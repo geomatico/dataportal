@@ -1,12 +1,232 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>ICOS-SPAIN</title>
-</head>
-<body>
-<h1>ICOS-SPAIN</h1>
-<p>Hello World!</p>
-</body>
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>ICOS Carbon Data Portal</title>
+		<link rel="shortcut icon" href="img/icos.ico" />
+		<link rel="stylesheet" type="text/css" href="js/ext3/resources/css/ext-all-notheme.css" />
+		<link rel="stylesheet" type="text/css" href="js/ext3/resources/css/xtheme-blue.css" />
+		<script type="text/javascript" src="js/openlayers/OpenLayers.js"></script>
+		<script type="text/javascript" src="js/ext3/adapter/ext/ext-base.js"></script>
+		<script type="text/javascript" src="js/ext3/ext-all-debug-w-comments.js"></script>
+		<script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script>
+        <!-- <script type="text/javascript" src="js/--GXP--"></script> -->
+        <style type="text/css">
+		    html, body {
+		        font-family: helvetica;
+		        font-size: 12px;
+		        margin:0;
+		        padding:0;
+		        border:0 none;
+		        overflow:hidden;
+		        height:100%;
+		    }
+			#header img{
+				float: left;
+				padding: 3px;
+			}
+			#title {
+				height: 64px;
+				font-size: 32px;
+				font-weight: bold;
+				font-style: italic;
+				padding-left: 240px;
+				padding-top: 18px;
+				color: #d14d0c;
+			}
+			p {
+				padding: 5px;
+			}
+			a.login {
+				position: absolute;
+				top: 35px;
+				right: 12px;
+			}
+	    </style>
+		<script type="text/javascript">
+	    Ext.onReady(function(){
+	        
+	        // NOTE: This is an example showing simple state management. During development,
+	        // it is generally best to disable state management as dynamically-generated ids
+	        // can change across page loads, leading to unpredictable results.  The developer
+	        // should ensure that stable state ids are set for stateful components in real apps.
+	        //Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+	        
+	        var viewport = new Ext.Viewport({
+	            layout: 'border',
+	            items: [
+	            new Ext.BoxComponent({
+	                region: 'north',
+	                height: 64,
+                    contentEl: 'header'
+	            }), {
+	                region: 'south',
+	                contentEl: 'log',
+	                split: true,
+	                height: 100,
+	                minSize: 100,
+	                maxSize: 200,
+	                collapsible: true,
+	                autoScroll: true,
+	                title: 'Message Log',
+	                margins: '0 0 0 0'
+	            }, {
+	                region: 'east',
+	                title: 'User',
+	                collapsible: true,
+	                split: true,
+	                width: 225,
+	                minSize: 175,
+	                maxSize: 400,
+	                margins: '0 5 0 0',
+	                layout: 'fit',
+	                items:
+	                new Ext.TabPanel({
+	                    border: false,
+	                    activeTab: 0,
+	                    items: [{
+	                        html: '<p>Dataset bundle download manager & QI generator</p>',
+	                        title: 'Shopping Cart',
+	                        autoScroll: true
+	                    }, {
+	                        html: '<p>Change personal preferences and data</p>',
+	                        title: 'Settings',
+	                        autoScroll: true
+	                    }]
+	                })
+	            }, {
+	                region: 'west',
+	                id: 'west-panel',
+	                title: 'Query Panel',
+	                split: true,
+	                width: 250,
+	                minSize: 175,
+	                maxSize: 400,
+	                collapsible: true,
+	                margins: '0 0 0 5',
+	                layout: {
+	                    type: 'vbox',
+	                    align:'stretch',
+	                    animate: true
+	                },
+	                items: [{
+	                    title: 'Search for Data',
+	                    border: false,
+	                    padding: 10,
+		                flex: 1,
+	                    xtype: 'form',
+	                    labelWidth: 60,
+	                    //labelAlign: 'top',
+	                    items: [{
+                            xtype: 'textfield',
+                            name: 'textfield',
+                            fieldLabel: 'Free text',
+                            value: ''
+                        }, {
+                            xtype:'fieldset',
+                            checkboxToggle:true,
+                            title: 'By location (where?)',
+                            items: [{
+                                xtype: "gx_mappanel",
+                                layers: [new OpenLayers.Layer.WMS(
+                                    "Global Imagery", "http://maps.opengeo.org/geowebcache/service/wms",
+                                    {layers: "bluemarble"}
+                                )],
+                                zoom: 1,
+                                height: 180
+	                        }]
+                        }, {
+                            xtype:'fieldset',
+                            checkboxToggle:true,
+                            title: 'By date range (when?)',
+                            items: [{
+	                            xtype: 'datefield',
+	                            name: 'from_date',
+	                            fieldLabel: 'From date'
+	                        }, {
+	                            xtype: 'datefield',
+	                            name: 'to_date',
+	                            fieldLabel: 'To date'
+	                        }]
+                        }, {
+                            xtype:'fieldset',
+                            checkboxToggle:true,
+                            title: 'By variables (what?)',
+                            items: new Ext.form.CheckboxGroup({
+                            	labelWidth: 0,
+                            	columns: 1,
+                                items:[  
+                                    {boxLabel: 'Sea Water Temperature', name: 'sea_water_temp'}, //campo marcado desde el principio  
+                                    {boxLabel: 'Sea Water Salinity', name: 'sea_water_salinity'},  
+                                    {boxLabel: 'Fluor', name: 'fuor_kin_dientes_sanos'},  
+                                    {boxLabel: '[...]', name: 'other_stuff'}
+                                ]
+                            })
+                        }],
+                        buttons: [{
+                            text: 'Search'
+                        }]
+	                }, {
+	                	title: 'Get data bundle by QI',
+	                	border: false,
+	                	height: 100,
+	                	padding: 10,
+	                	xtype: 'form',
+                        items: [{
+                            xtype: 'textfield',
+                            name: 'qi_field',
+                            fieldLabel: 'Query ID',
+                            value: ''
+                        }],
+                        buttons: [{
+                            text: 'Get data bundle'
+                        }]
+	                }]
+	            },
+	            new Ext.TabPanel({
+	                region: 'center',
+	                deferredRender: false,
+	                activeTab: 0,
+	                items: [{
+	                    contentEl: 'results',
+	                    title: 'Results',
+	                    closable: false,
+	                    autoScroll: true
+	                },{
+	                    contentEl: 'other',
+	                    title: 'Other Views',
+	                    closable: true,
+	                    autoScroll: true
+	                }]
+	            })]
+	        });
+	        log("Layout Loaded");
+	    });
+	    
+	    function log(message) {
+	    	Ext.fly("log").dom.innerHTML = "[" + new Date().format('Y-m-d H:i:s') + "] <b>"+message+"</b><br>" + Ext.fly("log").dom.innerHTML;
+	    }
+	    
+		</script>
+	</head>
+	<body>
+		<div id="header" class="x-hide-display">
+			 <img src="img/icos-logo.png"/>
+			 <div id="title">ICOS Carbon Data Portal</div>
+			 <a href="#" class="login" onclick="log('Login clicked')">Login</a>
+		</div>
+	    <!-- use class="x-hide-display" to prevent a brief flicker of the content -->
+	    <div id="search" class="x-hide-display">
+	        <p>Search form</p>
+	    </div>
+	    <div id="results" class="x-hide-display">
+	        <p><b>Results grid goes here</b></p>
+	    </div>
+	    <div id="other" class="x-hide-display">
+	        <p><b>Just close me</b></p>
+	        <p>Further tabs may contain other views</p>
+	    </div>
+	    <div id="log" class="x-hide-display" style="font-family:monospace;">
+	    </div>
+    </body>
 </html>
