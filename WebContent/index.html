@@ -5,61 +5,34 @@
 		<title>ICOS Carbon Data Portal</title>
 		<link rel="shortcut icon" href="img/icos.ico" />
 		<link rel="stylesheet" type="text/css" href="js/ext3/resources/css/ext-all-notheme.css" />
-		<link rel="stylesheet" type="text/css" href="js/ext3/resources/css/xtheme-blue.css" />
+		<link rel="stylesheet" type="text/css" href="js/ext3/resources/css/xtheme-gray.css" />
+		<link rel="stylesheet" type="text/css" href="css/icos.css" />
 		<script type="text/javascript" src="js/openlayers/OpenLayers.js"></script>
 		<script type="text/javascript" src="js/ext3/adapter/ext/ext-base.js"></script>
 		<script type="text/javascript" src="js/ext3/ext-all-debug-w-comments.js"></script>
 		<script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script>
-        <!-- <script type="text/javascript" src="js/--GXP--"></script> -->
-        <style type="text/css">
-		    html, body {
-		        font-family: helvetica;
-		        font-size: 12px;
-		        margin:0;
-		        padding:0;
-		        border:0 none;
-		        overflow:hidden;
-		        height:100%;
-		    }
-			#header img{
-				float: left;
-				padding: 3px;
-			}
-			#title {
-				height: 64px;
-				font-size: 32px;
-				font-weight: bold;
-				font-style: italic;
-				padding-left: 240px;
-				padding-top: 18px;
-				color: #d14d0c;
-			}
-			p {
-				padding: 5px;
-			}
-			a.login {
-				position: absolute;
-				top: 35px;
-				right: 12px;
-			}
-	    </style>
 		<script type="text/javascript">
+		var viewport;
+		
 	    Ext.onReady(function(){
-	        
-	        // NOTE: This is an example showing simple state management. During development,
-	        // it is generally best to disable state management as dynamically-generated ids
-	        // can change across page loads, leading to unpredictable results.  The developer
-	        // should ensure that stable state ids are set for stateful components in real apps.
 	        //Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+
+	        vl = new OpenLayers.Layer.Vector("BBOX filters");
+            bounds = OpenLayers.Bounds.fromArray([1, 38, 5, 41]);
+            bounds.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")); // TODO: This should be put in layer or map
+            box = new OpenLayers.Feature.Vector(bounds.toGeometry());
+            vl.addFeatures([box]);
 	        
-	        var viewport = new Ext.Viewport({
+	        Ext.QuickTips.init();
+                   
+	        viewport = new Ext.Viewport({
 	            layout: 'border',
-	            items: [
-	            new Ext.BoxComponent({
-	                region: 'north',
+	            items: [{
+                    region: 'north',
+	                xtype: 'box',
 	                height: 64,
                     contentEl: 'header'
-	            }), {
+	            }, {
 	                region: 'south',
 	                contentEl: 'log',
 	                split: true,
@@ -71,37 +44,35 @@
 	                title: 'Message Log',
 	                margins: '0 0 0 0'
 	            }, {
-	                region: 'east',
+                    region: 'east',
 	                title: 'User',
-	                collapsible: true,
+	                layout: 'fit',
+					collapsible: true,
 	                split: true,
 	                width: 225,
 	                minSize: 175,
 	                maxSize: 400,
 	                margins: '0 5 0 0',
-	                layout: 'fit',
-	                items:
-	                new Ext.TabPanel({
+	                items: [{
+	                    xtype: 'tabpanel',
 	                    border: false,
 	                    activeTab: 0,
 	                    items: [{
-	                        html: '<p>Dataset bundle download manager & QI generator</p>',
 	                        title: 'Shopping Cart',
+	                        html: '<p>Dataset bundle download manager & QI generator</p>',
 	                        autoScroll: true
 	                    }, {
-	                        html: '<p>Change personal preferences and data</p>',
 	                        title: 'Settings',
+	                        html: '<p>Change personal preferences and data</p>',
 	                        autoScroll: true
 	                    }]
-	                })
+	                }]
 	            }, {
 	                region: 'west',
 	                id: 'west-panel',
 	                title: 'Query Panel',
-	                split: true,
-	                width: 250,
-	                minSize: 175,
-	                maxSize: 400,
+	                split: false,
+	                width: 287,
 	                collapsible: true,
 	                margins: '0 0 0 5',
 	                layout: {
@@ -110,64 +81,120 @@
 	                    animate: true
 	                },
 	                items: [{
-	                    title: 'Search for Data',
-	                    border: false,
-	                    padding: 10,
+	                    labelAlign: 'top',
+	                    autoScroll: true,
+	                    border: true,
+	                    padding: 4,
 		                flex: 1,
 	                    xtype: 'form',
 	                    labelWidth: 60,
-	                    //labelAlign: 'top',
-	                    items: [{
-                            xtype: 'textfield',
+	                    id: 'searchFormPanel',
+	                    items: [/*{
+                            fieldLabel: 'Text',
+	                        xtype: 'textfield',
                             name: 'textfield',
-                            fieldLabel: 'Free text',
                             value: ''
+                        },*/ {
+                            xtype: 'gx_mappanel',
+                            map: {
+                                controls: [new OpenLayers.Control.Navigation()]
+                            },
+                            layers: [new OpenLayers.Layer.OSM("Base Layer"), vl],
+                            zoom: 0,
+                            height: 297,
+                            tbar: [{
+                                xtype: 'tbtext',
+                                text: 'Filter by location:'
+                            }, "->", {
+                                xtype: 'tbbutton',
+                                qtip: 'Navigate',
+                                iconCls: 'mapNav',
+                                handler: function(btn) {
+                                    log(btn.qtip+" Button Pressed");
+                                }
+                            }, {
+                                xtype: 'tbbutton',
+                                qtip: 'Add filter',
+                                iconCls: 'bboxAdd',
+                                handler: function(btn) {
+                                    log(btn.qtip+" Button Pressed");
+                                }
+                            }, {
+                                xtype: 'tbbutton',
+                                qtip: 'Remove filter',
+                                iconCls: 'bboxDel',
+                                handler: function(btn) {
+                                    log(btn.qtip+" Button Pressed");
+                                }
+                            }/*, {
+                                xtype: 'tbbutton',
+                                qtip: 'Open bigger map',
+                                iconCls: 'mapBig',
+                                handler: function(btn) {
+                                    log(btn.qtip+" Button Pressed");
+                                }
+                            }*/]
                         }, {
-                            xtype:'fieldset',
-                            checkboxToggle:true,
-                            title: 'By location (where?)',
+                            xtype: 'container',
+                            layout: 'column',
                             items: [{
-                                xtype: "gx_mappanel",
-                                layers: [new OpenLayers.Layer.WMS(
-                                    "Global Imagery", "http://maps.opengeo.org/geowebcache/service/wms",
-                                    {layers: "bluemarble"}
-                                )],
-                                zoom: 1,
-                                height: 180
-	                        }]
-                        }, {
-                            xtype:'fieldset',
-                            checkboxToggle:true,
-                            title: 'By date range (when?)',
-                            items: [{
-	                            xtype: 'datefield',
-	                            name: 'from_date',
-	                            fieldLabel: 'From date'
+                                type: 'form',
+                                labelAlign: 'top',
+                                border: false,
+                                columnWidth: 0.5,                                
+                                items: [{
+		                            xtype: 'datefield',
+		                            name: 'from_date',
+		                            fieldLabel: 'From date'
+                                }]
 	                        }, {
-	                            xtype: 'datefield',
-	                            name: 'to_date',
-	                            fieldLabel: 'To date'
+                                type: 'form',
+                                labelAlign: 'top',
+	                            border: false,
+                                columnWidth: 0.5,
+	                            items: [{
+		                            xtype: 'datefield',
+		                            name: 'to_date',
+		                            fieldLabel: 'To date'
+	                            }]
 	                        }]
                         }, {
-                            xtype:'fieldset',
-                            checkboxToggle:true,
-                            title: 'By variables (what?)',
-                            items: new Ext.form.CheckboxGroup({
-                            	labelWidth: 0,
-                            	columns: 1,
-                                items:[  
-                                    {boxLabel: 'Sea Water Temperature', name: 'sea_water_temp'}, //campo marcado desde el principio  
-                                    {boxLabel: 'Sea Water Salinity', name: 'sea_water_salinity'},  
-                                    {boxLabel: 'Fluor', name: 'fuor_kin_dientes_sanos'},  
-                                    {boxLabel: '[...]', name: 'other_stuff'}
-                                ]
-                            })
+                            xtype: 'checkboxgroup',
+                            fieldLabel: 'Magnitudes',
+                           	columns: 2,
+                           	id: 'magnitudes',
+                               items: [ // TODO: Generate items from datasource
+                                   {boxLabel: 'Temperature', name: 'sea_water_temp'},
+                                   {boxLabel: 'Salinity', name: 'sea_water_salinity'},  
+                                   {boxLabel: 'Fluor', name: 'fuor_kin_dientes_sanos'},  
+                                   {boxLabel: '[...]', name: 'other_stuff'}
+                               ]
                         }],
                         buttons: [{
-                            text: 'Search'
-                        }]
+                            text: 'Search',
+                            handler: function() {
+                                var format = new OpenLayers.Format.WKT({ // TODO: Make a simpler serializer for BBOXes
+                                    internalProjection: new OpenLayers.Projection("EPSG:900913"),
+                                    externalProjection: new OpenLayers.Projection("EPSG:4326")
+                                });
+                                
+                                Ext.getCmp('searchFormPanel').getForm().submit({
+                                    url: this.url,
+                                    scope: this,
+                                    success: function() {log('Search query: success')},
+                                    failure: function() {log('Search qyery: failure')},
+                                    params: {
+                                        bboxes: format.write(vl.features, false),
+                                    },
+                                    //method: 'GET',
+                                    waitMsg: 'Querying...'
+                                });
+                            }
+                        }],
+                        //standardSubmit: true,
+                        url: 'sarch_servlet' // TODO: Put the search servlet query here
 	                }, {
-	                	title: 'Get data bundle by QI',
+	                	title: 'Get data by Query Identifier',
 	                	border: false,
 	                	height: 100,
 	                	padding: 10,
@@ -175,15 +202,18 @@
                         items: [{
                             xtype: 'textfield',
                             name: 'qi_field',
-                            fieldLabel: 'Query ID',
+                            fieldLabel: 'DOI',
                             value: ''
                         }],
                         buttons: [{
-                            text: 'Get data bundle'
+                            text: 'Get dataset',
+                            handler: function(a, b) {
+                                log("Search by QI button pressed");
+                            }
                         }]
 	                }]
-	            },
-	            new Ext.TabPanel({
+	            }, {
+	                xtype: 'tabpanel',
 	                region: 'center',
 	                deferredRender: false,
 	                activeTab: 0,
@@ -198,7 +228,7 @@
 	                    closable: true,
 	                    autoScroll: true
 	                }]
-	            })]
+	            }]
 	        });
 	        log("Layout Loaded");
 	    });
@@ -220,11 +250,10 @@
 	        <p>Search form</p>
 	    </div>
 	    <div id="results" class="x-hide-display">
-	        <p><b>Results grid goes here</b></p>
+	        <p><b>Result grid renders here</b></p>
 	    </div>
 	    <div id="other" class="x-hide-display">
-	        <p><b>Just close me</b></p>
-	        <p>Further tabs may contain other views</p>
+	        <p><b>Close me</b></p>
 	    </div>
 	    <div id="log" class="x-hide-display" style="font-family:monospace;">
 	    </div>
