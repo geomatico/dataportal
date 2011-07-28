@@ -22,11 +22,13 @@ public class ClientSpeaker extends HttpServlet {
 
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
 		Enumeration paramNames = req.getParameterNames();
+		HashMap<String, String[]> parametros = new HashMap<String, String[]>();
 		while(paramNames.hasMoreElements()){
-			String paramName = (String)paramNames.nextElement();
-			HashMap<String, String[]> parametros = new HashMap<String, String[]>();
+			String paramName = (String)paramNames.nextElement();			
 			parametros.put(paramName, req.getParameterValues(paramName));
 		}
+		GnThController controller = new GnThController();
+		controller.ask2gn(parametros);
 		
 	}
 	

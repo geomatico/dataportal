@@ -3,6 +3,8 @@
  */
 package cmima.icos;
 
+import java.util.HashMap;
+
 
 /**
  * @author Micho Garcia
@@ -10,4 +12,7 @@ package cmima.icos;
  */
 public class GnThController {
 
+	public void ask2gn(HashMap<String, String[]> parametros) {
+		
+	}
 }

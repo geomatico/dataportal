@@ -6,7 +6,14 @@
 	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>query-core Maven Webapp</name>
-	<url>http://maven.apache.org</url>
+	<url>http://geomati.co</url>
+	<repositories>
+		<repository>
+			<id>it.geosolutions</id>
+			<name>it.geosolutions</name>
+			<url>http://maven.geo-solutions.it/</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -20,9 +27,14 @@
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>it.geosolutions</groupId>
+			<artifactId>geonetwork-manager</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
-		<finalName>query-core</finalName>
+		<finalName>${artifactId}-${version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
