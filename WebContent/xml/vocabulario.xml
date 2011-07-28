@@ -1,0 +1,335 @@
+<?xml version="1.0"?>
+<vocab>
+<term>
+  <sado_term>fecha</sado_term>
+  <nc_term>date</nc_term>
+  <nc_long_term>date of acquisition</nc_long_term>
+  <nc_units>seconds since 1970-01-01 00:00:00</nc_units>
+  <nc_data_type>INT</nc_data_type>
+  <nc_coordinate_axis_type>Time</nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>latitud</sado_term>
+  <nc_term>latitude</nc_term>
+  <nc_long_term>latitude</nc_long_term>
+  <nc_units>degrees_north</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type>Lat</nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>longitud</sado_term>
+  <nc_term>longitude</nc_term>
+  <nc_long_term>longitude</nc_long_term>
+  <nc_units>degrees_east</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type>Lon</nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>fecha_telegrama</sado_term>
+  <nc_term>acquisition_instrument_date</nc_term>
+  <nc_long_term>date of acquisition from instrument clock</nc_long_term>
+  <nc_units>seconds since 1970-01-01 00:00:00</nc_units>
+  <nc_data_type>INT</nc_data_type>
+  <nc_coordinate_axis_type>Time</nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>fecha_instrumento</sado_term>
+  <nc_term>acquisition_instrument_date</nc_term>
+  <nc_long_term>date of acquisition from instrument clock</nc_long_term>
+  <nc_units>seconds since 1970-01-01 00:00:00</nc_units>
+  <nc_data_type>INT</nc_data_type>
+  <nc_coordinate_axis_type>Time</nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>salinidad</sado_term>
+  <nc_term>sea_water_salinity</nc_term>
+  <nc_long_term>sea water salinity</nc_long_term>
+  <nc_units>psu</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>temperatura</sado_term>
+  <nc_term>sea_water_temperature</nc_term>
+  <nc_long_term>sea water temperature</nc_long_term>
+  <nc_units>degree_Celsius</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>fluor</sado_term>
+  <nc_term>fluorescence</nc_term>
+  <nc_long_term>fluorometer sensor output</nc_long_term>
+  <nc_units>V</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>conductividad</sado_term>
+  <nc_term>sea_water_electrical_conductivity</nc_term>
+  <nc_long_term>sea water electrical conductivity</nc_long_term>
+  <nc_units>S m-1</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>sigmat</sado_term>
+  <nc_term>sea_water_sigmat</nc_term>
+  <nc_long_term>sea water sigma t</nc_long_term>
+  <nc_units>kg m-3</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>velocidad_media_viento</sado_term>
+  <nc_term>wind_speed_mean_value</nc_term>
+  <nc_long_term>wind speed mean value</nc_long_term>
+  <nc_units>m_s-1</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>velocidad_inst_viento</sado_term>
+  <nc_term>wind_speed</nc_term>
+  <nc_long_term>wind speed</nc_long_term>
+  <nc_units>m_s-1</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>direccion_viento</sado_term>
+  <nc_term>wind_from_direction</nc_term>
+  <nc_long_term>wind from direction</nc_long_term>
+  <nc_units>degree</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>temperatura_aire</sado_term>
+  <nc_term>air_temperature</nc_term>
+  <nc_long_term>air temperature</nc_long_term>
+  <nc_units>degree_Celsius</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>humedad</sado_term>
+  <nc_term>relative_humidity</nc_term>
+  <nc_long_term>relativity humidity</nc_long_term>
+  <nc_units>%</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>radiacion_solar</sado_term>
+  <nc_term>solar_radiation</nc_term>
+  <nc_long_term>total incident solar radiation</nc_long_term>
+  <nc_units>W_m2</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>presion_atm</sado_term>
+  <nc_term>air_pressure</nc_term>
+  <nc_long_term>air pressure at sea level</nc_long_term>
+  <nc_units>Pa</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>temperatura_agua</sado_term>
+  <nc_term>sea_water_temperature</nc_term>
+  <nc_long_term>sea water temperature</nc_long_term>
+  <nc_units>degree_Celsius</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>rumbo</sado_term>
+  <nc_term>heading</nc_term>
+  <nc_long_term>ship heading</nc_long_term>
+  <nc_units>degree</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>velocidad</sado_term>
+  <nc_term>speed</nc_term>
+  <nc_long_term>ship speed</nc_long_term>
+  <nc_units>knots</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>profundidad</sado_term>
+  <nc_term>depth</nc_term>
+  <nc_long_term>water depth</nc_long_term>
+  <nc_units>m</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>cog</sado_term>
+  <nc_term>cog</nc_term>
+  <nc_long_term>course over ground</nc_long_term>
+  <nc_units>degree</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>sog</sado_term>
+  <nc_term>sog</nc_term>
+  <nc_long_term>speed over ground</nc_long_term>
+  <nc_units>knots</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>botella</sado_term>
+  <nc_term>fired_bottle</nc_term>
+  <nc_long_term>fired bottle</nc_long_term>
+  <nc_units>1</nc_units>
+  <nc_data_type>STRING</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>profundidad</sado_term>
+  <nc_term>depth</nc_term>
+  <nc_long_term>water depth</nc_long_term>
+  <nc_units>m</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>status</sado_term>
+  <nc_term>instrument_status</nc_term>
+  <nc_long_term>instrument status code</nc_long_term>
+  <nc_units>1</nc_units>
+  <nc_data_type>INT</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>gravimetria_bruta</sado_term>
+  <nc_term>grav_field</nc_term>
+  <nc_long_term>measured gravity field</nc_long_term>
+  <nc_units>mGal</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>grs67</sado_term>
+  <nc_term>normal_gravity_grs67</nc_term>
+  <nc_long_term>normal gravity grs67</nc_long_term>
+  <nc_units>mGal</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>gravimetria_free</sado_term>
+  <nc_term>grav_free_air_anom</nc_term>
+  <nc_long_term>gravity FreeAir anomaly</nc_long_term>
+  <nc_units>mGal</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>radsolar</sado_term>
+  <nc_term>solar_radiation</nc_term>
+  <nc_long_term>total incident solar radiation</nc_long_term>
+  <nc_units>W_m2</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>radpar</sado_term>
+  <nc_term>par</nc_term>
+  <nc_long_term>photosynthetically active radiation</nc_long_term>
+  <nc_units>W_m2</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>radgloblaneta</sado_term>
+  <nc_term>global_solar_radiation</nc_term>
+  <nc_long_term>global solar radiation</nc_long_term>
+  <nc_units>W_m2</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>raduvb</sado_term>
+  <nc_term>uv_radiation_b</nc_term>
+  <nc_long_term>Ultra-violet radiation B</nc_long_term>
+  <nc_units>W_m2</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>raduva</sado_term>
+  <nc_term>uv_radiation_a</nc_term>
+  <nc_long_term>Ultra-violet radiation A</nc_long_term>
+  <nc_units>W_m2</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>radiacion_uva</sado_term>
+  <nc_term>uv_radiation_a</nc_term>
+  <nc_long_term>Ultra-violet radiation A</nc_long_term>
+  <nc_units>W_m2</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>radiacion_uvb</sado_term>
+  <nc_term>uv_radiation_b</nc_term>
+  <nc_long_term>Ultra-violet radiation B</nc_long_term>
+  <nc_units>W_m2</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>temperatura_uvb</sado_term>
+  <en_term>temperature_uvb_sensor</en_term>
+  <nc_term></nc_term>
+  <nc_long_term></nc_long_term>
+  <en_long_term>temperature sensor UVB</en_long_term>
+  <nc_units>volts</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>temperatura_uva</sado_term>
+  <en_term>temperature_uva_sensor</en_term>
+  <nc_term></nc_term>
+  <nc_long_term></nc_long_term>
+  <en_long_term>temperature sensor UVA</en_long_term>
+  <nc_units>volts</nc_units>
+  <nc_data_type>DOUBLE</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>evento</sado_term>
+  <nc_term>event</nc_term>
+  <nc_long_term>event</nc_long_term>
+  <nc_units></nc_units>
+  <nc_data_type>STRING</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>tipo</sado_term>
+  <nc_term>event_type</nc_term>
+  <nc_long_term>event type</nc_long_term>
+  <nc_units></nc_units>
+  <nc_data_type>STRING</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+<term>
+  <sado_term>mostrar</sado_term>
+  <nc_term>show_level</nc_term>
+  <nc_long_term>shown level</nc_long_term>
+  <nc_units></nc_units>
+  <nc_data_type>STRING</nc_data_type>
+  <nc_coordinate_axis_type></nc_coordinate_axis_type>
+</term>
+</vocab>
