@@ -8,24 +8,25 @@
 		<link rel="stylesheet" type="text/css" href="js/ext3/resources/css/xtheme-gray.css" />
 		<link rel="stylesheet" type="text/css" href="css/icos.css" />
 		<script type="text/javascript" src="js/openlayers/OpenLayers.js"></script>
+        <script type="text/javascript" src="js/BBOXes.js"></script>
 		<script type="text/javascript" src="js/ext3/adapter/ext/ext-base.js"></script>
 		<script type="text/javascript" src="js/ext3/ext-all-debug-w-comments.js"></script>
 		<script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script>
 		<script type="text/javascript">
-		var viewport;
 		
 	    Ext.onReady(function(){
 	        //Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
-	        vl = new OpenLayers.Layer.Vector("BBOX filters");
+	        var vl = new OpenLayers.Layer.Vector("BBOXes");
             bounds = OpenLayers.Bounds.fromArray([1, 38, 5, 41]);
-            bounds.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")); // TODO: This should be put in layer or map
+            bounds.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
             box = new OpenLayers.Feature.Vector(bounds.toGeometry());
             vl.addFeatures([box]);
 	        
 	        Ext.QuickTips.init();
-                   
-	        viewport = new Ext.Viewport({
+	        Ext.QuickTips.enable();
+
+	        new Ext.Viewport({
 	            layout: 'border',
 	            items: [{
                     region: 'north',
@@ -40,6 +41,7 @@
 	                minSize: 100,
 	                maxSize: 200,
 	                collapsible: true,
+	                collapsed: true,
 	                autoScroll: true,
 	                title: 'Message Log',
 	                margins: '0 0 0 0'
@@ -82,26 +84,34 @@
 	                },
 	                items: [{
 	                    labelAlign: 'top',
+                        //labelWidth: 100,
 	                    autoScroll: true,
 	                    border: true,
 	                    padding: 4,
 		                flex: 1,
 	                    xtype: 'form',
-	                    labelWidth: 60,
 	                    id: 'searchFormPanel',
-	                    items: [/*{
-                            fieldLabel: 'Text',
-	                        xtype: 'textfield',
-                            name: 'textfield',
-                            value: ''
-                        },*/ {
+	                    items: [{
+                            border: false,
+                            items: [{
+                                xtype: 'label',
+                                text: 'Text:',
+                            },{
+                                style: 'margin: 4px;width:200px', // Guarradas a domicilio
+                                xtype: 'textfield',
+                                name: 'text',
+                                value: ''
+                            }]
+                        }, {
                             xtype: 'gx_mappanel',
                             map: {
-                                controls: [new OpenLayers.Control.Navigation()]
+                                controls: [new OpenLayers.Control.Navigation()],
+                                projection: new OpenLayers.Projection("EPSG:900913"),
+                                displayProjection: new OpenLayers.Projection("EPSG:4326")
                             },
                             layers: [new OpenLayers.Layer.OSM("Base Layer"), vl],
                             zoom: 0,
-                            height: 297,
+                            height: 283,
                             tbar: [{
                                 xtype: 'tbtext',
                                 text: 'Filter by location:'
@@ -135,65 +145,73 @@
                                 }
                             }*/]
                         }, {
-                            xtype: 'container',
                             layout: 'column',
+                            padding: 5,
+                            border: false,
                             items: [{
-                                type: 'form',
-                                labelAlign: 'top',
-                                border: false,
                                 columnWidth: 0.5,                                
+                                border: false,
                                 items: [{
+                                    xtype: 'label',
+                                    text: 'From date:'
+                                },{
 		                            xtype: 'datefield',
-		                            name: 'from_date',
-		                            fieldLabel: 'From date'
+		                            id: 'start_date',
+		                            submitValue: false
                                 }]
 	                        }, {
-                                type: 'form',
-                                labelAlign: 'top',
-	                            border: false,
                                 columnWidth: 0.5,
-	                            items: [{
+                                border: false,
+                                items: [{
+                                    xtype: 'label',
+                                    text: 'To date:'
+                                }, {
 		                            xtype: 'datefield',
-		                            name: 'to_date',
-		                            fieldLabel: 'To date'
+		                            id: 'end_date',
+		                            submitValue: false
 	                            }]
 	                        }]
-                        }, {
-                            xtype: 'checkboxgroup',
-                            fieldLabel: 'Magnitudes',
-                           	columns: 2,
-                           	id: 'magnitudes',
-                               items: [ // TODO: Generate items from datasource
-                                   {boxLabel: 'Temperature', name: 'sea_water_temp'},
-                                   {boxLabel: 'Salinity', name: 'sea_water_salinity'},  
-                                   {boxLabel: 'Fluor', name: 'fuor_kin_dientes_sanos'},  
-                                   {boxLabel: '[...]', name: 'other_stuff'}
-                               ]
                         }],
                         buttons: [{
                             text: 'Search',
                             handler: function() {
-                                var format = new OpenLayers.Format.WKT({ // TODO: Make a simpler serializer for BBOXes
-                                    internalProjection: new OpenLayers.Projection("EPSG:900913"),
-                                    externalProjection: new OpenLayers.Projection("EPSG:4326")
+                                var format = new OpenLayers.Format.BBOXes();
+                                
+                                var variables = [];
+                                Ext.getCmp('magnitudes').eachItem(function(item){
+                                    if(item.getValue()){
+                                        variables.push(item.getName());
+                                    };
                                 });
+                                
+                                var start_date = Ext.getCmp('start_date').getValue();
+                                if (start_date!="") start_date = start_date.format("Y-m-d");
+                                var end_date = Ext.getCmp('end_date').getValue();
+                                if (end_date!="") end_date = end_date.format("Y-m-d");
                                 
                                 Ext.getCmp('searchFormPanel').getForm().submit({
                                     url: this.url,
                                     scope: this,
                                     success: function() {log('Search query: success')},
-                                    failure: function() {log('Search qyery: failure')},
+                                    failure: function() {log('Search query: failure')},
                                     params: {
-                                        bboxes: format.write(vl.features, false),
+                                        bboxes: format.write(vl.features),
+                                        start_date: start_date,
+                                        end_date: end_date,
+                                        variables: variables.join(","),
+                                        response_format: "application/json",
+                                        start: 0,
+                                        limit: 25,
+                                        sort: "title",
+                                        dir: "ASC"
                                     },
                                     //method: 'GET',
                                     waitMsg: 'Querying...'
                                 });
                             }
                         }],
-                        //standardSubmit: true,
-                        url: 'sarch_servlet' // TODO: Put the search servlet query here
-	                }, {
+                        url: 'fakeSearch' // TODO. Put real servlet URL
+	                }/*, {
 	                	title: 'Get data by Query Identifier',
 	                	border: false,
 	                	height: 100,
@@ -211,7 +229,7 @@
                                 log("Search by QI button pressed");
                             }
                         }]
-	                }]
+	                }*/]
 	            }, {
 	                xtype: 'tabpanel',
 	                region: 'center',
@@ -231,6 +249,59 @@
 	            }]
 	        });
 	        log("Layout Loaded");
+	        
+	        var store = new Ext.data.XmlStore({
+	            autoLoad: true,
+	            storeId: 'vocabulario',
+	            url: 'xml/vocabulario.xml',
+	            record: 'term',
+	            idPath: 'sado_term',
+	            fields: [
+                     'sado_term',
+                     'nc_term',
+                     'nc_long_term',
+                     'en_term',
+                     'en_long_term',
+                     'nc_units',
+                     'nc_data_type',
+                     'nc_coordinate_axis_type'
+	            ],
+	            sortInfo: { field: 'nc_long_term', direction: 'ASC' },
+	            listeners: {
+	                'load': function(store, records, options) {
+	                    var checkboxitems = [];
+	                    //store.sort('nc_long_term', 'ASC');
+	                    store.each(function(record){
+	                        checkboxitems.push({
+	                            id: record.data.sado_term, // TODO this should be nc_term, if it was unique...
+	                            boxLabel: (record.data.nc_long_term || record.data.en_long_term),
+	                            name: record.data.nc_term || record.data.en_term,
+	                            submitValue: false
+	                        });
+	                    });
+	                                        
+	                    var cbg = new Ext.form.CheckboxGroup({
+                            id: 'magnitudes',
+                            columns: 1,
+                            items: checkboxitems
+                        });
+
+	                    var fs = { 
+	                        xtype:'fieldset',
+	                        title: 'Variables',
+	                        hideLabel: true,
+	                        fieldLabel: "&nbsp;", // Ah, si, si, creetelo!
+	                        collapsible: true,
+	                        autoHeight: true,
+	                        items: cbg
+	                    };
+	                    
+	                    Ext.getCmp('searchFormPanel').add(fs);
+	                    Ext.getCmp('west-panel').doLayout();
+	                }
+	            }
+	        });
+	        
 	    });
 	    
 	    function log(message) {
