@@ -192,8 +192,13 @@
                                 Ext.getCmp('searchFormPanel').getForm().submit({
                                     url: this.url,
                                     scope: this,
-                                    success: function() {log('Search query: success')},
-                                    failure: function() {log('Search query: failure')},
+                                    success: function() {
+                                        log('Search query: success')
+                                    },
+                                    failure: function(form, resp) {
+                                        log('Search query: failure');
+                                        Ext.fly("results").dom.innerHTML = "<xmp>"+resp.response.responseText+"</xmp>";
+                                    },
                                     params: {
                                         bboxes: format.write(vl.features),
                                         start_date: start_date,
@@ -248,6 +253,7 @@
 	                }]
 	            }]
 	        });
+
 	        log("Layout Loaded");
 	        
 	        var store = new Ext.data.XmlStore({
