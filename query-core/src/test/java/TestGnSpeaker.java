@@ -18,7 +18,7 @@ public class TestGnSpeaker extends TestCase {
 	/**
 	 * Test method for {@link cmima.icos.GnSpeaker#ask2gn()}.
 	 */
-	public void testAsk2gn() {
+	public void testAsk2gnvariables() {
 		
 		HashMap<String, String[]> parametros = new HashMap<String, String[]>();
 		String data[] = {"gribtocdl"};
