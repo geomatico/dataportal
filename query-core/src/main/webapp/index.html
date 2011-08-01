@@ -12,6 +12,7 @@
 		<script type="text/javascript" src="js/ext3/adapter/ext/ext-base.js"></script>
 		<script type="text/javascript" src="js/ext3/ext-all-debug-w-comments.js"></script>
 		<script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script>
+		<script type="text/javascript" src="js/searchGrid.js"></script>
 		<script type="text/javascript">
 		
 	    Ext.onReady(function(){
@@ -100,6 +101,7 @@
                                 style: 'margin: 4px;width:200px', // Guarradas a domicilio
                                 xtype: 'textfield',
                                 name: 'text',
+                                id: 'text',
                                 value: ''
                             }]
                         }, {
@@ -175,8 +177,13 @@
                         buttons: [{
                             text: 'Search',
                             handler: function() {
-                                var format = new OpenLayers.Format.BBOXes();
+                                var bboxWriter = new OpenLayers.Format.BBOXes();
                                 
+                                var start_date = Ext.getCmp('start_date').getValue();
+                                if (start_date!="") start_date = start_date.format("Y-m-d");
+                                var end_date = Ext.getCmp('end_date').getValue();
+                                if (end_date!="") end_date = end_date.format("Y-m-d");
+
                                 var variables = [];
                                 Ext.getCmp('magnitudes').eachItem(function(item){
                                     if(item.getValue()){
@@ -184,38 +191,22 @@
                                     };
                                 });
                                 
-                                var start_date = Ext.getCmp('start_date').getValue();
-                                if (start_date!="") start_date = start_date.format("Y-m-d");
-                                var end_date = Ext.getCmp('end_date').getValue();
-                                if (end_date!="") end_date = end_date.format("Y-m-d");
-                                
-                                Ext.getCmp('searchFormPanel').getForm().submit({
-                                    url: this.url,
-                                    scope: this,
-                                    success: function() {
-                                        log('Search query: success')
-                                    },
-                                    failure: function(form, resp) {
-                                        log('Search query: failure');
-                                        Ext.fly("results").dom.innerHTML = "<xmp>"+resp.response.responseText+"</xmp>";
-                                    },
+                                ds.load({ // TODO: Global var??
                                     params: {
-                                        bboxes: format.write(vl.features),
+                                        text: Ext.getCmp('text').getValue(),
+                                        bboxes: bboxWriter.write(vl.features),
                                         start_date: start_date,
                                         end_date: end_date,
                                         variables: variables.join(","),
-                                        response_format: "application/json",
+                                        response_format: "text/xml",
                                         start: 0,
                                         limit: 25,
                                         sort: "title",
                                         dir: "ASC"
-                                    },
-                                    //method: 'GET',
-                                    waitMsg: 'Querying...'
+                                    }
                                 });
                             }
-                        }],
-                        url: 'fakeSearch' // TODO. Put real servlet URL
+                        }]
 	                }/*, {
 	                	title: 'Get data by Query Identifier',
 	                	border: false,
@@ -307,6 +298,9 @@
 	                }
 	            }
 	        });
+
+	        log('Drawing grid...');
+	        renderGrid();
 	        
 	    });
 	    
@@ -327,7 +321,6 @@
 	        <p>Search form</p>
 	    </div>
 	    <div id="results" class="x-hide-display">
-	        <p><b>Result grid renders here</b></p>
 	    </div>
 	    <div id="other" class="x-hide-display">
 	        <p><b>Close me</b></p>

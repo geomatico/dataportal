@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<response totalcount="2" sucess="true">
+<response totalcount="33" success="true">
     <data>
         <metadata>
             <id>11</id>
@@ -9,8 +9,8 @@
             <summary>This is a sample global ocean file that comes with default Thredds installation. Its global attributes have been modified to conform with Dataset Discovery convention</summary>
             <extent>POLYGON ((-10 50, 10 50, 10 40, -10 40))</extent>
             <temporalextent>
-                <time_converage_start>2011-07-10T12:00:00Z</time_coverage_start>
-                <time_converage_end>2011-07-15T12:00:00Z</time_converage_end>
+                <time_coverage_start>2011-07-10T12:00:00Z</time_coverage_start>
+                <time_coverage_end>2011-07-15T12:00:00Z</time_coverage_end>
             </temporalextent>
             <variables>sea_water_salinity,sea_water_temperature,sea_water_electrical_conductivity</variables>
             <score>1.0</score>
@@ -23,11 +23,12 @@
             <summary>This is another sample global ocean file that comes with default Thredds installation. Its global attributes have been modified to conform with Dataset Discovery convention</summary>
             <extent>POLYGON ((-10 50, 10 50, 10 40, -10 40))</extent>
             <temporalextent>
-                <time_converage_start>2011-07-10T12:00:00Z</time_coverage_start>
-                <time_converage_end>2011-07-15T12:00:00Z</time_converage_end>
+                <time_coverage_start>2011-07-10T12:00:00Z</time_coverage_start>
+                <time_coverage_end>2011-07-15T12:00:00Z</time_coverage_end>
             </temporalextent>
             <variables>sea_water_salinity,sea_water_temperature,sea_water_electrical_conductivity</variables>
-            <score>1.0</score>
+            <score>0.8</score>
         </metadata>
     </data>
 </response>
+ 
