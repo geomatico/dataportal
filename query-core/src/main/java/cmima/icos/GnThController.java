@@ -47,8 +47,6 @@ public class GnThController {
 			Catalog catalogo = new Catalog("http://ciclope.cmima.csic.es:8080/geonetworkcmima/srv/en/csw");
 			String cswResponse = catalogo.sendCatalogRequest(cswQuery);
 			
-			logger.debug("CSWResponse: " + cswResponse);
-			
 		} catch (MalformedURLException malUrlE) {
 			logger.error(malUrlE.getMessage());
 			malUrlE.printStackTrace();
