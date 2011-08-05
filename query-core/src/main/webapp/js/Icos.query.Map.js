@@ -2,6 +2,7 @@ Ext.namespace('Icos.query');
 
 Icos.query.Map =  Ext.extend(GeoExt.MapPanel, {
 
+    map: null,
     bboxLayer: null,
     bboxWriter: null,
     mapProj: null,
@@ -18,47 +19,59 @@ Icos.query.Map =  Ext.extend(GeoExt.MapPanel, {
             internalProjection: this.mapProj,
             externalProjection: this.outProj
         });
-
-        // TODO: Delete this sample BBOX
-        bounds = OpenLayers.Bounds.fromArray([1, 38, 5, 41]).transform(this.outProj, this.mapProj);
-        box = new OpenLayers.Feature.Vector(bounds.toGeometry());
-        this.bboxLayer.addFeatures([box]);
         
+        this.map = new OpenLayers.Map({
+            controls: [],
+            projection: this.mapProj,
+            displayProjection: this.outProj,
+            layers: [
+                new OpenLayers.Layer.OSM("Base Layer"),
+                this.bboxLayer
+            ]
+        });
+
         var config = {
             xtype: 'gx_mappanel',
-            map: {
-                controls: [new OpenLayers.Control.Navigation()],
-                projection: this.mapProj,
-                displayProjection: this.outProj
-            },
-            layers: [new OpenLayers.Layer.OSM("Base Layer"), this.bboxLayer],
+            map: this.map,
             zoom: 0,
             height: 283,
-            tbar: [{
-                xtype: 'tbtext',
-                text: 'Location:'
-            }, "->", {
-                xtype: 'tbbutton',
-                qtip: 'Navigate',
-                iconCls: 'mapNav',
-                handler: function(btn) {
-                    // TODO
-                }
-            }, {
-                xtype: 'tbbutton',
-                qtip: 'Add filter',
-                iconCls: 'bboxAdd',
-                handler: function(btn) {
-                    // TODO
-                }
-            }, {
-                xtype: 'tbbutton',
-                qtip: 'Remove filter',
-                iconCls: 'bboxDel',
-                handler: function(btn) {
-                    // TODO
-                }
-            }]
+            tbar: [
+                {
+                    xtype: 'tbtext',
+                    text: 'Location:'
+                }, "->",
+                new GeoExt.Action({
+                    control: new OpenLayers.Control.Navigation(),
+                    map: this.map,
+                    toggleGroup: "draw",
+                    allowDepress: false,
+                    pressed: true,
+                    tooltip: "Navigate",
+                    iconCls: 'mapNav',
+                    group: "draw",
+                    checked: true
+                }),
+                new GeoExt.Action({
+                    control: new OpenLayers.Control.DrawFeature(
+                        this.bboxLayer, OpenLayers.Handler.RegularPolygon, {handlerOptions: {irregular: true}}
+                    ),
+                    map: this.map,
+                    toggleGroup: "draw",
+                    allowDepress: false,
+                    tooltip: "Add Box",
+                    iconCls: 'bboxAdd',
+                    group: "draw"
+                }),
+                new GeoExt.Action({
+                    control: new OpenLayers.Control.DeleteFeature(this.bboxLayer),
+                    map: this.map,
+                    toggleGroup: "draw",
+                    allowDepress: false,
+                    tooltip: "Remove Box",
+                    iconCls: 'bboxDel',
+                    group: "draw"
+                })                
+            ]
         };
         
         Ext.apply(this, Ext.apply(this.initialConfig, config));

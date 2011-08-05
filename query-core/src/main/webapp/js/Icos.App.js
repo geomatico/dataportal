@@ -9,9 +9,7 @@ Icos.App =  Ext.extend(Ext.Viewport, {
         // TODO: Manage state & session
         //Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
         
-        // TODO: Quicktips not working
-        //Ext.QuickTips.init();
-        //Ext.QuickTips.enable();
+        Ext.QuickTips.init();
         
         this.queryForm = new Icos.query.Form({
             xtype: 'i_queryform',

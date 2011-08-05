@@ -12,15 +12,17 @@
 		<script type="text/javascript" src="js/ext3/ext-all-debug-w-comments.js"></script>
 		<script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script>
 		
-        <script type="text/javascript" src="js/OpenLayers.Format.BBOXes.js"></script>		
+        <script type="text/javascript" src="js/OpenLayers.Format.BBOXes.js"></script>
+        <script type="text/javascript" src="js/OpenLayers.Control.DeleteFeature.js"></script>
         <script type="text/javascript" src="js/Icos.App.js"></script>
 		<script type="text/javascript" src="js/Icos.query.Form.js"></script>
         <script type="text/javascript" src="js/Icos.query.Map.js"></script>
 		<script type="text/javascript" src="js/Icos.result.Grid.js"></script>
 
 		<script type="text/javascript">
+		var app;
 		Ext.onReady(function(){
-	        new Icos.App();
+	        app = new Icos.App();
 	    });	    
 		</script>
 	</head>
