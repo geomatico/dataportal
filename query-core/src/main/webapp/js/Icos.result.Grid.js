@@ -10,7 +10,7 @@ Icos.result.Grid =  Ext.extend(Ext.grid.GridPanel, {
             autoExpandColumn: "title",
             ds: new Ext.data.Store({
                 autoLoad: false,
-                url: 'xml/fakeSearch.xml',
+                url: 'client', // 'xml/fakeSearch.xml',
                 storeId: 'searchResponse',
                 reader: new Ext.data.XmlReader({
                     root: 'response',
