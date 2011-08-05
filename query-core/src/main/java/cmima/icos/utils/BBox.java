@@ -3,11 +3,15 @@
  */
 package cmima.icos.utils;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Micho Garcia
  * 
  */
 public class BBox {
+
+	private static Logger logger = Logger.getLogger(BBox.class);
 
 	private String xmax;
 	private String xmin;
@@ -26,6 +30,9 @@ public class BBox {
 		this.ymin = coords[1];
 		this.xmax = coords[2];
 		this.ymax = coords[3];
+
+		logger.debug("BBOX - xmin: " + this.xmin + " ymin: " + this.ymin
+				+ " xmax: " + this.xmax + " ymax: " + this.ymax);
 	}
 
 	/**

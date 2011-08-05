@@ -40,7 +40,7 @@ public class GnThController {
 		}
 
 		CatalogRequest CSWrequest = new CatalogRequest("csw:IsoRecord",
-				"csw:Record");
+				"gmd:MD_Metadata");
 		String cswQuery = CSWrequest.createQuery(queryParams);
 		
 		try {

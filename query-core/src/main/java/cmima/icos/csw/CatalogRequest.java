@@ -23,21 +23,30 @@ public class CatalogRequest {
 	private static final String XMLENCODING = "UTF-8";
 	private static final String RESULTTYPE = "results";
 
-	private String outputSchema;
-	private String typeNames;
+	private String outputSchema = "";
+	private String typeNames = "";
 
 	private StringBuffer bodyQuery;
 
 	/**
 	 * @param params
 	 */
-	public CatalogRequest(String outputSchema, String typeNames) {
+	public CatalogRequest(String typeNames,String outputSchema) {
 		this.outputSchema = outputSchema;
 		this.typeNames = typeNames;
-
+		
 		bodyQuery = new StringBuffer(createHeadersRequest());
 	}
 
+	/**
+	 * @param params
+	 */
+	public CatalogRequest(String typeNames) {
+		this.typeNames = typeNames;
+		
+		bodyQuery = new StringBuffer(createHeadersRequest());
+	}
+	
 	/**
 	 * Create a header request string for GetRecords
 	 * 
@@ -50,27 +59,30 @@ public class CatalogRequest {
 	 */
 	private String createHeadersRequest() {
 
-		String schemaString = "";
-		schemaString = "outputSchema=\"" + this.outputSchema + "\"\n";
+		String outputSchemaString = " ";
+		if (this.outputSchema != ""){			
+			outputSchemaString = " outputSchema=\"" + this.outputSchema + "\"\n";
+		}
 
-		//"<?xml version=\"1.0\" encoding=\""
-		//+ CatalogRequest.XMLENCODING + "\"?> \n" +
-		String headerRequest = "<csw:GetRecords "
-				+ "service=\"CSW\" " + "version=\"" + CatalogRequest.CSWVERSION
-				+ "\" " + "resultType=\"" + CatalogRequest.RESULTTYPE + "\" "
-				+ "outputFormat=\"application/xml\" " + schemaString
+		// "<?xml version=\"1.0\" encoding=\""
+		// + CatalogRequest.XMLENCODING + "\"?> \n" +
+		String headerRequest = "<csw:GetRecords " + "service=\"CSW\" "
+				+ "version=\"" + CatalogRequest.CSWVERSION + "\" "
+				+ "resultType=\"" + CatalogRequest.RESULTTYPE + "\" "
+				+ "outputFormat=\"application/xml\"" + outputSchemaString
+				+ "xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" "
 				+ "xmlns:csw=\"http://www.opengis.net/cat/csw/"
-				+ CatalogRequest.CSWVERSION + "\"> \n"
+				+ CatalogRequest.CSWVERSION + "\"> \n"				
 				+ this.createHeadersQuery() + "</csw:GetRecords>";
 
-		//logger.debug(headerRequest);
+		// logger.debug(headerRequest);
 
 		return headerRequest;
 	}
 
 	/**
 	 * 
-	 * Create a header query 
+	 * Create a header query
 	 * 
 	 * @param typeNames
 	 * @return String
@@ -83,7 +95,7 @@ public class CatalogRequest {
 				+ "xmlns:gml=\"http://www.opengis.net/gml\"> \n" + "$"
 				+ "</ogc:Filter> \n </csw:Constraint> \n </csw:Query> \n";
 
-		//logger.debug(queryHeader);
+		// logger.debug(queryHeader);
 
 		return queryHeader;
 	}
@@ -97,20 +109,21 @@ public class CatalogRequest {
 	 */
 	public String createQuery(HashMap<String, Object> queryParams) {
 
-		StringBuffer query = new StringBuffer();		
+		StringBuffer query = new StringBuffer();
 
-		if (queryParams.containsKey("bboxes")) {			
-			
+		if (queryParams.containsKey("bboxes")) {
+
 			ArrayList<BBox> bboxes = (ArrayList<BBox>) queryParams
 					.get("bboxes");
-			
+
 			query = bboxes2CSWquery(query, bboxes);
 		}
-		
-		//logger.debug(query.toString());
-		bodyQuery.insert(bodyQuery.indexOf("$"), query).deleteCharAt(bodyQuery.indexOf("$"));
+
+		// logger.debug(query.toString());
+		bodyQuery.insert(bodyQuery.indexOf("$"), query).deleteCharAt(
+				bodyQuery.indexOf("$"));
 		logger.debug("CSW QUERY: " + bodyQuery.toString());
-		
+
 		return bodyQuery.toString();
 	}
 
@@ -118,8 +131,11 @@ public class CatalogRequest {
 	 * @param query
 	 * @param bboxes
 	 */
-	private StringBuffer bboxes2CSWquery(StringBuffer query, ArrayList<BBox> bboxes) {
+	private StringBuffer bboxes2CSWquery(StringBuffer query,
+			ArrayList<BBox> bboxes) {
 		
+		// TODO pasar este metodo a la clase BBOX (toOGC())
+
 		boolean moreThanOne = false;
 		if (bboxes.size() > 1) {
 			query.append("<ogc:Or> \n");
@@ -140,7 +156,7 @@ public class CatalogRequest {
 		}
 		if (moreThanOne)
 			query.append("</ogc:Or> \n");
-		
+
 		return query;
 	}
 

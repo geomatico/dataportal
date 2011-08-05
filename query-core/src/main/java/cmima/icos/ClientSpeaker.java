@@ -40,6 +40,7 @@ public class ClientSpeaker extends HttpServlet {
 			parametros.put(paramName, req.getParameterValues(paramName));
 		}
 		
+		// TODO molaba sacar esto de aquí
 		GnThController controller = new GnThController();
 		controller.ask2gn(parametros);
 		
