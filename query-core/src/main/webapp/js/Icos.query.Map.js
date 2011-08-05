@@ -24,8 +24,25 @@ Icos.query.Map =  Ext.extend(GeoExt.MapPanel, {
             controls: [],
             projection: this.mapProj,
             displayProjection: this.outProj,
+            units: "m",
+            numZoomLevels: 7,
+            maxResolution: 156543.0339,
+            maxExtent: new OpenLayers.Bounds(-20037508, -20037508, 20037508, 20037508),
+            restrictedExtent: new OpenLayers.Bounds(-20037508, -20037508, 20037508, 20037508),
             layers: [
-                new OpenLayers.Layer.OSM("Base Layer"),
+                //new OpenLayers.Layer.OSM("Base Layer"),
+                new OpenLayers.Layer.WMS(
+                    "Base Layer",
+                    "http://ciclope.cmima.csic.es:8080/geoserver/wms",
+                    {layers: 'gn:world', format: 'image/jpeg'},
+                    {isBaseLayer: true, wrapDateLine: true}
+                ),
+                new OpenLayers.Layer.WMS(
+                        "Base Layer",
+                        "http://ciclope.cmima.csic.es:8080/geoserver/wms",
+                        {layers: 'gn:gboundaries', format: 'image/png', transparent: true},
+                        {isBaseLayer: false, wrapDateLine: true}
+                    ),
                 this.bboxLayer
             ]
         });
