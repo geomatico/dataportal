@@ -64,8 +64,6 @@ public class CatalogRequest {
 			outputSchemaString = " outputSchema=\"" + this.outputSchema + "\"\n";
 		}
 
-		// "<?xml version=\"1.0\" encoding=\""
-		// + CatalogRequest.XMLENCODING + "\"?> \n" +
 		String headerRequest = "<csw:GetRecords " + "service=\"CSW\" "
 				+ "version=\"" + CatalogRequest.CSWVERSION + "\" "
 				+ "resultType=\"" + CatalogRequest.RESULTTYPE + "\" "
@@ -113,6 +111,7 @@ public class CatalogRequest {
 
 		if (queryParams.containsKey("bboxes")) {
 
+			@SuppressWarnings("unchecked")
 			ArrayList<BBox> bboxes = (ArrayList<BBox>) queryParams
 					.get("bboxes");
 

@@ -3,7 +3,6 @@
  */
 package cmima.icos.csw;
 
-import javax.xml.namespace.NamespaceContext;
 
 import cmima.icos.utils.BBox;
 
@@ -12,8 +11,6 @@ import cmima.icos.utils.BBox;
  *
  */
 public interface IMetadata {
-	
-	NamespaceContext ctx = null;
 	
 	/**
 	 * @return BBox 

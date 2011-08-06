@@ -5,9 +5,7 @@ package cmima.icos.csw;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -38,51 +36,20 @@ public class Metadata implements IMetadata {
 	 * 
 	 */
 	public Metadata(InputStream responseCSWXml) throws Exception {
-		super();
+		super();		
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		cswXml = dBuilder.parse(responseCSWXml);
 		cswXml.getDocumentElement().normalize();
 
+		CSWNamespaceContext ctx = new CSWNamespaceContext();
+		
 		XPathFactory factory = XPathFactory.newInstance();
 		xpath = factory.newXPath();
 		xpath.setNamespaceContext(ctx);
 
 		logger.debug("CREATED METADATA");
 	}
-
-	private NamespaceContext ctx = new NamespaceContext() {
-		public String getNamespaceURI(String prefix) {
-			String uri;
-			if (prefix.equals("gmd"))
-				uri = "http://www.isotc211.org/2005/gmd";
-			else if (prefix.equals("gco"))
-				uri = "http://www.isotc211.org/2005/gco";
-			else if (prefix.equals("gmi"))
-				uri = "http://www.isotc211.org/2005/gmi";
-			else if (prefix.equals("gts"))
-				uri = "http://www.isotc211.org/2005/gts";
-			else if (prefix.equals("xsi"))
-				uri = "http://www.w3.org/2001/XMLSchema-instance";
-			else if (prefix.equals("geonet"))
-				uri = "http://www.fao.org/geonetwork";
-			else if (prefix.equals("srv"))
-				uri = "http://www.isotc211.org/2005/srv";
-			else
-				uri = null;
-			return uri;
-		}
-
-		// Dummy implementation - not used!
-		public Iterator getPrefixes(String val) {
-			return null;
-		}
-
-		// Dummy implemenation - not used!
-		public String getPrefix(String uri) {
-			return null;
-		}
-	};
 
 	/**
 	 * 
@@ -115,8 +82,8 @@ public class Metadata implements IMetadata {
 	@Override
 	public BBox getExtent() {
 
-		String[] coords = { "eastBoundLongitude", "southBoundLatitude",
-				"westBoundLongitude", "northBoundLatitude" };
+		String[] coords = { "westBoundLongitude", "southBoundLatitude",
+				"eastBoundLongitude", "northBoundLatitude" };
 		String iniExpresion = "//EX_GeographicBoundingBox//";
 		String endExpresion = "/Decimal/child::node()";
 		String[] extent = new String[4];

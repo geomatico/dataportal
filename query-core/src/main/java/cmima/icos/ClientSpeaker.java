@@ -4,6 +4,7 @@
 package cmima.icos;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -42,7 +43,14 @@ public class ClientSpeaker extends HttpServlet {
 		
 		// TODO molaba sacar esto de aquí
 		GnThController controller = new GnThController();
-		controller.ask2gn(parametros);
+		String response = controller.ask2gn(parametros);
+		
+		res.setContentType("application/xml");
+		res.setCharacterEncoding("UTF-8");
+		PrintWriter writer2Client = res.getWriter();
+		writer2Client.print(response);
+		writer2Client.flush();
+		writer2Client.close();
 		
 	}
 	

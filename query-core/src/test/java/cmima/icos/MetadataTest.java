@@ -33,7 +33,7 @@ public class MetadataTest extends TestCase {
 
 	public void testGetExtent() {
 
-		String[] coordenadasTest = { "-20.76556", "9.54645", "-20.567",
+		String[] coordenadasTest = { "-20.567", "9.54645", "-20.76556",
 				"21.54534" };
 
 		BBox bboxTest = new BBox(coordenadasTest);
@@ -76,18 +76,18 @@ public class MetadataTest extends TestCase {
 
 		assertEquals(title, metadataTitle);
 	}
-	
+
 	public void testGetAbstract() {
 		String strAbstract = "NetCDF dataset";
 		String metadataAbstract = metadato.getAbstract();
-		
+
 		assertEquals(strAbstract, metadataAbstract);
 	}
-	
+
 	public void testGetSchema() {
 		String strSchema = "ISO 19115:2003/19139";
 		String metadataSchema = metadato.getSchema();
-		
+
 		assertEquals(strSchema, metadataSchema);
 	}
 }

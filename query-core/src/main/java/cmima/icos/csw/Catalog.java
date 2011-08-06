@@ -3,13 +3,19 @@
  */
 package cmima.icos.csw;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 
@@ -18,14 +24,15 @@ import org.apache.log4j.Logger;
  * 
  */
 public class Catalog {
-	
+
 	private static Logger logger = Logger.getLogger(Catalog.class);
 
 	private static URL URL;
 
 	/**
 	 * 
-	 * @param URL String with url csw server
+	 * @param URL
+	 *            String with url csw server
 	 * @throws MalformedURLException
 	 */
 	public Catalog(String URL) throws MalformedURLException {
@@ -35,38 +42,59 @@ public class Catalog {
 
 	/**
 	 * 
-	 * @param cswQuery 
+	 * @param cswQuery
 	 * @return
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public String sendCatalogRequest(String cswQuery)
-			throws IOException {
+	public String sendCatalogRequest(String cswQuery) throws Exception {
 
 		URLConnection conexionCatalog = Catalog.URL.openConnection();
-		
+
 		conexionCatalog.setDoOutput(true);
 		conexionCatalog.setRequestProperty("Accept", "*/*");
-		conexionCatalog.setRequestProperty("Content-type",
-				"application/xml");
-		
+		conexionCatalog.setRequestProperty("Content-type", "application/xml");
+
 		OutputStreamWriter cswParameters = new OutputStreamWriter(
 				conexionCatalog.getOutputStream());
 		cswParameters.write(cswQuery);
 		cswParameters.flush();
 
-		StringBuffer cswResponse = new StringBuffer();
-		BufferedReader cswReader = new BufferedReader(new InputStreamReader(
-				conexionCatalog.getInputStream()));
-		String line;
-		while ((line = cswReader.readLine()) != null) {
-			cswResponse.append(line);
-		}
-
-		cswReader.close();
-		cswParameters.close();
-
-		logger.debug("response CSW: " + cswResponse.toString());
+		InputStream isCswResponse = conexionCatalog.getInputStream();
 		
-		return cswResponse.toString();
+		String response = transform(isCswResponse);
+		
+		isCswResponse.close();
+
+		logger.debug("RESPONSE2CLIENT: " + response);
+		
+		return response;
+	}
+	
+	public static String transform(InputStream isCSWResponse) {
+		
+		StringWriter writer2Client = new StringWriter();
+		InputStream isXslt = Catalog.class.getResourceAsStream("/response2client.xsl");
+
+		try {
+			Source responseSource = new StreamSource(isCSWResponse);
+			Source xsltSource = new StreamSource(isXslt);
+
+			TransformerFactory transFact = TransformerFactory.newInstance();
+			Templates template = transFact.newTemplates(xsltSource);
+			Transformer transformer = template.newTransformer();
+
+			transformer.transform(responseSource, new StreamResult(
+					writer2Client));
+
+			writer2Client.flush();
+			writer2Client.close();
+			
+			isXslt.close();
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} 
+		
+		return writer2Client.toString();
 	}
 }

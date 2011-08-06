@@ -30,36 +30,37 @@ public class GnThController {
 	 * 
 	 * @param parametros
 	 */
-	public void ask2gn(HashMap<String, String[]> parametros) {
+	public String ask2gn(HashMap<String, String[]> parametros) {
 
 		HashMap<String, Object> queryParams = new HashMap<String, Object>();
+		String cswResponse = "";
+		
 		// bboxes
 		if (parametros.containsKey("bboxes")) {
 			ArrayList<BBox> bboxes = extractToBBoxes(parametros);
 			queryParams.put("bboxes", bboxes);
 		}
 
-		CatalogRequest CSWrequest = new CatalogRequest("csw:IsoRecord",
-				"gmd:MD_Metadata");
+		CatalogRequest CSWrequest = new CatalogRequest("gmd:MD_Metadata",
+				"csw:IsoRecord");
 		String cswQuery = CSWrequest.createQuery(queryParams);
-		
+
 		try {
-			Catalog catalogo = new Catalog("http://ciclope.cmima.csic.es:8080/geonetworkcmima/srv/en/csw");
-			String cswResponse = catalogo.sendCatalogRequest(cswQuery);
-			
-		} catch (MalformedURLException malUrlE) {
-			logger.error(malUrlE.getMessage());
-			malUrlE.printStackTrace();
-		} catch (IOException ioE) {
-			logger.error(ioE.getMessage());
-			ioE.printStackTrace();
+			Catalog catalogo = new Catalog(
+					"http://ciclope.cmima.csic.es:8080/geonetworkcmima/srv/en/csw");
+			 cswResponse = catalogo.sendCatalogRequest(cswQuery);
+
+		} catch (Exception e) {
+			logger.error("ERROR: " + e.getMessage());
+			e.printStackTrace();
 		}
+		return cswResponse;
 	}
 
 	/**
 	 * 
 	 * Extract the coords of bbox from string[] and convert into an arraylist of
-	 * bbox type 
+	 * bbox type
 	 * 
 	 * TODO (SACAR ESTE METODO DE AQUI, posible utils)
 	 * 
