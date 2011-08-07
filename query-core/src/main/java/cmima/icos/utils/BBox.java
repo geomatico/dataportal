@@ -62,4 +62,24 @@ public class BBox {
 	public String getYmin() {
 		return ymin;
 	}
+	
+	/**
+	 * @param bbox
+	 * @return
+	 */
+	public String toOGCBBox() {
+		
+		String ogcBBox = "<ogc:BBOX>\n"
+				+ "<ogc:PropertyName>iso:BoundingBox</ogc:PropertyName>\n"
+				+ "<gml:Envelope xmlns:gml=\"http://www.opengis.net/gml\">\n";
+		String lowerCorner = "<gml:lowerCorner>" + xmin + " "
+				+ ymin + "</gml:lowerCorner>\n";
+		String upperCorner = "<gml:upperCorner>" + xmax + " "
+				+ ymax + "</gml:upperCorner>\n";
+		String endGml = "</gml:Envelope>\n</ogc:BBOX>\n";
+
+		String strBbox = ogcBBox + lowerCorner + upperCorner + endGml;
+		
+		return strBbox;
+	}
 }

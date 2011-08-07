@@ -23,9 +23,9 @@ import org.apache.log4j.Logger;
  * @author Micho Garcia
  * 
  */
-public class Catalog {
+public class CSWCatalog {
 
-	private static Logger logger = Logger.getLogger(Catalog.class);
+	private static Logger logger = Logger.getLogger(CSWCatalog.class);
 
 	private static URL URL;
 
@@ -35,8 +35,8 @@ public class Catalog {
 	 *            String with url csw server
 	 * @throws MalformedURLException
 	 */
-	public Catalog(String URL) throws MalformedURLException {
-		Catalog.URL = new URL(URL);
+	public CSWCatalog(String URL) throws MalformedURLException {
+		CSWCatalog.URL = new URL(URL);
 		logger.debug("URL to connect: " + URL);
 	}
 
@@ -48,7 +48,7 @@ public class Catalog {
 	 */
 	public String sendCatalogRequest(String cswQuery) throws Exception {
 
-		URLConnection conexionCatalog = Catalog.URL.openConnection();
+		URLConnection conexionCatalog = CSWCatalog.URL.openConnection();
 
 		conexionCatalog.setDoOutput(true);
 		conexionCatalog.setRequestProperty("Accept", "*/*");
@@ -70,10 +70,14 @@ public class Catalog {
 		return response;
 	}
 	
+	/**
+	 * @param isCSWResponse
+	 * @return
+	 */
 	public static String transform(InputStream isCSWResponse) {
 		
 		StringWriter writer2Client = new StringWriter();
-		InputStream isXslt = Catalog.class.getResourceAsStream("/response2client.xsl");
+		InputStream isXslt = CSWCatalog.class.getResourceAsStream("/response2client.xsl");
 
 		try {
 			Source responseSource = new StreamSource(isCSWResponse);

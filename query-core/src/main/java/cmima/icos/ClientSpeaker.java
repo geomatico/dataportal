@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
@@ -32,14 +33,17 @@ public class ClientSpeaker extends HttpServlet {
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
-		Enumeration paramNames = req.getParameterNames();
+		
+		/*Enumeration paramNames = req.getParameterNames();
 		HashMap<String, String[]> parametros = new HashMap<String, String[]>();
 		while(paramNames.hasMoreElements()){
 			String paramName = (String)paramNames.nextElement();
 
 			logger.debug(paramName + " ; " +req.getParameterValues(paramName)[0]);
 			parametros.put(paramName, req.getParameterValues(paramName));
-		}
+		}*/
+		
+		Map<String, String[]> parametros = req.getParameterMap();
 		
 		// TODO molaba sacar esto de aquí
 		GnThController controller = new GnThController();

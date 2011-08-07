@@ -10,14 +10,15 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 import cmima.icos.utils.BBox;
+import cmima.icos.utils.RangeDate;
 
 /**
  * @author Micho Garcia
  * 
  */
-public class CatalogRequest {
+public class CSWQuery {
 
-	private static Logger logger = Logger.getLogger(CatalogRequest.class);
+	private static Logger logger = Logger.getLogger(CSWQuery.class);
 
 	private static final String CSWVERSION = "2.0.2";
 	private static final String XMLENCODING = "UTF-8";
@@ -31,22 +32,22 @@ public class CatalogRequest {
 	/**
 	 * @param params
 	 */
-	public CatalogRequest(String typeNames,String outputSchema) {
+	public CSWQuery(String typeNames, String outputSchema) {
 		this.outputSchema = outputSchema;
 		this.typeNames = typeNames;
-		
+
 		bodyQuery = new StringBuffer(createHeadersRequest());
 	}
 
 	/**
 	 * @param params
 	 */
-	public CatalogRequest(String typeNames) {
+	public CSWQuery(String typeNames) {
 		this.typeNames = typeNames;
-		
+
 		bodyQuery = new StringBuffer(createHeadersRequest());
 	}
-	
+
 	/**
 	 * Create a header request string for GetRecords
 	 * 
@@ -60,18 +61,19 @@ public class CatalogRequest {
 	private String createHeadersRequest() {
 
 		String outputSchemaString = " ";
-		if (this.outputSchema != ""){			
-			outputSchemaString = " outputSchema=\"" + this.outputSchema + "\"\n";
+		if (this.outputSchema != "") {
+			outputSchemaString = " outputSchema=\"" + this.outputSchema
+					+ "\"\n";
 		}
 
 		String headerRequest = "<csw:GetRecords " + "service=\"CSW\" "
-				+ "version=\"" + CatalogRequest.CSWVERSION + "\" "
-				+ "resultType=\"" + CatalogRequest.RESULTTYPE + "\" "
+				+ "version=\"" + CSWQuery.CSWVERSION + "\" " + "resultType=\""
+				+ CSWQuery.RESULTTYPE + "\" "
 				+ "outputFormat=\"application/xml\"" + outputSchemaString
 				+ "xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" "
 				+ "xmlns:csw=\"http://www.opengis.net/cat/csw/"
-				+ CatalogRequest.CSWVERSION + "\"> \n"				
-				+ this.createHeadersQuery() + "</csw:GetRecords>";
+				+ CSWQuery.CSWVERSION + "\">\n" + this.createHeadersQuery()
+				+ "</csw:GetRecords>";
 
 		// logger.debug(headerRequest);
 
@@ -88,10 +90,10 @@ public class CatalogRequest {
 	private String createHeadersQuery() {
 
 		String queryHeader = "<csw:Query typeNames=\"" + this.typeNames
-				+ "\"> \n" + "<csw:Constraint version=\"1.1.0\"> \n"
+				+ "\">\n" + "<csw:Constraint version=\"1.1.0\">\n"
 				+ "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/ogc\" "
-				+ "xmlns:gml=\"http://www.opengis.net/gml\"> \n" + "$"
-				+ "</ogc:Filter> \n </csw:Constraint> \n </csw:Query> \n";
+				+ "xmlns:gml=\"http://www.opengis.net/gml\">\n" + "$"
+				+ "</ogc:Filter>\n</csw:Constraint>\n</csw:Query>\n";
 
 		// logger.debug(queryHeader);
 
@@ -108,6 +110,12 @@ public class CatalogRequest {
 	public String createQuery(HashMap<String, Object> queryParams) {
 
 		StringBuffer query = new StringBuffer();
+		boolean moreThanOneParams = false;
+
+		if (queryParams.size() > 1) {
+			query.append("<ogc:And>\n");
+			moreThanOneParams = true;
+		}
 
 		if (queryParams.containsKey("bboxes")) {
 
@@ -117,6 +125,25 @@ public class CatalogRequest {
 
 			query = bboxes2CSWquery(query, bboxes);
 		}
+
+		if (queryParams.containsKey("temporalExtent")) {
+			RangeDate temporalExtent = (RangeDate) queryParams
+					.get("temporalExtent");
+			query.append(temporalExtent.toOGCTemporalExtent());
+		}
+
+		if (queryParams.containsKey("variables")) {
+			// TODO
+		}
+
+		if (queryParams.containsKey("text")) {
+			String text = (String)queryParams.get("text");
+			query.append(freeText2Query(text));
+			
+		}
+
+		if (moreThanOneParams)
+			query.append("</ogc:And>\n");
 
 		// logger.debug(query.toString());
 		bodyQuery.insert(bodyQuery.indexOf("$"), query).deleteCharAt(
@@ -132,31 +159,34 @@ public class CatalogRequest {
 	 */
 	private StringBuffer bboxes2CSWquery(StringBuffer query,
 			ArrayList<BBox> bboxes) {
-		
-		// TODO pasar este metodo a la clase BBOX (toOGC())
 
 		boolean moreThanOne = false;
 		if (bboxes.size() > 1) {
-			query.append("<ogc:Or> \n");
+			query.append("<ogc:Or>\n");
 			moreThanOne = true;
 		}
 		for (BBox bbox : bboxes) {
-			String ogcBBox = "<ogc:BBOX> \n"
-					+ "<ogc:PropertyName>iso:BoundingBox</ogc:PropertyName> \n"
-					+ "<gml:Envelope xmlns:gml=\"http://www.opengis.net/gml\"> \n";
-			String lowerCorner = "<gml:lowerCorner>" + bbox.getXmin() + " "
-					+ bbox.getYmin() + "</gml:lowerCorner> \n";
-			String upperCorner = "<gml:upperCorner>" + bbox.getXmax() + " "
-					+ bbox.getYmax() + "</gml:upperCorner> \n";
-			String endGml = "</gml:Envelope> \n </ogc:BBOX> \n";
-
-			query.append(ogcBBox).append(lowerCorner).append(upperCorner)
-					.append(endGml);
+			String strBbox = bbox.toOGCBBox();
+			query.append(strBbox);
 		}
 		if (moreThanOne)
-			query.append("</ogc:Or> \n");
+			query.append("</ogc:Or>\n");
 
 		return query;
 	}
 
+	/**
+	 * @param text
+	 * @return
+	 */
+	private String freeText2Query(String text) {
+
+		String freeText = "<ogc:PropertyIsLike wildCard=\"%\" singleChar=\"_\" escape=\"\\\\\">\n"
+				+ "<ogc:PropertyName>AnyText</ogc:PropertyName>\n"
+				+ "<ogc:Literal>"
+				+ text
+				+ "</ogc:Literal>\n</ogc:PropertyIsLike>\n";
+		
+		return freeText;
+	}
 }

@@ -3,16 +3,18 @@
  */
 package cmima.icos;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import cmima.icos.csw.Catalog;
-import cmima.icos.csw.CatalogRequest;
+import cmima.icos.csw.CSWCatalog;
+import cmima.icos.csw.CSWQuery;
 import cmima.icos.utils.BBox;
+import cmima.icos.utils.RangeDate;
+import cmima.icos.utils.Utils;
 
 /**
  * @author Micho Garcia
@@ -20,35 +22,61 @@ import cmima.icos.utils.BBox;
  */
 public class GnThController {
 
+	private static final int FIRST = 0;
 	private static Logger logger = Logger.getLogger(GnThController.class);
 
 	/**
 	 * Receive the params from the client request and communicates these to
 	 * gnSpeaker
 	 * 
-	 * (TODO extraer la URL del servidor del metodo)
 	 * 
 	 * @param parametros
 	 */
-	public String ask2gn(HashMap<String, String[]> parametros) {
+	public String ask2gn(Map<String, String[]> parametros) {
 
 		HashMap<String, Object> queryParams = new HashMap<String, Object>();
 		String cswResponse = "";
-		
+
 		// bboxes
 		if (parametros.containsKey("bboxes")) {
-			ArrayList<BBox> bboxes = extractToBBoxes(parametros);
+			ArrayList<BBox> bboxes = Utils.extractToBBoxes(parametros);
 			queryParams.put("bboxes", bboxes);
 		}
 
-		CatalogRequest CSWrequest = new CatalogRequest("gmd:MD_Metadata",
-				"csw:IsoRecord");
-		String cswQuery = CSWrequest.createQuery(queryParams);
+		// temporal range
+		if (parametros.containsKey("start_date")
+				&& parametros.containsKey("end_date")) {
+			String start_date = parametros.get("start_date")[FIRST];
+			String end_date = parametros.get("end_date")[FIRST];
+			RangeDate temporalExtent = new RangeDate(start_date, end_date);
+			queryParams.put("temporalExtent", temporalExtent);
+		}
+
+		// variables
+		if (parametros.containsKey("variables")) {
+			// TODO
+		}
+
+		// free text
+		if (parametros.containsKey("text")) {
+			String freeText = parametros.get("text")[FIRST];
+			queryParams.put("text", freeText);
+		}
+
+		CSWQuery CSWrequest = new CSWQuery("gmd:MD_Metadata", "csw:IsoRecord");
+		String aCswQuery = CSWrequest.createQuery(queryParams);
+
+		Properties queryCoreProp = new Properties();
 
 		try {
-			Catalog catalogo = new Catalog(
-					"http://ciclope.cmima.csic.es:8080/geonetworkcmima/srv/en/csw");
-			 cswResponse = catalogo.sendCatalogRequest(cswQuery);
+			queryCoreProp.load(GnThController.class
+					.getResourceAsStream("/query-core.properties"));
+			String urlCSW = queryCoreProp.getProperty("urlCsw") + "/srv/en/csw";
+
+			logger.debug("URL to CONNECT: " + urlCSW);
+
+			CSWCatalog catalogo = new CSWCatalog(urlCSW);
+			cswResponse = catalogo.sendCatalogRequest(aCswQuery);
 
 		} catch (Exception e) {
 			logger.error("ERROR: " + e.getMessage());
@@ -57,39 +85,4 @@ public class GnThController {
 		return cswResponse;
 	}
 
-	/**
-	 * 
-	 * Extract the coords of bbox from string[] and convert into an arraylist of
-	 * bbox type
-	 * 
-	 * TODO (SACAR ESTE METODO DE AQUI, posible utils)
-	 * 
-	 * @param parametros
-	 */
-	private ArrayList<BBox> extractToBBoxes(HashMap<String, String[]> parametros) {
-
-		String stringBBoxes = parametros.get("bboxes")[0];
-
-		ArrayList<BBox> bboxes = new ArrayList<BBox>();
-		StringBuffer tempStringBBoxes = new StringBuffer();
-
-		for (int n = 2; n < stringBBoxes.length() - 1; n++) {
-
-			if (stringBBoxes.charAt(n) != ']') {
-				tempStringBBoxes.append(stringBBoxes.charAt(n));
-			} else {
-				String[] coords = tempStringBBoxes.toString()
-						.replaceAll(",\\[", "").split(",");
-
-				logger.debug("COORDS: xmin " + coords[0] + "; ymin "
-						+ coords[1] + "; xmax " + coords[2] + "; ymax "
-						+ coords[3]);
-
-				bboxes.add(new BBox(coords));
-				tempStringBBoxes = new StringBuffer();
-			}
-		}
-
-		return bboxes;
-	}
 }

@@ -6,8 +6,8 @@ package cmima.icos;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import cmima.icos.csw.Catalog;
-import cmima.icos.csw.CatalogRequest;
+import cmima.icos.csw.CSWCatalog;
+import cmima.icos.csw.CSWQuery;
 import cmima.icos.utils.BBox;
 import junit.framework.TestCase;
 
@@ -15,12 +15,12 @@ import junit.framework.TestCase;
  * @author Micho Garcia
  * 
  */
-public class CatalogTest extends TestCase {
+public class CSWCatalogTest extends TestCase {
 
 	private String OUPUTSCHEMA = "csw:IsoRecord";
 	private String TYPENAMES = "gmd:MD_Metadata";
 
-	private Catalog catalogo;
+	private CSWCatalog catalogo;
 	private String CSWQuery;
 
 	/*
@@ -33,9 +33,9 @@ public class CatalogTest extends TestCase {
 
 		super.setUp();
 		
-		catalogo = new Catalog("http://ciclope.cmima.csic.es:8080/geonetworkcmima/srv/en/csw");
+		catalogo = new CSWCatalog("http://ciclope.cmima.csic.es:8080/geonetworkcmima/srv/en/csw");
 
-		CatalogRequest request = new CatalogRequest(TYPENAMES, OUPUTSCHEMA);
+		CSWQuery request = new CSWQuery(TYPENAMES, OUPUTSCHEMA);
 		HashMap<String, Object> parametros = new HashMap<String, Object>();
 		ArrayList<BBox> bboxes = new ArrayList<BBox>();
 		String[] coords = { "-10", "50", "10", "40" };
