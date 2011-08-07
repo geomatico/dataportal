@@ -34,22 +34,15 @@ public class ClientSpeaker extends HttpServlet {
 	 */
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
 		
-		/*Enumeration paramNames = req.getParameterNames();
-		HashMap<String, String[]> parametros = new HashMap<String, String[]>();
-		while(paramNames.hasMoreElements()){
-			String paramName = (String)paramNames.nextElement();
-
-			logger.debug(paramName + " ; " +req.getParameterValues(paramName)[0]);
-			parametros.put(paramName, req.getParameterValues(paramName));
-		}*/
-		
+		@SuppressWarnings("unchecked")
 		Map<String, String[]> parametros = req.getParameterMap();
 		
 		// TODO molaba sacar esto de aquí
 		GnThController controller = new GnThController();
 		String response = controller.ask2gn(parametros);
 		
-		res.setContentType("application/xml");
+		String contentType = req.getParameter("response_format");
+		res.setContentType(contentType);
 		res.setCharacterEncoding("UTF-8");
 		PrintWriter writer2Client = res.getWriter();
 		writer2Client.print(response);

@@ -29,6 +29,7 @@ public class GnThController {
 	 * Receive the params from the client request and communicates these to
 	 * gnSpeaker
 	 * 
+	 * TODO Cambiar parametro entrada extractToBBoxes a String[]
 	 * 
 	 * @param parametros
 	 */
@@ -40,7 +41,8 @@ public class GnThController {
 		// bboxes
 		if (parametros.containsKey("bboxes")) {
 			ArrayList<BBox> bboxes = Utils.extractToBBoxes(parametros);
-			queryParams.put("bboxes", bboxes);
+			if (bboxes != null)
+				queryParams.put("bboxes", bboxes);
 		}
 
 		// temporal range
@@ -48,8 +50,12 @@ public class GnThController {
 				&& parametros.containsKey("end_date")) {
 			String start_date = parametros.get("start_date")[FIRST];
 			String end_date = parametros.get("end_date")[FIRST];
-			RangeDate temporalExtent = new RangeDate(start_date, end_date);
-			queryParams.put("temporalExtent", temporalExtent);
+			logger.debug("Range Date: " + start_date + " ; " + end_date);
+			
+			if (start_date != "" && end_date != ""){
+				RangeDate temporalExtent = new RangeDate(start_date, end_date);
+				queryParams.put("temporalExtent", temporalExtent);
+			}
 		}
 
 		// variables
@@ -60,7 +66,8 @@ public class GnThController {
 		// free text
 		if (parametros.containsKey("text")) {
 			String freeText = parametros.get("text")[FIRST];
-			queryParams.put("text", freeText);
+			if (freeText != "")
+				queryParams.put("text", freeText);
 		}
 
 		CSWQuery CSWrequest = new CSWQuery("gmd:MD_Metadata", "csw:IsoRecord");

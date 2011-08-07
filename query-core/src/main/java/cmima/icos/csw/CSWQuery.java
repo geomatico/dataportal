@@ -181,7 +181,7 @@ public class CSWQuery {
 	 */
 	private String freeText2Query(String text) {
 
-		String freeText = "<ogc:PropertyIsLike wildCard=\"%\" singleChar=\"_\" escape=\"\\\\\">\n"
+		String freeText = "<ogc:PropertyIsLike wildCard=\"%\" singleChar=\"_\" escapeChar=\"\\\\\">\n"
 				+ "<ogc:PropertyName>AnyText</ogc:PropertyName>\n"
 				+ "<ogc:Literal>"
 				+ text
