@@ -2,3 +2,4 @@ query-core/target
 query-core/.project
 query-core/.classpath
 query-core/.settings
+doc/_*
