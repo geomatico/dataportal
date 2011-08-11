@@ -22,6 +22,7 @@ xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:xsi="http://www.w3.org/20
 		<xsl:element name="id"><xsl:value-of select="gmd:fileIdentifier/gco:CharacterString" /></xsl:element>
 		<xsl:element name="schema"><xsl:value-of select="gmd:metadataStandardName/gco:CharacterString" /></xsl:element>
 		<xsl:apply-templates select="./gmd:identificationInfo" />
+		<xsl:apply-templates select="./gmd:distributionInfo//gmd:transferOptions"></xsl:apply-templates>
 	</xsl:element>
 </xsl:template>
 
@@ -45,5 +46,13 @@ xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:xsi="http://www.w3.org/20
 		<xsl:element name="time_coverage_start"><xsl:value-of select="//gml:beginPosition" /></xsl:element>
 		<xsl:element name="time_coverage_end"><xsl:value-of select="//gml:endPosition" /></xsl:element>
 	</xsl:element>
+</xsl:template>
+
+<xsl:template match="gmd:transferOptions">
+    <xsl:for-each select=".//gmd:URL">
+        <xsl:if test="contains(.,'fileServer')">
+            <xsl:element name="URLFileserver"><xsl:value-of select="(.)" /></xsl:element>
+        </xsl:if>
+    </xsl:for-each>
 </xsl:template>
 </xsl:stylesheet> 
