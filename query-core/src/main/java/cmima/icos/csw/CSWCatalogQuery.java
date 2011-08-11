@@ -16,9 +16,9 @@ import cmima.icos.utils.RangeDate;
  * @author Micho Garcia
  * 
  */
-public class CSWQuery {
+public class CSWCatalogQuery {
 
-	private static Logger logger = Logger.getLogger(CSWQuery.class);
+	private static Logger logger = Logger.getLogger(CSWCatalogQuery.class);
 
 	private static final String CSWVERSION = "2.0.2";
 	private static final String XMLENCODING = "UTF-8";
@@ -26,13 +26,15 @@ public class CSWQuery {
 
 	private String outputSchema = "";
 	private String typeNames = "";
+	private String startPosition = "1";
+	private String maxRecords = "10";
 
 	private StringBuffer bodyQuery;
 
 	/**
 	 * @param params
 	 */
-	public CSWQuery(String typeNames, String outputSchema) {
+	public CSWCatalogQuery(String typeNames, String outputSchema) {
 		this.outputSchema = outputSchema;
 		this.typeNames = typeNames;
 
@@ -42,10 +44,29 @@ public class CSWQuery {
 	/**
 	 * @param params
 	 */
-	public CSWQuery(String typeNames) {
+	public CSWCatalogQuery(String typeNames) {
 		this.typeNames = typeNames;
 
 		bodyQuery = new StringBuffer(createHeadersRequest());
+	}
+
+	/**
+	 * @param startPosition the startPosition to set
+	 * 
+	 * TODO cambiar esto en cliente
+	 */
+	public void setStartPosition(String startPosition) {
+		if (startPosition.equals("0") )
+			this.startPosition = "1";
+		else
+			this.startPosition = startPosition;
+	}
+
+	/**
+	 * @param maxRecords the maxRecords to set
+	 */
+	public void setMaxRecords(String maxRecords) {
+		this.maxRecords = maxRecords;
 	}
 
 	/**
@@ -67,12 +88,14 @@ public class CSWQuery {
 		}
 
 		String headerRequest = "<csw:GetRecords " + "service=\"CSW\" "
-				+ "version=\"" + CSWQuery.CSWVERSION + "\" " + "resultType=\""
-				+ CSWQuery.RESULTTYPE + "\" "
+				+ "version=\"" + CSWCatalogQuery.CSWVERSION + "\" "
+				+ "resultType=\"" + CSWCatalogQuery.RESULTTYPE + "\" "
 				+ "outputFormat=\"application/xml\"" + outputSchemaString
 				+ "xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" "
 				+ "xmlns:csw=\"http://www.opengis.net/cat/csw/"
-				+ CSWQuery.CSWVERSION + "\">\n" + this.createHeadersQuery()
+				+ CSWCatalogQuery.CSWVERSION + "\" maxRecords=\""
+				+ this.maxRecords + "\" " + "startPosition=\""
+				+ this.startPosition + "\">\n" + this.createHeadersQuery()
 				+ "</csw:GetRecords>";
 
 		// logger.debug(headerRequest);
@@ -82,7 +105,7 @@ public class CSWQuery {
 
 	/**
 	 * 
-	 * Create a header query
+	 * Create a header filter query
 	 * 
 	 * @param typeNames
 	 * @return String
@@ -118,11 +141,9 @@ public class CSWQuery {
 		}
 
 		if (queryParams.containsKey("bboxes")) {
-
 			@SuppressWarnings("unchecked")
 			ArrayList<BBox> bboxes = (ArrayList<BBox>) queryParams
 					.get("bboxes");
-
 			query = bboxes2CSWquery(query, bboxes);
 		}
 
@@ -137,9 +158,9 @@ public class CSWQuery {
 		}
 
 		if (queryParams.containsKey("text")) {
-			String text = (String)queryParams.get("text");
+			String text = (String) queryParams.get("text");
 			query.append(freeText2Query(text));
-			
+
 		}
 
 		if (moreThanOneParams)
@@ -186,7 +207,7 @@ public class CSWQuery {
 				+ "<ogc:Literal>"
 				+ text
 				+ "</ogc:Literal>\n</ogc:PropertyIsLike>\n";
-		
+
 		return freeText;
 	}
 }

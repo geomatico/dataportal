@@ -5,8 +5,6 @@ package cmima.icos;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -19,10 +17,10 @@ import org.apache.log4j.Logger;
  * @author Micho Garcia
  *
  */
-public class ClientSpeaker extends HttpServlet {
+public class QueryServlet extends HttpServlet {
 
 	
-	private static Logger logger = Logger.getLogger(ClientSpeaker.class);
+	private static Logger logger = Logger.getLogger(QueryServlet.class);
 	
 	/**
 	 * Receive the request from client with parameters
@@ -37,8 +35,7 @@ public class ClientSpeaker extends HttpServlet {
 		@SuppressWarnings("unchecked")
 		Map<String, String[]> parametros = req.getParameterMap();
 		
-		// TODO molaba sacar esto de aquí
-		GnThController controller = new GnThController();
+		QueryController controller = new QueryController();
 		String response = controller.ask2gn(parametros);
 		
 		String contentType = req.getParameter("response_format");

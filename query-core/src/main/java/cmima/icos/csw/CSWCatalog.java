@@ -3,19 +3,12 @@
  */
 package cmima.icos.csw;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.Templates;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 
@@ -44,9 +37,10 @@ public class CSWCatalog {
 	 * 
 	 * @param cswQuery
 	 * @return
+	 * @throws IOException 
 	 * @throws Exception
 	 */
-	public String sendCatalogRequest(String cswQuery) throws Exception {
+	public InputStream sendCatalogRequest(String cswQuery) throws IOException  {
 
 		URLConnection conexionCatalog = CSWCatalog.URL.openConnection();
 
@@ -61,44 +55,6 @@ public class CSWCatalog {
 
 		InputStream isCswResponse = conexionCatalog.getInputStream();
 		
-		String response = transform(isCswResponse);
-		
-		isCswResponse.close();
-
-		logger.debug("RESPONSE2CLIENT: " + response);
-		
-		return response;
-	}
-	
-	/**
-	 * @param isCSWResponse
-	 * @return
-	 */
-	public static String transform(InputStream isCSWResponse) {
-		
-		StringWriter writer2Client = new StringWriter();
-		InputStream isXslt = CSWCatalog.class.getResourceAsStream("/response2client.xsl");
-
-		try {
-			Source responseSource = new StreamSource(isCSWResponse);
-			Source xsltSource = new StreamSource(isXslt);
-
-			TransformerFactory transFact = TransformerFactory.newInstance();
-			Templates template = transFact.newTemplates(xsltSource);
-			Transformer transformer = template.newTransformer();
-
-			transformer.transform(responseSource, new StreamResult(
-					writer2Client));
-
-			writer2Client.flush();
-			writer2Client.close();
-			
-			isXslt.close();
-
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		} 
-		
-		return writer2Client.toString();
+		return isCswResponse;
 	}
 }

@@ -17,7 +17,6 @@ import org.apache.log4j.Logger;
  */
 public class Utils {
 
-	private static final int FIRST = 0;
 	private static Logger logger = Logger.getLogger(Utils.class);
 
 	public static String convertStreamToString(InputStream is) throws Exception {
@@ -39,9 +38,7 @@ public class Utils {
 	 * 
 	 * @param parametros
 	 */
-	public static ArrayList<BBox> extractToBBoxes(Map<String, String[]> parametros) {
-
-		String stringBBoxes = parametros.get("bboxes")[FIRST];
+	public static ArrayList<BBox> extractToBBoxes(String stringBBoxes) {
 		
 		logger.debug("BBOXES: " + stringBBoxes);
 
