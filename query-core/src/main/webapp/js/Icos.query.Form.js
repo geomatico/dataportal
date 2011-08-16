@@ -134,7 +134,7 @@ Icos.query.Form =  Ext.extend(Ext.form.FormPanel, {
         
         // Add static params
         params.response_format = "text/xml";
-        params.start = 0;
+        params.start = 1;
         params.limit = 25;
         params.sort = "title";
         params.dir = "ASC";
