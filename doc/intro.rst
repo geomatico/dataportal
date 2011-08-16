@@ -1,3 +1,7 @@
+﻿
+Introducción
+============
+
 Escenario
 ---------
 
@@ -52,6 +56,7 @@ Recuperar la búsqueda a partir de un QI
 
 Otro usuario podría introducir el QI, de modo que el formulario muester los criterios de búsqueda utlizados, así como un enlace a la colección de datos que se recuperaron en su momento. El objetivo es que las búsquedas sean reproducibles, y los criterios de búsqueda recuperables.
 
+
 Report
 ------
 
@@ -61,4 +66,7 @@ Report en PDF: Un usuario validado puede ver con cuántos QI está relacionado. 
 Esquema de bloques
 ------------------
 
-(todo)
+.. image:: img/dataportal.*
+   :width: 900 px
+   :alt: esquema de bloques de la aplicación *data portal*
+   :align: center
