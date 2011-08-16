@@ -2,10 +2,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cmima.icos</groupId>
-	<artifactId>icos-cmima</artifactId>
+	<artifactId>dataportal</artifactId>
 	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>icos-cmima portal</name>
+	<name>ICOS Carbon Data Portal</name>
 	<url>http://geomati.co</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
