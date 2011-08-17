@@ -107,3 +107,69 @@ Ejemplo de un set de atributos globales según las |Discovery|_, expresados en *
   <attribute name="GRIB_reference" value="Office Note 388 GRIB" />
   <attribute name="GRIB_URL" value="http://www.nco.ncep.noaa.gov/pmb/docs/on388/" />
   <attribute name="version" type="double" value="0.0" />
+
+  
+Tabla equivalencias metadatos
+-----------------------------
+
+A lo largo de la aplicación, estos **atributos netCDF** se transformarán en una **fichas ISO** en un proceso de harvesting. El servicio **search** podrá filtrar por alguno de estos conceptos vía **parámetros de búsqueda**, que se convertirán en un **request CSW**, y que dará lugar a unos **resultados de búsqueda**. Estos resultados, además, serán **ordenables** por alguno de los parámetros.
+
+Puesto que en cada etapa estos metadatos toman nombres distintos, se detalla aquí una tabla-resumen:
+
+.. list-table:: *Equivalencia entre los nombres de los metadatos en diferentes fases del proceso*
+   :header-rows: 1
+   
+   * - netCDF global attribute
+     - ISO 19115:2003/19139
+     - Search request param
+     - CSW Filter
+     - Search order-by param
+     - Search result field
+   * - id
+     - /gmd:MD_Metadata/gmd:fileIdentifier/gco:CharacterString
+     - -- (no se busca por id, de momento)
+     - (equivaldría a un *getRecordById*, o algo así) CONFIRMAR
+     - id
+     - id
+   * - title
+     - /gmd:MD_Metadata/gmd:identificationInfo/gmd:title/gco:CharacterString
+     - text (texto libre)
+     - any
+     - title
+     - title
+   * - summary
+     - /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString
+     - text (texto libre)
+     - any
+     - -- (no se ordena por resumen)
+     - summary
+   * - geospatial_lat_min, geospatial_lat_max, geospatial_lon_min, geospatial_lon_max
+     - /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/gmd:westBoundLongitude/gco:Decimal
+       /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/gmd:eastBoundLongitude/gco:Decimal
+       /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/gmd:southBoundLongitude/gco:Decimal
+       /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/gmd:northBoundLongitude/gco:Decimal
+     - bboxes (múltiples)
+     - ¿¿¿???
+     - -- (no se ordena por bbox)
+     - geo_extent (WKT)
+   * - time_coverage_start
+     - /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:beginPosition
+     - start_date
+     - ¿¿¿???
+     - start_time
+     - start_time
+   * - time_coverage_end
+     - /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition
+     - end_date
+     - ¿¿¿???
+     - end_time
+     - end_time
+   * - -- (proceso harvesting extraería las variables, de algún modo...)
+     - ISO TODO
+     - variables
+     - CSW TODO
+     - -- (no se ordena por variables)
+     - variables
+
+     
+FALTA DOCUMENTAR: *totalcount* (lo genera servicio CSW de GN) y *data_link* (lo genera proceso de harvesting).
