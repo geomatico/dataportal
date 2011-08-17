@@ -14,3 +14,4 @@ Contents:
    intro
    install
    data
+   search-service
