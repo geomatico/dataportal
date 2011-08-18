@@ -50,10 +50,10 @@ Los *parametros de búsqueda* son:
   
 *Parámetros de paginación*:
 
-  - **start**: Primer registro solicitado (offset, comenzando a contar con 1).
+  - **start**: Primer registro solicitado (offset, comenzando a contar por cero).
   - **limit**: Número máximo de resultados por página.
   
-Por ejemplo, para solicitar la 3ª página a 20 resultados por página, los parámetros serían: *start=41* & *limit=20*.
+Por ejemplo, para solicitar la 3ª página a 20 resultados por página, los parámetros serían: *start=40* y *limit=20*.
 
   
 *Parámetros de ordenación*:
@@ -65,7 +65,7 @@ Por ejemplo, para solicitar la 3ª página a 20 resultados por página, los par�
     - "end_time".
   - **dir**: "ASC" (orden ascendente) o "DESC" (orden descendente).
 
-Por ejemplo, para obtener los datos más recientes primero, los parámetros serían: *sort=start_time* & *dir=DESC*.
+Por ejemplo, para obtener los registros más recientes primero, los parámetros serían: *sort=start_time* & *dir=DESC*.
 
 
 Elementos de la respuesta
