@@ -132,7 +132,7 @@ Puesto que en cada etapa estos metadatos toman nombres distintos, se detalla aqu
      - id
      - id
    * - title
-     - /gmd:MD_Metadata/gmd:identificationInfo/gmd:title/gco:CharacterString
+     - /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString
      - text (texto libre)
      - any
      - title
