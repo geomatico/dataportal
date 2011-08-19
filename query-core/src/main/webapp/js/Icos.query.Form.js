@@ -3,6 +3,7 @@ Ext.namespace('Icos.query');
 Icos.query.Form =  Ext.extend(Ext.form.FormPanel, {
 
     map: null,
+    vocabulary: null,
         
     initComponent: function() {
         
@@ -39,7 +40,8 @@ Icos.query.Form =  Ext.extend(Ext.form.FormPanel, {
                         xtype: 'label'
                     }, {
                         name: 'start_date',
-                        xtype: 'datefield'
+                        xtype: 'datefield',
+                        format: 'Y-m-d'
                     }]
                 }, {
                     columnWidth: 0.5,
@@ -49,7 +51,8 @@ Icos.query.Form =  Ext.extend(Ext.form.FormPanel, {
                         xtype: 'label'
                     }, {
                         name: 'end_date',
-                        xtype: 'datefield'
+                        xtype: 'datefield',
+                        format: 'Y-m-d'
                     }]
                 }]
             }],
@@ -60,29 +63,13 @@ Icos.query.Form =  Ext.extend(Ext.form.FormPanel, {
         Ext.apply(this, Ext.apply(this.initialConfig, config));
         
         Icos.query.Form.superclass.initComponent.apply(this, arguments);
-        
-        new Ext.data.XmlStore({
-            autoLoad: true,
-            url: 'xml/vocabulario.xml',
-            record: 'term',
-            idPath: 'sado_term',
-            fields: [
-                 'sado_term', 'nc_term', 'nc_long_term', 'en_term', 'en_long_term',
-                 'nc_units', 'nc_data_type', 'nc_coordinate_axis_type'
-            ],
-            sortInfo: {
-                field: 'nc_long_term',
-                direction: 'ASC'
-            },
-            listeners: {
-                'load': this.addVariableFieldset,
-                scope: this
-            }
-        });
+
+        if(this.vocabulary) {
+            this.vocabulary.on('load', this.addVariableFieldset, this);
+        }
     },
 
     addVariableFieldset: function(store, records, options) {
-        
         var checkboxitems = [];
         store.each( function(record) {
             checkboxitems.push({

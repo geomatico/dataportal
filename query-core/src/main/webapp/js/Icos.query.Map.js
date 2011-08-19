@@ -38,11 +38,11 @@ Icos.query.Map =  Ext.extend(GeoExt.MapPanel, {
                     {isBaseLayer: true, wrapDateLine: true}
                 ),
                 new OpenLayers.Layer.WMS(
-                        "Base Layer",
-                        "http://ciclope.cmima.csic.es:8080/geoserver/wms",
-                        {layers: 'gn:gboundaries', format: 'image/png', transparent: true},
-                        {isBaseLayer: false, wrapDateLine: true}
-                    ),
+                    "Base Layer",
+                    "http://ciclope.cmima.csic.es:8080/geoserver/wms",
+                    {layers: 'gn:gboundaries', format: 'image/png', transparent: true},
+                    {isBaseLayer: false, wrapDateLine: true}
+                ),
                 this.bboxLayer
             ]
         });
