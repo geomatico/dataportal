@@ -2,7 +2,7 @@
 .. |GN|  replace:: *GeoNetwork*
 .. |GS|  replace:: *GeoServer*
 .. |DP|  replace:: *Data Portal*
-.. |JVM| replace:: *Máquina Virtual Java* 
+.. |TCT| replace:: *Tomcat*
 
 .. [1] http://www.keopx.net/blog/cambiar-las-preferencias-de-java-alternatives-en-debianubuntu
 .. [2] http://www.guia-ubuntu.org/index.php?title=Java
@@ -22,11 +22,11 @@ Utilizando los repositorios de Ubuntu
 """""""""""""""""""""""""""""""""""""
 Primero instalaremos la versión necesaria de Java, en este caso la 6. Para ello teclearemos en la terminal::
 
-	sudo apt-get install sun-java6-jdk sun-java6-bin sun-java6-jre
+	$ sudo apt-get install sun-java6-jdk sun-java6-bin sun-java6-jre
 
 Comprobaremos que Ubuntu está utilizando la versión que nos interesa de Java y no la que lleva instalada por defecto. Para ello indicamos en la terminal::
 
-	java -version
+	$ java -version
 
 que nos mostrará el mensaje::
 
@@ -36,11 +36,11 @@ que nos mostrará el mensaje::
 
 indicando nuestra versión de Java. En caso contrario será necesario instalar nuestra vesión como alternativa. Para ello primero comprobamos las alternativas que está utilizando. Accedemos a la ruta::
 	
-	cd /etc/alternatives
+	$ cd /etc/alternatives
 
 y mostramos las que nos interesan::
 
-	ls -la ja*
+	$ ls -la ja*
 
 podremos observar que alternativa de java está disponible::
 
@@ -48,11 +48,11 @@ podremos observar que alternativa de java está disponible::
 
 para modificar esta debemos primero instalar nuestra versión de java como alternativa::
 
-	sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-6-sun/jre/bin/java 1
+	$ sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-6-sun/jre/bin/java 1
 
 y después asignaremos esta alternativa::
 
-	sudo update-alternatives --set /usr/lib/jvm/java-6-sun/jre/bin/java
+	$ sudo update-alternatives --set /usr/lib/jvm/java-6-sun/jre/bin/java
 
 ahora podemos comprobar a que máquina de Java apunta::
 
@@ -67,15 +67,15 @@ Primero descargaremos la versión de Java que nos interesa desde::
 
 Accedemos a la carpeta de descarga del archivo y modificamos su permiso de ejecución::
 
-	sudo chmod +x <nombre del archivo>
+	$ sudo chmod +x <nombre del archivo>
 
 y ejecutamos::
 	
-	sudo ./<nombre del archivo>
+	$ sudo ./<nombre del archivo>
 
 este paso nos solicitará nuestra confirmación y descomprimirá los archivos en una carpeta en el mismo directorio donde lo hayamos ejecutado. Movemos esa carpeta a una localización mas acorde::
 
-	mv <ruta de la carpeta> /usr/lib/jvm
+	$ mv <ruta de la carpeta> /usr/lib/jvm
 
 después realizaremos los mismos pasos para asignar la alternativa que en el caso anterior.
 
@@ -91,26 +91,26 @@ Instalación desde los repositorios
 """"""""""""""""""""""""""""""""""
 Abrimos un terminal y tecleamos::
 	
-	sudo apt-get install tomcat6
+	$ sudo apt-get install tomcat6
 
-de esta manera instalaremos Tomcat. Para comprobar que la instalación es correcta::
+de esta manera instalaremos |TCT|. Para comprobar que la instalación es correcta::
 
 	http://localhost:8080
 
 apareciendo el mensaje **It works!**.
-Esta instalación de Tomcat crea la siguiente estructura de directorios que mas adelante nos hará falta conocer::
+Esta instalación de |TCT| crea la siguiente estructura de directorios que mas adelante nos hará falta conocer::
 
 	Directorio de logs; logs --> /var/lib/tomcat6/logs
 	Directorio de configuracion; conf --> /var/lib/tomcat6/conf
 	Directorio de aplicaciones; webapps --> /var/lib/tomcat6/webapps
 
-La instalación creara un usuario y un grupo, tomcat6::tomcat6. Para arrancar/parar o reiniciar esta instancia de Tomcat::
+La instalación creara un usuario y un grupo, tomcat6::tomcat6. Para arrancar/parar o reiniciar esta instancia de |TCT|::
 
-	sudo /etc/init.d/tomcat6 [start|stop|restart]
+	$ sudo /etc/init.d/tomcat6 [start|stop|restart]
 
-Para acceder al manager de Tomcat primero instalaremos la aplicación necesaria para gestionar el servidor. Para ello tecleamos desde una terminal::
+Para acceder al manager de |TCT| primero instalaremos la aplicación necesaria para gestionar el servidor. Para ello tecleamos desde una terminal::
 
-	sudo apt-get install tomcat6-admin
+	$ sudo apt-get install tomcat6-admin
 
 Una vez instalado incluiremos en el archivo tomcat-users.xml en el directorio de configuración el rol y el usuario necesario para acceder a la aplicación. Para ello incluiremos bajo la raiz <tomcat-users> lo siguiente::
 
@@ -135,10 +135,90 @@ TODO: Oscar
 
 |TDS|
 -----
+Instalación de Thredds Data Server
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+En este apartado se explicará la instalación y configuración del servidor |TDS|. En primer lugar necesitaremos descargarnos la versión adecuada del servidor, en nuestro caso será la versión 4.2::
 
-* cómo configurar las extensiones
+	ftp://ftp.unidata.ucar.edu/pub/thredds/4.2/thredds.war
 
+Descargamos un archivo .war que deberemos desplegar en nuestro servidor |TCT|. Antes de ello debemos efectuar unas configuraciones previas. 
+Crearemos una variable de entorno que apunte a nuestro directorio de |TCT|. Editamos el archivo .bashrc de la sesión con la que estemos trabajando. Este archivo lo encontraremos en::
 
+	$ cd ~
+
+Modificamos el archivo **.bashrc** con un editor de texto::
+
+	$ nano .bashrc
+
+e incluiremos la siguiente linea::
+
+	export TOMCAT_HOME=/usr/share/tomcat6
+
+Aplicamos los cambios escribiendo en el terminal::
+
+	$ source .bashrc
+
+y comprobamos que aparece nuestra variable::
+
+	$ echo $TOMCAT_HOME
+
+que nos mostrará el valor que hemos introducido en el archivo **.bashrc**, /usr/share/tomcat6
+
+Crearemos un script en la carpeta bin del |TCT| ($TOMCAT_HOME/bin) que permita a este encontrar unas determinadas variables que necesitará para arrancar |TDS|::
+
+	$ sudo nano $TOMCAT_HOME/bin/setenv.sh
+
+e incluiremos lo siguiente::
+
+	#!/bin/sh
+	#
+	# ENVARS for Tomcat and TDS environment
+	#
+	JAVA_HOME="/usr/lib/jvm/java-6-sun"
+	export JAVA_HOME
+
+	JAVA_OPTS="-Xmx1500m -Xms512m -XX:MaxPermSize=180m -server -Djava.awt.headless=true -Djava.util.prefs.systemRoot=$CATALINA_HOME/content/thredds/javaUtilPrefs"
+	export JAVA_OPTS
+
+	CATALINA_HOME="/usr/share/tomcat6"
+	export CATALINA_HOME
+
+Donde le indicamos la memoria máxima 1500 en caso de sistemas de 32-bit o 4096 o más en sistemas de 64-bit, y en caso de usar WMS con |TDS| debemos añadirle la localización de javaUtilPrefs asignandole a ``-Djava.util.prefs.systemRoot`` la ruta.
+Una vez realizado esto, reiniciaremos |TCT| y comprobamos que los cambios se han producido::
+
+	$ ps -ef | grep tomcat
+
+que nos mostrará::
+
+	tomcat6   7376     1 45 14:48 ?        00:00:03 /usr/lib/jvm/java-6-sun/bin/java -Djava.util.logging.config.file=/var/lib/tomcat6/conf/logging.properties
+	-Xmx1500m -Xms512m -XX:MaxPermSize=180m -server -Djava.awt.headless=true -Djava.util.prefs.systemRoot=/usr/share/tomcat6/content/thredds/javaUtilPrefs 
+	-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Djava.endorsed.dirs=/usr/share/tomcat6/endorsed -classpath /usr/share/tomcat6/bin/bootstrap.jar 
+	-Dcatalina.base=/var/lib/tomcat6 -Dcatalina.home=/usr/share/tomcat6 -Djava.io.tmpdir=/tmp/tomcat6-tmp org.apache.catalina.startup.Bootstrap start
+
+Donde podemos observar los valores que hemos introducido en nuestro script y que |TCT| ha incluido en el arranque.
+Antes de realizar el despliegue de |TDS| crearemos la carpeta donde la instalación crea todos los archivos necesarios para la instalación y configuración del mismo. Para ello navegamos hasta el directorio donde el despliegue del war busca dicha carpeta por defecto::
+
+	$ cd /var/lib/tomcat
+
+y creamos la carpeta con el nombre por defecto::
+
+	$ mkdir content
+
+seguidamente le asignaremos permisos al usuario y grupo tomcat6::
+
+	$ sudo chmod tomcat6:tomcat6 content
+
+Una vez hecho esto procederemos al despliegue de |TDS| bien desde la pestaña manager de |TCT|, o copiando directamente el archivo thredds.war en la carpeta webapps de nuestra instancia de |TCT|. Es recomendable realizar un seguimiento de los cambios producidos en el servidor para comprobar que el despliegue de |TDS| se realiza correctamente, para ello ejecutaremos previamente en una consola::
+
+	$ tail -f /var/lib/tomcat6/logs/catalina.out
+
+de esta manera veremos por consola los mensajes que nos envia |TCT|
+Para comprobar que la instalación ha ido correctamente::
+
+	http://localhost:8080/thredds
+
+y accederemos al catalogo de ejemplo que viene en |TDS| por defecto.
+ 
 |GN|
 ----
 
