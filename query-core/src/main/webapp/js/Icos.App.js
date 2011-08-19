@@ -3,6 +3,7 @@ Ext.namespace('Icos');
 Icos.App =  Ext.extend(Ext.Viewport, {
     
     queryForm: null,
+    vocabulary: null,
     resultGrid: null,
     
     initComponent: function() {
@@ -11,8 +12,23 @@ Icos.App =  Ext.extend(Ext.Viewport, {
         
         Ext.QuickTips.init();
         
+        this.vocabulary = new Ext.data.XmlStore({
+            url: 'xml/vocabulario.xml',
+            record: 'term',
+            idPath: 'nc_term',
+            fields: [
+                 'sado_term', 'nc_term', 'nc_long_term', 'en_term', 'en_long_term',
+                 'nc_units', 'nc_data_type', 'nc_coordinate_axis_type'
+            ],
+            sortInfo: {
+                field: 'nc_long_term',
+                direction: 'ASC'
+            }
+        });
+        
         this.queryForm = new Icos.query.Form({
             xtype: 'i_queryform',
+            vocabulary: this.vocabulary,
             listeners: {
                 scope: this,
                 render: function(form) {
@@ -24,8 +40,11 @@ Icos.App =  Ext.extend(Ext.Viewport, {
             }
         });
         
+        this.vocabulary.load();
+        
         this.resultGrid = new Icos.result.Grid({
-            xtype: 'i_resultgrid'
+            xtype: 'i_resultgrid',
+            vocabulary: this.vocabulary
         });
         
         var config = {
