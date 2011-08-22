@@ -10,6 +10,9 @@
 .. [4] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/tutorial/AddingServices.html
 .. [5] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/reference/ncISO.html
 .. [6] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.1/reference/RemoteManagement.html
+.. [7] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/tutorial/ConfigCatalogs.html
+.. [8] http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html
+
 
 Instalación
 ===========
@@ -305,21 +308,76 @@ Ahora será posible añadir estos servicios a nuestros catálogos.
 
 Inclusión de servicios OGC/ISO en los catálogos
 """""""""""""""""""""""""""""""""""""""""""""""
-Una vez que hemos activado los servicios OGC/ISO será posible la utilización de estos en nuestros catálogos.
+Una vez que hemos activado los servicios OGC/ISO será posible la utilización de estos en nuestros catálogos. |TDS| utiliza archivos catalog.xml para definir las carpetas donde se almacenan los datasets, así como la estructura que tendrá el arbol que muestra dichos datasets. También se encarga de definir los servicios que están disponibles en el servidor y que permite el acceso a estos datasets.
+
+Existe la posibilidad de definir un tipo de servicio ``compound`` que lo que nos permite es asignar todos los servicios activos a los datasets que incluyan este servicio. Para definir esto, en nuestro ``catalog.xml`` incluiremos el siguiente elemento::
+
+	<service name="all" base="" serviceType="compound">
+		<service name="odap" serviceType="OpenDAP" base="/thredds/dodsC/" />
+		<service name="http" serviceType="HTTPServer" base="/thredds/fileServer/" />
+		<service name="wcs" serviceType="WCS" base="/thredds/wcs/" />
+		<service name="wms" serviceType="WMS" base="/thredds/wms/" />
+		<service name="ncml" serviceType="NCML" base="/thredds/ncml/"/>
+		<service name="uddc" serviceType="UDDC" base="/thredds/uddc/"/>
+		<service name="iso" serviceType="ISO" base="/thredds/iso/"/>
+	</service>
+
+así podremos indicar a los datasets que utilicen este servicio compuesto::
+
+	<dataset ID="sample" name="Sample Data" urlPath="sample.nc">
+  	<serviceName>all</serviceName>
+	</dataset>
+
+A través del ``servicename`` es como enlazaremos el servicio con los datasets. Podemos reinicializar nuestros catálogos accediendo a través de la aplicación TDS Remote Management.
+
+**Referencias**
+
+* TDS Configuration Catalogs [7]_
+* Dataset Inventory Catalog Specification, Version 1.0.2 [8]_
 
 |GN|
 ----
 
-* qué versión de |GN| instalar
+Para el DataPortal será necesario utilizar una versión de |GN| 2.7 o superior, debido a los procesos que son necesarios para realizar el harvesting. Una vez descargada la versión de |GN| indicada, se desplegará en nuestra instancia de |TCT| bien desde el manager o bien moviendo el archivo .war descargado a la carpeta webapps de servidor. 
+Será necesario modificar los permisos de la carpeta /var/lib/tomcat6 para que el usuario tomcat6 que ejecuta el despliegue tenga permisos a la hora de desplegar |GN| y pueda crear en dicha carpeta los archivos necesarios para la instalación de |GN|. Para ello ejecutamos::
 
+	$ sudo chown tomcat6:tomcat6 /var/lib/tomcat6
 
+y haremos el despliegue de |GN|. Si tenemos monitorizada la salida del archivo de log ``catalina.out`` podremos comprobar que el despliegue se ha realizado de manera correcta si aparece un mensaje como::
+
+	2011-08-22 18:21:29,004 INFO  [jeeves.engine] - === System working =========================================
+
+Podremos acceder a nuestro |GN| a través de::
+
+	http://localhost:8080/geonetwork
 
 Harvesting |TDS| a |GN|
 -----------------------
 
-* cómo configurar tarea harvesting (pantallazo?)
-* cómo tunear plantilla de harvesteo para que recoja BBOX, timespan, texto y variables de netCDF y los coloque en una ISO
+|GN| permite, a partir de su versión 2.7, realizar procesos de harvesting a servidores |TDS|. De esta manera es posible incorporar en nuestro servidor de catálogo la información de los metadatos de los datasets que tengamos publicados a través de nuestro servidor |TDS|. Para configurar correctamente este proceso de Harvesting es necesario realizar dos operaciones diferentes:
 
+* Creación y configuración del proceso de Harvesting
+* Creación de las plantillas de extracción de la información
+
+Creación y configuración del proceso de Harvesting
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Para dar de alta un proceso de harvesting debemos acceder a |GN| como administradores y dirigirnos a la pestaña de ``Administration``. Desde allí nos dirigiremos a ``Harvesting Management``. Esto nos abrirá una nueva ventana desde donde podemos crear nuestro proceso de harvesting. Para ello pulsaremos sobre ``Add`` y elegiremos del desplegable el ``Thredds Catalog`` para después volver a pulsar ``Add``. Rellenaremos los campos como se indica a continuación:
+
+* **Name**; nombre que le queremos dar al proceso
+* **Catalog URL**; URL del catalog de |TDS|. Importante que la dirección apunte al .xml::
+	
+	http://localhost:8080/thredds/catalog.xml
+
+* **Create ISO19119 metadata for all services in the catalog**; crearia una plantilla ISO19119 para todos los servicios que hayamos definido en nuestro catalog.xml
+* **Create metadata for Collection Datasets**; si seleccionamos esta opción, el proceso de harvesting creará un registro en |GN| también para las colecciones de datasets incluidas en el catalog.xml. Dentro de esta opción existen varias opciones:
+	* **Ignore harvesting attribute**: Que no tiene en cuenta el valor del atributo harvest en el archivo catalog.xml. En caso de no seleccionar esta opción, solo incorporarán en el catálogo aquellas colecciones que tengan este valor igual a ``true`` en el catalog.xml.
+	* **Extract DIF metadata elements and create ISO metadata**: Extrae metadatos DIF y crea un metadato ISO. Habrá que seleccionar el esquema en el que se desea realizar la extracción.
+	* **Extract Unidata dataset discovery metadata using fragments**: indicaremos que el proceso extraiga el valor de los metadatos que se definen utilizando la NetCDF Attribute Convention for Dataset Discovery. Nos permite el uso de fragmentos en la extracción de la información. Nos solicita el esquema de salida de la información, la plantilla que queremos utilizar para la creación de los fragmentos y la plantilla sobre la que se van a crear dichos fragmentos. Un detalle de este proceso se explica más adelante.
+* **Create metadata for Atomic Datasets**; Con las opciones parecidas al caso anterior, generará un registro por cada dataset que exista en nuestro servidor |TDS|. Cuenta con la opción **Harvest new or modified datasets only** que indica que cuando se repita el proceso de harvesting solo se incluyan aquellos datasets nuevos o que hayan sido modificados.
+* **Create thumbnails for any datasets delivered by WMS**; crea iconos para los datasets que tengan activado el servicio WMS y permite elegir el icono.
+* **Every**; indicaremos la frecuencia con que deseamos que se repita el proceso de harvest o si solo queremos que se repita una vez.
+
+Una vez definidas estos parametros pulsaremos sobre ``Save`` y podremos observar como en la ventana anterior aparece nuestro proceso. Seleccionandole y podremos acceder a las diferentes operaciones que se nos ofrece. Si pulsamos sobre ``Run`` ejecutaremos el harvest. Una vez finalizado, situando el puntero del ratón sobre el ``Status`` visualizaremos un resumen del proceso.
 
 |DP|
 ----
