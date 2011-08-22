@@ -212,12 +212,54 @@ Una vez hecho esto procederemos al despliegue de |TDS| bien desde la pestaña ma
 
 	$ tail -f /var/lib/tomcat6/logs/catalina.out
 
-de esta manera veremos por consola los mensajes que nos envia |TCT|
+de esta manera veremos por consola los mensajes que nos envia |TCT|.
 Para comprobar que la instalación ha ido correctamente::
 
 	http://localhost:8080/thredds
 
 y accederemos al catalogo de ejemplo que viene en |TDS| por defecto.
+
+Configuración de módulos en |TDS|
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TDS Remote Management
+"""""""""""""""""""""
+Desde el Remote Management de |TDS| podemos acceder a información acerca del estado del servidor, reiniciar catálogos... Para porder acceder a este deberemos previamente configurar |TCT| para que permita el acceso mediante SSL. Lo primero que haremos será crear un certificado autofirmado en el servidor (keystore) y configuraremos |TCT| para utilizar un conector que permita el acceso mediante este protocolo.
+
+Lo primero que haremos será utilizar la herramienta keytool para generar el certificado. Esta herramienta viene suministrada con el JDK de Java y la encontraremos en::
+	
+	$ $JAVA_HOME/bin/
+
+y la ejecutaremos indicandole la ruta donde generaremos el archivo .keystore ($USER_HOME/.keystore por defecto)::
+
+	$JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -validity 365 -keystore ~/.keystore
+
+y responderemos a las cuestiones que plantea. Respecto al password, por defecto |TCT| tiene definida *changeit* como contraseña por defecto, así que deberemos modificar en los valores del conector el valor de esta, indicandole la que hayamos definido en la creación del certificado. Para introducir esta y modificar algunos otros valores necesarios modificaremos el archivo server.xml de nuestra instancia de |TCT|::
+
+	$ sudo nano /etc/tomcat6/server.xml
+
+descomentaremos las lineas que activan el conector::
+
+	  <!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 -->
+    <Connector port="8443" 
+               maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+               enableLookups="false" disableUploadTimeout="true"
+               acceptCount="100" debug="0" scheme="https" secure="true"
+               clientAuth="false" sslProtocol="TLS" keystoreFile="<ruta al .keystore creado>" keystorePass="<contraseña al crear el keystore>"/>
+
+introduciendo la ruta al archivo .keystore creado e indicandole la contraseña que hemos indicado en la creación del mismo. Una vez realizada esta modificación, reiniciaremos el |TCT| comprobaremos que los cambios se han realizado correctamente accediendo a::
+
+	https://localhost:8443
+
+Finalmente, para poder acceder al gestor remoto del |TDS| deberemos crear el usuario y el rol en |TCT| que permite este acceso. Para ello modificaremos el archivo tomcat-users.xml incluyendo lo siguiente::
+
+	<role rolename="tdsConfig"/>
+	<user username="<nombre usuario>" password="<password usuario>" roles="tdsConfig"/>
+
+Está será la clave de acceso del usuario, por lo que no debe ser igual a la que se ha definido en el conector de |TCT|. Reiniciaremos el |TCT| de nuevo y comprobamos el acceso a través de::
+
+	https://localhost:8443/thredds/admin/debug
+
+
  
 |GN|
 ----
