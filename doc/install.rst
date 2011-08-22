@@ -6,7 +6,10 @@
 
 .. [1] http://www.keopx.net/blog/cambiar-las-preferencias-de-java-alternatives-en-debianubuntu
 .. [2] http://www.guia-ubuntu.org/index.php?title=Java
-
+.. [3] http://tomcat.apache.org/tomcat-6.0-doc/ssl-howto.html
+.. [4] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/tutorial/AddingServices.html
+.. [5] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/reference/ncISO.html
+.. [6] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.1/reference/RemoteManagement.html
 
 Instalación
 ===========
@@ -137,7 +140,7 @@ TODO: Oscar
 -----
 Instalación de Thredds Data Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-En este apartado se explicará la instalación y configuración del servidor |TDS|. En primer lugar necesitaremos descargarnos la versión adecuada del servidor, en nuestro caso será la versión 4.2::
+En este apartado se explicará la instalación y configuración del servidor |TDS|. En primer lugar necesitaremos descargarnos la versión adecuada del servidor, en nuestro caso será la versión 4.2.8::
 
 	ftp://ftp.unidata.ucar.edu/pub/thredds/4.2/thredds.war
 
@@ -255,12 +258,55 @@ Finalmente, para poder acceder al gestor remoto del |TDS| deberemos crear el usu
 	<role rolename="tdsConfig"/>
 	<user username="<nombre usuario>" password="<password usuario>" roles="tdsConfig"/>
 
-Está será la clave de acceso del usuario, por lo que no debe ser igual a la que se ha definido en el conector de |TCT|. Reiniciaremos el |TCT| de nuevo y comprobamos el acceso a través de::
+Está será la clave de acceso del usuario, por lo que no es necesario que sea igual a la que se ha definido en el conector de |TCT|. Reiniciaremos el |TCT| de nuevo y comprobamos el acceso a través de::
 
 	https://localhost:8443/thredds/admin/debug
 
+**Referencias**
 
- 
+* SSL Configuration HOW-TO [3]_
+* Enabling TDS Remote Management [6]_
+
+Configuración de servicios WMS y WCS
+""""""""""""""""""""""""""""""""""""
+|TDS| tiene por defecto los servicios WMS y WCS desactivados. Para poder hacer uso de estos servicios tendremos que activarlos. Deberemos modificar el archivo ``threddsConfig.xml`` que encontraremos en la carpeta ``content`` de la instalación de |TDS|. Modificaremos el archivo activando los servicios descomentando las etiquetas ``WMS`` y ``WCS`` y modificando el valor de la etiqueta ``allow`` a ``true``::
+	
+	<WMS>
+  	<allow>true</allow>
+	</WMS>
+
+para el servicio WMS y::
+
+	<WCS>
+  	<allow>true</allow>
+	</WCS>
+
+para el WCS. Ahora ya podremos indicar en nuestros catálogos que los servicios WMS y WCS se encuentran activos.
+
+**Referencias**
+
+* OGC/ISO services (WMS, WCS and ncISO) [4]_
+
+Configuración de ncISO
+""""""""""""""""""""""
+Desde la versión 4.2.4 de |TDS| se incluye el paquete ``ncISO`` que permite mostrar los metadatos de los datasets como fichas ISO. Para activar dicho servicio será necesario realizar unas modificaciones en el archivo ``threddsConfig.xml`` como en el caso de los servicios anteriores. Buscaremos en el archivo la linea que hace referencia el servicio ncISO las descomentaremos y modificaremos el valor a ``true`` para los tres casos::
+
+	<NCISO>
+		<ncmlAllow>true</ncmlAllow>
+		<uddcAllow>true</uddcAllow>
+		<isoAllow>true</isoAllow>
+	</NCISO>
+
+Ahora será posible añadir estos servicios a nuestros catálogos.
+
+**Referencias**
+
+* TDS and ncISO: Metadata Services [5]_
+
+Inclusión de servicios OGC/ISO en los catálogos
+"""""""""""""""""""""""""""""""""""""""""""""""
+Una vez que hemos activado los servicios OGC/ISO será posible la utilización de estos en nuestros catálogos.
+
 |GN|
 ----
 
