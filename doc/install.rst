@@ -12,6 +12,8 @@
 .. [6] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.1/reference/RemoteManagement.html
 .. [7] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/tutorial/ConfigCatalogs.html
 .. [8] http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html
+.. [9] http://geonetwork-opensource.org/manuals/trunk/users/admin/harvesting/index.html#harvesting-fragments-of-metadata-to-support-re-use
+.. [10] http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html
 
 
 Instalación
@@ -338,8 +340,8 @@ A través del ``servicename`` es como enlazaremos el servicio con los datasets. 
 |GN|
 ----
 
-Para el DataPortal será necesario utilizar una versión de |GN| 2.7 o superior, debido a los procesos que son necesarios para realizar el harvesting. Una vez descargada la versión de |GN| indicada, se desplegará en nuestra instancia de |TCT| bien desde el manager o bien moviendo el archivo .war descargado a la carpeta webapps de servidor. 
-Será necesario modificar los permisos de la carpeta /var/lib/tomcat6 para que el usuario tomcat6 que ejecuta el despliegue tenga permisos a la hora de desplegar |GN| y pueda crear en dicha carpeta los archivos necesarios para la instalación de |GN|. Para ello ejecutamos::
+Para el |DP| será necesario utilizar una versión de |GN| 2.7 o superior, debido a los procesos que son necesarios para realizar el harvesting. Una vez descargada la versión de |GN| indicada, se desplegará en nuestra instancia de |TCT| bien desde el manager o bien moviendo el archivo .war descargado a la carpeta webapps de servidor. 
+Será necesario modificar los permisos de la carpeta ``/var/lib/tomcat6`` para que el usuario tomcat6 que ejecuta el despliegue tenga permisos a la hora de desplegar |GN| y pueda crear en dicha carpeta los archivos necesarios para la instalación de |GN|. Para ello ejecutamos::
 
 	$ sudo chown tomcat6:tomcat6 /var/lib/tomcat6
 
@@ -363,6 +365,11 @@ Creación y configuración del proceso de Harvesting
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Para dar de alta un proceso de harvesting debemos acceder a |GN| como administradores y dirigirnos a la pestaña de ``Administration``. Desde allí nos dirigiremos a ``Harvesting Management``. Esto nos abrirá una nueva ventana desde donde podemos crear nuestro proceso de harvesting. Para ello pulsaremos sobre ``Add`` y elegiremos del desplegable el ``Thredds Catalog`` para después volver a pulsar ``Add``. Rellenaremos los campos como se indica a continuación:
 
+.. image:: img/harvesting-management.png
+		:width: 600 px
+		:alt: Configuración de proceso harvest
+		:align: center
+ 
 * **Name**; nombre que le queremos dar al proceso
 * **Catalog URL**; URL del catalog de |TDS|. Importante que la dirección apunte al .xml::
 	
@@ -377,7 +384,67 @@ Para dar de alta un proceso de harvesting debemos acceder a |GN| como administra
 * **Create thumbnails for any datasets delivered by WMS**; crea iconos para los datasets que tengan activado el servicio WMS y permite elegir el icono.
 * **Every**; indicaremos la frecuencia con que deseamos que se repita el proceso de harvest o si solo queremos que se repita una vez.
 
-Una vez definidas estos parametros pulsaremos sobre ``Save`` y podremos observar como en la ventana anterior aparece nuestro proceso. Seleccionandole y podremos acceder a las diferentes operaciones que se nos ofrece. Si pulsamos sobre ``Run`` ejecutaremos el harvest. Una vez finalizado, situando el puntero del ratón sobre el ``Status`` visualizaremos un resumen del proceso.
+Una vez definidas estos parametros pulsaremos sobre ``Save`` y podremos observar como en la ventana anterior aparece nuestro proceso. Seleccionandole podremos acceder a las diferentes operaciones que se nos ofrece. Si pulsamos sobre ``Run`` ejecutaremos el harvest. Una vez finalizado, situando el puntero del ratón sobre el icono ``Status`` visualizaremos un resumen del proceso.
+
+Creación de las plantillas de extracción de la información
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Para generar la información que necesitamos para el |DP|, debemos configurar el proceso de harvest de manera que este extraiga la información asociada a los datasets configurados en el servidor |TDS| siguiendo la NetCDF Attribute Convention for Dataset Discovery. Para ello a partir de la versión 2.7 de |GN| se implementa la posibilidad de utilizar fragmentos para la extracción y reutilización de esta información extraida en el proceso de harvest. Esta posibilidad solo está disponible para extracción de información de catalogos |TDS| y operaciones getFeature del protocolo WFS. Utilizando los fragmentos podremos extraer exclusivamente la información que requiere el |DP| para el proceso de busquedas implementado a través de |GN|. Podremos definir plantillas con los fragmentos que nos interesan que serán guardados en |GN| como **subplantillas** (subtemplates), a seleccionar en las opciones del proceso de harvest, y estos fragmentos que generarán estas subplantillas serán insertados en una plantilla que generará el registro (**plantilla base**) con el metadato en |GN|.
+
+.. image:: img/web-harvesting-fragments.png
+   :width: 400 px
+   :alt: utilización de fragmentos en |GN|
+   :align: center
+
+Para tener disposición de las plantillas y subplantillas hemos de crear estas en la carpeta del esquema que vayamos a utilizar. Estas carpetas se encuentran en::
+
+	$TOMCAT_HOME/webapps/geonetwork/xml/schemas/
+
+Para el caso del |DP| utilizaremos el esquema ISO19139, por lo que será necesario crear la **plantilla base** en la carpeta ``templates`` del esquema ``iso19139``::
+
+	$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/templates
+
+allí encontraremos la plantilla base que viene por defecto con la versión de |GN| que podremos utilizar para crear la nuestra propia. Dentro de la misma carpeta del esquema, encontraremos una carpeta ``convert`` en la que aparece la carpeta ``ThreddsTofragments``. En esta localización será donde incluiremos nuestras **subplantillas** que generarán los fragmentos::
+
+	$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/convert/ThreddsToFragments
+
+Una vez que hayamos incluido nuestros archivos en las carpetas indicadas, deberemos cargar las plantillas del esquema en |GN|. Para ello, desde una sesión como administrador, nos dirigiremos a la ventana ``Administration`` y en la sección de ``Metadata & Template`` seleccionaremos el esquema ``iso19139`` y le indicaremos ``Add templates``. Realizado esto, podremos comprobar que en las opciones dentro de la ventana de ``Harvesting Management`` ``Stylesheet to create metadata fragments`` y ``Select template to combine with fragments`` podremos encontrar las plantillas que hemos creado. El nombre de estas plantillas serán el nombre del archivo para las **subplantillas** y el valor del tag que tenga asociado el id ``id="thredds.title"`` dentro de la **plantilla base**.
+
+Creación de la plantilla base
+"""""""""""""""""""""""""""""
+Para la creación de la plantilla base tomaremos como plantilla de partida la que |GN| incluye por defecto en su versión 2.7. Esta, como hemos comentado se encuentra en::
+
+	$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/templates/thredds-harvester-unidata-data-discovery.xml
+
+Esta es la plantilla base que se generará por cada registro que se incluya en |GN|. Se trata de una plantilla tipica de la ISO19139. La diferencia fundamental, es que asociado a determinados elementos de la ISO, aparece el atributo ``id=<identificador del fragmento>``. Esta es la manera en que se indica que durante el proceso de creación del metadato en |GN|, busque el identificador en la subplantilla que hemos seleccionado al crear el proceso de harvest. Por eso para crear la plantilla base, lo único que debemos hacer es sustituir los elementos que estemos interesados en crear mediante fragmentos, por una llamada a través del ``id`` al del fragmento que estamos interesados en incluir::
+
+	<gmd:date id="thredds.resource.dates"/>
+	<gmd:abstract id="thredds.abstract"/>
+	<gmd:credit id="thredds.credit"/>
+	<gmd:descriptiveKeywords id="thredds.keywords"/>
+	<gmd:resourceConstraints id="thredds.use.constraints"/>
+	<gmd:aggregationInfo id="thredds.project"/>
+
+y en la subplantilla definiremos los fragmentos y les indicaremos el ``id`` al que la pantilla hace referencia.
+
+Creación de la subplantilla (fragmentos)
+""""""""""""""""""""""""""""""""""""""""
+La subplantilla ha de definirse en la carpeta::
+
+	$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/convert/ThreddsToFragments
+ 
+Una vez que hemos definido los ``id`` en la plantilla base, debemos crear estos en la subplantilla. Para ello podemos partir de alguna de los XSL que vienen suministrados en la versión de |GN|. Estas subplantillas, a diferencia de las plantillas base, se tratan de hojas XSL que serán ejecutadas durante la creación del metadato. 
+
+Si abrimos una plantilla de las suministradas, por ejemplo::
+
+	$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/convert/ThreddsToFragments/netcdf-attributes.xsl
+
+comprobaremos que se trata de un ejemplo normal de plantilla xsl, con su encabezado, definición de namespaces, y como diferencia se puede observar la aparición de unos elementos::
+
+	<fragment id="thredds.resource.dates" uuid="{util:toString(util:randomUUID())}" title="{concat($name,'_metadata_creation')}">
+	...
+	</fragment>
+
+Esta es la manera de definir el fragmento. El atributo ``id`` que acompaña al elemento se trata del ``id`` al que se hace referencia en la plantilla base, y todos los elementos que se incluyan dentro del fragmento serán procesados en la creación del metadato e incluidos en la plantilla. 
 
 |DP|
 ----
