@@ -6,14 +6,6 @@
 
 .. [1] http://www.keopx.net/blog/cambiar-las-preferencias-de-java-alternatives-en-debianubuntu
 .. [2] http://www.guia-ubuntu.org/index.php?title=Java
-.. [3] http://tomcat.apache.org/tomcat-6.0-doc/ssl-howto.html
-.. [4] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/tutorial/AddingServices.html
-.. [5] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/reference/ncISO.html
-.. [6] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.1/reference/RemoteManagement.html
-.. [7] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/tutorial/ConfigCatalogs.html
-.. [8] http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html
-.. [9] http://geonetwork-opensource.org/manuals/trunk/users/admin/harvesting/index.html#harvesting-fragments-of-metadata-to-support-re-use
-.. [10] http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html
 
 
 Instalación
@@ -145,7 +137,7 @@ TODO: Oscar
 -----
 Instalación de Thredds Data Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-En este apartado se explicará la instalación y configuración del servidor |TDS|. En primer lugar necesitaremos descargarnos la versión adecuada del servidor, en nuestro caso será la versión 4.2.8::
+En este apartado se explicará la instalación y configuración del servidor |TDS|. En primer lugar necesitaremos descargarnos la versión adecuada del servidor, en nuestro caso será la versión 4.2::
 
 	ftp://ftp.unidata.ucar.edu/pub/thredds/4.2/thredds.war
 
@@ -220,231 +212,26 @@ Una vez hecho esto procederemos al despliegue de |TDS| bien desde la pestaña ma
 
 	$ tail -f /var/lib/tomcat6/logs/catalina.out
 
-de esta manera veremos por consola los mensajes que nos envia |TCT|.
+de esta manera veremos por consola los mensajes que nos envia |TCT|
 Para comprobar que la instalación ha ido correctamente::
 
 	http://localhost:8080/thredds
 
 y accederemos al catalogo de ejemplo que viene en |TDS| por defecto.
-
-Configuración de módulos en |TDS|
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-TDS Remote Management
-"""""""""""""""""""""
-Desde el Remote Management de |TDS| podemos acceder a información acerca del estado del servidor, reiniciar catálogos... Para porder acceder a este deberemos previamente configurar |TCT| para que permita el acceso mediante SSL. Lo primero que haremos será crear un certificado autofirmado en el servidor (keystore) y configuraremos |TCT| para utilizar un conector que permita el acceso mediante este protocolo.
-
-Lo primero que haremos será utilizar la herramienta keytool para generar el certificado. Esta herramienta viene suministrada con el JDK de Java y la encontraremos en::
-	
-	$ $JAVA_HOME/bin/
-
-y la ejecutaremos indicandole la ruta donde generaremos el archivo .keystore ($USER_HOME/.keystore por defecto)::
-
-	$JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -validity 365 -keystore ~/.keystore
-
-y responderemos a las cuestiones que plantea. Respecto al password, por defecto |TCT| tiene definida *changeit* como contraseña por defecto, así que deberemos modificar en los valores del conector el valor de esta, indicandole la que hayamos definido en la creación del certificado. Para introducir esta y modificar algunos otros valores necesarios modificaremos el archivo server.xml de nuestra instancia de |TCT|::
-
-	$ sudo nano /etc/tomcat6/server.xml
-
-descomentaremos las lineas que activan el conector::
-
-	  <!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 -->
-    <Connector port="8443" 
-               maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
-               enableLookups="false" disableUploadTimeout="true"
-               acceptCount="100" debug="0" scheme="https" secure="true"
-               clientAuth="false" sslProtocol="TLS" keystoreFile="<ruta al .keystore creado>" keystorePass="<contraseña al crear el keystore>"/>
-
-introduciendo la ruta al archivo .keystore creado e indicandole la contraseña que hemos indicado en la creación del mismo. Una vez realizada esta modificación, reiniciaremos el |TCT| comprobaremos que los cambios se han realizado correctamente accediendo a::
-
-	https://localhost:8443
-
-Finalmente, para poder acceder al gestor remoto del |TDS| deberemos crear el usuario y el rol en |TCT| que permite este acceso. Para ello modificaremos el archivo tomcat-users.xml incluyendo lo siguiente::
-
-	<role rolename="tdsConfig"/>
-	<user username="<nombre usuario>" password="<password usuario>" roles="tdsConfig"/>
-
-Está será la clave de acceso del usuario, por lo que no es necesario que sea igual a la que se ha definido en el conector de |TCT|. Reiniciaremos el |TCT| de nuevo y comprobamos el acceso a través de::
-
-	https://localhost:8443/thredds/admin/debug
-
-**Referencias**
-
-* SSL Configuration HOW-TO [3]_
-* Enabling TDS Remote Management [6]_
-
-Configuración de servicios WMS y WCS
-""""""""""""""""""""""""""""""""""""
-|TDS| tiene por defecto los servicios WMS y WCS desactivados. Para poder hacer uso de estos servicios tendremos que activarlos. Deberemos modificar el archivo ``threddsConfig.xml`` que encontraremos en la carpeta ``content`` de la instalación de |TDS|. Modificaremos el archivo activando los servicios descomentando las etiquetas ``WMS`` y ``WCS`` y modificando el valor de la etiqueta ``allow`` a ``true``::
-	
-	<WMS>
-  	<allow>true</allow>
-	</WMS>
-
-para el servicio WMS y::
-
-	<WCS>
-  	<allow>true</allow>
-	</WCS>
-
-para el WCS. Ahora ya podremos indicar en nuestros catálogos que los servicios WMS y WCS se encuentran activos.
-
-**Referencias**
-
-* OGC/ISO services (WMS, WCS and ncISO) [4]_
-
-Configuración de ncISO
-""""""""""""""""""""""
-Desde la versión 4.2.4 de |TDS| se incluye el paquete ``ncISO`` que permite mostrar los metadatos de los datasets como fichas ISO. Para activar dicho servicio será necesario realizar unas modificaciones en el archivo ``threddsConfig.xml`` como en el caso de los servicios anteriores. Buscaremos en el archivo la linea que hace referencia el servicio ncISO las descomentaremos y modificaremos el valor a ``true`` para los tres casos::
-
-	<NCISO>
-		<ncmlAllow>true</ncmlAllow>
-		<uddcAllow>true</uddcAllow>
-		<isoAllow>true</isoAllow>
-	</NCISO>
-
-Ahora será posible añadir estos servicios a nuestros catálogos.
-
-**Referencias**
-
-* TDS and ncISO: Metadata Services [5]_
-
-Inclusión de servicios OGC/ISO en los catálogos
-"""""""""""""""""""""""""""""""""""""""""""""""
-Una vez que hemos activado los servicios OGC/ISO será posible la utilización de estos en nuestros catálogos. |TDS| utiliza archivos catalog.xml para definir las carpetas donde se almacenan los datasets, así como la estructura que tendrá el arbol que muestra dichos datasets. También se encarga de definir los servicios que están disponibles en el servidor y que permite el acceso a estos datasets.
-
-Existe la posibilidad de definir un tipo de servicio ``compound`` que lo que nos permite es asignar todos los servicios activos a los datasets que incluyan este servicio. Para definir esto, en nuestro ``catalog.xml`` incluiremos el siguiente elemento::
-
-	<service name="all" base="" serviceType="compound">
-		<service name="odap" serviceType="OpenDAP" base="/thredds/dodsC/" />
-		<service name="http" serviceType="HTTPServer" base="/thredds/fileServer/" />
-		<service name="wcs" serviceType="WCS" base="/thredds/wcs/" />
-		<service name="wms" serviceType="WMS" base="/thredds/wms/" />
-		<service name="ncml" serviceType="NCML" base="/thredds/ncml/"/>
-		<service name="uddc" serviceType="UDDC" base="/thredds/uddc/"/>
-		<service name="iso" serviceType="ISO" base="/thredds/iso/"/>
-	</service>
-
-así podremos indicar a los datasets que utilicen este servicio compuesto::
-
-	<dataset ID="sample" name="Sample Data" urlPath="sample.nc">
-  	<serviceName>all</serviceName>
-	</dataset>
-
-A través del ``servicename`` es como enlazaremos el servicio con los datasets. Podemos reinicializar nuestros catálogos accediendo a través de la aplicación TDS Remote Management.
-
-**Referencias**
-
-* TDS Configuration Catalogs [7]_
-* Dataset Inventory Catalog Specification, Version 1.0.2 [8]_
-
+ 
 |GN|
 ----
 
-Para el |DP| será necesario utilizar una versión de |GN| 2.7 o superior, debido a los procesos que son necesarios para realizar el harvesting. Una vez descargada la versión de |GN| indicada, se desplegará en nuestra instancia de |TCT| bien desde el manager o bien moviendo el archivo .war descargado a la carpeta webapps de servidor. 
-Será necesario modificar los permisos de la carpeta ``/var/lib/tomcat6`` para que el usuario tomcat6 que ejecuta el despliegue tenga permisos a la hora de desplegar |GN| y pueda crear en dicha carpeta los archivos necesarios para la instalación de |GN|. Para ello ejecutamos::
+* qué versión de |GN| instalar
 
-	$ sudo chown tomcat6:tomcat6 /var/lib/tomcat6
 
-y haremos el despliegue de |GN|. Si tenemos monitorizada la salida del archivo de log ``catalina.out`` podremos comprobar que el despliegue se ha realizado de manera correcta si aparece un mensaje como::
-
-	2011-08-22 18:21:29,004 INFO  [jeeves.engine] - === System working =========================================
-
-Podremos acceder a nuestro |GN| a través de::
-
-	http://localhost:8080/geonetwork
 
 Harvesting |TDS| a |GN|
 -----------------------
 
-|GN| permite, a partir de su versión 2.7, realizar procesos de harvesting a servidores |TDS|. De esta manera es posible incorporar en nuestro servidor de catálogo la información de los metadatos de los datasets que tengamos publicados a través de nuestro servidor |TDS|. Para configurar correctamente este proceso de Harvesting es necesario realizar dos operaciones diferentes:
+* cómo configurar tarea harvesting (pantallazo?)
+* cómo tunear plantilla de harvesteo para que recoja BBOX, timespan, texto y variables de netCDF y los coloque en una ISO
 
-* Creación y configuración del proceso de Harvesting
-* Creación de las plantillas de extracción de la información
-
-Creación y configuración del proceso de Harvesting
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Para dar de alta un proceso de harvesting debemos acceder a |GN| como administradores y dirigirnos a la pestaña de ``Administration``. Desde allí nos dirigiremos a ``Harvesting Management``. Esto nos abrirá una nueva ventana desde donde podemos crear nuestro proceso de harvesting. Para ello pulsaremos sobre ``Add`` y elegiremos del desplegable el ``Thredds Catalog`` para después volver a pulsar ``Add``. Rellenaremos los campos como se indica a continuación:
-
-.. image:: img/harvesting-management.png
-		:width: 600 px
-		:alt: Configuración de proceso harvest
-		:align: center
- 
-* **Name**; nombre que le queremos dar al proceso
-* **Catalog URL**; URL del catalog de |TDS|. Importante que la dirección apunte al .xml::
-	
-	http://localhost:8080/thredds/catalog.xml
-
-* **Create ISO19119 metadata for all services in the catalog**; crearia una plantilla ISO19119 para todos los servicios que hayamos definido en nuestro catalog.xml
-* **Create metadata for Collection Datasets**; si seleccionamos esta opción, el proceso de harvesting creará un registro en |GN| también para las colecciones de datasets incluidas en el catalog.xml. Dentro de esta opción existen varias opciones:
-	* **Ignore harvesting attribute**: Que no tiene en cuenta el valor del atributo harvest en el archivo catalog.xml. En caso de no seleccionar esta opción, solo incorporarán en el catálogo aquellas colecciones que tengan este valor igual a ``true`` en el catalog.xml.
-	* **Extract DIF metadata elements and create ISO metadata**: Extrae metadatos DIF y crea un metadato ISO. Habrá que seleccionar el esquema en el que se desea realizar la extracción.
-	* **Extract Unidata dataset discovery metadata using fragments**: indicaremos que el proceso extraiga el valor de los metadatos que se definen utilizando la NetCDF Attribute Convention for Dataset Discovery. Nos permite el uso de fragmentos en la extracción de la información. Nos solicita el esquema de salida de la información, la plantilla que queremos utilizar para la creación de los fragmentos y la plantilla sobre la que se van a crear dichos fragmentos. Un detalle de este proceso se explica más adelante.
-* **Create metadata for Atomic Datasets**; Con las opciones parecidas al caso anterior, generará un registro por cada dataset que exista en nuestro servidor |TDS|. Cuenta con la opción **Harvest new or modified datasets only** que indica que cuando se repita el proceso de harvesting solo se incluyan aquellos datasets nuevos o que hayan sido modificados.
-* **Create thumbnails for any datasets delivered by WMS**; crea iconos para los datasets que tengan activado el servicio WMS y permite elegir el icono.
-* **Every**; indicaremos la frecuencia con que deseamos que se repita el proceso de harvest o si solo queremos que se repita una vez.
-
-Una vez definidas estos parametros pulsaremos sobre ``Save`` y podremos observar como en la ventana anterior aparece nuestro proceso. Seleccionandole podremos acceder a las diferentes operaciones que se nos ofrece. Si pulsamos sobre ``Run`` ejecutaremos el harvest. Una vez finalizado, situando el puntero del ratón sobre el icono ``Status`` visualizaremos un resumen del proceso.
-
-Creación de las plantillas de extracción de la información
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Para generar la información que necesitamos para el |DP|, debemos configurar el proceso de harvest de manera que este extraiga la información asociada a los datasets configurados en el servidor |TDS| siguiendo la NetCDF Attribute Convention for Dataset Discovery. Para ello a partir de la versión 2.7 de |GN| se implementa la posibilidad de utilizar fragmentos para la extracción y reutilización de esta información extraida en el proceso de harvest. Esta posibilidad solo está disponible para extracción de información de catalogos |TDS| y operaciones getFeature del protocolo WFS. Utilizando los fragmentos podremos extraer exclusivamente la información que requiere el |DP| para el proceso de busquedas implementado a través de |GN|. Podremos definir plantillas con los fragmentos que nos interesan que serán guardados en |GN| como **subplantillas** (subtemplates), a seleccionar en las opciones del proceso de harvest, y estos fragmentos que generarán estas subplantillas serán insertados en una plantilla que generará el registro (**plantilla base**) con el metadato en |GN|.
-
-.. image:: img/web-harvesting-fragments.png
-   :width: 400 px
-   :alt: utilización de fragmentos en |GN|
-   :align: center
-
-Para tener disposición de las plantillas y subplantillas hemos de crear estas en la carpeta del esquema que vayamos a utilizar. Estas carpetas se encuentran en::
-
-	$TOMCAT_HOME/webapps/geonetwork/xml/schemas/
-
-Para el caso del |DP| utilizaremos el esquema ISO19139, por lo que será necesario crear la **plantilla base** en la carpeta ``templates`` del esquema ``iso19139``::
-
-	$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/templates
-
-allí encontraremos la plantilla base que viene por defecto con la versión de |GN| que podremos utilizar para crear la nuestra propia. Dentro de la misma carpeta del esquema, encontraremos una carpeta ``convert`` en la que aparece la carpeta ``ThreddsTofragments``. En esta localización será donde incluiremos nuestras **subplantillas** que generarán los fragmentos::
-
-	$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/convert/ThreddsToFragments
-
-Una vez que hayamos incluido nuestros archivos en las carpetas indicadas, deberemos cargar las plantillas del esquema en |GN|. Para ello, desde una sesión como administrador, nos dirigiremos a la ventana ``Administration`` y en la sección de ``Metadata & Template`` seleccionaremos el esquema ``iso19139`` y le indicaremos ``Add templates``. Realizado esto, podremos comprobar que en las opciones dentro de la ventana de ``Harvesting Management`` ``Stylesheet to create metadata fragments`` y ``Select template to combine with fragments`` podremos encontrar las plantillas que hemos creado. El nombre de estas plantillas serán el nombre del archivo para las **subplantillas** y el valor del tag que tenga asociado el id ``id="thredds.title"`` dentro de la **plantilla base**.
-
-Creación de la plantilla base
-"""""""""""""""""""""""""""""
-Para la creación de la plantilla base tomaremos como plantilla de partida la que |GN| incluye por defecto en su versión 2.7. Esta, como hemos comentado se encuentra en::
-
-	$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/templates/thredds-harvester-unidata-data-discovery.xml
-
-Esta es la plantilla base que se generará por cada registro que se incluya en |GN|. Se trata de una plantilla tipica de la ISO19139. La diferencia fundamental, es que asociado a determinados elementos de la ISO, aparece el atributo ``id=<identificador del fragmento>``. Esta es la manera en que se indica que durante el proceso de creación del metadato en |GN|, busque el identificador en la subplantilla que hemos seleccionado al crear el proceso de harvest. Por eso para crear la plantilla base, lo único que debemos hacer es sustituir los elementos que estemos interesados en crear mediante fragmentos, por una llamada a través del ``id`` al del fragmento que estamos interesados en incluir::
-
-	<gmd:date id="thredds.resource.dates"/>
-	<gmd:abstract id="thredds.abstract"/>
-	<gmd:credit id="thredds.credit"/>
-	<gmd:descriptiveKeywords id="thredds.keywords"/>
-	<gmd:resourceConstraints id="thredds.use.constraints"/>
-	<gmd:aggregationInfo id="thredds.project"/>
-
-y en la subplantilla definiremos los fragmentos y les indicaremos el ``id`` al que la pantilla hace referencia.
-
-Creación de la subplantilla (fragmentos)
-""""""""""""""""""""""""""""""""""""""""
-La subplantilla ha de definirse en la carpeta::
-
-	$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/convert/ThreddsToFragments
- 
-Una vez que hemos definido los ``id`` en la plantilla base, debemos crear estos en la subplantilla. Para ello podemos partir de alguna de los XSL que vienen suministrados en la versión de |GN|. Estas subplantillas, a diferencia de las plantillas base, se tratan de hojas XSL que serán ejecutadas durante la creación del metadato. 
-
-Si abrimos una plantilla de las suministradas, por ejemplo::
-
-	$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/convert/ThreddsToFragments/netcdf-attributes.xsl
-
-comprobaremos que se trata de un ejemplo normal de plantilla xsl, con su encabezado, definición de namespaces, y como diferencia se puede observar la aparición de unos elementos::
-
-	<fragment id="thredds.resource.dates" uuid="{util:toString(util:randomUUID())}" title="{concat($name,'_metadata_creation')}">
-	...
-	</fragment>
-
-Esta es la manera de definir el fragmento. El atributo ``id`` que acompaña al elemento se trata del ``id`` al que se hace referencia en la plantilla base, y todos los elementos que se incluyan dentro del fragmento serán procesados en la creación del metadato e incluidos en la plantilla. 
 
 |DP|
 ----
