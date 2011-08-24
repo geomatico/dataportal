@@ -1,0 +1,332 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>ICOS Carbon Data Portal</title>
+		<link rel="shortcut icon" href="img/icos.ico" />
+		<link rel="stylesheet" type="text/css" href="js/ext3/resources/css/ext-all-notheme.css" />
+		<link rel="stylesheet" type="text/css" href="js/ext3/resources/css/xtheme-gray.css" />
+		<link rel="stylesheet" type="text/css" href="css/icos.css" />
+		<script type="text/javascript" src="js/openlayers/OpenLayers.js"></script>
+        <script type="text/javascript" src="js/BBOXes.js"></script>
+		<script type="text/javascript" src="js/ext3/adapter/ext/ext-base.js"></script>
+		<script type="text/javascript" src="js/ext3/ext-all-debug-w-comments.js"></script>
+		<script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script>
+		<script type="text/javascript">
+		
+	    Ext.onReady(function(){
+	        //Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+
+	        var vl = new OpenLayers.Layer.Vector("BBOXes");
+            bounds = OpenLayers.Bounds.fromArray([1, 38, 5, 41]);
+            bounds.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+            box = new OpenLayers.Feature.Vector(bounds.toGeometry());
+            vl.addFeatures([box]);
+	        
+	        Ext.QuickTips.init();
+	        Ext.QuickTips.enable();
+
+	        new Ext.Viewport({
+	            layout: 'border',
+	            items: [{
+                    region: 'north',
+	                xtype: 'box',
+	                height: 64,
+                    contentEl: 'header'
+	            }, {
+	                region: 'south',
+	                contentEl: 'log',
+	                split: true,
+	                height: 100,
+	                minSize: 100,
+	                maxSize: 200,
+	                collapsible: true,
+	                collapsed: true,
+	                autoScroll: true,
+	                title: 'Message Log',
+	                margins: '0 0 0 0'
+	            }, {
+                    region: 'east',
+	                title: 'User',
+	                layout: 'fit',
+					collapsible: true,
+	                split: true,
+	                width: 225,
+	                minSize: 175,
+	                maxSize: 400,
+	                margins: '0 5 0 0',
+	                items: [{
+	                    xtype: 'tabpanel',
+	                    border: false,
+	                    activeTab: 0,
+	                    items: [{
+	                        title: 'Shopping Cart',
+	                        html: '<p>Dataset bundle download manager & QI generator</p>',
+	                        autoScroll: true
+	                    }, {
+	                        title: 'Settings',
+	                        html: '<p>Change personal preferences and data</p>',
+	                        autoScroll: true
+	                    }]
+	                }]
+	            }, {
+	                region: 'west',
+	                id: 'west-panel',
+	                title: 'Query Panel',
+	                split: false,
+	                width: 287,
+	                collapsible: true,
+	                margins: '0 0 0 5',
+	                layout: {
+	                    type: 'vbox',
+	                    align:'stretch',
+	                    animate: true
+	                },
+	                items: [{
+	                    labelAlign: 'top',
+                        //labelWidth: 100,
+	                    autoScroll: true,
+	                    border: true,
+	                    padding: 4,
+		                flex: 1,
+	                    xtype: 'form',
+	                    id: 'searchFormPanel',
+	                    items: [{
+                            border: false,
+                            items: [{
+                                xtype: 'label',
+                                text: 'Text:',
+                            },{
+                                style: 'margin: 4px;width:200px', // Guarradas a domicilio
+                                xtype: 'textfield',
+                                name: 'text',
+                                value: ''
+                            }]
+                        }, {
+                            xtype: 'gx_mappanel',
+                            map: {
+                                controls: [new OpenLayers.Control.Navigation()],
+                                projection: new OpenLayers.Projection("EPSG:900913"),
+                                displayProjection: new OpenLayers.Projection("EPSG:4326")
+                            },
+                            layers: [new OpenLayers.Layer.OSM("Base Layer"), vl],
+                            zoom: 0,
+                            height: 283,
+                            tbar: [{
+                                xtype: 'tbtext',
+                                text: 'Filter by location:'
+                            }, "->", {
+                                xtype: 'tbbutton',
+                                qtip: 'Navigate',
+                                iconCls: 'mapNav',
+                                handler: function(btn) {
+                                    log(btn.qtip+" Button Pressed");
+                                }
+                            }, {
+                                xtype: 'tbbutton',
+                                qtip: 'Add filter',
+                                iconCls: 'bboxAdd',
+                                handler: function(btn) {
+                                    log(btn.qtip+" Button Pressed");
+                                }
+                            }, {
+                                xtype: 'tbbutton',
+                                qtip: 'Remove filter',
+                                iconCls: 'bboxDel',
+                                handler: function(btn) {
+                                    log(btn.qtip+" Button Pressed");
+                                }
+                            }/*, {
+                                xtype: 'tbbutton',
+                                qtip: 'Open bigger map',
+                                iconCls: 'mapBig',
+                                handler: function(btn) {
+                                    log(btn.qtip+" Button Pressed");
+                                }
+                            }*/]
+                        }, {
+                            layout: 'column',
+                            padding: 5,
+                            border: false,
+                            items: [{
+                                columnWidth: 0.5,                                
+                                border: false,
+                                items: [{
+                                    xtype: 'label',
+                                    text: 'From date:'
+                                },{
+		                            xtype: 'datefield',
+		                            id: 'start_date',
+		                            submitValue: false
+                                }]
+	                        }, {
+                                columnWidth: 0.5,
+                                border: false,
+                                items: [{
+                                    xtype: 'label',
+                                    text: 'To date:'
+                                }, {
+		                            xtype: 'datefield',
+		                            id: 'end_date',
+		                            submitValue: false
+	                            }]
+	                        }]
+                        }],
+                        buttons: [{
+                            text: 'Search',
+                            handler: function() {
+                                var format = new OpenLayers.Format.BBOXes();
+                                
+                                var variables = [];
+                                Ext.getCmp('magnitudes').eachItem(function(item){
+                                    if(item.getValue()){
+                                        variables.push(item.getName());
+                                    };
+                                });
+                                
+                                var start_date = Ext.getCmp('start_date').getValue();
+                                if (start_date!="") start_date = start_date.format("Y-m-d");
+                                var end_date = Ext.getCmp('end_date').getValue();
+                                if (end_date!="") end_date = end_date.format("Y-m-d");
+                                
+                                Ext.getCmp('searchFormPanel').getForm().submit({
+                                    url: this.url,
+                                    scope: this,
+                                    success: function() {log('Search query: success')},
+                                    failure: function() {log('Search query: failure')},
+                                    params: {
+                                        bboxes: format.write(vl.features),
+                                        start_date: start_date,
+                                        end_date: end_date,
+                                        variables: variables.join(","),
+                                        response_format: "application/json",
+                                        start: 0,
+                                        limit: 25,
+                                        sort: "title",
+                                        dir: "ASC"
+                                    },
+                                    //method: 'GET',
+                                    waitMsg: 'Querying...'
+                                });
+                            }
+                        }],
+                        url: 'fakeSearch' // TODO. Put real servlet URL
+	                }/*, {
+	                	title: 'Get data by Query Identifier',
+	                	border: false,
+	                	height: 100,
+	                	padding: 10,
+	                	xtype: 'form',
+                        items: [{
+                            xtype: 'textfield',
+                            name: 'qi_field',
+                            fieldLabel: 'DOI',
+                            value: ''
+                        }],
+                        buttons: [{
+                            text: 'Get dataset',
+                            handler: function(a, b) {
+                                log("Search by QI button pressed");
+                            }
+                        }]
+	                }*/]
+	            }, {
+	                xtype: 'tabpanel',
+	                region: 'center',
+	                deferredRender: false,
+	                activeTab: 0,
+	                items: [{
+	                    contentEl: 'results',
+	                    title: 'Results',
+	                    closable: false,
+	                    autoScroll: true
+	                },{
+	                    contentEl: 'other',
+	                    title: 'Other Views',
+	                    closable: true,
+	                    autoScroll: true
+	                }]
+	            }]
+	        });
+	        log("Layout Loaded");
+	        
+	        var store = new Ext.data.XmlStore({
+	            autoLoad: true,
+	            storeId: 'vocabulario',
+	            url: 'xml/vocabulario.xml',
+	            record: 'term',
+	            idPath: 'sado_term',
+	            fields: [
+                     'sado_term',
+                     'nc_term',
+                     'nc_long_term',
+                     'en_term',
+                     'en_long_term',
+                     'nc_units',
+                     'nc_data_type',
+                     'nc_coordinate_axis_type'
+	            ],
+	            sortInfo: { field: 'nc_long_term', direction: 'ASC' },
+	            listeners: {
+	                'load': function(store, records, options) {
+	                    var checkboxitems = [];
+	                    //store.sort('nc_long_term', 'ASC');
+	                    store.each(function(record){
+	                        checkboxitems.push({
+	                            id: record.data.sado_term, // TODO this should be nc_term, if it was unique...
+	                            boxLabel: (record.data.nc_long_term || record.data.en_long_term),
+	                            name: record.data.nc_term || record.data.en_term,
+	                            submitValue: false
+	                        });
+	                    });
+	                                        
+	                    var cbg = new Ext.form.CheckboxGroup({
+                            id: 'magnitudes',
+                            columns: 1,
+                            items: checkboxitems
+                        });
+
+	                    var fs = { 
+	                        xtype:'fieldset',
+	                        title: 'Variables',
+	                        hideLabel: true,
+	                        fieldLabel: "&nbsp;", // Ah, si, si, creetelo!
+	                        collapsible: true,
+	                        autoHeight: true,
+	                        items: cbg
+	                    };
+	                    
+	                    Ext.getCmp('searchFormPanel').add(fs);
+	                    Ext.getCmp('west-panel').doLayout();
+	                }
+	            }
+	        });
+	        
+	    });
+	    
+	    function log(message) {
+	    	Ext.fly("log").dom.innerHTML = "[" + new Date().format('Y-m-d H:i:s') + "] <b>"+message+"</b><br>" + Ext.fly("log").dom.innerHTML;
+	    }
+	    
+		</script>
+	</head>
+	<body>
+		<div id="header" class="x-hide-display">
+			 <img src="img/icos-logo.png"/>
+			 <div id="title">ICOS Carbon Data Portal</div>
+			 <a href="#" class="login" onclick="log('Login clicked')">Login</a>
+		</div>
+	    <!-- use class="x-hide-display" to prevent a brief flicker of the content -->
+	    <div id="search" class="x-hide-display">
+	        <p>Search form</p>
+	    </div>
+	    <div id="results" class="x-hide-display">
+	        <p><b>Result grid renders here</b></p>
+	    </div>
+	    <div id="other" class="x-hide-display">
+	        <p><b>Close me</b></p>
+	    </div>
+	    <div id="log" class="x-hide-display" style="font-family:monospace;">
+	    </div>
+    </body>
+</html>

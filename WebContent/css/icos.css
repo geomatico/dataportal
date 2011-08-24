@@ -1,0 +1,70 @@
+html, body {
+    font-family: helvetica;
+    font-size: 12px;
+    margin:0;
+    padding:0;
+    border:0 none;
+    overflow:hidden;
+    height:100%;
+}
+
+#header img{
+	float: left;
+	padding: 3px;
+	padding-left: 15px;
+}
+
+#title {
+	height: 64px;
+	font-size: 40px;
+	font-weight: bold;
+	font-style: italic;
+	padding-left: 320px;
+	padding-top: 12px;
+	color: #d14d0c;
+}
+
+p {
+	padding: 5px;
+}
+
+a.login {
+	position: absolute;
+	top: 35px;
+	right: 12px;
+}
+
+#pepe {
+    padding-bottom: 8px;
+    padding-top: 4px;
+}
+
+.bboxAdd {
+  background-image: url(../img/silk/pencil_add.png) !important;
+}
+
+.bboxDel {
+  background-image: url(../img/silk/pencil_delete.png) !important;
+}
+
+.mapNav {
+  background-image: url(../img/geosilk/pan.png) !important;
+}
+
+.mapBig {
+  background-image: url(../img/silk/wand.png) !important;
+}
+
+#magnitudes {
+    padding-left: 5px;
+}
+
+#magnitudes .x-form-item, #magnitudes .x-form-element {
+    padding: 0;
+    margin: 0;	
+}
+
+.x-form-check-wrap {
+    line-height: 18px;
+}
+
