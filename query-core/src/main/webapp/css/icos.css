@@ -74,3 +74,14 @@ a.login {
     margin-top: 24px;
 }
 
+img.icon-download {
+    width: 16px;
+    height: 16px;
+    background: url(../img/silk/bullet_go.png) no-repeat;
+}
+
+img.icon-delete {
+    width: 16px;
+    height: 16px;
+    background: url(../img/silk/cross.png) no-repeat;
+}

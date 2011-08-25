@@ -4,6 +4,9 @@ Icos.result.Grid =  Ext.extend(Ext.grid.GridPanel, {
     
     pageSize: 25,
     vocabulary: null,
+    recordType: null,
+    downloadHandler: null,
+    handlerScope: null,
     
     initComponent: function() {
         
@@ -16,17 +19,7 @@ Icos.result.Grid =  Ext.extend(Ext.grid.GridPanel, {
                 record: 'item',
                 id: 'id',
                 totalProperty: '@totalcount'
-            },
-            [ // RecordType
-                 'id',
-                 'title',
-                 'summary',
-                 'geo_extent',
-                 {name: 'start_time', type: 'date'},
-                 {name: 'end_time', type: 'date'},
-                 'variables',
-                 'data_link'
-            ]),
+            }, this.recordType ),
             remoteSort: true,
             sortInfo: {
                 field: 'title',
@@ -87,13 +80,14 @@ Icos.result.Grid =  Ext.extend(Ext.grid.GridPanel, {
                 {id: "title", header: "Title", width: 'auto', sortable: true, dataIndex: 'title'},
                 {header: "From date", width: 90, sortable: true, dataIndex: 'start_time', renderer: Ext.util.Format.dateRenderer('Y-m-d')}, // H:i:s
                 {header: "To date", width: 90, sortable: true, dataIndex: 'end_time', renderer: Ext.util.Format.dateRenderer('Y-m-d')},
-                {header: "Data Link", width: 100, sortable: false, dataIndex: 'data_link', renderer:
-                    function(value){
-                        if (value)
-                            return '<a href="'+value+'">DOWNLOAD</a>';
-                        else
-                            return '(N/A)';
-                    }
+                {
+                    xtype: "actioncolumn",
+                    width: 30,
+                    iconCls: "icon-download",
+                    tooltip: "Add to Downloads",
+                    align: "center",
+                    handler: this.downloadHandler,
+                    scope: this.handlerScope
                 }
             ]),
             bbar: new Ext.PagingToolbar({

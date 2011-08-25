@@ -2,9 +2,11 @@ Ext.namespace('Icos');
 
 Icos.App =  Ext.extend(Ext.Viewport, {
     
-    queryForm: null,
     vocabulary: null,
+    dataRecordType: null,
+    queryForm: null,
     resultGrid: null,
+    downloadPanel: null,
     
     initComponent: function() {
         // TODO: Manage state & session
@@ -26,8 +28,18 @@ Icos.App =  Ext.extend(Ext.Viewport, {
             }
         });
         
+        this.dataRecordType = Ext.data.Record.create ([
+            'id',
+            'title',
+            'summary',
+            'geo_extent',
+            {name: 'start_time', type: 'date'},
+            {name: 'end_time', type: 'date'},
+            'variables',
+            'data_link'
+       ]);
+        
         this.queryForm = new Icos.query.Form({
-            xtype: 'i_queryform',
             vocabulary: this.vocabulary,
             listeners: {
                 scope: this,
@@ -43,8 +55,17 @@ Icos.App =  Ext.extend(Ext.Viewport, {
         this.vocabulary.load();
         
         this.resultGrid = new Icos.result.Grid({
-            xtype: 'i_resultgrid',
-            vocabulary: this.vocabulary
+            vocabulary: this.vocabulary,
+            recordType: this.dataRecordType,
+            downloadHandler: function(grid, rowIndex, colIndex) {
+                var id = grid.store.getAt(rowIndex).get("id");
+                this.addRecordToDownload(grid.store.getAt(rowIndex));
+            },
+            handlerScope: this
+        });
+        
+        this.downloadPanel = new Icos.download.Panel({
+            recordType: this.dataRecordType
         });
         
         var config = {
@@ -71,6 +92,7 @@ Icos.App =  Ext.extend(Ext.Viewport, {
             }, {
                 title: '2. Results',
                 region: 'center',
+                layout: 'fit',
                 items: [
                     this.resultGrid
                 ],
@@ -80,7 +102,10 @@ Icos.App =  Ext.extend(Ext.Viewport, {
                 region: 'east',
                 layout: 'fit',
                 split: false,
-                width: 225
+                width: 287,
+                items: [
+                    this.downloadPanel
+                ]
             }]
         };
         
@@ -90,7 +115,17 @@ Icos.App =  Ext.extend(Ext.Viewport, {
 
     doQuery: function() {
         this.resultGrid.load(this.queryForm.getParams());
+    },
+    
+    addRecordToDownload: function(record) {
+        var clonedRecord = record.copy();
+        if(this.downloadPanel.store.getById(clonedRecord.id)) {
+            alert("This file is already set for download");
+        } else {
+            this.downloadPanel.store.add(clonedRecord);
+        }
     }
+    
 });
 
 Ext.reg('i_app', Icos.App);
