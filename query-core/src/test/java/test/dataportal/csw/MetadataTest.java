@@ -1,10 +1,11 @@
-package cmima.icos;
+package test.dataportal.csw;
 
 import java.io.File;
 import java.io.FileInputStream;
 
-import cmima.icos.csw.Metadata;
-import cmima.icos.utils.BBox;
+import org.dataportal.csw.Metadata;
+import org.dataportal.utils.BBox;
+
 import junit.framework.TestCase;
 
 public class MetadataTest extends TestCase {
@@ -21,7 +22,7 @@ public class MetadataTest extends TestCase {
 
 		super.setUp();
 		String dir = System.getProperty("user.dir");
-		File metadatoFile = new File(dir + "/src/test/java/metadatoTest.xml");
+		File metadatoFile = new File(dir + "/src/test/resources/metadatoTest.xml");
 
 		try {
 			FileInputStream archivo = new FileInputStream(metadatoFile);

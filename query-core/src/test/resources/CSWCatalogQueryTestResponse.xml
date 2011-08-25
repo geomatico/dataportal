@@ -1,0 +1,37 @@
+<csw:GetRecords service="CSW" version="2.0.2" resultType="results"
+	outputFormat="application/xml" outputSchema="csw:IsoRecord"
+	xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
+	maxRecords="10" startPosition="1">
+	<csw:Query typeNames="gmd:MD_Metadata">
+		<csw:ElementSetName>full</csw:ElementSetName>
+		<csw:Constraint version="1.1.0">
+			<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc"
+				xmlns:gml="http://www.opengis.net/gml">
+				<ogc:And>
+					<ogc:BBOX>
+						<ogc:PropertyName>iso:BoundingBox</ogc:PropertyName>
+						<gml:Envelope xmlns:gml="http://www.opengis.net/gml">
+							<gml:lowerCorner>-10 50</gml:lowerCorner>
+							<gml:upperCorner>10 40</gml:upperCorner>
+						</gml:Envelope>
+					</ogc:BBOX>
+					<ogc:And>
+						<ogc:PropertyIsGreaterThanOrEqualTo>
+							<ogc:PropertyName>TempExtent_begin</ogc:PropertyName>
+							<ogc:Literal>2011-07-10</ogc:Literal>
+						</ogc:PropertyIsGreaterThanOrEqualTo>
+						<ogc:PropertyIsLessThanOrEqualTo>
+							<ogc:PropertyName>TempExtent_end</ogc:PropertyName>
+							<ogc:Literal>2011-07-15</ogc:Literal>
+						</ogc:PropertyIsLessThanOrEqualTo>
+					</ogc:And>
+					<ogc:PropertyIsLike wildCard="%" singleChar="_"
+						escapeChar="\\">
+						<ogc:PropertyName>AnyText</ogc:PropertyName>
+						<ogc:Literal>oscar fonts</ogc:Literal>
+					</ogc:PropertyIsLike>
+				</ogc:And>
+			</ogc:Filter>
+		</csw:Constraint>
+	</csw:Query>
+</csw:GetRecords>

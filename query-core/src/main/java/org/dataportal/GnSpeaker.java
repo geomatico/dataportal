@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cmima.icos;
+package org.dataportal;
 
 import java.util.HashMap;
 

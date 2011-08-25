@@ -1,6 +1,7 @@
-package cmima.icos;
+package test.dataportal.utils;
 
-import cmima.icos.utils.RangeDate;
+import org.dataportal.utils.RangeDate;
+
 import junit.framework.TestCase;
 
 public class RangeDateTest extends TestCase {

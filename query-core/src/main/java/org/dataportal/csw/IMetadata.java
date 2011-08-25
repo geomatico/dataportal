@@ -1,10 +1,10 @@
 /**
  * 
  */
-package cmima.icos.csw;
+package org.dataportal.csw;
 
 
-import cmima.icos.utils.BBox;
+import org.dataportal.utils.BBox;
 
 /**
  * @author Micho Garcia

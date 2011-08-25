@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cmima.icos;
+package org.dataportal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.rmi.CORBA.Util;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -20,19 +19,18 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
-
-import cmima.icos.csw.CSWCatalog;
-import cmima.icos.csw.CSWCatalogQuery;
-import cmima.icos.utils.BBox;
-import cmima.icos.utils.RangeDate;
-import cmima.icos.utils.Utils;
+import org.dataportal.csw.CSWCatalog;
+import org.dataportal.csw.CSWCatalogQuery;
+import org.dataportal.utils.BBox;
+import org.dataportal.utils.RangeDate;
+import org.dataportal.utils.Utils;
 
 /**
  * @author Micho Garcia
  * 
  */
 public class QueryController {
-	
+
 	private static Logger logger = Logger.getLogger(QueryController.class);
 
 	private static final int FIRST = 0;
@@ -55,7 +53,7 @@ public class QueryController {
 
 	/**
 	 * Receive the params from the client request and communicates these to
-	 * gnSpeaker
+	 * CSWCatalog
 	 * 
 	 * @param parametros
 	 */
@@ -83,8 +81,10 @@ public class QueryController {
 	}
 
 	/**
+	 * Transform the response from CSW Catalog into client response
+	 * 
 	 * @param isCswResponse
-	 * @return
+	 * @return String
 	 */
 	private String transform(InputStream isCswResponse) {
 
@@ -92,7 +92,7 @@ public class QueryController {
 		InputStream isXslt = CSWCatalog.class
 				.getResourceAsStream("/response2client.xsl");
 
-		try {			
+		try {
 			Source responseSource = new StreamSource(isCswResponse);
 			Source xsltSource = new StreamSource(isXslt);
 
@@ -117,8 +117,11 @@ public class QueryController {
 	}
 
 	/**
+	 * Extract the params from a Map and create a Query in CSW 2.0.2
+	 * standard
+	 * 
 	 * @param parametros
-	 * @return
+	 * @return String
 	 */
 	private String params2Query(Map<String, String[]> parametros) {
 
@@ -145,13 +148,13 @@ public class QueryController {
 		String freeText = parametros.get("text")[FIRST];
 		if (freeText != "")
 			queryParams.put("text", freeText);
-		
+
 		// pagination
 		String startPosition = parametros.get("start")[FIRST];
 		String maxRecords = parametros.get("limit")[FIRST];
-		
 
-		CSWCatalogQuery CSWrequest = new CSWCatalogQuery("gmd:MD_Metadata", "csw:IsoRecord");
+		CSWCatalogQuery CSWrequest = new CSWCatalogQuery("gmd:MD_Metadata",
+				"csw:IsoRecord");
 		CSWrequest.setMaxRecords(maxRecords);
 		CSWrequest.setStartPosition(startPosition);
 		String aCSWQuery = CSWrequest.createQuery(queryParams);

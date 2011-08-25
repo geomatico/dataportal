@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cmima.icos.utils;
+package org.dataportal.utils;
 
 /**
  * @author Micho Garcia

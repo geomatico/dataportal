@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cmima.icos.csw;
+package org.dataportal.csw;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -14,11 +14,11 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
+import org.dataportal.utils.BBox;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import cmima.icos.utils.BBox;
 
 /**
  * @author Micho Garcia

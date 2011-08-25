@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cmima.icos.utils;
+package org.dataportal.utils;
 
 import org.apache.log4j.Logger;
 

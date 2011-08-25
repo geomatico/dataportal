@@ -1,16 +1,15 @@
 /**
  * 
  */
-package cmima.icos.csw;
+package org.dataportal.csw;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
-
-import cmima.icos.utils.BBox;
-import cmima.icos.utils.RangeDate;
+import org.dataportal.utils.BBox;
+import org.dataportal.utils.RangeDate;
 
 /**
  * @author Micho Garcia
@@ -51,19 +50,21 @@ public class CSWCatalogQuery {
 	}
 
 	/**
-	 * @param startPosition the startPosition to set
+	 * @param startPosition
+	 *            the startPosition to set
 	 * 
-	 * TODO cambiar esto en cliente
+	 *            TODO cambiar esto en cliente
 	 */
 	public void setStartPosition(String startPosition) {
-		if (startPosition.equals("0") )
+		if (startPosition.equals("0"))
 			this.startPosition = "1";
 		else
 			this.startPosition = startPosition;
 	}
 
 	/**
-	 * @param maxRecords the maxRecords to set
+	 * @param maxRecords
+	 *            the maxRecords to set
 	 */
 	public void setMaxRecords(String maxRecords) {
 		this.maxRecords = maxRecords;
@@ -72,12 +73,8 @@ public class CSWCatalogQuery {
 	/**
 	 * Create a header request string for GetRecords
 	 * 
-	 * @param id
-	 *            is the ID of the record to get
-	 * @param cat
-	 *            Catalog The catalog to get the record from
 	 * @return A properly formatted request string
-	 * @throws IOException
+	 * 
 	 */
 	private String createHeadersRequest() {
 
@@ -107,13 +104,13 @@ public class CSWCatalogQuery {
 	 * 
 	 * Create a header filter query
 	 * 
-	 * @param typeNames
 	 * @return String
 	 */
 	private String createHeadersQuery() {
 
 		String queryHeader = "<csw:Query typeNames=\"" + this.typeNames
-				+ "\">\n" + "<csw:Constraint version=\"1.1.0\">\n"
+				+ "\">\n" + "<csw:ElementSetName>full</csw:ElementSetName>\n"
+				+ "<csw:Constraint version=\"1.1.0\">\n"
 				+ "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/ogc\" "
 				+ "xmlns:gml=\"http://www.opengis.net/gml\">\n" + "$"
 				+ "</ogc:Filter>\n</csw:Constraint>\n</csw:Query>\n";
@@ -144,7 +141,7 @@ public class CSWCatalogQuery {
 			@SuppressWarnings("unchecked")
 			ArrayList<BBox> bboxes = (ArrayList<BBox>) queryParams
 					.get("bboxes");
-			query = bboxes2CSWquery(query, bboxes);
+			query.append(bboxes2CSWquery(bboxes));
 		}
 
 		if (queryParams.containsKey("temporalExtent")) {
@@ -175,30 +172,36 @@ public class CSWCatalogQuery {
 	}
 
 	/**
+	 * Convert bboxes array into OGC text to query
+	 * 
 	 * @param query
 	 * @param bboxes
 	 */
-	private StringBuffer bboxes2CSWquery(StringBuffer query,
+	private String bboxes2CSWquery(
 			ArrayList<BBox> bboxes) {
+		
+		String query = "";
 
 		boolean moreThanOne = false;
 		if (bboxes.size() > 1) {
-			query.append("<ogc:Or>\n");
+			query = query.concat("<ogc:Or>\n");
 			moreThanOne = true;
 		}
 		for (BBox bbox : bboxes) {
 			String strBbox = bbox.toOGCBBox();
-			query.append(strBbox);
+			query = query.concat(strBbox);
 		}
 		if (moreThanOne)
-			query.append("</ogc:Or>\n");
+			query = query.concat("</ogc:Or>\n");
 
 		return query;
 	}
 
 	/**
+	 * Convert a text into OGC property
+	 * 
 	 * @param text
-	 * @return
+	 * @return String
 	 */
 	private String freeText2Query(String text) {
 

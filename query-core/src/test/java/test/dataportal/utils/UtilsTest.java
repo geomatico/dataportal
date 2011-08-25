@@ -1,12 +1,13 @@
 /**
  * 
  */
-package cmima.icos;
+package test.dataportal.utils;
 
 import java.util.ArrayList;
 
-import cmima.icos.utils.BBox;
-import cmima.icos.utils.Utils;
+import org.dataportal.utils.BBox;
+import org.dataportal.utils.Utils;
+
 
 import junit.framework.TestCase;
 
@@ -24,7 +25,7 @@ public class UtilsTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link cmima.icos.utils.Utils#extractToBBoxes(java.lang.String)}.
+	 * Test method for {@link org.dataportal.utils.Utils#extractToBBoxes(java.lang.String)}.
 	 */
 	public void testExtractToBBoxes() {
 		String stringBBoxes = "[[10,20,10,40]]";

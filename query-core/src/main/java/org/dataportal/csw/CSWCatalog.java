@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cmima.icos.csw;
+package org.dataportal.csw;
 
 import java.io.IOException;
 import java.io.InputStream;

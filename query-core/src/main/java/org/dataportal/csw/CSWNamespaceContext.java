@@ -1,4 +1,4 @@
-package cmima.icos.csw;
+package org.dataportal.csw;
 
 import java.util.Iterator;
 

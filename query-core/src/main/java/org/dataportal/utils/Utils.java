@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cmima.icos.utils;
+package org.dataportal.utils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
