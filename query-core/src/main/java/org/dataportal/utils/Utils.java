@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -39,7 +38,7 @@ public class Utils {
 	 * @param parametros
 	 */
 	public static ArrayList<BBox> extractToBBoxes(String stringBBoxes) {
-		
+
 		logger.debug("BBOXES: " + stringBBoxes);
 
 		ArrayList<BBox> bboxes = new ArrayList<BBox>();
@@ -61,11 +60,10 @@ public class Utils {
 				tempStringBBoxes = new StringBuffer();
 			}
 		}
-		
+
 		if (bboxes.size() == 0)
 			return null;
 
 		return bboxes;
 	}
-
 }

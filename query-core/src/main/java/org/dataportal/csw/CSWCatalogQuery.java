@@ -3,7 +3,6 @@
  */
 package org.dataportal.csw;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -36,30 +35,23 @@ public class CSWCatalogQuery {
 	public CSWCatalogQuery(String typeNames, String outputSchema) {
 		this.outputSchema = outputSchema;
 		this.typeNames = typeNames;
-
-		bodyQuery = new StringBuffer(createHeadersRequest());
 	}
 
 	/**
 	 * @param params
 	 */
 	public CSWCatalogQuery(String typeNames) {
-		this.typeNames = typeNames;
-
-		bodyQuery = new StringBuffer(createHeadersRequest());
+		this.typeNames = typeNames;		
 	}
 
 	/**
 	 * @param startPosition
 	 *            the startPosition to set
 	 * 
-	 *            TODO cambiar esto en cliente
 	 */
 	public void setStartPosition(String startPosition) {
-		if (startPosition.equals("0"))
-			this.startPosition = "1";
-		else
-			this.startPosition = startPosition;
+		Integer tempStartPosition = Integer.parseInt(startPosition) + 1;
+		this.startPosition = tempStartPosition.toString();
 	}
 
 	/**
@@ -128,6 +120,8 @@ public class CSWCatalogQuery {
 	 * @return String
 	 */
 	public String createQuery(HashMap<String, Object> queryParams) {
+		
+		bodyQuery = new StringBuffer(createHeadersRequest());
 
 		StringBuffer query = new StringBuffer();
 		boolean moreThanOneParams = false;
@@ -177,9 +171,8 @@ public class CSWCatalogQuery {
 	 * @param query
 	 * @param bboxes
 	 */
-	private String bboxes2CSWquery(
-			ArrayList<BBox> bboxes) {
-		
+	private String bboxes2CSWquery(ArrayList<BBox> bboxes) {
+
 		String query = "";
 
 		boolean moreThanOne = false;

@@ -35,5 +35,4 @@ public class UtilsTest extends TestCase {
 		assertEquals("10", testBBoxes.get(0).getXmax());
 		assertEquals("40", testBBoxes.get(0).getYmax());
 	}
-
 }

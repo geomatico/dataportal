@@ -57,10 +57,11 @@ public class CSWCatalogQueryTest extends TestCase {
 		parametros.put("temporalExtent", temporalExtent);
 		String text = "oscar fonts";
 		parametros.put("text", text);
-		String start = "1";
-		parametros.put("start", start);
+		// pagination
+		String start = "0";
 		String limit = "25";
-		parametros.put("limit", limit);
+		query.setMaxRecords(limit);
+		query.setStartPosition(start);
 	}
 
 	/**
@@ -84,6 +85,7 @@ public class CSWCatalogQueryTest extends TestCase {
 			XPath xpath = factory.newXPath();
 			xpath.setNamespaceContext(ctx);
 
+			// test init date
 			String startDateExpr = "//PropertyIsGreaterThanOrEqualTo/Literal/child::node()";
 			Node testStartNode = (Node) xpath.evaluate(startDateExpr, testXML,
 					XPathConstants.NODE);
@@ -92,6 +94,7 @@ public class CSWCatalogQueryTest extends TestCase {
 			assertEquals(expectedStartNode.getNodeValue(),
 					testStartNode.getNodeValue());
 
+			// test end date
 			String endDateExpr = "//PropertyIsLessThanOrEqualTo/Literal/child::node()";
 			Node testEndNode = (Node) xpath.evaluate(endDateExpr, testXML,
 					XPathConstants.NODE);
@@ -99,23 +102,42 @@ public class CSWCatalogQueryTest extends TestCase {
 					expectedXML, XPathConstants.NODE);
 			assertEquals(expectedEndNode.getNodeValue(),
 					testEndNode.getNodeValue());
-			
+
+			// test lower corner bbox
 			String lowerCornerExpr = "//lowerCorner/child::node()";
-			Node testLowerCornerNode = (Node) xpath.evaluate(lowerCornerExpr, testXML,
-					XPathConstants.NODE);
-			Node expectedLowerCornerNode = (Node) xpath.evaluate(lowerCornerExpr,
-					expectedXML, XPathConstants.NODE);
+			Node testLowerCornerNode = (Node) xpath.evaluate(lowerCornerExpr,
+					testXML, XPathConstants.NODE);
+			Node expectedLowerCornerNode = (Node) xpath.evaluate(
+					lowerCornerExpr, expectedXML, XPathConstants.NODE);
 			assertEquals(expectedLowerCornerNode.getNodeValue(),
 					testLowerCornerNode.getNodeValue());
-			
+
+			// test upper corner bbox
 			String upperCornerExpr = "//upperCorner/child::node()";
-			Node testUpperCornerNode = (Node) xpath.evaluate(upperCornerExpr, testXML,
-					XPathConstants.NODE);
-			Node expectedUpperCornerNode = (Node) xpath.evaluate(upperCornerExpr,
-					expectedXML, XPathConstants.NODE);
+			Node testUpperCornerNode = (Node) xpath.evaluate(upperCornerExpr,
+					testXML, XPathConstants.NODE);
+			Node expectedUpperCornerNode = (Node) xpath.evaluate(
+					upperCornerExpr, expectedXML, XPathConstants.NODE);
 			assertEquals(expectedUpperCornerNode.getNodeValue(),
 					testUpperCornerNode.getNodeValue());
-			
+
+			// text max records pagination
+			String maxRecordsExpr = "GetRecords/attribute::maxRecords";
+			Node testmaxRecordsNode = (Node) xpath.evaluate(maxRecordsExpr,
+					testXML, XPathConstants.NODE);
+			Node expectedMaxRecordsNode = (Node) xpath.evaluate(maxRecordsExpr,
+					expectedXML, XPathConstants.NODE);
+			assertEquals(expectedMaxRecordsNode.getNodeValue(),
+					testmaxRecordsNode.getNodeValue());
+
+			// test limit records pagination
+			String startPositionExpr = "GetRecords/attribute::startPosition";
+			Node testStartPositionNode = (Node) xpath.evaluate(
+					startPositionExpr, testXML, XPathConstants.NODE);
+			Node expectedStartPositionNode = (Node) xpath.evaluate(
+					startPositionExpr, expectedXML, XPathConstants.NODE);
+			assertEquals(expectedStartPositionNode.getNodeValue(),
+					testStartPositionNode.getNodeValue());
 
 		} catch (Exception e) {
 			e.printStackTrace();
