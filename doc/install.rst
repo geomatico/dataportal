@@ -440,9 +440,9 @@ Si abrimos una plantilla de las suministradas, por ejemplo::
 
 comprobaremos que se trata de un ejemplo normal de plantilla xsl, con su encabezado, definición de namespaces, y como diferencia se puede observar la aparición de unos elementos::
 
-	<fragment id="thredds.resource.dates" uuid="{util:toString(util:randomUUID())}" title="{concat($name,'_metadata_creation')}">
+	<replacementGroup id="thredds.supplemental">
 	...
-	</fragment>
+	</replacementGroup>
 
 Esta es la manera de definir el fragmento. El atributo ``id`` que acompaña al elemento se trata del ``id`` al que se hace referencia en la plantilla base, y todos los elementos que se incluyan dentro del fragmento serán procesados en la creación del metadato e incluidos en la plantilla. 
 
