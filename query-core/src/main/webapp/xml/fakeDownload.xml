@@ -1,0 +1,6 @@
+This is a dumb download response (not even xml).
+
+To download a zip file, these response headers may help:
+
+  * Content-Type: application/zip
+  * Content-Disposition: attachment; filename=GoodLookingFileName.zip
