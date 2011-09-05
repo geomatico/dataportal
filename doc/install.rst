@@ -22,7 +22,7 @@ Instalación
 TODO: Micho, excepto apdo. |GS|
 
 
-Tomcat y Java
+|TCT| y Java
 -------------
 Instalación de JAVA de SUN
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -256,7 +256,7 @@ descomentaremos las lineas que activan el conector::
 
 introduciendo la ruta al archivo .keystore creado e indicandole la contraseña que hemos indicado en la creación del mismo. Una vez realizada esta modificación, reiniciaremos el |TCT| comprobaremos que los cambios se han realizado correctamente accediendo a::
 
-	https://localhost:8443
+	http://localhost:8443
 
 Finalmente, para poder acceder al gestor remoto del |TDS| deberemos crear el usuario y el rol en |TCT| que permite este acceso. Para ello modificaremos el archivo tomcat-users.xml incluyendo lo siguiente::
 
@@ -265,7 +265,7 @@ Finalmente, para poder acceder al gestor remoto del |TDS| deberemos crear el usu
 
 Está será la clave de acceso del usuario, por lo que no es necesario que sea igual a la que se ha definido en el conector de |TCT|. Reiniciaremos el |TCT| de nuevo y comprobamos el acceso a través de::
 
-	https://localhost:8443/thredds/admin/debug
+	http://localhost:8443/thredds/admin/debug
 
 **Referencias**
 
@@ -301,6 +301,32 @@ Desde la versión 4.2.4 de |TDS| se incluye el paquete ``ncISO`` que permite mos
 		<uddcAllow>true</uddcAllow>
 		<isoAllow>true</isoAllow>
 	</NCISO>
+
+En caso de que estas lineas no apareciesen en nuestro archivo las creariamos. Después debemos acceder al archivo ``web.xml`` de nuestra instalación de |TDS| y descomentaremos las lineas que activan el servicio ``ncISO`` de manera que quede así::
+
+	<filter-mapping>
+		<filter-name>RequestQueryFilter</filter-name>
+		<servlet-name>metadata</servlet-name>
+	</filter-mapping>
+
+	<servlet>
+		<servlet-name>metadata</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>3</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>metadata</servlet-name>
+		<url-pattern>/ncml/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>metadata</servlet-name>
+		<url-pattern>/uddc/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>metadata</servlet-name>
+		<url-pattern>/iso/*</url-pattern>
+	</servlet-mapping>
 
 Ahora será posible añadir estos servicios a nuestros catálogos.
 
@@ -441,7 +467,9 @@ Si abrimos una plantilla de las suministradas, por ejemplo::
 comprobaremos que se trata de un ejemplo normal de plantilla xsl, con su encabezado, definición de namespaces, y como diferencia se puede observar la aparición de unos elementos::
 
 	<replacementGroup id="thredds.supplemental">
+	<fragment uuid="{util:toString(util:randomUUID())}" title="{concat($name,'_contentinfo')}">
 	...
+	</fragment>
 	</replacementGroup>
 
 Esta es la manera de definir el fragmento. El atributo ``id`` que acompaña al elemento se trata del ``id`` al que se hace referencia en la plantilla base, y todos los elementos que se incluyan dentro del fragmento serán procesados en la creación del metadato e incluidos en la plantilla. 

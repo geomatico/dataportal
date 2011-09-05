@@ -3,9 +3,20 @@
  */
 package test.dataportal;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
 import org.dataportal.QueryController;
+import org.dataportal.csw.CSWNamespaceContext;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import junit.framework.TestCase;
 
@@ -16,32 +27,66 @@ import junit.framework.TestCase;
 public class QueryControllerTest extends TestCase {
 
 	private QueryController controlador = new QueryController();
+	private Document expectedXML;
+	private HashMap<String, String[]> params;
 
-	public void testAsk2gn() {
+	@Override
+	protected void setUp() throws Exception {
 		
-		HashMap<String, String[]> params = new HashMap<String, String[]>();
+		InputStream isTestResponse = getClass().getResourceAsStream(
+				"/testResponse2Client.xml");
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		expectedXML = (Document) dBuilder.parse(isTestResponse);		
+		
+		params = new HashMap<String, String[]>();
 		String[] bboxes = { "[]" };
 		params.put("bboxes", bboxes);
 		String[] start_date = { "" };
 		String[] end_date = { "" };
 		params.put("start_date", start_date);
 		params.put("end_date", end_date);
-		String[] text = { "oscar fonts" };
+		String[] text = { "" };
 		params.put("text", text);
-		String[] start = { "1" };
+		String[] start = { "0" };
 		params.put("start", start);
 		String[] limit = { "25" };
 		params.put("limit", limit);
+		String[] variables = { "eastward_wind" };
+		params.put("variables", variables);
 		
-		String response = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<response totalcount=\"1\" success=\"true\">"
-				+ "<item><id>icos-sample-1</id><schema>ISO 19115:2003/19139</schema>"
-				+ "<title>Global Wind-Wave Forecast Model and Ocean Wave model</title>"
-				+ "<summary>This is a sample global ocean file that comes with default Thredds installation. Its global attributes have been modified to conform with Dataset Discovery convention</summary>"
-				+ "<geo_extent>POLYGON (( -10 50,10 50,10 40,-10 40))</geo_extent></item></response>";
+		super.setUp();
+	}
+
+	public void testAsk2gn() {
 		
-		String testResponse = controlador.ask2gn(params);
-		// TODO Modificar el test con respuesta correcta
-		//assertTrue(response.trim().equals(testResponse.trim()));
+		String controllerResponse = controlador.ask2gn(params);
+		
+		try {
+			
+			InputStream isTestResponse = new ByteArrayInputStream(
+					controllerResponse.getBytes("UTF-8"));
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document controllerXML = (Document) dBuilder.parse(isTestResponse);
+
+			CSWNamespaceContext ctx = new CSWNamespaceContext();
+
+			XPathFactory factory = XPathFactory.newInstance();
+			XPath xpath = factory.newXPath();
+			xpath.setNamespaceContext(ctx);
+		
+			// variables
+			String variablesExpr = "response/item/variables/child::node()";
+			Node testVariablesNode = (Node) xpath.evaluate(variablesExpr, controllerXML,
+					XPathConstants.NODE);
+			Node expectedVariablesNode = (Node) xpath.evaluate(variablesExpr,
+					expectedXML, XPathConstants.NODE);
+			assertEquals(expectedVariablesNode.getNodeValue(),
+					testVariablesNode.getNodeValue());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

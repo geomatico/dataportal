@@ -66,9 +66,7 @@ public class QueryController {
 		try {
 			CSWCatalog catalogo = new CSWCatalog(urlCSW);
 			isCswResponse = catalogo.sendCatalogRequest(aCSWQuery);
-
 			response = transform(isCswResponse);
-
 			isCswResponse.close();
 
 			logger.debug("RESPONSE2CLIENT: " + response);
@@ -142,7 +140,11 @@ public class QueryController {
 		}
 
 		// variables
-		// TODO
+		String variables = parametros.get("variables")[FIRST];
+		if (variables != "") {
+			String queryVariables[] = variables.split(",");
+			queryParams.put("variables", queryVariables);
+		}
 
 		// free text
 		String freeText = parametros.get("text")[FIRST];
@@ -152,11 +154,18 @@ public class QueryController {
 		// pagination
 		String startPosition = parametros.get("start")[FIRST];
 		String maxRecords = parametros.get("limit")[FIRST];
+		
+		// Order
+		String sort = parametros.get("sort")[FIRST];
+		String dir = parametros.get("dir")[FIRST];
 
 		CSWCatalogQuery CSWrequest = new CSWCatalogQuery("gmd:MD_Metadata",
 				"csw:IsoRecord");
 		CSWrequest.setMaxRecords(maxRecords);
 		CSWrequest.setStartPosition(startPosition);
+		CSWrequest.setSort(sort);
+		CSWrequest.setDir(dir);
+		
 		String aCSWQuery = CSWrequest.createQuery(queryParams);
 
 		return aCSWQuery;

@@ -2,6 +2,10 @@
 .. _ISO8601: http://es.wikipedia.org/wiki/ISO_8601
 .. _WKT: http://en.wikipedia.org/wiki/Well-known_text
 .. _UTC: http://en.wikipedia.org/wiki/Coordinated_Universal_Time
+.. _Luke: http://code.google.com/p/luke/downloads/list
+
+.. |GN|  replace:: *GeoNetwork*
+.. |DP|  replace:: *Data Portal*
 
 
 Servicio "search" de búsqueda de datos
@@ -132,6 +136,76 @@ Respuesta XML en caso de error::
         </error>
     </response>
 
+Configuración de |GN| para búsqueda por variables
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+|GN| incluye el motor de búsqueda Apache Lucene para realizar búsquedas dentro del catálogo. Lucene está configurado para que estas búsquedas puedan ser realizadas por unos determinados campos. Para conseguir realizar búsquedas por un tipo de campos no incluidos, habrá que modificar |GN|. Los siguientes pasos indican como se ha de realizar esta modificación.
+
+Indexación del campo en Lucene
+""""""""""""""""""""""""""""""
+En primer lugar indicaremos que nuevos campos han de ser indexados. Para ello en cada carpeta de esquema existe un archivo ``index-fields.xsl`` en el que se indica que campos han de ser indexados. La ruta para el esquema ISO19139 con el que estamos trabajando en el |DP| será::
+
+	/var/lib/tomcat6/webapps/geonetwork/xml/schemas/iso19139/index-fields.xsl
+
+Este archivo se trata de una plantilla XSLT que se encarga de extraer datos de nuestros metadatos en incluirlos en el índice de Lucene. Para realizar esta acción, debemos indicar que valores queremos que se incluyan en el índice, el nombre del campo en los que se incluirá y una serie de parametros que indican como han de incluirse estos:
+
+* **store**: guarda el valor del campo en el índice
+* **index**: indexa el campo, casi siempre será ``true``
+* **token**: extrae el valor del campo en pequeños trozos (tokens)::
+	
+	P.ej.: 'es un valor de campo' --> 'es','un','valor','de','campo'
+
+El fragmento de plantilla que debe quedar trás la ejecución de la plantilla será::
+
+	<Field name="<nombre del campo>" string="{<valor del campo>}"
+	store="true" index="true"
+	token="true"/>
+
+Así estamos indicando que cree un campo ``<nombre del campo>`` en el índice y que incluya el valor ``<valor del campo>`` en el mismo. Esta última será una expresión XPATH que recoja del metadato en el esquema que estamos trabajando, la información que nos interesa. En el caso del |DP| quedaría de la siguiente manera::
+
+	<xsl:for-each select="//gmd:contentInfo/gmi:MI_CoverageDescription/gmd:dimension">
+	<Field name="variable" token="false" store="true" index="true" string="{string(gmd:MD_Band/gmd:sequenceIdentifier/gco:MemberName/gco:aName/gco:CharacterString)}" />
+	</xsl:for-each>
+
+Así estamos indicando que para cada valor que aparezca de ``gmd:Dimension`` incluya este en un campo denominado ``variable`` en el índice. 
+Una vez que hemos modificado el archivo ``index-fields.xsl`` debemos re-indexar todos los metadatos con la nueva disposición. Para ello iremos a la sección **Index settings** de la ventana de administración y en ``Rebuild Lucene index`` indicaremos ``Rebuild``. Esta operación tardará en función del número de metadatos que tengamos en el servidor.
+
+Una vez que esta operación ha finalizado, debemos comprobar si las nuevas variables han sido indexadas. Para ello desargaremos la herramienta Luke_ - Lucene Index Toolbox, que nos permitirá explorar el indice y comprobar los cambios que hemos realizado. Una vez descargada, navegaremos hasta el directorio, modificaremos los permisos dandole de ejecución y ejecutaremos::
+
+	$ java -jar lukeall-3.3.0.jar
+
+Lo primero que nos indicará la aplicación es que seleccionemos la ruta donde se encuentra el índice, que en nuestro caso será::
+
+	$TOMCAT_HOME/webapps/geonetwork/WEB-INF/lucene/nonspatial
+
+.. image:: img/luke-lucene.png
+		:width: 500 px
+		:alt: Cáptura inicio Luke
+		:align: center
+
+Una vez abierto el índice, en la pestaña ``overview``, podremos comprobar que el campo se encuentra indexado, y visualizar los términos que ha guardado. También podremos ir a la pestaña ``search`` y realizar unas pruebas de búsqueda para el campo que acabamos de incluir.
+
+Inclusión del campo en servicio CSW
+"""""""""""""""""""""""""""""""""""
+Una vez que hemos indexado el campo de búsqueda, debemos incluir este como campo soportado en las búsquedas a través del servicio CSW. Para ello modificaremos el archivo config-csw.xml que se encuentra en::
+
+	$TOMCAT_HOME/webapps/geonetwork/WEB-INF/config-csw.xml
+
+Debemos añadir dentro de los campos	``Additional queryable properties`` la linea que incluya nuestro campo como consultable. Para ello añadiremos en esa sección::
+
+	<parameter name="<Nombre del campo dentro del esquema>" field="<nombre del campo incluido en el índice>" type="SupportedISOQueryables" />
+
+Que para el caso del |DP| quedaría::
+
+	<parameter name="ContentInfo" field="variable" type="SupportedISOQueryables" />
+
+De esta manera, si consultamos del GetCapabilities del servidor observaremos si el campo ha sido incluido::
+
+	<ows:Constraint name="SupportedISOQueryables">
+	...
+	<ows:Value>ContentInfo</ows:Value>
+	...
+
+Ya tendremos preparado nuestro servidor para realizar consultas por ``ContenInfo``.
     
 Interfaz gráfica de usuario
 ---------------------------

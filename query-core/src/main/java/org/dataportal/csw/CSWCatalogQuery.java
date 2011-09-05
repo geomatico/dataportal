@@ -26,8 +26,8 @@ public class CSWCatalogQuery {
 	private String typeNames = "";
 	private String startPosition = "1";
 	private String maxRecords = "10";
-
-	private StringBuffer bodyQuery;
+	private String sort = "";
+	private String dir = "";
 
 	/**
 	 * @param params
@@ -41,7 +41,7 @@ public class CSWCatalogQuery {
 	 * @param params
 	 */
 	public CSWCatalogQuery(String typeNames) {
-		this.typeNames = typeNames;		
+		this.typeNames = typeNames;
 	}
 
 	/**
@@ -60,6 +60,23 @@ public class CSWCatalogQuery {
 	 */
 	public void setMaxRecords(String maxRecords) {
 		this.maxRecords = maxRecords;
+	}
+
+	/**
+	 * @param sort
+	 *            the sort to set
+	 */
+	public void setSort(String sort) {
+		this.sort = sort;
+	}
+
+	/**
+	 * @param dir
+	 *            the dir to set
+	 */
+	public void setDir(String dir) {
+		this.dir = dir;
+
 	}
 
 	/**
@@ -105,11 +122,30 @@ public class CSWCatalogQuery {
 				+ "<csw:Constraint version=\"1.1.0\">\n"
 				+ "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/ogc\" "
 				+ "xmlns:gml=\"http://www.opengis.net/gml\">\n" + "$"
-				+ "</ogc:Filter>\n</csw:Constraint>\n</csw:Query>\n";
+				+ "</ogc:Filter>\n</csw:Constraint>\n" + this.createSortBy()
+				+ "</csw:Query>\n";
 
 		// logger.debug(queryHeader);
 
 		return queryHeader;
+	}
+
+	/**
+	 * 
+	 * Create CSW sort property
+	 * 
+	 * @returnString
+	 */
+	private String createSortBy() {
+
+		String sortByCSW = "<ogc:SortBy xmlns:ogc=\"http://www.opengis.net/ogc\">\n"
+				+ "<ogc:SortProperty>\n<ogc:PropertyName>"
+				+ sort
+				+ "</ogc:PropertyName>\n<ogc:SortOrder>"
+				+ dir
+				+ "</ogc:SortOrder>\n</ogc:SortProperty>\n</ogc:SortBy>\n";
+
+		return sortByCSW;
 	}
 
 	/**
@@ -120,8 +156,8 @@ public class CSWCatalogQuery {
 	 * @return String
 	 */
 	public String createQuery(HashMap<String, Object> queryParams) {
-		
-		bodyQuery = new StringBuffer(createHeadersRequest());
+
+		StringBuffer bodyQuery = new StringBuffer(createHeadersRequest());
 
 		StringBuffer query = new StringBuffer();
 		boolean moreThanOneParams = false;
@@ -131,6 +167,7 @@ public class CSWCatalogQuery {
 			moreThanOneParams = true;
 		}
 
+		// bboxes
 		if (queryParams.containsKey("bboxes")) {
 			@SuppressWarnings("unchecked")
 			ArrayList<BBox> bboxes = (ArrayList<BBox>) queryParams
@@ -138,16 +175,20 @@ public class CSWCatalogQuery {
 			query.append(bboxes2CSWquery(bboxes));
 		}
 
+		// temporal extent
 		if (queryParams.containsKey("temporalExtent")) {
 			RangeDate temporalExtent = (RangeDate) queryParams
 					.get("temporalExtent");
 			query.append(temporalExtent.toOGCTemporalExtent());
 		}
 
+		// variables
 		if (queryParams.containsKey("variables")) {
-			// TODO
+			String variables[] = (String[]) queryParams.get("variables");
+			query.append(variables2CSWQuery(variables));
 		}
 
+		// free text
 		if (queryParams.containsKey("text")) {
 			String text = (String) queryParams.get("text");
 			query.append(freeText2Query(text));
@@ -163,6 +204,35 @@ public class CSWCatalogQuery {
 		logger.debug("CSW QUERY: " + bodyQuery.toString());
 
 		return bodyQuery.toString();
+	}
+
+	/**
+	 * Create CSW Query from string array
+	 * 
+	 * @param variables
+	 * @return
+	 */
+	private Object variables2CSWQuery(String[] variables) {
+
+		String variablesCSW = "";
+
+		boolean moreThanOne = false;
+		if (variables.length > 1) {
+			variablesCSW = variablesCSW.concat("<ogc:Or>\n");
+			moreThanOne = true;
+		}
+		for (String variable : variables) {
+			String queryVariables = "<ogc:PropertyIsLike wildCard=\"%\" singleChar=\"_\" escapeChar=\"\\\\\">\n"
+					+ "<ogc:PropertyName>ContentInfo</ogc:PropertyName>\n"
+					+ "<ogc:Literal>"
+					+ variable
+					+ "</ogc:Literal>\n</ogc:PropertyIsLike>\n";
+			variablesCSW = variablesCSW.concat(queryVariables);
+		}
+		if (moreThanOne)
+			variablesCSW = variablesCSW.concat("</ogc:Or>\n");
+
+		return variablesCSW;
 	}
 
 	/**

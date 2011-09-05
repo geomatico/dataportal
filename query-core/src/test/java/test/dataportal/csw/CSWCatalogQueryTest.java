@@ -12,7 +12,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.dataportal.csw.CSWCatalogQuery;
@@ -57,11 +56,16 @@ public class CSWCatalogQueryTest extends TestCase {
 		parametros.put("temporalExtent", temporalExtent);
 		String text = "oscar fonts";
 		parametros.put("text", text);
+		// variables
+		String variables[] = {"eastward_wind", "northward_wind"}; 
+		parametros.put("variables", variables);
 		// pagination
 		String start = "0";
 		String limit = "25";
 		query.setMaxRecords(limit);
 		query.setStartPosition(start);
+		query.setSort("title");
+		query.setDir("ASC");
 	}
 
 	/**
