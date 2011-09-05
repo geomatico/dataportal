@@ -54,6 +54,10 @@ public class QueryControllerTest extends TestCase {
 		params.put("limit", limit);
 		String[] variables = { "eastward_wind" };
 		params.put("variables", variables);
+		String[] sort = {"title"};
+		params.put("sort", sort);
+		String[] dir = {"ASC"};
+		params.put("dir", dir);
 		
 		super.setUp();
 	}
