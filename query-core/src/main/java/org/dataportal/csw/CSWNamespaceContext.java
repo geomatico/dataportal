@@ -32,8 +32,27 @@ public class CSWNamespaceContext implements NamespaceContext{
 
 	@Override
 	public String getPrefix(String namespaceURI) {
-		// dummy implement not used
-		return null;
+		String prefix;
+		if (namespaceURI.equals("http://www.isotc211.org/2005/gmd"))
+			prefix = "gmd";
+		else if (namespaceURI.equals("http://www.isotc211.org/2005/gco"))
+			prefix = "gco";
+		else if (namespaceURI.equals("http://www.isotc211.org/2005/gmi"))
+			prefix = "gmi";
+		else if (namespaceURI.equals("http://www.isotc211.org/2005/gts"))
+			prefix = "gts";
+		else if (namespaceURI.equals("http://www.w3.org/2001/XMLSchema-instance"))
+			prefix = "xsi";
+		else if (namespaceURI.equals("http://www.fao.org/geonetwork"))
+			prefix = "geonet";
+		else if (namespaceURI.equals("http://www.isotc211.org/2005/srv"))
+			prefix = "srv";
+		else if (namespaceURI.equals("http://www.opengis.net/cat/csw/2.0.2"))
+			prefix = "csw";
+		else
+			prefix = null;
+		
+		return prefix;
 	}
 
 	@Override

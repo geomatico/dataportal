@@ -14,7 +14,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.dataportal.csw.CSWCatalogQuery;
+import org.dataportal.csw.CSWGetRecords;
 import org.dataportal.csw.CSWNamespaceContext;
 import org.dataportal.utils.BBox;
 import org.dataportal.utils.RangeDate;
@@ -27,10 +27,10 @@ import junit.framework.TestCase;
  * @author michogar
  * 
  */
-public class CSWCatalogQueryTest extends TestCase {
+public class CSWGetRecordsTest extends TestCase {
 
 	private HashMap<String, Object> parametros = new HashMap<String, Object>();
-	private CSWCatalogQuery query = new CSWCatalogQuery("gmd:MD_Metadata",
+	private CSWGetRecords query = new CSWGetRecords("gmd:MD_Metadata",
 			"csw:IsoRecord");
 	private Document expectedXML;
 
@@ -70,7 +70,7 @@ public class CSWCatalogQueryTest extends TestCase {
 
 	/**
 	 * Test method for
-	 * {@link org.dataportal.csw.CSWCatalogQuery#createQuery(java.util.HashMap)}
+	 * {@link org.dataportal.csw.CSWGetRecords#createQuery(java.util.HashMap)}
 	 * .
 	 */
 	public void testCreateQuery() {

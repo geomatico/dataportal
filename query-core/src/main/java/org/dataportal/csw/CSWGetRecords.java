@@ -14,9 +14,9 @@ import org.dataportal.utils.RangeDate;
  * @author Micho Garcia
  * 
  */
-public class CSWCatalogQuery {
+public class CSWGetRecords {
 
-	private static Logger logger = Logger.getLogger(CSWCatalogQuery.class);
+	private static Logger logger = Logger.getLogger(CSWGetRecords.class);
 
 	private static final String CSWVERSION = "2.0.2";
 	private static final String XMLENCODING = "UTF-8";
@@ -32,7 +32,7 @@ public class CSWCatalogQuery {
 	/**
 	 * @param params
 	 */
-	public CSWCatalogQuery(String typeNames, String outputSchema) {
+	public CSWGetRecords(String typeNames, String outputSchema) {
 		this.outputSchema = outputSchema;
 		this.typeNames = typeNames;
 	}
@@ -40,7 +40,7 @@ public class CSWCatalogQuery {
 	/**
 	 * @param params
 	 */
-	public CSWCatalogQuery(String typeNames) {
+	public CSWGetRecords(String typeNames) {
 		this.typeNames = typeNames;
 	}
 
@@ -94,12 +94,12 @@ public class CSWCatalogQuery {
 		}
 
 		String headerRequest = "<csw:GetRecords " + "service=\"CSW\" "
-				+ "version=\"" + CSWCatalogQuery.CSWVERSION + "\" "
-				+ "resultType=\"" + CSWCatalogQuery.RESULTTYPE + "\" "
+				+ "version=\"" + CSWGetRecords.CSWVERSION + "\" "
+				+ "resultType=\"" + CSWGetRecords.RESULTTYPE + "\" "
 				+ "outputFormat=\"application/xml\"" + outputSchemaString
 				+ "xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" "
 				+ "xmlns:csw=\"http://www.opengis.net/cat/csw/"
-				+ CSWCatalogQuery.CSWVERSION + "\" maxRecords=\""
+				+ CSWGetRecords.CSWVERSION + "\" maxRecords=\""
 				+ this.maxRecords + "\" " + "startPosition=\""
 				+ this.startPosition + "\">\n" + this.createHeadersQuery()
 				+ "</csw:GetRecords>";
@@ -191,7 +191,7 @@ public class CSWCatalogQuery {
 		// free text
 		if (queryParams.containsKey("text")) {
 			String text = (String) queryParams.get("text");
-			query.append(freeText2Query(text));
+			query.append(freeText2CSWQuery(text));
 
 		}
 
@@ -266,7 +266,7 @@ public class CSWCatalogQuery {
 	 * @param text
 	 * @return String
 	 */
-	private String freeText2Query(String text) {
+	private String freeText2CSWQuery(String text) {
 
 		String freeText = "<ogc:PropertyIsLike wildCard=\"%\" singleChar=\"_\" escapeChar=\"\\\\\">\n"
 				+ "<ogc:PropertyName>AnyText</ogc:PropertyName>\n"

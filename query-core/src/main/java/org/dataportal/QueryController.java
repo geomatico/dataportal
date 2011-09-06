@@ -11,19 +11,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
 import org.dataportal.csw.CSWCatalog;
-import org.dataportal.csw.CSWCatalogQuery;
+import org.dataportal.csw.CSWGetRecords;
+import org.dataportal.csw.CSWNamespaceContext;
 import org.dataportal.utils.BBox;
 import org.dataportal.utils.RangeDate;
 import org.dataportal.utils.Utils;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 /**
  * @author Micho Garcia
@@ -34,7 +42,7 @@ public class QueryController {
 	private static Logger logger = Logger.getLogger(QueryController.class);
 
 	private static final int FIRST = 0;
-	private static String urlCSW = "";
+	private static CSWCatalog catalogo;
 
 	/**
 	 * 
@@ -45,10 +53,12 @@ public class QueryController {
 		try {
 			queryCoreProp.load(QueryController.class
 					.getResourceAsStream("/query-core.properties"));
+			String urlCSW = queryCoreProp.getProperty("urlCsw") + "/srv/en/csw";
+			catalogo = new CSWCatalog(urlCSW);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
-		urlCSW = queryCoreProp.getProperty("urlCsw") + "/srv/en/csw";
+
 	}
 
 	/**
@@ -64,7 +74,6 @@ public class QueryController {
 		String response = "";
 
 		try {
-			CSWCatalog catalogo = new CSWCatalog(urlCSW);
 			isCswResponse = catalogo.sendCatalogRequest(aCSWQuery);
 			response = transform(isCswResponse);
 			isCswResponse.close();
@@ -115,8 +124,7 @@ public class QueryController {
 	}
 
 	/**
-	 * Extract the params from a Map and create a Query in CSW 2.0.2
-	 * standard
+	 * Extract the params from a Map and create a Query in CSW 2.0.2 standard
 	 * 
 	 * @param parametros
 	 * @return String
@@ -154,21 +162,47 @@ public class QueryController {
 		// pagination
 		String startPosition = parametros.get("start")[FIRST];
 		String maxRecords = parametros.get("limit")[FIRST];
-		
+
 		// Order
 		String sort = parametros.get("sort")[FIRST];
 		String dir = parametros.get("dir")[FIRST];
 
-		CSWCatalogQuery CSWrequest = new CSWCatalogQuery("gmd:MD_Metadata",
+		CSWGetRecords CSWrequest = new CSWGetRecords("gmd:MD_Metadata",
 				"csw:IsoRecord");
 		CSWrequest.setMaxRecords(maxRecords);
 		CSWrequest.setStartPosition(startPosition);
 		CSWrequest.setSort(sort);
 		CSWrequest.setDir(dir);
-		
+
 		String aCSWQuery = CSWrequest.createQuery(queryParams);
 
 		return aCSWQuery;
+	}
+
+	/**
+	 * @param isRequestXML
+	 */
+	public void askgn2download(InputStream isRequestXML) {
+
+		try {
+			DocumentBuilderFactory dbFactoria = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder dbBuilder = dbFactoria.newDocumentBuilder();
+			Document downloadXML = (Document) dbBuilder.parse(isRequestXML);
+
+			CSWNamespaceContext ctx = new CSWNamespaceContext();
+
+			XPathFactory factory = XPathFactory.newInstance();
+			XPath xpath = factory.newXPath();
+			xpath.setNamespaceContext(ctx);
+
+			String variablesExpr = "//id/child::node()";
+			NodeList idNodeList = (NodeList) xpath.evaluate(variablesExpr,
+					downloadXML, XPathConstants.NODESET);
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
 	}
 
 }

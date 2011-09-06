@@ -10,7 +10,7 @@ Icos.download.Panel =  Ext.extend(Ext.Panel, {
         this.store = new Ext.data.Store({
             autoLoad: false,
             autoSave: false,
-            url: 'xml/fakeDownload.xml',
+            url: 'download', //'xml/fakeDownload.xml',
             reader: new Ext.data.XmlReader({
                 root: 'response',
                 record: 'item',
