@@ -34,7 +34,8 @@ Icos.result.Grid =  Ext.extend(Ext.grid.GridPanel, {
             var varnames = [];
             for (var i=0; i < variables.length; i++) {
                 variable = variables[i];
-                name = this.vocabulary.getById(variable).get("nc_long_term") || this.vocabulary.getById(variable).get("en_long_term") || variable;
+                term = this.vocabulary.getById(variable);
+                name = term ? (term.get("nc_long_term") || term.get("en_long_term")) : variable;
                 varnames.push(name);
             }
             
