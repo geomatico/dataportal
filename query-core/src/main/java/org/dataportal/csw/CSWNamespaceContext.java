@@ -4,6 +4,13 @@ import java.util.Iterator;
 
 import javax.xml.namespace.NamespaceContext;
 
+/**
+ * 
+ * Class to define the namespaces in context
+ * 
+ * @author Micho Garcia
+ *
+ */
 public class CSWNamespaceContext implements NamespaceContext{
 
 	@Override
@@ -25,6 +32,8 @@ public class CSWNamespaceContext implements NamespaceContext{
 			uri = "http://www.isotc211.org/2005/srv";
 		else if (prefix.equals("csw"))
 			uri = "http://www.opengis.net/cat/csw/2.0.2";
+		else if (prefix.equals("dc"))
+			uri = "http://purl.org/dc/elements/1.1/";
 		else
 			uri = null;
 		return uri;
@@ -49,6 +58,8 @@ public class CSWNamespaceContext implements NamespaceContext{
 			prefix = "srv";
 		else if (namespaceURI.equals("http://www.opengis.net/cat/csw/2.0.2"))
 			prefix = "csw";
+		else if (namespaceURI.equals("http://purl.org/dc/elements/1.1/"))
+			prefix = "dc";
 		else
 			prefix = null;
 		

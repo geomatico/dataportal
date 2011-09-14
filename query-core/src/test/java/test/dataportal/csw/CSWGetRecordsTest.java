@@ -24,7 +24,7 @@ import org.w3c.dom.Node;
 import junit.framework.TestCase;
 
 /**
- * @author michogar
+ * @author Micho Garcia
  * 
  */
 public class CSWGetRecordsTest extends TestCase {

@@ -5,6 +5,7 @@ package org.dataportal;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,7 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 /**
- * @author michogar
+ * Servlet to comunicate with Client to download process
+ * 
+ * @author Micho Garcia
  *
  */
 public class DownloadServlet extends HttpServlet {
@@ -41,7 +44,14 @@ public class DownloadServlet extends HttpServlet {
 		InputStream isRequestXML = req.getInputStream();	
 		
 		QueryController controller = new QueryController();
-		controller.askgn2download(isRequestXML);
+		String response = controller.askgn2download(isRequestXML);
+		
+		resp.setContentType("application/xml");
+		resp.setCharacterEncoding("UTF-8");
+		PrintWriter writer2Client = resp.getWriter();
+		writer2Client.print(response);
+		writer2Client.flush();
+		writer2Client.close();
 	}
 
 }

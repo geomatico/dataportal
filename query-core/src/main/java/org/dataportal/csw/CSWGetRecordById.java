@@ -10,16 +10,17 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.log4j.Logger;
 
 /**
- * @author michogar
+ * Class to create a CSW Standard query GetRecordById
  * 
- */
-/**
- * @author michogar
+ * @author Micho Garcia
  * 
  */
 public class CSWGetRecordById {
+
+	private static Logger logger = Logger.getLogger(CSWGetRecordById.class);
 
 	public static final String SERVICE = "CSW";
 	public static final String CSW_VERSION = "2.0.2";
@@ -49,6 +50,8 @@ public class CSWGetRecordById {
 	private String outputSchema = "";
 
 	/**
+	 * Constructor with ElementSetName
+	 * 
 	 * @param ElementSetName
 	 */
 	public CSWGetRecordById(String elementSetNameValue) {
@@ -67,6 +70,9 @@ public class CSWGetRecordById {
 	}
 
 	/**
+	 * 
+	 * Constructor with elementSetName & outputFormat
+	 * 
 	 * @param ElementSetName
 	 * @param outputFormat
 	 */
@@ -88,6 +94,8 @@ public class CSWGetRecordById {
 	}
 
 	/**
+	 * Constructor with elementSetName, outputFormat & outputSchemaValue
+	 * 
 	 * @param elementSetNameValue
 	 * @param outputFormatValue
 	 * @param outputSchemaValue
@@ -114,6 +122,9 @@ public class CSWGetRecordById {
 	}
 
 	/**
+	 * Create a GetRecordById query with all id's in arrayList
+	 * 
+	 * @param ArrayList with id's
 	 * @throws XMLStreamException
 	 * 
 	 */
@@ -147,6 +158,8 @@ public class CSWGetRecordById {
 		xmlWriter.writeEndElement();
 		xmlWriter.flush();
 		xmlWriter.close();
+
+		logger.debug(strWriter.toString());
 
 		return strWriter.toString();
 	}

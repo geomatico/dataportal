@@ -9,8 +9,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
+import org.w3c.dom.NodeList;
 
 /**
+ * 
+ * Utils to use in Dataportal
+ * 
  * @author Micho Garcia
  * 
  */
@@ -21,11 +25,13 @@ public class Utils {
 	public static String convertStreamToString(InputStream is) throws Exception {
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
 		StringBuilder sb = new StringBuilder();
 		String line = null;
 		while ((line = reader.readLine()) != null) {
 			sb.append(line + "\n");
 		}
+
 		return sb.toString();
 	}
 
@@ -65,5 +71,50 @@ public class Utils {
 			return null;
 
 		return bboxes;
+	}
+
+	/**
+	 * 
+	 * Transform a NodeList in an ArrayList
+	 * 
+	 * @param aNodeList
+	 * @return
+	 */
+	public static ArrayList<String> nodeList2ArrayList(NodeList aNodeList) {
+		String debug = "";
+		ArrayList<String> aArrayList = new ArrayList<String>();
+		for (int nNodo = 0; nNodo < aNodeList.getLength(); nNodo++) {
+			aArrayList.add(aNodeList.item(nNodo).getNodeValue());
+			debug += aNodeList.item(nNodo).getNodeValue();
+		}
+		logger.debug("CONTENT: " + debug);
+		return aArrayList;
+	}
+
+	/**
+	 * 
+	 * Compare the content of 2 ArrayList
+	 * 
+	 * @param ArrayList arrayUno
+	 * @param ArrayList arrayDos
+	 * @return ArrayList with diferences
+	 */
+	public static ArrayList<String> compare2Arraylist(ArrayList<String> arrayRequest,
+			ArrayList<String> arrayResponse) {
+
+		ArrayList<String> diferentes = new ArrayList<String>();
+		boolean encontrado = false;
+		
+		for (String idRequest : arrayRequest) {
+			encontrado = false;
+			for (String idResponse : arrayResponse) {
+				if (idResponse.equals(idRequest))
+					encontrado = true;
+			}
+			if (!encontrado)
+				diferentes.add(idRequest);
+		}
+
+		return diferentes;
 	}
 }

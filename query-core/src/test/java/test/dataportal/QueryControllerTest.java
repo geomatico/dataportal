@@ -46,13 +46,13 @@ public class QueryControllerTest extends TestCase {
 		String[] end_date = { "" };
 		params.put("start_date", start_date);
 		params.put("end_date", end_date);
-		String[] text = { "" };
+		String[] text = { "oceans" };
 		params.put("text", text);
 		String[] start = { "0" };
 		params.put("start", start);
 		String[] limit = { "25" };
 		params.put("limit", limit);
-		String[] variables = { "eastward_wind" };
+		String[] variables = { "" };
 		params.put("variables", variables);
 		String[] sort = {"title"};
 		params.put("sort", sort);

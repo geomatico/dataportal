@@ -35,4 +35,18 @@ public class UtilsTest extends TestCase {
 		assertEquals("10", testBBoxes.get(0).getXmax());
 		assertEquals("40", testBBoxes.get(0).getYmax());
 	}
+	
+	/**
+	 * Test method for {@link org.dataportal.utils.Utils#compare2Arraylist(java.lang.ArrayList<String>,java.lang.ArrayList<String>)}.
+	 */	
+	public void testCompare2Arraylist() {
+		ArrayList<String> arrayUno = new ArrayList<String>();
+		arrayUno.add("uno");
+		ArrayList<String> arrayDos = new ArrayList<String>();
+		arrayDos.add("dos");
+		arrayDos.add("uno");
+		
+		ArrayList<String> resultado = Utils.compare2Arraylist(arrayDos, arrayUno);
+		assertEquals("dos", resultado.get(0));
+	}
 }
