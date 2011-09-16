@@ -6,6 +6,7 @@ package test.dataportal;
 import java.util.ArrayList;
 
 import org.dataportal.DownloadController;
+import org.dataportal.utils.Utils;
 
 import junit.framework.TestCase;
 
@@ -46,7 +47,8 @@ public class DownloadControllerTest extends TestCase {
 			DownloadController controladorDescarga = new DownloadController();
 			String finalizado = controladorDescarga.downloadDatasets(arrayURLs, "admin");
 			System.out.println(finalizado);
-			assertEquals("FINALIZADO", finalizado);
+			// TODO cambiar la ruta de este test (solo vale para mi)
+			assertEquals("/home/michogar/geomati.co/CMIMA/data/tmp/admin/admin_" + Utils.extractDateSystem() + ".tar", finalizado);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

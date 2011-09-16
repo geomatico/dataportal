@@ -3,6 +3,9 @@
  */
 package org.dataportal;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -157,13 +160,13 @@ public class QueryController {
 
 				ArrayList<String> urlsRequest = Utils
 						.nodeList2ArrayList(urlNodeList);
-				
-				// TODO usar nombre usuario real				
+
+				// TODO usar nombre usuario real
 				String userName = "admin";
 
 				DownloadController controladorDescarga = new DownloadController();
-				String resultDownload = controladorDescarga
-						.downloadDatasets(urlsRequest, userName);
+				String resultDownload = controladorDescarga.downloadDatasets(
+						urlsRequest, userName);
 
 				response.append(resultDownload);
 			}
@@ -178,7 +181,7 @@ public class QueryController {
 			e.printStackTrace();
 		}
 
-		logger.debug(response.toString());
+		logger.debug("RESPONSE CONTROLLER: " + response.toString());
 
 		return response.toString();
 	}
@@ -314,5 +317,22 @@ public class QueryController {
 		String aCSWQuery = CSWrequest.createQuery(queryParams);
 
 		return aCSWQuery;
+	}
+
+	/**
+	 * Return an inputStream to download the compress file
+	 * 
+	 * @param filePath
+	 *            Path to compress file
+	 * @return
+	 * @throws FileNotFoundException
+	 */
+	public InputStream downloadFile(String filePath)
+			throws FileNotFoundException {
+
+		File fileToDownload = new File(filePath);
+		FileInputStream isFileToDownload = new FileInputStream(fileToDownload);
+
+		return isFileToDownload;
 	}
 }

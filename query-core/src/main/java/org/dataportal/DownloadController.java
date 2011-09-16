@@ -54,7 +54,6 @@ public class DownloadController {
 				if (!createDir)
 					pathFile = "";
 			}
-
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 			pathFile = "";
@@ -74,12 +73,12 @@ public class DownloadController {
 	public String downloadDatasets(ArrayList<String> urlsRequest,
 			String userName) throws Exception {
 
-		// TODO cambiar esto por un mensaje de dataportal
+		// TODO cambiar esto por una clase mensaje de dataportal
 		String response = "";
 
-		String pathFile = this.createPathFile(userName);
+		String pathFile = createPathFile(userName);
 		if (pathFile.equals("")) {
-			response = "Imposible realizar la descarga";
+			response = "No se ha podido crear el directorio";
 			logger.error("No se ha podido crear el directorio");
 		} else {
 
@@ -105,10 +104,11 @@ public class DownloadController {
 				logger.info("DOWNLOADING FINISH: " + tarea);
 			}
 
-			String nameFile = userName + Utils.extractDateSystem();
-			compressFiles(pathFile, nameFile);
+			String nameFile = userName + "_" + Utils.extractDateSystem();
+			String filePathName = compressFilesTar(pathFile, nameFile);
 			// TODO cambiar mensaje
-			response = "FINALIZADO";
+			logger.debug("FILE to download: " + filePathName);
+			response = filePathName;
 		}
 
 		return response;
@@ -124,11 +124,12 @@ public class DownloadController {
 	 *            archive name (String)
 	 * @throws IOException
 	 */
-	private static void compressFiles(String pathDir, String nameFile)
+	private String compressFilesTar(String pathDir, String nameFile)
 			throws IOException {
 
-		OutputStream os = new FileOutputStream(pathDir + "/" + nameFile
-				+ ".tar");
+		String filePathName = pathDir + "/" + nameFile
+						+ ".tar";
+		OutputStream os = new FileOutputStream(filePathName);
 		TarArchiveOutputStream tarOs = new TarArchiveOutputStream(os);
 
 		File directory = new File(pathDir);
@@ -150,6 +151,8 @@ public class DownloadController {
 		tarOs.close();
 
 		os.close();
+		
+		return filePathName;
 	}
 
 }
