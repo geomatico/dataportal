@@ -10,6 +10,6 @@
     <start_time>2011-07-10T12:00:00Z</start_time>
     <end_time>2011-07-15T12:00:00Z</end_time>
     <variables>reftime,datetime,forecasttime,model_id,nav_model,grid_type_code,grid_type,grid_name,grid_center,grid_number,i_dim,j_dim,Ni,Nj,La1,Lo1,La2,Lo2,Di,Dj,ResCompFlag,eastward_wind,northward_wind,significant_height_of_wind_and_swell_waves,wind_wave_period,direction_of_wind_wave_velocity,valtime,valtime_offset,lat,lon</variables>
-    <data_link>http://localhost:8080/thredds/fileServer/pruebaScan/ocean-metadata-sample.nc</data_link>
+    <data_link>http://ciclope.cmima.csic.es:8080/thredds/fileServer/testDP/ocean-metadata-sample.nc</data_link>
   </item>
 </response>

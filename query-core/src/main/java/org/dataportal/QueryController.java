@@ -157,11 +157,15 @@ public class QueryController {
 
 				ArrayList<String> urlsRequest = Utils
 						.nodeList2ArrayList(urlNodeList);
+				
+				// TODO usar nombre usuario real				
+				String userName = "admin";
 
-				String resutlDownload = DownloadController
-						.downloadDatasets(urlsRequest);
+				DownloadController controladorDescarga = new DownloadController();
+				String resultDownload = controladorDescarga
+						.downloadDatasets(urlsRequest, userName);
 
-				response.append(resutlDownload);
+				response.append(resultDownload);
 			}
 
 		} catch (Exception e) {

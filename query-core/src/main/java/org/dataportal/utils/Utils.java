@@ -6,7 +6,9 @@ package org.dataportal.utils;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.NodeList;
@@ -21,6 +23,8 @@ import org.w3c.dom.NodeList;
 public class Utils {
 
 	private static Logger logger = Logger.getLogger(Utils.class);
+
+	public static final String DATE_FORMAT_NOW = "yyyyMMddHHmmss";
 
 	public static String convertStreamToString(InputStream is) throws Exception {
 
@@ -95,16 +99,18 @@ public class Utils {
 	 * 
 	 * Compare the content of 2 ArrayList
 	 * 
-	 * @param ArrayList arrayUno
-	 * @param ArrayList arrayDos
+	 * @param ArrayList
+	 *            arrayUno
+	 * @param ArrayList
+	 *            arrayDos
 	 * @return ArrayList with diferences
 	 */
-	public static ArrayList<String> compare2Arraylist(ArrayList<String> arrayRequest,
-			ArrayList<String> arrayResponse) {
+	public static ArrayList<String> compare2Arraylist(
+			ArrayList<String> arrayRequest, ArrayList<String> arrayResponse) {
 
 		ArrayList<String> diferentes = new ArrayList<String>();
 		boolean encontrado = false;
-		
+
 		for (String idRequest : arrayRequest) {
 			encontrado = false;
 			for (String idResponse : arrayResponse) {
@@ -116,5 +122,18 @@ public class Utils {
 		}
 
 		return diferentes;
+	}
+
+	/**
+	 * 
+	 * Extract date-time from systema with DATA_FORMAT_NOW
+	 * 
+	 * @return String
+	 */
+	public static String extractDateSystem() {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
+
+		return sdf.format(cal.getTime());
 	}
 }
