@@ -319,20 +319,4 @@ public class QueryController {
 		return aCSWQuery;
 	}
 
-	/**
-	 * Return an inputStream to download the compress file
-	 * 
-	 * @param filePath
-	 *            Path to compress file
-	 * @return
-	 * @throws FileNotFoundException
-	 */
-	public InputStream downloadFile(String filePath)
-			throws FileNotFoundException {
-
-		File fileToDownload = new File(filePath);
-		FileInputStream isFileToDownload = new FileInputStream(fileToDownload);
-
-		return isFileToDownload;
-	}
 }

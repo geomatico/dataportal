@@ -30,7 +30,8 @@ Icos.download.Panel =  Ext.extend(Ext.Panel, {
                 var request = {
                     url: this.url,
                     success: function(response) {
-                        alert(response.responseText);
+                        var fileName = Ext.query("filename",response.responseXML)[0].childNodes[0].wholeText;
+                        window.location = "download?file="+fileName;
                     },
                     failure: function(response) {
                         alert(response.status + " " + response.statusText);

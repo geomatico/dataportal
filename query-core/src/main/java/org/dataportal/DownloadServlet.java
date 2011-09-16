@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,7 +31,7 @@ public class DownloadServlet extends HttpServlet {
 	private static final String CONTENTDISPOSITION = "Content-disposition";
 	private static final String SEPARATOR = "/";
 	private static final String TYPEXML = "application/xml";
-	private static final String TYPETAR = "application/x-tar";
+	private static final String TYPEZIP = "application/zip";
 	private static final String UTF8 = "UTF-8";
 
 	/* (non-Javadoc)
@@ -39,8 +40,29 @@ public class DownloadServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(req, resp);
+
+		@SuppressWarnings("unchecked")
+		Map<String, String[]> params = req.getParameterMap();
+		
+		if (params.containsKey("file")) {
+            DownloadController download = new DownloadController();
+            
+            String userName = "admin"; // TODO usar nombre usuario real
+            String fileName = params.get("file")[0];
+            int fileSize = (int)download.getFileSize(fileName, userName);
+
+            InputStream contents = download.getFileContents(fileName, userName);
+            OutputStream out = resp.getOutputStream();
+
+		    resp.setContentType(TYPEZIP);
+            resp.setHeader(CONTENTDISPOSITION, "attachment; filename=" + fileName);
+            resp.setContentLength(fileSize);
+            
+            IOUtils.copyLarge(contents, out);
+            out.flush();
+            out.close();
+            contents.close();
+	    }
 	}
 
 	/* (non-Javadoc)
@@ -53,28 +75,17 @@ public class DownloadServlet extends HttpServlet {
 		InputStream isRequestXML = req.getInputStream();	
 		
 		QueryController controller = new QueryController();
-		String filePath2Download = controller.askgn2download(isRequestXML);
-		
-		if (filePath2Download.equals("")) {
-			resp.setContentType(TYPEXML);
-			resp.setCharacterEncoding(UTF8);
-			PrintWriter writer2Client = resp.getWriter();
-			writer2Client.print(filePath2Download);
-			writer2Client.flush();
-			writer2Client.close();
-		} else {
-			String filename = StringUtils.substringAfterLast(filePath2Download, SEPARATOR);		
-			logger.debug("FILE to download: " + filename);
-			
-			InputStream isFile = controller.downloadFile(filePath2Download);
-			resp.setContentType(TYPETAR);
-			resp.setHeader(CONTENTDISPOSITION, "attachment; filename=" + filename);
-			OutputStream osResponse = resp.getOutputStream();
-			IOUtils.copyLarge(isFile, osResponse);
-			osResponse.flush();
-			osResponse.close();
-			isFile.close();
-		}
+		String fileName = controller.askgn2download(isRequestXML);
+   
+        logger.debug("FILE to download: " + fileName);
+		resp.setContentType(TYPEXML);
+		resp.setCharacterEncoding(UTF8);
+		PrintWriter writer2Client = resp.getWriter();
+		writer2Client.println("<download>");
+		writer2Client.println("  <filename>"+fileName+"</filename>");
+		writer2Client.println("</download>");
+		writer2Client.flush();
+		writer2Client.close();
 	}
 
 }
