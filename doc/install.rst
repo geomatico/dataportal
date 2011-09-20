@@ -4,30 +4,19 @@
 .. |DP|  replace:: *Data Portal*
 .. |TCT| replace:: *Tomcat*
 
-.. [1] http://www.keopx.net/blog/cambiar-las-preferencias-de-java-alternatives-en-debianubuntu
-.. [2] http://www.guia-ubuntu.org/index.php?title=Java
-.. [3] http://tomcat.apache.org/tomcat-6.0-doc/ssl-howto.html
-.. [4] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/tutorial/AddingServices.html
-.. [5] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/reference/ncISO.html
-.. [6] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.1/reference/RemoteManagement.html
-.. [7] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/tutorial/ConfigCatalogs.html
-.. [8] http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html
-.. [9] http://geonetwork-opensource.org/manuals/trunk/users/admin/harvesting/index.html#harvesting-fragments-of-metadata-to-support-re-use
-.. [10] http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html
-
 
 Instalación
 ===========
 
-TODO: Micho, excepto apdo. |GS|
-
-
 |TCT| y Java
 -------------
+
 Instalación de JAVA de SUN
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Utilizando los repositorios de Ubuntu
 """""""""""""""""""""""""""""""""""""
+
 Primero instalaremos la versión necesaria de Java, en este caso la 6. Para ello teclearemos en la terminal::
 
 	$ sudo apt-get install sun-java6-jdk sun-java6-bin sun-java6-jre
@@ -60,14 +49,18 @@ para modificar esta debemos primero instalar nuestra versión de java como alter
 
 y después asignaremos esta alternativa::
 
-	$ sudo update-alternatives --set /usr/lib/jvm/java-6-sun/jre/bin/java
+	$ sudo update-alternatives --set java /usr/lib/jvm/java-6-sun/jre/bin/java
 
 ahora podemos comprobar a que máquina de Java apunta::
 
 	java -> /usr/lib/jvm/java-6-sun/jre/bin/java
 
+    
 Descargando Java
 """"""""""""""""
+
+.. WARNING::
+   Si ya se ha instalado java mediante apt-get (apartado anterior), esto no hace falta.
 
 Primero descargaremos la versión de Java que nos interesa desde::
 
@@ -92,11 +85,14 @@ después realizaremos los mismos pasos para asignar la alternativa que en el cas
 
 *	Cambiar las preferencias de Java (alternatives) en Debian/Ubuntu [1]_
 *	Instalación de Java Guia-Ubuntu [2]_
+
 	
 Instalación de Tomcat
 ^^^^^^^^^^^^^^^^^^^^^
+
 Instalación desde los repositorios
 """"""""""""""""""""""""""""""""""
+
 Abrimos un terminal y tecleamos::
 	
 	$ sudo apt-get install tomcat6
@@ -120,7 +116,7 @@ Para acceder al manager de |TCT| primero instalaremos la aplicación necesaria p
 
 	$ sudo apt-get install tomcat6-admin
 
-Una vez instalado incluiremos en el archivo tomcat-users.xml en el directorio de configuración el rol y el usuario necesario para acceder a la aplicación. Para ello incluiremos bajo la raiz <tomcat-users> lo siguiente::
+Una vez instalado incluiremos en el archivo /var/lib/tomcat6/conf/tomcat-users.xml el rol y el usuario necesario para acceder a la aplicación. Para ello incluiremos bajo la raiz <tomcat-users> lo siguiente::
 
 	<role rolename="tomcat"/>
 	<role rolename="manager"/>
@@ -132,19 +128,157 @@ Reiniciaremos el servidor y probamos el acceso a través de::
 
 e introduciremos los datos incluidos en el fichero tomcat-users.xml
 
+La configuración de GeoServer se hará entrando como admin en: http://localhost:8080/geoserver/web/
+
 
 |GS|
 ----
 
-TODO: Oscar
+Publicación de capas base para |GN| y |DP|
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* cómo metadatar servicios OWS y publicar cartografía de base que se usará en |GN| y |DP|
+Tanto la interfaz web de |GN| como el |DP| utilizan de un par de capas de base:
+
+* gn:world: Capa de origen raster con el Blue Marble de la NASA.
+* gn:gboundaries: Capa de origen vectorial con las fronteras de los países.
+
+La forma más cómoda de incorporar estas capas es a partir de una distribución *con instalador* de |GN|. El instalador incluye un directorio **geoserver_data** que puede copiarse tal cual en algún lugar del servidor. El usuario tomcat6 debe tener permisos de escritura sobre todo el contenido del directorio::
+
+    $ chown -R tomcat6:tomcat6 .
+    
+Además, debe editarse el parámetro GEOSERVER_DATA_DIR dentro de la instalación de GeoServer, en WEB-INF/web.xml::
+
+    <web-app>
+      ...
+      <context-param>
+        <param-name>GEOSERVER_DATA_DIR</param-name>
+        <param-value>/home/icos/data/geoserver_data</param-value>
+      </context-param>
+      ...
+    </web-app>
+
+.. WARNING::
+   La copia directa del **geoserver_data** se ha probado con las versiones de |GN| 2.6.4 y |GS| 2.1.x.
+
+
+Configuración inicial
+^^^^^^^^^^^^^^^^^^^^^
+
+Metadatos de servicio
+"""""""""""""""""""""
+
+En Servidor => Información de Contacto, pondremos los datos de contacto que queremos que aparezcan en los documentos de GetCapabilities de los servicios OGC.
+ 
+.. image:: img/geoserver-contactinfo.png
+    :width: 480 px
+    :alt: Servidor => Información de contacto
+    :align: center
+
+Por ejemplo:
+
+    * Persona de contacto: Jordi Sorribas
+    * Organización: Unidad de Tecnología Marina, CSIC
+    * Posición: Responsable servicios telemáticos
+    * Tipo de dirección: postal
+    * Dirección: Pg. Maritim de la Barceloneta 37-49
+    * Ciudad: Barcelona
+    * Estado o provincia: Barcelona
+    * Código postal o ZIP: E-08003
+    * País: Spain
+    * Teléfono: (+34)932309500
+    * Fax: (+34)932309555
+    * Correo electrónico: sorribas at utm.csic.es
+    
+Borrado de datos de ejemplo
+"""""""""""""""""""""""""""
+
+En caso de querer publicar nuestros propios datos, en algún momento deberemos proceder al borrado de los datos iniciales que vienen de ejemplo. Para evitar conflictos, deben borrarse por este orden:
+
+    #. Datos => Grupos de capas
+    #. Datos => Capas
+    #. Datos => Almacenes de datos
+    #. Datos => Espacios de trabajo
+    #. Datos => Estilos (excepto los estilos 'point', 'line', 'polygon' y 'raster', que deben conservarse porque son los que se usarán al publicar nuevas capas de datos)
+    
+Servicios
+"""""""""
+
+En Servicios => WCS, poner la información (para los metadatos del servicio) que se crea necesaria: responsable de mantenimiento, recurso en línea, título, resumen, tasas, restricciones de acceso, palabras clave. Además conviene tener en cuenta:
+
+    * Procesado de coberturas: Para una calidad óptima, utilizar submuestreo y overviews de mayor resolución.
+    * Imponer limitaciones en el consumo de recursos para evitar peticiones absurdamente grandes. Por ejemplo, limitar la memoria a 65 536 Kb (64 Mb) en ambos casos.
+
+En  Servicios => WFS, rellenar también los metadatos del servicio. Además:
+
+    * Features => Máximo número de features: Esto también impedirá peticiones absurdamente grandes. Por ejemplo, se puede limitar a 100 000.
+    
+En Servicios => WMS, rellenar también los metadatos del servicio. Además:
+
+    * Lista de SRS limitada: Para evitar que el GetCapabilities contenga *todos* los posibles SRS (cientos de ellos), es recomendable poner aquí la lista de SRS que es razonable ofrecer. Dependiendo del área geográfica de los datos, esta lista puede cambiar, pero se recomienda que contenga:
+        * Proyección UTM en los husos que corresponda. Para Europa, será habitual usar los datums ED50, ETRS89 y WGS84. Por ejemplo, para el Huso UTM 31N, serían: 23031, 25831, 32431.
+        * Latitud, longitud en WGS84 (las “coordenadas típicas” de los no profesionales): Es decir, 4326.
+        * La “proyección” de Google Maps. Tiene dos códigos EPSG: el oficial (3857), y el no oficial (900913).
+    * Opciones de renderizado raster: Escoger método de interpolación según la calidad deseada:
+        * Bicúbica (máxima calidad, mayor tiempo de respuesta)
+        * Bilineal (calidad media, tiempo de respuesta medio)
+        * Vecino más próximo (calidad baja, velocidad alta)
+    * Opciones de KML. Se recomienda estos valores:
+        * Modo per defecto del reflector: Superoverlay.
+        * Método de superoverlay: Auto.
+        * Generar placemarks de todo tipo.
+        * Umbral raster/vector: 40.
+    * Límites en el consumo de recursos:
+        * Memoria máxima para renderizado (KB): 65 536.
+        * Máximo tiempo de renderizado (s): 60.
+        * Máximo número de errores de renderizado: 1000.
+    * Configuración de la filigrana: Permite añadir un logo o “firma” en cada respuesta de GetMap. No se recomienda utilizarlo, porque es muy intrusivo (por ejemplo, da al traste con cualquier técnica de teselado).
+
+
+.. image:: img/geoserver-WMS.png
+    :width: 480 px
+    :alt: Algunas de las opciones de Servicios => WMS
+    :align: center
+
+Settings => Global
+""""""""""""""""""
+
+En Configuración Gobal, poner:
+
+    * Cantidad de decimales: Si se trabaja en coordenadas geográficas y con precisiones del orden de un metro (escalas no mayores que 1: 5 000), puede cambiarse este valor a  6.
+    * Codificación de caracteres: Como regla general para cualquier aplicación informática, se recomienda, siempre que se pueda, usar UTF-8. Es la codificación universal, que incorpora todos los alfabetos mundiales.
+    * Perfil del registro: En un servidor de verdad, se cambiaría a PRODUCTION_LOGGING.properties
+
+Seguridad
+"""""""""
+
+Se propone aquí una configuración de seguridad simple, donde cualquiera tenga acceso de lectura, pero sólo el administrador pueda hacer cambios en los datos. Obviamente, esta configuración puede cambiarse para hacerla tan compleja como se quiera, creando diversos grupos de usuarios con diversos niveles de acceso a los datos y servicios.
+
+**Seguridad de los datos**
+
+    * Conservar regla de lectura \*.\*.r para todos (*).
+    * Cambiar regla de escritura \*.\*.w para que sólo tenga derechos de edición ROLE_ADMINISTRATOR.
+
+.. image:: img/geoserver-security.png
+    :width: 600 px
+    :alt: Reglas mínimas de acceso a datos
+    :align: center
+    
+**Seguridad del catálogo**
+
+Se recomienda el método CHALLENGE, el más compatible con diversos clientes.
+
+Referencias
+"""""""""""
+
+Para más información sobre cómo diseñar y configurar entornos de producción reales, y sus implicaciones en seguridad y rendimiento, consultar el documento de OpenGeo Geoserver In Production: http://opengeo.org/publications/geoserver-production/
 
 
 |TDS|
 -----
+
 Instalación de Thredds Data Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 En este apartado se explicará la instalación y configuración del servidor |TDS|. En primer lugar necesitaremos descargarnos la versión adecuada del servidor, en nuestro caso será la versión 4.2.8::
 
 	ftp://ftp.unidata.ucar.edu/pub/thredds/4.2/thredds.war
@@ -154,6 +288,10 @@ Crearemos una variable de entorno que apunte a nuestro directorio de |TCT|. Edit
 
 	$ cd ~
 
+.. WARNING::
+   Si se ha isntalado el tomcat vía apt-get, y se inicia mediante /etc/init.d/tomcat6, entonces debe editarse dicho fichero y poner en $JAVA_OPTS los valores que corresponda, en lugar de editar .bashrc y setenv.sh
+   
+    
 Modificamos el archivo **.bashrc** con un editor de texto::
 
 	$ nano .bashrc
@@ -204,6 +342,7 @@ que nos mostrará::
 	-Dcatalina.base=/var/lib/tomcat6 -Dcatalina.home=/usr/share/tomcat6 -Djava.io.tmpdir=/tmp/tomcat6-tmp org.apache.catalina.startup.Bootstrap start
 
 Donde podemos observar los valores que hemos introducido en nuestro script y que |TCT| ha incluido en el arranque.
+
 Antes de realizar el despliegue de |TDS| crearemos la carpeta donde la instalación crea todos los archivos necesarios para la instalación y configuración del mismo. Para ello navegamos hasta el directorio donde el despliegue del war busca dicha carpeta por defecto::
 
 	$ cd /var/lib/tomcat
@@ -229,9 +368,14 @@ y accederemos al catalogo de ejemplo que viene en |TDS| por defecto.
 
 Configuración de módulos en |TDS|
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 TDS Remote Management
 """""""""""""""""""""
+
 Desde el Remote Management de |TDS| podemos acceder a información acerca del estado del servidor, reiniciar catálogos... Para porder acceder a este deberemos previamente configurar |TCT| para que permita el acceso mediante SSL. Lo primero que haremos será crear un certificado autofirmado en el servidor (keystore) y configuraremos |TCT| para utilizar un conector que permita el acceso mediante este protocolo.
+
+.. WARNING::
+   En lugar de utilizar ssl (en nuestro caso, el puerto SSL 443 no es accessible desde fuera), puede editarse el web.xml para cambiar las restricciones de acceso de este servicio de "CONFIDENTIAL" a "NONE".
 
 Lo primero que haremos será utilizar la herramienta keytool para generar el certificado. Esta herramienta viene suministrada con el JDK de Java y la encontraremos en::
 	
@@ -274,6 +418,7 @@ Está será la clave de acceso del usuario, por lo que no es necesario que sea i
 
 Configuración de servicios WMS y WCS
 """"""""""""""""""""""""""""""""""""
+
 |TDS| tiene por defecto los servicios WMS y WCS desactivados. Para poder hacer uso de estos servicios tendremos que activarlos. Deberemos modificar el archivo ``threddsConfig.xml`` que encontraremos en la carpeta ``content`` de la instalación de |TDS|. Modificaremos el archivo activando los servicios descomentando las etiquetas ``WMS`` y ``WCS`` y modificando el valor de la etiqueta ``allow`` a ``true``::
 	
 	<WMS>
@@ -294,6 +439,7 @@ para el WCS. Ahora ya podremos indicar en nuestros catálogos que los servicios 
 
 Configuración de ncISO
 """"""""""""""""""""""
+
 Desde la versión 4.2.4 de |TDS| se incluye el paquete ``ncISO`` que permite mostrar los metadatos de los datasets como fichas ISO. Para activar dicho servicio será necesario realizar unas modificaciones en el archivo ``threddsConfig.xml`` como en el caso de los servicios anteriores. Buscaremos en el archivo la linea que hace referencia el servicio ncISO las descomentaremos y modificaremos el valor a ``true`` para los tres casos::
 
 	<NCISO>
@@ -336,6 +482,7 @@ Ahora será posible añadir estos servicios a nuestros catálogos.
 
 Inclusión de servicios OGC/ISO en los catálogos
 """""""""""""""""""""""""""""""""""""""""""""""
+
 Una vez que hemos activado los servicios OGC/ISO será posible la utilización de estos en nuestros catálogos. |TDS| utiliza archivos catalog.xml para definir las carpetas donde se almacenan los datasets, así como la estructura que tendrá el arbol que muestra dichos datasets. También se encarga de definir los servicios que están disponibles en el servidor y que permite el acceso a estos datasets.
 
 Existe la posibilidad de definir un tipo de servicio ``compound`` que lo que nos permite es asignar todos los servicios activos a los datasets que incluyan este servicio. Para definir esto, en nuestro ``catalog.xml`` incluiremos el siguiente elemento::
@@ -389,6 +536,7 @@ Harvesting |TDS| a |GN|
 
 Creación y configuración del proceso de Harvesting
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Para dar de alta un proceso de harvesting debemos acceder a |GN| como administradores y dirigirnos a la pestaña de ``Administration``. Desde allí nos dirigiremos a ``Harvesting Management``. Esto nos abrirá una nueva ventana desde donde podemos crear nuestro proceso de harvesting. Para ello pulsaremos sobre ``Add`` y elegiremos del desplegable el ``Thredds Catalog`` para después volver a pulsar ``Add``. Rellenaremos los campos como se indica a continuación:
 
 .. image:: img/harvesting-management.png
@@ -414,6 +562,7 @@ Una vez definidas estos parametros pulsaremos sobre ``Save`` y podremos observar
 
 Creación de las plantillas de extracción de la información
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Para generar la información que necesitamos para el |DP|, debemos configurar el proceso de harvest de manera que este extraiga la información asociada a los datasets configurados en el servidor |TDS| siguiendo la NetCDF Attribute Convention for Dataset Discovery. Para ello a partir de la versión 2.7 de |GN| se implementa la posibilidad de utilizar fragmentos para la extracción y reutilización de esta información extraida en el proceso de harvest. Esta posibilidad solo está disponible para extracción de información de catalogos |TDS| y operaciones getFeature del protocolo WFS. Utilizando los fragmentos podremos extraer exclusivamente la información que requiere el |DP| para el proceso de busquedas implementado a través de |GN|. Podremos definir plantillas con los fragmentos que nos interesan que serán guardados en |GN| como **subplantillas** (subtemplates), a seleccionar en las opciones del proceso de harvest, y estos fragmentos que generarán estas subplantillas serán insertados en una plantilla que generará el registro (**plantilla base**) con el metadato en |GN|.
 
 .. image:: img/web-harvesting-fragments.png
@@ -437,6 +586,7 @@ Una vez que hayamos incluido nuestros archivos en las carpetas indicadas, debere
 
 Creación de la plantilla base
 """""""""""""""""""""""""""""
+
 Para la creación de la plantilla base tomaremos como plantilla de partida la que |GN| incluye por defecto en su versión 2.7. Esta, como hemos comentado se encuentra en::
 
 	$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/templates/thredds-harvester-unidata-data-discovery.xml
@@ -454,6 +604,7 @@ y en la subplantilla definiremos los fragmentos y les indicaremos el ``id`` al q
 
 Creación de la subplantilla (fragmentos)
 """"""""""""""""""""""""""""""""""""""""
+
 La subplantilla ha de definirse en la carpeta::
 
 	$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/convert/ThreddsToFragments
@@ -478,3 +629,18 @@ Esta es la manera de definir el fragmento. El atributo ``id`` que acompaña al e
 ----
 
 * nuestra app (tocar properties?)
+
+
+Referencias
+===========
+
+.. [1] http://www.keopx.net/blog/cambiar-las-preferencias-de-java-alternatives-en-debianubuntu
+.. [2] http://www.guia-ubuntu.org/index.php?title=Java
+.. [3] http://tomcat.apache.org/tomcat-6.0-doc/ssl-howto.html
+.. [4] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/tutorial/AddingServices.html
+.. [5] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/reference/ncISO.html
+.. [6] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.1/reference/RemoteManagement.html
+.. [7] http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/tutorial/ConfigCatalogs.html
+.. [8] http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html
+.. [9] http://geonetwork-opensource.org/manuals/trunk/users/admin/harvesting/index.html#harvesting-fragments-of-metadata-to-support-re-use
+.. [10] http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html
