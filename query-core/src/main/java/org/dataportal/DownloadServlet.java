@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -26,10 +25,11 @@ import org.apache.log4j.Logger;
  */
 public class DownloadServlet extends HttpServlet {
 	
-	private static Logger logger = Logger.getLogger(DownloadServlet.class);
+    private static final long serialVersionUID = 1L;
+
+    private static Logger logger = Logger.getLogger(DownloadServlet.class);
 	
 	private static final String CONTENTDISPOSITION = "Content-disposition";
-	private static final String SEPARATOR = "/";
 	private static final String TYPEXML = "application/xml";
 	private static final String TYPEZIP = "application/zip";
 	private static final String UTF8 = "UTF-8";

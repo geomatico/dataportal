@@ -10,19 +10,15 @@ import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
-
-
 /**
  * @author Micho Garcia
  *
  */
 public class QueryServlet extends HttpServlet {
+	
+    private static final long serialVersionUID = 1L;
 
-	
-	private static Logger logger = Logger.getLogger(QueryServlet.class);
-	
-	/**
+    /**
 	 * Receive the request from client with parameters
 	 * 
 	 * 
