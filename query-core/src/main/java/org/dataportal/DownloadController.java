@@ -12,13 +12,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -41,14 +39,7 @@ public class DownloadController {
      * Constructor. Reads tempDir from properties file. 
      */
     public DownloadController() {
-        Properties queryCoreProp = new Properties();
-        try {
-            queryCoreProp.load(QueryController.class.getResourceAsStream("/query-core.properties"));
-            this.tempDir = queryCoreProp.getProperty("pathTmp");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-            this.tempDir = "";            
-        }
+        this.tempDir = Config.get("temp.dir");
     }
     
 	/**
