@@ -1,0 +1,84 @@
+-- User: icos
+CREATE ROLE icos LOGIN ENCRYPTED PASSWORD 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+   VALID UNTIL 'infinity';
+
+
+-- Database: dataportal
+CREATE DATABASE dataportal
+  WITH ENCODING='UTF8'
+       OWNER=icos
+       CONNECTION LIMIT=-1;
+
+       
+-- Table: user
+CREATE TABLE "user"
+(
+   id character varying(128) NOT NULL, 
+   "password" character varying(32) NOT NULL, 
+   state character varying(16) NOT NULL, 
+   hash character varying(32), 
+   CONSTRAINT user_pk PRIMARY KEY (id), 
+   CONSTRAINT user_uid UNIQUE (id)
+) 
+WITH (
+  OIDS = FALSE
+)
+;
+ALTER TABLE "user" OWNER TO icos;
+
+
+-- Table: search
+CREATE TABLE "search"
+(
+   id serial, 
+   "user" character varying(128),
+   "timestamp" timestamp without time zone, 
+   "text" text, 
+   start_date date, 
+   end_date date, 
+   bboxes numeric(9,6)[][4], 
+   variables text[], 
+   CONSTRAINT search_pk PRIMARY KEY (id),
+   CONSTRAINT search_user_fk FOREIGN KEY ("user")
+      REFERENCES "user" (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+) 
+WITH (
+  OIDS = FALSE
+)
+;
+ALTER TABLE "search" OWNER TO icos;
+
+
+-- Table: download
+CREATE TABLE download
+(
+  id serial NOT NULL,
+  "user" character varying(128),
+  "timestamp" timestamp without time zone NOT NULL,
+  filename text,
+  CONSTRAINT download_pk PRIMARY KEY (id),
+  CONSTRAINT download_user_fk FOREIGN KEY ("user")
+      REFERENCES "user" (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE download OWNER TO icos;
+
+
+-- Table: download_item
+CREATE TABLE download_item
+(
+   id_download integer, 
+   id_item text NOT NULL, 
+   CONSTRAINT download_item_pk PRIMARY KEY (id_download, id_item), 
+   CONSTRAINT download_item_id_download_fk FOREIGN KEY (id_download) REFERENCES download (id) ON UPDATE NO ACTION ON DELETE NO ACTION
+) 
+WITH (
+  OIDS = FALSE
+)
+;
+ALTER TABLE download_item OWNER TO icos;
+
