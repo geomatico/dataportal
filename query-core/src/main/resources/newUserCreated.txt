@@ -1,0 +1,9 @@
+Dear new user,
+
+Your account at the ICOS Carbon Data Portal has been activated.
+
+For any issue, please contact us at {contact}.
+
+Best regards,
+
+The ICOS Carbon Data Portal team.

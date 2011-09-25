@@ -1,5 +1,5 @@
 -- User: icos
-CREATE ROLE icos LOGIN ENCRYPTED PASSWORD 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+CREATE ROLE icos LOGIN ENCRYPTED PASSWORD 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
    VALID UNTIL 'infinity';
 
 
@@ -10,21 +10,20 @@ CREATE DATABASE dataportal
        CONNECTION LIMIT=-1;
 
        
--- Table: user
-CREATE TABLE "user"
+-- Table: users
+CREATE TABLE "users"
 (
    id character varying(128) NOT NULL, 
    "password" character varying(32) NOT NULL, 
    state character varying(16) NOT NULL, 
    hash character varying(32), 
-   CONSTRAINT user_pk PRIMARY KEY (id), 
-   CONSTRAINT user_uid UNIQUE (id)
+   CONSTRAINT users_pk PRIMARY KEY (id)
 ) 
 WITH (
   OIDS = FALSE
 )
 ;
-ALTER TABLE "user" OWNER TO icos;
+ALTER TABLE "users" OWNER TO icos;
 
 
 -- Table: search
@@ -40,7 +39,7 @@ CREATE TABLE "search"
    variables text[], 
    CONSTRAINT search_pk PRIMARY KEY (id),
    CONSTRAINT search_user_fk FOREIGN KEY ("user")
-      REFERENCES "user" (id) MATCH SIMPLE
+      REFERENCES "users" (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 ) 
 WITH (
@@ -59,7 +58,7 @@ CREATE TABLE download
   filename text,
   CONSTRAINT download_pk PRIMARY KEY (id),
   CONSTRAINT download_user_fk FOREIGN KEY ("user")
-      REFERENCES "user" (id) MATCH SIMPLE
+      REFERENCES "users" (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 )
 WITH (

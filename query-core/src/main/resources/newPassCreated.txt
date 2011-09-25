@@ -1,0 +1,13 @@
+Dear user,
+
+Your new password has been generated successfully.
+
+Your new password is: {pass}
+
+For privacy reasons, we strongly encourage you to change this password in your next login.
+
+For any question, please contact us at {contact}.
+
+Best regards,
+
+The ICOS Carbon Data Portal team.

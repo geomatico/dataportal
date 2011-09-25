@@ -1,0 +1,15 @@
+Dear user,
+
+At the ICOS Carbon Data Portal we have received a new password generation request from you.
+
+In order to complete the process, you must confirm your identity following this link:
+
+{link}
+
+If you haven't registered in the ICOS Carbon Data Portal, you can safely ignore this message.
+
+If you have any concern, please don't hestitate to contact us at {contact}.
+
+Best regards,
+
+The ICOS Carbon Data Portal team.
