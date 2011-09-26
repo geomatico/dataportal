@@ -2,6 +2,7 @@ package org.dataportal;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.Principal;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,7 +21,11 @@ public class TestAuthenticationServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    String userName = request.getRemoteUser();
+	    String isIcosUser = request.isUserInRole("icosUser") ? "Yes" : "Nope";
+
 	    PrintWriter out = response.getWriter();
-	    out.println("Hi there!");
+	    out.println("Hi, " + userName);
+	    out.println("Are you an icosUser? " + isIcosUser);
 	}
 }
