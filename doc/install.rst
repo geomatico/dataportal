@@ -1,6 +1,7 @@
 ﻿.. |TDS| replace:: *Thredds*
 .. |GN|  replace:: *GeoNetwork*
 .. |GS|  replace:: *GeoServer*
+.. |PG|  replace:: *PostgreSQL*
 .. |DP|  replace:: *Data Portal*
 .. |TCT| replace:: *Tomcat*
 
@@ -625,10 +626,90 @@ comprobaremos que se trata de un ejemplo normal de plantilla xsl, con su encabez
 
 Esta es la manera de definir el fragmento. El atributo ``id`` que acompaña al elemento se trata del ``id`` al que se hace referencia en la plantilla base, y todos los elementos que se incluyan dentro del fragmento serán procesados en la creación del metadato e incluidos en la plantilla. 
 
+|PG|
+----
+
+Instalación y configuración inicial
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Instalar |PG|::
+
+    $ sudo apt-get install postgresql
+
+Comprobar que está habilitado el servicio de conexión vía TCP/IP para localhost, y el puerto. En postgresql.conf::
+    
+    listen_addresses = 'localhost' 
+    port = 5432 
+   
+Y en pg_hba.conf::
+
+    host    all         all         127.0.0.1/32          md5
+
+Si se ha modificado alguno de estos ficheros, reiniciar el servicio::
+
+    $ sudo /etc/init.d/postgresql-8.4 restart
+
+    
+Creación esquema BDD para el |DP|
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    
+Obtener los scripts create_db.sql y create_schema.sql. Abrir el script create_db.sql y poner un password al usuario "icos". Luego, ejecutar el script::
+
+    $ sudo -u postgres psql < create_db.sql
+    
+A continuación creamos el esquema::
+
+    $ psql -U icos -d dataportal < create_schema.sql
+
+    
 |DP|
 ----
 
-* nuestra app (tocar properties?)
+Creación de un dominio de autenticación en |TCT|
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Para proteger ciertos recursos de la aplicación mediante autenticación HTTP Digest, utilizaremos los usuarios y passwords almacenados en la BDD |PG|. Para ello debe definirse un dominio de autenticación (Realm) a nivel de contenedor de aplicaciones, aunque sólo afectará al contexto de la aplicación |DP|.
+
+Primero, copiar el driver JDBC de |PG| en las librerias comunes de |TCT|::
+
+    $ cd /usr/share/java
+    $ sudo wget http://jdbc.postgresql.org/download/postgresql-8.4-703.jdbc4.jar
+    $ cd /usr/share/tomcat6/lib
+    $ sudo ln -s ../../java/postgresql-8.4-703.jdbc4.jar postgresql-8.4-703.jdbc4.jar
+
+Definir el Realm. Crear un fichero de contexto en /var/lib/tomcat6/conf/Catalina/localhost/dataportal.xml con el siguiente contenido::
+  
+    <?xml version="1.0" encoding="UTF-8"?>
+    <Context path="/dataportal">
+        <Realm
+            className="org.apache.catalina.realm.JDBCRealm"
+            allRolesMode="authOnly"
+            driverName="org.postgresql.Driver"
+            connectionURL="jdbc:postgresql://localhost:5432/dataportal"
+            connectionName="icos"
+            connectionPassword="XXXXXXXXX"
+            userTable="users"
+            userNameCol="id"
+            userCredCol="password"
+            digest="MD5"
+            digestEncoding="UTF8"
+            userRoleTable="users"
+            roleNameCol="'icosUser'"
+        />
+    </Context>
+
+.. WARNING::
+   Poner en connectionPassword el password correspondiente al rol 'icos' (ver apartado sobre instalación de |PG|).
+   
+Fichero dataportal.properties
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Cambiar los valores para:
+
+* URL del servicio de catálogo CSW donde realizar las búsquedas.
+* Directorio temporal donde se almacenarán los datos descargables.
+* Credenciales de acceso a la BDD de la aplicación.
+* Datos sobre la cuenta de mail utilizada por el gestor de cuentas de usuario.
 
 
 Referencias

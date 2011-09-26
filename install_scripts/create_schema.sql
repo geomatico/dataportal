@@ -1,15 +1,3 @@
--- User: icos
-CREATE ROLE icos LOGIN ENCRYPTED PASSWORD 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-   VALID UNTIL 'infinity';
-
-
--- Database: dataportal
-CREATE DATABASE dataportal
-  WITH ENCODING='UTF8'
-       OWNER=icos
-       CONNECTION LIMIT=-1;
-
-       
 -- Table: users
 CREATE TABLE "users"
 (
