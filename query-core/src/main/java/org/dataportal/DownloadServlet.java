@@ -74,8 +74,8 @@ public class DownloadServlet extends HttpServlet {
 		
 		InputStream isRequestXML = req.getInputStream();	
 		
-		QueryController controller = new QueryController();
-		String fileName = controller.askgn2download(isRequestXML);
+		DownloadController downloader = new DownloadController();
+		String fileName = downloader.askgn2download(isRequestXML);
    
         logger.debug("FILE to download: " + fileName);
 		resp.setContentType(TYPEXML);
