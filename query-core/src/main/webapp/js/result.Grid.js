@@ -1,6 +1,6 @@
-Ext.namespace('Icos.result');
+Ext.namespace('result');
 
-Icos.result.Grid =  Ext.extend(Ext.grid.GridPanel, {
+result.Grid =  Ext.extend(Ext.grid.GridPanel, {
     
     pageSize: 25,
     vocabulary: null,
@@ -56,7 +56,7 @@ Icos.result.Grid =  Ext.extend(Ext.grid.GridPanel, {
                         columnWidth: .70
                     },{
                         title: 'Spatial Extent',
-                        items: [new Icos.result.Map({resultExtent: record.get("geo_extent")})],
+                        items: [new result.Map({resultExtent: record.get("geo_extent")})],
                         width: 260,
                         height: 300
                     },{
@@ -102,7 +102,7 @@ Icos.result.Grid =  Ext.extend(Ext.grid.GridPanel, {
         };
         
         Ext.apply(this, Ext.apply(this.initialConfig, config));
-        Icos.result.Grid.superclass.initComponent.apply(this, arguments);
+        result.Grid.superclass.initComponent.apply(this, arguments);
     },
     
     load: function(params) {
@@ -117,4 +117,4 @@ Icos.result.Grid =  Ext.extend(Ext.grid.GridPanel, {
 
 });
 
-Ext.reg('i_resultgrid', Icos.result.Grid);
+Ext.reg('i_resultgrid', result.Grid);

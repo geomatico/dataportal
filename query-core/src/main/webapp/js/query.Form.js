@@ -1,13 +1,13 @@
-Ext.namespace('Icos.query');
+Ext.namespace('query');
 
-Icos.query.Form =  Ext.extend(Ext.form.FormPanel, {
+query.Form =  Ext.extend(Ext.form.FormPanel, {
 
     map: null,
     vocabulary: null,
         
     initComponent: function() {
         
-        this.map = new Icos.query.Map();
+        this.map = new query.Map();
                
         var config = {
             labelAlign: 'top',
@@ -62,7 +62,7 @@ Icos.query.Form =  Ext.extend(Ext.form.FormPanel, {
         };
         Ext.apply(this, Ext.apply(this.initialConfig, config));
         
-        Icos.query.Form.superclass.initComponent.apply(this, arguments);
+        query.Form.superclass.initComponent.apply(this, arguments);
 
         if(this.vocabulary) {
             this.vocabulary.on('load', this.addVariableFieldset, this);
@@ -127,4 +127,4 @@ Icos.query.Form =  Ext.extend(Ext.form.FormPanel, {
     
 });
 
-Ext.reg('i_queryform', Icos.query.Form);
+Ext.reg('i_queryform', query.Form);

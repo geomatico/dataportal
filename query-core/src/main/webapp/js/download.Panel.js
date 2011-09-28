@@ -1,6 +1,6 @@
-Ext.namespace('Icos.download');
+Ext.namespace('download');
 
-Icos.download.Panel =  Ext.extend(Ext.Panel, {
+download.Panel =  Ext.extend(Ext.Panel, {
     
     store: null,
     recordType: null,
@@ -87,8 +87,8 @@ Icos.download.Panel =  Ext.extend(Ext.Panel, {
         };
         
         Ext.apply(this, Ext.apply(this.initialConfig, config));
-        Icos.download.Panel.superclass.initComponent.apply(this, arguments);
+        download.Panel.superclass.initComponent.apply(this, arguments);
     }
 });
 
-Ext.reg('i_downloadpanel', Icos.download.Panel);
+Ext.reg('i_downloadpanel', download.Panel);

@@ -1,6 +1,6 @@
-Ext.namespace('Icos.result');
+Ext.namespace('result');
 
-Icos.result.Map =  Ext.extend(GeoExt.MapPanel, {
+result.Map =  Ext.extend(GeoExt.MapPanel, {
 
     map: null,
     fullExtent: null,
@@ -65,8 +65,8 @@ Icos.result.Map =  Ext.extend(GeoExt.MapPanel, {
         };
         
         Ext.apply(this, Ext.apply(this.initialConfig, config));
-        Icos.result.Map.superclass.initComponent.apply(this, arguments);
+        result.Map.superclass.initComponent.apply(this, arguments);
     }
 });
 
-Ext.reg('i_resultmap', Icos.result.Map);
+Ext.reg('i_resultmap', result.Map);

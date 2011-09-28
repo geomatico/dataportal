@@ -1,6 +1,6 @@
-Ext.namespace('Icos.query');
+Ext.namespace('query');
 
-Icos.query.Map =  Ext.extend(GeoExt.MapPanel, {
+query.Map =  Ext.extend(GeoExt.MapPanel, {
 
     map: null,
     bboxLayer: null,
@@ -92,7 +92,7 @@ Icos.query.Map =  Ext.extend(GeoExt.MapPanel, {
         };
         
         Ext.apply(this, Ext.apply(this.initialConfig, config));
-        Icos.query.Map.superclass.initComponent.apply(this, arguments);
+        query.Map.superclass.initComponent.apply(this, arguments);
     },
 
     getBBOXes: function() {
@@ -100,4 +100,4 @@ Icos.query.Map =  Ext.extend(GeoExt.MapPanel, {
     }
 });
 
-Ext.reg('i_querymap', Icos.query.Map);
+Ext.reg('i_querymap', query.Map);
