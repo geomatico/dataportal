@@ -93,12 +93,4 @@ public class QueryControllerTest extends TestCase {
 			e.printStackTrace();
 		}
 	}
-	
-	public void testAskgn2download() {		
-		
-		InputStream isRequestXML = getClass().getResourceAsStream(
-				"/testResponse2Client.xml");
-		
-		controlador.askgn2download(isRequestXML);
-	}
 }
