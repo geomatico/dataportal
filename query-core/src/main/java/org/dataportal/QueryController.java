@@ -11,29 +11,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.dataportal.csw.CSWCatalog;
-import org.dataportal.csw.CSWGetRecordById;
 import org.dataportal.csw.CSWGetRecords;
-import org.dataportal.csw.CSWNamespaceContext;
 import org.dataportal.utils.BBox;
 import org.dataportal.utils.RangeDate;
 import org.dataportal.utils.Utils;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 
 /**
  * Controller manage client petitions to server and manage responses from server

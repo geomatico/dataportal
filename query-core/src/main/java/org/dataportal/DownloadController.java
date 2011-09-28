@@ -45,6 +45,7 @@ import org.w3c.dom.NodeList;
 public class DownloadController {
 
     private static Logger logger = Logger.getLogger(DownloadController.class);
+    
     private String tempDir;
     private static CSWCatalog catalogo;
 
@@ -91,7 +92,7 @@ public class DownloadController {
 	 * @param InputStream
 	 *            with the XML sends by client
 	 */
-	public String askgn2download(InputStream isRequestXML) {
+	public String askgn2download(InputStream isRequestXML, String anUserName) {
 
 		StringBuffer response = new StringBuffer();
 
@@ -147,8 +148,7 @@ public class DownloadController {
 				ArrayList<String> urlsRequest = Utils
 						.nodeList2ArrayList(urlNodeList);
 
-				// TODO usar nombre usuario real
-				String userName = "admin";
+				String userName = anUserName;
 
 				String resultDownload = downloadDatasets(
 						urlsRequest, userName);
@@ -190,6 +190,7 @@ public class DownloadController {
 			Document xmlGetRecordsById = (Document) dBuilder
 					.parse(isGetRecordByIdResponse);
 
+			// TODO Extraer esto a una clase
 			CSWNamespaceContext ctx = new CSWNamespaceContext();
 
 			XPathFactory factory = XPathFactory.newInstance();
@@ -199,6 +200,7 @@ public class DownloadController {
 			String recordsExpr = "//BriefRecord/identifier/child::node()";
 			ides = (NodeList) xpath.evaluate(recordsExpr, xmlGetRecordsById,
 					XPathConstants.NODESET);
+			// TODO EOF
 			if (ides.getLength() != 0)
 				arrayIdes = Utils.nodeList2ArrayList(ides);
 

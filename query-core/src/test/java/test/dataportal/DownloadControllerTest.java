@@ -4,7 +4,6 @@
 package test.dataportal;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 
 import org.dataportal.DownloadController;
 
@@ -37,6 +36,6 @@ public class DownloadControllerTest extends TestCase {
 		InputStream isRequestXML = getClass().getResourceAsStream(
 				"/testResponse2Client.xml");
 		
-		controladorDescarga.askgn2download(isRequestXML);
+		controladorDescarga.askgn2download(isRequestXML, "micho.garcia");
 	}
 }
