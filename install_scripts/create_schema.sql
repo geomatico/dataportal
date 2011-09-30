@@ -56,7 +56,26 @@ ALTER TABLE download OWNER TO icos;
 
 
 -- Table: download_item
+DROP TABLE IF EXISTS "download_item" CASCADE;
+
 CREATE TABLE download_item
+(
+   id_item serial NOT NULL, 
+	 text	text	NOT NULL,
+	 id_download serial,
+   CONSTRAINT download_item_pk PRIMARY KEY (id_item), 
+   CONSTRAINT id_download_fk FOREIGN KEY (id_download) 
+			REFERENCES download (id) MATCH SIMPLE 
+			ON UPDATE NO ACTION ON DELETE NO ACTION
+) 
+WITH (
+  OIDS = FALSE
+)
+;
+ALTER TABLE download_item OWNER TO icos;
+
+-- Table: download_item
+/*CREATE TABLE download_item
 (
    id_download integer, 
    id_item text NOT NULL, 
@@ -67,5 +86,5 @@ WITH (
   OIDS = FALSE
 )
 ;
-ALTER TABLE download_item OWNER TO icos;
+ALTER TABLE download_item OWNER TO icos;*/
 
