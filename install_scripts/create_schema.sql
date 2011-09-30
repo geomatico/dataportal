@@ -56,8 +56,6 @@ ALTER TABLE download OWNER TO icos;
 
 
 -- Table: download_item
-DROP TABLE IF EXISTS "download_item" CASCADE;
-
 CREATE TABLE download_item
 (
    id_item serial NOT NULL, 
