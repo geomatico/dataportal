@@ -28,6 +28,11 @@ public class DownloadItem implements Serializable {
 
     public DownloadItem() {
     }
+    
+    public DownloadItem(String filename, Download download) {
+    	this.text = filename;
+    	this.download = download;
+    }
 
 	public Integer getIdItem() {
 		return this.idItem;

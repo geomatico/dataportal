@@ -36,6 +36,13 @@ public class Download implements Serializable {
 
     public Download() {
     }
+    
+    public Download(Integer id, String filename, Timestamp timestamp, User user) {
+    	this.id = id;
+    	this.filename = filename;
+    	this.timestamp = timestamp;
+    	this.userBean = user;
+    }
 
 	public Integer getId() {
 		return this.id;
