@@ -1,6 +1,4 @@
-Ext.namespace('Icos');
-
-Icos.App =  Ext.extend(Ext.Viewport, {
+App =  Ext.extend(Ext.Viewport, {
     
     vocabulary: null,
     dataRecordType: null,
@@ -39,7 +37,7 @@ Icos.App =  Ext.extend(Ext.Viewport, {
             'data_link'
        ]);
         
-        this.queryForm = new Icos.query.Form({
+        this.queryForm = new query.Form({
             vocabulary: this.vocabulary,
             listeners: {
                 scope: this,
@@ -54,7 +52,7 @@ Icos.App =  Ext.extend(Ext.Viewport, {
         
         this.vocabulary.load();
         
-        this.resultGrid = new Icos.result.Grid({
+        this.resultGrid = new result.Grid({
             vocabulary: this.vocabulary,
             recordType: this.dataRecordType,
             downloadHandler: function(grid, rowIndex, colIndex) {
@@ -64,7 +62,7 @@ Icos.App =  Ext.extend(Ext.Viewport, {
             handlerScope: this
         });
         
-        this.downloadPanel = new Icos.download.Panel({
+        this.downloadPanel = new download.Panel({
             recordType: this.dataRecordType
         });
         
@@ -110,7 +108,7 @@ Icos.App =  Ext.extend(Ext.Viewport, {
         };
         
         Ext.apply(this, Ext.apply(this.initialConfig, config));
-        Icos.App.superclass.initComponent.apply(this, arguments);
+        App.superclass.initComponent.apply(this, arguments);
     },
 
     doQuery: function() {
@@ -128,4 +126,4 @@ Icos.App =  Ext.extend(Ext.Viewport, {
     
 });
 
-Ext.reg('i_app', Icos.App);
+Ext.reg('i_app', App);
