@@ -16,8 +16,8 @@ public class Download implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(unique=true, nullable=false)
-	private Integer id;
+	@Column(unique=true, nullable=false, length=128)
+	private String id;
 
 	@Column(length=2147483647)
 	private String filename;
@@ -37,18 +37,22 @@ public class Download implements Serializable {
     public Download() {
     }
     
-    public Download(Integer id, String filename, Timestamp timestamp, User user) {
+    public Download(String id) {
+    	this.id = id;
+    }
+    
+    public Download(String id, String filename, Timestamp timestamp, User user) {
     	this.id = id;
     	this.filename = filename;
     	this.timestamp = timestamp;
     	this.userBean = user;
     }
 
-	public Integer getId() {
+	public String getId() {
 		return this.id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
