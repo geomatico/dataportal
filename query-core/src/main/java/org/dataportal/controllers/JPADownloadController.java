@@ -3,12 +3,15 @@
  */
 package org.dataportal.controllers;
 
+import java.util.ArrayList;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
 import org.dataportal.model.Download;
+import org.dataportal.model.DownloadItem;
 
 /**
  * 
@@ -63,6 +66,30 @@ public class JPADownloadController {
 		}
 		return inserted;
 	}
+	
+	public boolean insertItems(Download download, ArrayList<DownloadItem> items) {
+		
+		boolean inserted = false;
+		EntityManager manager = getEntityManager();
+		EntityTransaction transaction = manager.getTransaction();
+		try {
+			transaction.begin();
+			manager.persist(download);			
+			for (DownloadItem item : items) {
+				item.setDownload(download);
+				manager.persist(item);
+			}
+			transaction.commit();
+			inserted = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			inserted = false;
+		} finally {
+			if (manager != null)
+				manager.close();
+		}
+		return inserted;
+	}
 
 	/**
 	 * 
@@ -72,6 +99,8 @@ public class JPADownloadController {
 	 * @return boolean with operations result
 	 */
 	public boolean delete(Download download) {
+		
+		// TODO elimine items en cascada
 
 		boolean deleted = false;
 		EntityManager manager = getEntityManager();

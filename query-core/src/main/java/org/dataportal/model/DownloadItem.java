@@ -34,6 +34,10 @@ public class DownloadItem implements Serializable {
     	this.download = download;
     }
 
+	public DownloadItem(String filename) {
+		this.text = filename;
+	}
+
 	public Integer getIdItem() {
 		return this.idItem;
 	}
