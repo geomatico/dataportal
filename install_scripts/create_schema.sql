@@ -40,7 +40,7 @@ ALTER TABLE "search" OWNER TO icos;
 -- Table: download
 CREATE TABLE download
 (
-  id serial NOT NULL,
+  id character varying(128) NOT NULL,
   "user" character varying(128),
   "timestamp" timestamp without time zone NOT NULL,
   filename text,
@@ -60,7 +60,7 @@ CREATE TABLE download_item
 (
    id_item serial NOT NULL, 
 	 text	text	NOT NULL,
-	 id_download serial,
+	 id_download character varying(128),
    CONSTRAINT download_item_pk PRIMARY KEY (id_item), 
    CONSTRAINT id_download_fk FOREIGN KEY (id_download) 
 			REFERENCES download (id) MATCH SIMPLE 
