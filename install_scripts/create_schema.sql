@@ -23,8 +23,10 @@ CREATE TABLE "search"
    "text" text, 
    start_date date, 
    end_date date, 
-   bboxes numeric(9,6)[][4], 
-   variables text[], 
+   --bboxes numeric(9,6)[][4], 
+   --variables text[], 
+   bboxes text, 
+   variables text,
    CONSTRAINT search_pk PRIMARY KEY (id),
    CONSTRAINT search_user_fk FOREIGN KEY ("user")
       REFERENCES "users" (id) MATCH SIMPLE
