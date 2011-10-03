@@ -66,15 +66,25 @@ public class JPADownloadController {
 		}
 		return inserted;
 	}
-	
+
+	/**
+	 * 
+	 * Insert a download with all items into RDBMS
+	 * 
+	 * @param download
+	 *            Download
+	 * @param items
+	 *            DownloadItem ArrayList
+	 * @return
+	 */
 	public boolean insertItems(Download download, ArrayList<DownloadItem> items) {
-		
+
 		boolean inserted = false;
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
 		try {
 			transaction.begin();
-			manager.persist(download);			
+			manager.persist(download);
 			for (DownloadItem item : items) {
 				item.setDownload(download);
 				manager.persist(item);
@@ -99,7 +109,7 @@ public class JPADownloadController {
 	 * @return boolean with operations result
 	 */
 	public boolean delete(Download download) {
-		
+
 		// TODO elimine items en cascada
 
 		boolean deleted = false;

@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -86,7 +87,7 @@ public class DownloadController {
 		if (!exits) {
 			boolean createDir = personalDirectory.mkdir();
 			if (!createDir)
-				pathFile = "";
+				pathFile = null;
 		}
 
 		return pathFile;
@@ -139,9 +140,8 @@ public class DownloadController {
 				logger.info("ID'S NO ENCONTRADOS: "
 						+ String.valueOf(noIdsResponse.size()) + " -> "
 						+ StringUtils.join(noIdsResponse, " : "));
-				QueryError error = new QueryError();
-				// TODO change error code
-				error.setCode("ides.no.encontrados");
+				DataPortalError error = new DataPortalError();
+				error.setCode("id.not.found");
 				error.setMessage(StringUtils.join(noIdsResponse, " : "));
 
 				response.append(error.getErrorMessage());
@@ -177,7 +177,7 @@ public class DownloadController {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			QueryError error = new QueryError();
+			DataPortalError error = new DataPortalError();
 			error.setCode("error.ejecucion.servidor");
 			error.setMessage(e.getMessage());
 			response.append(error.getErrorMessage());
@@ -223,7 +223,7 @@ public class DownloadController {
 	 * @return String with DOI
 	 */
 	private String getDOI() {
-		
+
 		// TODO todo
 		String DOI = "100/1000.434";
 		return DOI;
@@ -278,51 +278,72 @@ public class DownloadController {
 	 * @param urlsRequest
 	 *            ArrayList with url's (ArrayList)
 	 * @return Message
-	 * @throws Exception
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws IOException
 	 */
 	private String downloadDatasets(ArrayList<String> urlsRequest,
-			String userName) throws Exception {
+			String userName) throws InterruptedException, ExecutionException,
+			IOException {
 
 		// TODO cambiar esto por una clase mensaje de dataportal
-		String response = "";
+		StringBuffer response = null;
 
 		String pathFile = createPathFile(userName);
-		if (pathFile.equals("")) {
-			// TODO cambiar por clase error
-			response = "No se ha podido crear el directorio";
-			logger.error("No se ha podido crear el directorio");
+		if (pathFile == null) {
+			DataPortalError error = new DataPortalError();
+			error.setCode("failed.create.directory");
+			error.setMessage("Failed to create directory");
+			response = new StringBuffer();
+			response.append(error.getErrorMessage());
+			logger.error("FAILED create directory");
 		} else {
-
-			int urls = urlsRequest.size();
-
-			ExecutorService threadsPool = Executors.newCachedThreadPool();
-			int future = 0;
-			Future futures[] = new Future[urls];
-
-			for (String url : urlsRequest) {
-				String name = StringUtils.substringAfterLast(url, "/");
-
-				DownloadCallable hiloDescarga = new DownloadCallable(url, name,
-						pathFile);
-				futures[future] = threadsPool.submit(hiloDescarga);
-				future += 1;
-
-				Thread.sleep(2000);
-			}
-
-			for (int i = 0; i < urls; i++) {
-				String tarea = (String) futures[i].get();
-				logger.info("DOWNLOADING FINISH: " + tarea);
-			}
-
+			createDownloadThreads(urlsRequest, pathFile);
 			String nameFile = userName + "_" + Utils.extractDateSystem();
 			String filePathName = compressFiles(pathFile, nameFile);
 			// TODO cambiar mensaje
 			logger.debug("FILE to download: " + filePathName);
-			response = StringUtils.substringAfterLast(filePathName, "/");
+			response = new StringBuffer();
+			response.append(StringUtils.substringAfterLast(filePathName, "/"));
 		}
 
-		return response;
+		return response.toString();
+	}
+
+	/**
+	 * 
+	 * Create all Threads to download files
+	 * 
+	 * @param urlsRequest URL's ArrayList
+	 * @param pathFile path to save files
+	 * @throws MalformedURLException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	private void createDownloadThreads(ArrayList<String> urlsRequest,
+			String pathFile) throws MalformedURLException,
+			InterruptedException, ExecutionException {
+		int urls = urlsRequest.size();
+
+		ExecutorService threadsPool = Executors.newCachedThreadPool();
+		int future = 0;
+		Future futures[] = new Future[urls];
+
+		for (String url : urlsRequest) {
+			String name = StringUtils.substringAfterLast(url, "/");
+
+			DownloadCallable hiloDescarga = new DownloadCallable(url, name,
+					pathFile);
+			futures[future] = threadsPool.submit(hiloDescarga);
+			future += 1;
+
+			Thread.sleep(2000);
+		}
+
+		for (int i = 0; i < urls; i++) {
+			String tarea = (String) futures[i].get();
+			logger.info("DOWNLOADING FINISH: " + tarea);
+		}
 	}
 
 	/**
