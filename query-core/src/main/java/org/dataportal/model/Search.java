@@ -2,7 +2,6 @@ package org.dataportal.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import java.sql.Array;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -17,10 +16,12 @@ public class Search implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(unique=true, nullable=false)
 	private Integer id;
 
-	private Array bboxes;
+	@Column(length=2147483647)
+	private String bboxes;
 
     @Temporal( TemporalType.DATE)
 	@Column(name="end_date")
@@ -36,7 +37,7 @@ public class Search implements Serializable {
 	private Timestamp timestamp;
 
 	@Column(length=2147483647)
-	private Array variables;
+	private String variables;
 
 	//bi-directional many-to-one association to User
     @ManyToOne
@@ -54,11 +55,11 @@ public class Search implements Serializable {
 		this.id = id;
 	}
 
-	public Array getBboxes() {
+	public String getBboxes() {
 		return this.bboxes;
 	}
 
-	public void setBboxes(Array bboxes) {
+	public void setBboxes(String bboxes) {
 		this.bboxes = bboxes;
 	}
 
@@ -94,11 +95,11 @@ public class Search implements Serializable {
 		this.timestamp = timestamp;
 	}
 
-	public Array getVariables() {
+	public String getVariables() {
 		return this.variables;
 	}
 
-	public void setVariables(Array variables) {
+	public void setVariables(String variables) {
 		this.variables = variables;
 	}
 
