@@ -16,7 +16,7 @@ import javax.xml.stream.XMLStreamWriter;
  * @author Micho Garcia
  * 
  */
-public class QueryError {
+public class DataPortalError {
 
 	private static final String XMLENCODING = "UTF-8";
 	private static final String XMLVERSION = "1.0";
