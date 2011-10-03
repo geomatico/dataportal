@@ -59,7 +59,7 @@ public class JPADownloadControllerTest extends TestCase {
 	 */
 	public EntityManager getEntityManager() {
 		EntityManagerFactory factoria = Persistence
-				.createEntityManagerFactory("dataportalTest");
+				.createEntityManagerFactory("dataportal");
 		EntityManager manager = factoria.createEntityManager();
 		return manager;
 	}
