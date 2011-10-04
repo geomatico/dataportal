@@ -5,12 +5,24 @@ App =  Ext.extend(Ext.Viewport, {
     queryForm: null,
     resultGrid: null,
     downloadPanel: null,
+    user: null,
     
     initComponent: function() {
         // TODO: Manage state & session
         //Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
         
         Ext.QuickTips.init();
+        
+        this.user = new Authentication({
+            listeners: {
+                logged_in: function(username) {
+                    alert("Welcome, " + username + "!");
+                },
+                logged_out: function() {
+                    alert("See you!");
+                }
+            }
+        });
         
         this.vocabulary = new Ext.data.XmlStore({
             url: 'xml/vocabulario.xml',

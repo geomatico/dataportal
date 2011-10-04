@@ -45,7 +45,7 @@
         <url-pattern>/testauth</url-pattern>
     </servlet-mapping>
 
-    <security-constraint>
+    <!--security-constraint>
         <web-resource-collection>
             <web-resource-name>IcosDataPortalUserAccess</web-resource-name>
             <url-pattern>/download</url-pattern>
@@ -57,7 +57,7 @@
     </security-constraint>
 
     <login-config>
-        <auth-method>DIGEST</auth-method>
+        <auth-method>BASIC</auth-method>
         <realm-name>ICOS Data Portal user access</realm-name>
-    </login-config>
+    </login-config-->
 </web-app>

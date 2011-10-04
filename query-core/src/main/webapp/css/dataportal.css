@@ -32,10 +32,10 @@ p {
 	padding: 5px;
 }
 
-a.login {
-	position: absolute;
-	top: 35px;
-	right: 12px;
+#notLoggedLinks, #loggedLinks {
+    position: absolute;
+    top: 35px;
+    right: 12px;
 }
 
 .bboxAdd {

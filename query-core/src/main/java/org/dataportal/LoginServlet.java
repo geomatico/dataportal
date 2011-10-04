@@ -49,13 +49,18 @@ public class LoginServlet extends HttpServlet {
             String request = req.getParameter("request");
             String user = req.getParameter("user");
             
+            if(request == null) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid request.");
+                return;
+            }
+            
             if (request.equals(ACCESS)) {
                 String password = req.getParameter("password");
                 User u = new User(user, password);
                 if(u.isActive()) {
-                    out.print("{\"OK\":\""+user+"\"}");
+                    out.print("{success:true,message:\""+user+"\"}");
                 } else {
-                    out.print("{\"ERROR\":\"Access denied.\"}");
+                    out.print("{success:false,message:\"Access denied.\"}");
                 }
                 
             } else if (request.equals(CHANGE_PASS)) {

@@ -8,14 +8,16 @@
 		<link rel="stylesheet" type="text/css" href="js/ext3/resources/css/xtheme-gray.css" />
 		<link rel="stylesheet" type="text/css" href="css/dataportal.css" />
 		<script type="text/javascript" src="js/openlayers/OpenLayers.js"></script>
-		<script type="text/javascript" src="js/ext3/adapter/ext/ext-base.js"></script>
+		<script type="text/javascript" src="js/ext3/adapter/ext/ext-base-debug.js"></script>
 		<script type="text/javascript" src="js/ext3/ext-all-debug-w-comments.js"></script>
 		<script type="text/javascript" src="js/ext3/ux/RowExpander.js"></script>
 		<script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script>
-		
+        <script type="text/javascript" src="js/md5-min.js"></script>
+        		
         <script type="text/javascript" src="js/OpenLayers.Format.BBOXes.js"></script>
         <script type="text/javascript" src="js/OpenLayers.Control.DeleteFeature.js"></script>
         <script type="text/javascript" src="js/App.js"></script>
+        <script type="text/javascript" src="js/Authentication.js"></script>
 		<script type="text/javascript" src="js/query.Form.js"></script>
         <script type="text/javascript" src="js/query.Map.js"></script>
 		<script type="text/javascript" src="js/result.Grid.js"></script>
@@ -33,7 +35,12 @@
 		<div id="header">
 			 <img src="img/icos-logo.png"/>
 			 <div id="title">ICOS Carbon Data Portal</div>
-			 <!--a href="#" class="login" onclick="alert('Login clicked')">Login</a-->
+			 <div id="notLoggedLinks">
+			     <a href="javascript:void(0);" class="login">Login</a> or <a href="javascript:void(0);" class="createUser">Sign up</a>
+			 </div>
+             <div id="loggedLinks" style="display:none">
+                 <a href="javascript:void(0);" class="logout">Exit</a> -- <a href="javascript:void(0);" class="updateUser">User profile</a>
+             </div>
 		</div>
     </body>
 </html>
