@@ -160,7 +160,7 @@ public class DownloadController {
 				String userName = anUserName;
 				User anUser = new User(userName);
 				userJPAController = new JPAUserController();
-				user = userJPAController.exits(anUser);
+				user = userJPAController.exitsInto(anUser);
 
 				if (user != null) {
 					String resultDownload = downloadDatasets(urlsRequest,
