@@ -23,8 +23,10 @@ CREATE TABLE "search"
    "text" text, 
    start_date date, 
    end_date date, 
-   bboxes numeric(9,6)[][4], 
-   variables text[], 
+   --bboxes numeric(9,6)[][4], 
+   --variables text[], 
+   bboxes text, 
+   variables text,
    CONSTRAINT search_pk PRIMARY KEY (id),
    CONSTRAINT search_user_fk FOREIGN KEY ("user")
       REFERENCES "users" (id) MATCH SIMPLE
@@ -40,7 +42,7 @@ ALTER TABLE "search" OWNER TO icos;
 -- Table: download
 CREATE TABLE download
 (
-  id serial NOT NULL,
+  id character varying(128) NOT NULL,
   "user" character varying(128),
   "timestamp" timestamp without time zone NOT NULL,
   filename text,
@@ -58,6 +60,23 @@ ALTER TABLE download OWNER TO icos;
 -- Table: download_item
 CREATE TABLE download_item
 (
+   id_item serial NOT NULL, 
+	 text	text	NOT NULL,
+	 id_download character varying(128),
+   CONSTRAINT download_item_pk PRIMARY KEY (id_item), 
+   CONSTRAINT id_download_fk FOREIGN KEY (id_download) 
+			REFERENCES download (id) MATCH SIMPLE 
+			ON UPDATE NO ACTION ON DELETE NO ACTION
+) 
+WITH (
+  OIDS = FALSE
+)
+;
+ALTER TABLE download_item OWNER TO icos;
+
+-- Table: download_item
+/*CREATE TABLE download_item
+(
    id_download integer, 
    id_item text NOT NULL, 
    CONSTRAINT download_item_pk PRIMARY KEY (id_download, id_item), 
@@ -67,5 +86,5 @@ WITH (
   OIDS = FALSE
 )
 ;
-ALTER TABLE download_item OWNER TO icos;
+ALTER TABLE download_item OWNER TO icos;*/
 

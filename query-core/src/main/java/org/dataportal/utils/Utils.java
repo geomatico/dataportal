@@ -6,6 +6,7 @@ package org.dataportal.utils;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -135,5 +136,18 @@ public class Utils {
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
 
 		return sdf.format(cal.getTime());
+	}
+
+	/**
+	 * 
+	 * Extract date form system and converts into TimeStamp SQL type
+	 * 
+	 * @return TimeStamp
+	 */
+	public static Timestamp extractDateSystemTimeStamp() {
+		Calendar calendario = Calendar.getInstance();
+		Timestamp timestamp = new Timestamp(calendario.getTimeInMillis());
+
+		return timestamp;
 	}
 }

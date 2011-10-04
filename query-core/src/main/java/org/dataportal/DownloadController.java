@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -28,9 +30,14 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.dataportal.controllers.JPADownloadController;
+import org.dataportal.controllers.JPAUserController;
 import org.dataportal.csw.CSWCatalog;
 import org.dataportal.csw.CSWGetRecordById;
 import org.dataportal.csw.CSWNamespaceContext;
+import org.dataportal.model.Download;
+import org.dataportal.model.DownloadItem;
+import org.dataportal.model.User;
 import org.dataportal.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -44,24 +51,27 @@ import org.w3c.dom.NodeList;
  */
 public class DownloadController {
 
-    private static Logger logger = Logger.getLogger(DownloadController.class);
-    
-    private String tempDir;
-    private static CSWCatalog catalogo;
+	private static Logger logger = Logger.getLogger(DownloadController.class);
 
-    /**
-     * Constructor. Reads tempDir from properties file. 
-     */
-    public DownloadController() {
-        this.tempDir = Config.get("temp.dir");
-	    String url = Config.get("csw.url");
-	    try {
+	private String tempDir;
+	private static CSWCatalog catalogo;
+	private User user = null;
+	private JPAUserController userJPAController = null;
+	private JPADownloadController downloadJPAController = null;
+
+	/**
+	 * Constructor. Reads tempDir from properties file.
+	 */
+	public DownloadController() {
+		this.tempDir = Config.get("temp.dir");
+		String url = Config.get("csw.url");
+		try {
 			catalogo = new CSWCatalog(url);
 		} catch (MalformedURLException e) {
 			logger.error(e.getMessage());
 		}
-    }
-    
+	}
+
 	/**
 	 * Create the pathfile with the information extracted from properties and
 	 * create the directory if not exits
@@ -77,12 +87,12 @@ public class DownloadController {
 		if (!exits) {
 			boolean createDir = personalDirectory.mkdir();
 			if (!createDir)
-				pathFile = "";
+				pathFile = null;
 		}
 
 		return pathFile;
 	}
-	
+
 	/**
 	 * Extract id's from client XML request. Checks whether id's are in the
 	 * server using a GetRecordById request. If checking is OK, extract the
@@ -130,9 +140,8 @@ public class DownloadController {
 				logger.info("ID'S NO ENCONTRADOS: "
 						+ String.valueOf(noIdsResponse.size()) + " -> "
 						+ StringUtils.join(noIdsResponse, " : "));
-				QueryError error = new QueryError();
-				// TODO change error code
-				error.setCode("ides.no.encontrados");
+				DataPortalError error = new DataPortalError();
+				error.setCode("id.not.found");
 				error.setMessage(StringUtils.join(noIdsResponse, " : "));
 
 				response.append(error.getErrorMessage());
@@ -149,16 +158,26 @@ public class DownloadController {
 						.nodeList2ArrayList(urlNodeList);
 
 				String userName = anUserName;
+				User anUser = new User(userName);
+				userJPAController = new JPAUserController();
+				user = userJPAController.exitsInto(anUser);
 
-				String resultDownload = downloadDatasets(
-						urlsRequest, userName);
+				if (user != null) {
+					String resultDownload = downloadDatasets(urlsRequest,
+							userName);
 
-				response.append(resultDownload);
+					// TODO realizar comprobación antes inserción en base de
+					// datos
+					// modificar respuesta método downloadDatasets a tipo XML
+
+					insertDownload(user, resultDownload, urlsRequest);
+					response.append(resultDownload);
+				}
 			}
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			QueryError error = new QueryError();
+			DataPortalError error = new DataPortalError();
 			error.setCode("error.ejecucion.servidor");
 			error.setMessage(e.getMessage());
 			response.append(error.getErrorMessage());
@@ -169,6 +188,45 @@ public class DownloadController {
 		logger.debug("RESPONSE CONTROLLER: " + response.toString());
 
 		return response.toString();
+	}
+
+	/**
+	 * 
+	 * Insert download into RDBMS
+	 * 
+	 * @param user
+	 *            User
+	 * @param fileName
+	 *            String with filename
+	 * @param urlsRequest
+	 *            url request array
+	 */
+	private void insertDownload(User user, String fileName,
+			ArrayList<String> urlsRequest) {
+
+		String DOI = getDOI();
+		Timestamp timeStamp = Utils.extractDateSystemTimeStamp();
+		Download download = new Download(DOI, fileName, timeStamp, user);
+		ArrayList<DownloadItem> items = new ArrayList<DownloadItem>();
+		for (String url : urlsRequest) {
+			DownloadItem item = new DownloadItem(url);
+			items.add(item);
+		}
+		downloadJPAController = new JPADownloadController();
+		downloadJPAController.insertItems(download, items);
+	}
+
+	/**
+	 * 
+	 * Method to obtain DOI
+	 * 
+	 * @return String with DOI
+	 */
+	private String getDOI() {
+
+		// TODO todo
+		String DOI = "100/1000.434";
+		return DOI;
 	}
 
 	/**
@@ -213,92 +271,116 @@ public class DownloadController {
 
 		return arrayIdes;
 	}
-	
+
 	/**
 	 * Method to download files from a url's array.
 	 * 
 	 * @param urlsRequest
 	 *            ArrayList with url's (ArrayList)
 	 * @return Message
-	 * @throws Exception
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws IOException
 	 */
 	private String downloadDatasets(ArrayList<String> urlsRequest,
-			String userName) throws Exception {
+			String userName) throws InterruptedException, ExecutionException,
+			IOException {
 
 		// TODO cambiar esto por una clase mensaje de dataportal
-		String response = "";
+		StringBuffer response = null;
 
 		String pathFile = createPathFile(userName);
-		if (pathFile.equals("")) {
-			response = "No se ha podido crear el directorio";
-			logger.error("No se ha podido crear el directorio");
+		if (pathFile == null) {
+			DataPortalError error = new DataPortalError();
+			error.setCode("failed.create.directory");
+			error.setMessage("Failed to create directory");
+			response = new StringBuffer();
+			response.append(error.getErrorMessage());
+			logger.error("FAILED create directory");
 		} else {
-
-			int urls = urlsRequest.size();
-
-			ExecutorService threadsPool = Executors.newCachedThreadPool();
-			int future = 0;
-			Future futures[] = new Future[urls];
-
-			for (String url : urlsRequest) {
-				String name = StringUtils.substringAfterLast(url, "/");
-
-				DownloadCallable hiloDescarga = new DownloadCallable(url, name,
-						pathFile);
-				futures[future] = threadsPool.submit(hiloDescarga);
-				future += 1;
-
-				Thread.sleep(2000);
-			}
-
-			for (int i = 0; i < urls; i++) {
-				String tarea = (String) futures[i].get();
-				logger.info("DOWNLOADING FINISH: " + tarea);
-			}
-
+			createDownloadThreads(urlsRequest, pathFile);
 			String nameFile = userName + "_" + Utils.extractDateSystem();
 			String filePathName = compressFiles(pathFile, nameFile);
 			// TODO cambiar mensaje
 			logger.debug("FILE to download: " + filePathName);
-			response = StringUtils.substringAfterLast(filePathName, "/");
+			response = new StringBuffer();
+			response.append(StringUtils.substringAfterLast(filePathName, "/"));
 		}
 
-		return response;
+		return response.toString();
 	}
 
-    /**
-     * Returns an inputStream to download the compressed file
-     * 
-     * @param fileName
-     *            Name of compressed file
-     * @param userName
-     *            User name that generated the file
-     * @return
-     * @throws FileNotFoundException
-     */
-    public InputStream getFileContents(String fileName, String userName) throws FileNotFoundException {
-        File file = new File(this.tempDir + "/" + userName + "/" + fileName);
-        return new FileInputStream(file);
-    }
+	/**
+	 * 
+	 * Create all Threads to download files
+	 * 
+	 * @param urlsRequest URL's ArrayList
+	 * @param pathFile path to save files
+	 * @throws MalformedURLException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	private void createDownloadThreads(ArrayList<String> urlsRequest,
+			String pathFile) throws MalformedURLException,
+			InterruptedException, ExecutionException {
+		int urls = urlsRequest.size();
 
-    /**
-     * Returns the downloadable file size
-     * 
-     * @param fileName
-     *            Name of compressed file
-     * @param userName
-     *            User name that generated the file
-     * @return
-     * @throws FileNotFoundException
-     */
-    public long getFileSize(String fileName, String userName) throws FileNotFoundException {
-        File file = new File(this.tempDir + "/" + userName + "/" + fileName);
-        if (file.exists() && file.isFile())
-            return file.length();
-        else
-            return 0;
-    }
-    
+		ExecutorService threadsPool = Executors.newCachedThreadPool();
+		int future = 0;
+		Future futures[] = new Future[urls];
+
+		for (String url : urlsRequest) {
+			String name = StringUtils.substringAfterLast(url, "/");
+
+			DownloadCallable hiloDescarga = new DownloadCallable(url, name,
+					pathFile);
+			futures[future] = threadsPool.submit(hiloDescarga);
+			future += 1;
+
+			Thread.sleep(2000);
+		}
+
+		for (int i = 0; i < urls; i++) {
+			String tarea = (String) futures[i].get();
+			logger.info("DOWNLOADING FINISH: " + tarea);
+		}
+	}
+
+	/**
+	 * Returns an inputStream to download the compressed file
+	 * 
+	 * @param fileName
+	 *            Name of compressed file
+	 * @param userName
+	 *            User name that generated the file
+	 * @return
+	 * @throws FileNotFoundException
+	 */
+	public InputStream getFileContents(String fileName, String userName)
+			throws FileNotFoundException {
+		File file = new File(this.tempDir + "/" + userName + "/" + fileName);
+		return new FileInputStream(file);
+	}
+
+	/**
+	 * Returns the downloadable file size
+	 * 
+	 * @param fileName
+	 *            Name of compressed file
+	 * @param userName
+	 *            User name that generated the file
+	 * @return
+	 * @throws FileNotFoundException
+	 */
+	public long getFileSize(String fileName, String userName)
+			throws FileNotFoundException {
+		File file = new File(this.tempDir + "/" + userName + "/" + fileName);
+		if (file.exists() && file.isFile())
+			return file.length();
+		else
+			return 0;
+	}
+
 	/**
 	 * 
 	 * Compress in tar format files in directory
@@ -309,11 +391,10 @@ public class DownloadController {
 	 *            archive name (String)
 	 * @throws IOException
 	 */
-    private String compressFiles(String pathDir, String nameFile)
+	private String compressFiles(String pathDir, String nameFile)
 			throws IOException {
 
-		String filePathName = pathDir + "/" + nameFile
-						+ ".zip";
+		String filePathName = pathDir + "/" + nameFile + ".zip";
 		OutputStream os = new FileOutputStream(filePathName);
 		ZipArchiveOutputStream zipOs = new ZipArchiveOutputStream(os);
 
@@ -336,7 +417,7 @@ public class DownloadController {
 		zipOs.close();
 
 		os.close();
-		
+
 		return filePathName;
 	}
 
