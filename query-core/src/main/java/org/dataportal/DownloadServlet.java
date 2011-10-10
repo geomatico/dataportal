@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.dataportal.users.User;
 
 /**
  * Servlet to comunicate with Client to download process
@@ -56,12 +57,14 @@ public class DownloadServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
+	    if (!this.authenticate(req, resp)) return;
+
 		@SuppressWarnings("unchecked")
 		Map<String, String[]> params = req.getParameterMap();
 		
 		if (params.containsKey("file")) {
             
-            String userName = StringUtils.substringBeforeLast(req.getRemoteUser(), "@");
+            String userName = StringUtils.substringBeforeLast(params.get("user")[0], "@");
             String fileName = params.get("file")[0];
             int fileSize = (int)download.getFileSize(fileName, userName);
 
@@ -85,18 +88,18 @@ public class DownloadServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		
-		InputStream isRequestXML = req.getInputStream();	
-		
-		String userName = StringUtils.substringBeforeLast(req.getRemoteUser(), "@");
-		
-		logger.debug("UserName to download: " + userName);
+
+	    if (!this.authenticate(req, resp)) return;
 
         resp.setContentType(TYPEXML);
         resp.setCharacterEncoding(UTF8);
         PrintWriter writer2Client = resp.getWriter();
+	    InputStream isRequestXML = req.getInputStream();    
 		
 		try {
+	        String userName = StringUtils.substringBeforeLast(req.getParameter("user"), "@");
+	        logger.debug("UserName to download: " + userName);
+
 		    String fileName = download.askgn2download(isRequestXML, userName);
 	        logger.debug("FILE to download: " + fileName);
 	        writer2Client.println("<download>");
@@ -107,9 +110,26 @@ public class DownloadServlet extends HttpServlet {
 		} catch (Exception e) {
 	        DataPortalError error = new DataPortalError();
 	        error.setCode("error.ejecucion.servidor");
-	        error.setMessage(e.getMessage());
+	        error.setMessage("Server error: " + e.getMessage());
 	        writer2Client.print(error.getErrorMessage());
 		}
 	}
 
+	protected boolean authenticate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String login = req.getParameter("user");
+        String password = req.getParameter("password");
+        boolean userIsActive = false;
+	    try {
+            userIsActive = new User(login, password).isActive();
+            if (!userIsActive) {
+                resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access denied.");
+            }
+        } catch (Exception e) {
+            DataPortalError error = new DataPortalError();
+            error.setCode("error.login");
+            error.setMessage("Error authenticating user");
+            resp.getWriter().print(error.getErrorMessage());
+        }
+        return userIsActive;
+	}
 }

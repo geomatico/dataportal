@@ -1,5 +1,6 @@
 Authentication = Ext.extend(Ext.util.Observable, {
     user: null,
+    password: null,
     loginForm: null,
     loginWindow: null,
     

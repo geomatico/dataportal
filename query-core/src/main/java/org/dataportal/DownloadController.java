@@ -143,8 +143,7 @@ public class DownloadController {
 						+ StringUtils.join(noIdsResponse, " : "));
 				DataPortalError error = new DataPortalError();
 				error.setCode("id.not.found");
-				error.setMessage(StringUtils.join(noIdsResponse, " : "));
-
+				error.setMessage("The following dataset IDs where not found: " + StringUtils.join(noIdsResponse, ", "));
 				response.append(error.getErrorMessage());
 			} else {
 				xpath.reset();

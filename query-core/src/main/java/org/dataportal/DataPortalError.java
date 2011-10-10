@@ -72,7 +72,7 @@ public class DataPortalError {
 			xmlWriter.writeStartDocument(XMLENCODING, XMLVERSION);
 			xmlWriter.writeDTD(LF);
 			xmlWriter.writeStartElement("response");
-			xmlWriter.writeAttribute("sucess", "false");
+			xmlWriter.writeAttribute("success", "false");
 			xmlWriter.writeDTD(LF);
 			xmlWriter.writeStartElement("error");
 			xmlWriter.writeDTD(LF);

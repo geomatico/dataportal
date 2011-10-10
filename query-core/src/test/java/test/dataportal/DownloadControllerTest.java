@@ -31,7 +31,7 @@ public class DownloadControllerTest extends TestCase {
 	 * {@link org.dataportal.DownloadController#askgn2Download(java.util.InputStream)}
 	 * .
 	 */
-	public void testAskgn2download() {		
+	public void testAskgn2download() throws Exception {		
 		
 		InputStream isRequestXML = getClass().getResourceAsStream(
 				"/testResponse2Client.xml");

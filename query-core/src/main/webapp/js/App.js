@@ -75,7 +75,8 @@ App =  Ext.extend(Ext.Viewport, {
         });
         
         this.downloadPanel = new download.Panel({
-            recordType: this.dataRecordType
+            recordType: this.dataRecordType,
+            user: this.user
         });
         
         var config = {
