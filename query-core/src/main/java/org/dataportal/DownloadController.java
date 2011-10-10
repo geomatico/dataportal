@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -103,7 +104,7 @@ public class DownloadController {
 	 *            with the XML sends by client
 	 * @throws Exception 
 	 */
-	public String askgn2download(InputStream isRequestXML, String anUserName) throws Exception {
+	public String askgn2download(InputStream isRequestXML, String userName) throws Exception {
 
 		StringBuffer response = new StringBuffer();
 
@@ -157,7 +158,6 @@ public class DownloadController {
 				ArrayList<String> urlsRequest = Utils
 						.nodeList2ArrayList(urlNodeList);
 
-				String userName = anUserName;
 				User anUser = new User(userName);
 				userJPAController = new JPAUserController();
 				user = userJPAController.exitsInto(anUser);
@@ -219,10 +219,8 @@ public class DownloadController {
 	 * @return String with DOI
 	 */
 	private String getDOI() {
-
-		// TODO todo
-		String DOI = "100/1000.434";
-		return DOI;
+		// Generating random UUID (java built-in)
+		return UUID.randomUUID().toString();
 	}
 
 	/**

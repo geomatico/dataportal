@@ -33,10 +33,10 @@ download.Panel =  Ext.extend(Ext.Panel, {
                 var request = {
                     url: this.url,
                     success: function(response) {
+                        var fileName = Ext.DomQuery.selectValue("//download/filename", response.responseXML);
                         var success = Ext.DomQuery.selectValue('/response/@success', response.responseXML);
-                        if (success=="true"){
-                            var fileName = Ext.DomQuery.selectValue("/response/filename", response.responseXML);
-                            window.location = "download?file="+fileName;                            
+                        if (fileName) {
+                            window.location = "download?file="+fileName+"&user="+this.user.user+"&password="+this.user.password;                            
                         } else if (success=="false") {
                             alert(Ext.DomQuery.selectValue('/response/error/message', response.responseXML));
                         }
@@ -48,7 +48,8 @@ download.Panel =  Ext.extend(Ext.Panel, {
                         user: this.user.user,
                         password: this.user.password
                     },
-                    method: "POST"
+                    method: "POST",
+                    scope: this
                 };
                 
                 this.writer.apply(request, [], "create", this.data.items);

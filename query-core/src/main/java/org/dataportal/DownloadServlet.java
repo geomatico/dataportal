@@ -64,7 +64,7 @@ public class DownloadServlet extends HttpServlet {
 		
 		if (params.containsKey("file")) {
             
-            String userName = StringUtils.substringBeforeLast(params.get("user")[0], "@");
+            String userName = params.get("user")[0];
             String fileName = params.get("file")[0];
             int fileSize = (int)download.getFileSize(fileName, userName);
 
@@ -97,7 +97,7 @@ public class DownloadServlet extends HttpServlet {
 	    InputStream isRequestXML = req.getInputStream();    
 		
 		try {
-	        String userName = StringUtils.substringBeforeLast(req.getParameter("user"), "@");
+	        String userName = req.getParameter("user");
 	        logger.debug("UserName to download: " + userName);
 
 		    String fileName = download.askgn2download(isRequestXML, userName);
