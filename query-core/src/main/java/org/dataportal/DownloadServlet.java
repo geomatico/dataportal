@@ -91,18 +91,25 @@ public class DownloadServlet extends HttpServlet {
 		String userName = StringUtils.substringBeforeLast(req.getRemoteUser(), "@");
 		
 		logger.debug("UserName to download: " + userName);
+
+        resp.setContentType(TYPEXML);
+        resp.setCharacterEncoding(UTF8);
+        PrintWriter writer2Client = resp.getWriter();
 		
-		String fileName = download.askgn2download(isRequestXML, userName);
-   
-        logger.debug("FILE to download: " + fileName);
-		resp.setContentType(TYPEXML);
-		resp.setCharacterEncoding(UTF8);
-		PrintWriter writer2Client = resp.getWriter();
-		writer2Client.println("<download>");
-		writer2Client.println("  <filename>"+fileName+"</filename>");
-		writer2Client.println("</download>");
-		writer2Client.flush();
-		writer2Client.close();
+		try {
+		    String fileName = download.askgn2download(isRequestXML, userName);
+	        logger.debug("FILE to download: " + fileName);
+	        writer2Client.println("<download>");
+	        writer2Client.println("  <filename>"+fileName+"</filename>");
+	        writer2Client.println("</download>");
+	        writer2Client.flush();
+	        writer2Client.close();
+		} catch (Exception e) {
+	        DataPortalError error = new DataPortalError();
+	        error.setCode("error.ejecucion.servidor");
+	        error.setMessage(e.getMessage());
+	        writer2Client.print(error.getErrorMessage());
+		}
 	}
 
 }

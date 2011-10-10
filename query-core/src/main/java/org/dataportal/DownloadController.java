@@ -101,8 +101,9 @@ public class DownloadController {
 	 * 
 	 * @param InputStream
 	 *            with the XML sends by client
+	 * @throws Exception 
 	 */
-	public String askgn2download(InputStream isRequestXML, String anUserName) {
+	public String askgn2download(InputStream isRequestXML, String anUserName) throws Exception {
 
 		StringBuffer response = new StringBuffer();
 
@@ -177,12 +178,8 @@ public class DownloadController {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			DataPortalError error = new DataPortalError();
-			error.setCode("error.ejecucion.servidor");
-			error.setMessage(e.getMessage());
-			response.append(error.getErrorMessage());
-
 			e.printStackTrace();
+			throw(e);
 		}
 
 		logger.debug("RESPONSE CONTROLLER: " + response.toString());
