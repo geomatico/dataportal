@@ -12,7 +12,7 @@ Authentication = Ext.extend(Ext.util.Observable, {
             "password_changed": true,
             "password_reminder_requested": true
         });
-        this.listeners = config.listeners;
+        this.listeners = config && config.listeners || null;
 
         Authentication.superclass.constructor.call(this, config);
         
@@ -32,18 +32,50 @@ Authentication = Ext.extend(Ext.util.Observable, {
             },
             items: [
                 new Ext.form.TextField({
-                    id: "user",
+                    name: "user",
                     fieldLabel: "Email address",
                     vtype: "email",
                     allowBlank: false,
-                    blankText: "Enter your email address"
+                    blankText: "Enter your email address",
+                    enableKeyEvents: true,
+                    listeners: {
+                        'keyup': function(field, e){
+                            if(e.getCharCode()==e.ENTER){
+                                this.loginForm.getForm().findField("password").focus(false, 50);
+                            }
+                        },
+                        scope: this
+                    }
                 }),
                 new Ext.form.TextField({
-                    id: "password",
+                    name: "password",
                     fieldLabel: "Password",
                     inputType: 'password',
                     allowBlank: false,
-                    blankText: "Enter your password"
+                    blankText: "Enter your password",
+                    enableKeyEvents: true,
+                    listeners: {
+                        'keyup': function(field, e){
+                            if(e.getCharCode()==e.ENTER){
+                                this.loginForm.getForm().findField("user").focus(false, 50);
+                                var b = this.loginForm.buttons[0];
+                                b.handler.call(b.scope, b, Ext.EventObject);
+                            }
+                        },
+                        scope: this
+                    }
+                }),
+                new Ext.form.DisplayField({
+                    html: '<a href="#">'+"Forgot your password?"+'</a>',
+                    listeners: {
+                        render: function(c) {
+                            c.getEl().on('click', function(ev, el) {
+                                this.loginWindow.close();
+                                this.showPasswordReminder();
+                            }, this, {stopEvent: true});
+                        },
+                        scope: this
+                    }
                 })
             ],
             buttons: [{
@@ -79,17 +111,22 @@ Authentication = Ext.extend(Ext.util.Observable, {
                     }
                 },
                 scope: this
-            }]
+            }],
+            listeners: {
+                afterlayout: function(form) {
+                    this.getForm().findField("user").focus(false, 50);
+                }
+            }            
         });
 
         this.loginWindow = new Ext.Window({
             title: 'Welcome to ICOS Carbon Data Portal',
             layout: 'fit',
-            height: 140,
+            height: 165,
             width: 260,
             closable: true,
-            resizable: false,
-            draggable: false,
+            draggable: true,
+            modal: true,
             items: [this.loginForm]
         });
       
@@ -108,6 +145,60 @@ Authentication = Ext.extend(Ext.util.Observable, {
         this.fireEvent("signed_up", "----");
     },
     
+    showPasswordReminder: function() {
+        var form = new Ext.form.FormPanel({
+            frame: true,
+            width: 260,
+            labelWidth: 60,
+            defaults: {
+                width: 165
+            },
+            items: [
+                new Ext.form.TextField({
+                    name: "user",
+                    fieldLabel: "Email address",
+                    vtype: "email",
+                    allowBlank: false,
+                    blankText: "Enter your email address",
+                    enableKeyEvents: true
+                }),
+                new Ext.form.DisplayField({
+                    value: "Your password is about to be reset. Please check your inbox for further instructions."
+                })
+            ]
+        });
+
+        var win = new Ext.Window({
+            title: 'Password Reminder',
+            layout: 'fit',
+            height: 165,
+            width: 260,
+            closable: true,
+            draggable: true,
+            modal: true,
+            items: [form]
+        });
+        
+        form.addButton({
+            text: 'Reset password',
+            handler: function() {
+                this.form.getForm().submit({
+                    url: 'login',
+                    params: { request: "generatePass" },
+                    success: function(form, action) {
+                        this.win.close();
+                        this.auth.showActionResult(form, action);
+                    },
+                    failure: this.auth.showActionResult,
+                    scope: this
+                });
+            },
+            scope: {auth: this, form: form, win: win}
+        });
+        
+        win.show();
+    },
+    
     doLogout: function() {
         if(this.user != null) {
             Ext.get("loggedLinks").hide();
@@ -116,6 +207,13 @@ Authentication = Ext.extend(Ext.util.Observable, {
             Ext.get("notLoggedLinks").show();
             this.fireEvent("logged_out");            
         }
+    },
+    
+    
+   showActionResult: function(form, action) {
+       var success = action.result.success; //true or false;
+       var message = action.result.message;
+       alert(message);
     }
 });
 

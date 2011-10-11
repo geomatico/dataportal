@@ -179,7 +179,7 @@ public class JPAUserController {
 			if (userInto != null) {
 				transaction.begin();
 				userInto.setHash("");
-				userInto.setPassword(hex_md5(password));
+				userInto.setPassword(hex_md5(userInto.getId() + ":" + password));
 				transaction.commit();
 			} else
 				password = null;

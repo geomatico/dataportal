@@ -152,7 +152,7 @@ public class User {
             st = conn.prepareStatement(
                 "UPDATE users SET hash='', password = ? WHERE hash = ?;"
             );
-            st.setString(1, User.hex_md5(password));
+            st.setString(1, User.hex_md5(this.login + ":" + password));
             st.setString(2, hash);
             r = st.executeUpdate();
             st.close();

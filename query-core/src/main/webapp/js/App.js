@@ -13,7 +13,7 @@ App =  Ext.extend(Ext.Viewport, {
         
         Ext.QuickTips.init();
         
-        this.user = new Authentication({
+        this.user = new Authentication(/*{
             listeners: {
                 logged_in: function(username) {
                     alert("Welcome, " + username + "!");
@@ -22,7 +22,7 @@ App =  Ext.extend(Ext.Viewport, {
                     alert("See you!");
                 }
             }
-        });
+        }*/);
         
         this.vocabulary = new Ext.data.XmlStore({
             url: 'xml/vocabulario.xml',
