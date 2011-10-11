@@ -6,6 +6,8 @@ package test.dataportal;
 import java.io.InputStream;
 
 import org.dataportal.DownloadController;
+import org.dataportal.controllers.JPAUserController;
+import org.dataportal.model.User;
 
 import junit.framework.TestCase;
 
@@ -36,6 +38,13 @@ public class DownloadControllerTest extends TestCase {
 		InputStream isRequestXML = getClass().getResourceAsStream(
 				"/testResponse2Client.xml");
 		
+		User user = new User("micho.garcia", "unapassword");
+		user.setState("ACTIVE");
+		JPAUserController controladorUsuario = new JPAUserController();
+		controladorUsuario.insert(user);
+		
 		controladorDescarga.askgn2download(isRequestXML, "micho.garcia");
+		
+		controladorUsuario.delete(user);
 	}
 }
