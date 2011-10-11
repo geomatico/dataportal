@@ -11,7 +11,7 @@ import javax.persistence.Persistence;
 import org.dataportal.model.Search;
 
 /**
- * @author michogar
+ * @author Micho Garcia
  * 
  */
 public class JPASearchController {
@@ -55,6 +55,10 @@ public class JPASearchController {
 			e.printStackTrace();
 			inserted = false;
 		} finally {
+		    if (transaction.isActive())
+		    {
+		        transaction.rollback();
+		    }
 			if (manager != null)
 				manager.close();
 		}

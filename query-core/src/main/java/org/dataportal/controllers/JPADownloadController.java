@@ -61,6 +61,10 @@ public class JPADownloadController {
 			e.printStackTrace();
 			inserted = false;
 		} finally {
+		    if (transaction.isActive())
+		    {
+		        transaction.rollback();
+		    }
 			if (manager != null)
 				manager.close();
 		}
@@ -95,6 +99,10 @@ public class JPADownloadController {
 			e.printStackTrace();
 			inserted = false;
 		} finally {
+		    if (transaction.isActive())
+		    {
+		        transaction.rollback();
+		    }
 			if (manager != null)
 				manager.close();
 		}
@@ -128,6 +136,10 @@ public class JPADownloadController {
 			e.printStackTrace();
 			deleted = false;
 		} finally {
+		    if (transaction.isActive())
+		    {
+		        transaction.rollback();
+		    }
 			if (manager != null)
 				manager.close();
 		}
