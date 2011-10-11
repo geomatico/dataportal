@@ -172,6 +172,11 @@ public class DownloadController {
 
 					insertDownload(user, resultDownload, urlsRequest);
 					response.append(resultDownload);
+				} else {
+					DataPortalError error = new DataPortalError();
+					error.setCode("user.not.found");
+					error.setMessage("The following User where not found: " + userName);
+					response.append(error.getErrorMessage());
 				}
 			}
 
@@ -405,6 +410,8 @@ public class DownloadController {
 			zipOs.write(FileUtils.readFileToByteArray(fl));
 			zipOs.flush();
 			zipOs.closeArchiveEntry();
+			
+			FileUtils.forceDelete(fl);
 		}
 
 		zipOs.finish();

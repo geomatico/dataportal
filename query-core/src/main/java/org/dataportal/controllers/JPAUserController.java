@@ -17,7 +17,7 @@ import javax.persistence.TypedQuery;
 import org.dataportal.model.User;
 
 /**
- * @author michogar
+ * @author Micho Garcia
  * 
  */
 public class JPAUserController {
@@ -63,6 +63,10 @@ public class JPAUserController {
 			e.printStackTrace();
 			inserted = false;
 		} finally {
+		    if (transaction.isActive())
+		    {
+		        transaction.rollback();
+		    }
 			if (manager != null)
 				manager.close();
 		}
@@ -140,6 +144,10 @@ public class JPAUserController {
 			e.printStackTrace();
 			return null;
 		} finally {
+		    if (transaction.isActive())
+		    {
+		        transaction.rollback();
+		    }
 			if (manager != null)
 				manager.close();
 		}
@@ -188,6 +196,10 @@ public class JPAUserController {
 			e.printStackTrace();
 			return null;
 		} finally {
+		    if (transaction.isActive())
+		    {
+		        transaction.rollback();
+		    }
 			if (manager != null)
 				manager.close();
 		}
@@ -219,6 +231,10 @@ public class JPAUserController {
 			e.printStackTrace();
 			return null;
 		} finally {
+		    if (transaction.isActive())
+		    {
+		        transaction.rollback();
+		    }
 			if (manager != null)
 				manager.close();
 		}
@@ -257,6 +273,10 @@ public class JPAUserController {
 			e.printStackTrace();
 			return false;
 		} finally {
+		    if (transaction.isActive())
+		    {
+		        transaction.rollback();
+		    }
 			if (manager != null)
 				manager.close();
 		}
@@ -275,6 +295,10 @@ public class JPAUserController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
+		    if (transaction.isActive())
+		    {
+		        transaction.rollback();
+		    }
 			if (manager != null)
 				manager.close();
 		}
@@ -296,6 +320,10 @@ public class JPAUserController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
+		    if (transaction.isActive())
+		    {
+		        transaction.rollback();
+		    }
 			if (manager != null)
 				manager.close();
 		}
