@@ -664,42 +664,6 @@ A continuación creamos el esquema::
     
 |DP|
 ----
-
-Creación de un dominio de autenticación en |TCT|
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Para proteger ciertos recursos de la aplicación mediante autenticación HTTP Digest, utilizaremos los usuarios y passwords almacenados en la BDD |PG|. Para ello debe definirse un dominio de autenticación (Realm) a nivel de contenedor de aplicaciones, aunque sólo afectará al contexto de la aplicación |DP|.
-
-Primero, copiar el driver JDBC de |PG| en las librerias comunes de |TCT|::
-
-    $ cd /usr/share/java
-    $ sudo wget http://jdbc.postgresql.org/download/postgresql-8.4-703.jdbc4.jar
-    $ cd /usr/share/tomcat6/lib
-    $ sudo ln -s ../../java/postgresql-8.4-703.jdbc4.jar postgresql-8.4-703.jdbc4.jar
-
-Definir el Realm. Crear un fichero de contexto en /var/lib/tomcat6/conf/Catalina/localhost/dataportal.xml con el siguiente contenido::
-  
-    <?xml version="1.0" encoding="UTF-8"?>
-    <Context path="/dataportal">
-        <Realm
-            className="org.apache.catalina.realm.JDBCRealm"
-            allRolesMode="authOnly"
-            driverName="org.postgresql.Driver"
-            connectionURL="jdbc:postgresql://localhost:5432/dataportal"
-            connectionName="icos"
-            connectionPassword="XXXXXXXXX"
-            userTable="users"
-            userNameCol="id"
-            userCredCol="password"
-            digest="MD5"
-            digestEncoding="UTF8"
-            userRoleTable="users"
-            roleNameCol="'icosUser'"
-        />
-    </Context>
-
-.. WARNING::
-   Poner en connectionPassword el password correspondiente al rol 'icos' (ver apartado sobre instalación de |PG|).
    
 Fichero dataportal.properties
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
