@@ -134,15 +134,139 @@ Authentication = Ext.extend(Ext.util.Observable, {
     },
     
     showSignup: function() {
-        // TODO
-        alert("signup not implemented - yet");
-        this.fireEvent("signed_up", "----");
+        var form = new Ext.form.FormPanel({
+            frame: true,
+            width: 260,
+            labelWidth: 60,
+            defaults: {
+                width: 165
+            },
+            items: [
+                new Ext.form.TextField({
+                    name: "user",
+                    fieldLabel: "Email address",
+                    vtype: "email",
+                    allowBlank: false,
+                    blankText: "Enter your email address"
+                }),
+                new Ext.form.TextField({
+                    name: "password",
+                    fieldLabel: "Password",
+                    inputType: 'password',
+                    allowBlank: false,
+                    submitValue: false,
+                    blankText: "Enter your Password"
+                })
+            ]
+        });
+
+        var win = new Ext.Window({
+            title: 'New User',
+            layout: 'fit',
+            height: 165,
+            width: 260,
+            closable: true,
+            draggable: true,
+            modal: true,
+            items: [form]
+        });
+        
+        form.addButton({
+            text: 'Sign Up',
+            handler: function() {
+                var fields = this.form.getForm().getFieldValues();
+                this.form.getForm().submit({
+                    url: 'login',
+                    params: {
+                        request: "register",
+                        password: hex_md5(fields.user+":"+fields.password)
+                    },
+                    success: function(form, action) {
+                        this.win.close();
+                        this.auth.showActionResult(form, action);
+                        this.fireEvent("signed_up", this.form.getForm().getValues().user);
+                    },
+                    failure: this.auth.showActionResult,
+                    scope: this
+                });
+            },
+            scope: {auth: this, form: form, win: win}
+        });
+        
+        win.show();
     },
 
     showProperties: function() {
-        // TODO
-        alert("user edit not implemented - yet");
-        this.fireEvent("signed_up", "----");
+        var form = new Ext.form.FormPanel({
+            frame: true,
+            width: 260,
+            labelWidth: 60,
+            defaults: {
+                width: 165
+            },
+            items: [
+                new Ext.form.TextField({
+                    name: "user",
+                    fieldLabel: "Email address",
+                    vtype: "email",
+                    value: this.user,
+                    readOnly: true
+                }),
+                new Ext.form.TextField({
+                    name: "password",
+                    fieldLabel: "Old Password",
+                    inputType: 'password',
+                    allowBlank: false,
+                    submitValue: false,
+                    blankText: "Enter your Old Password"
+                }),
+                new Ext.form.TextField({
+                    name: "newPassword",
+                    fieldLabel: "New Password",
+                    inputType: 'password',
+                    allowBlank: false,
+                    submitValue: false,
+                    blankText: "Enter your New Password"
+                })
+            ]
+        });
+
+        var win = new Ext.Window({
+            title: 'Change Password',
+            layout: 'fit',
+            height: 190,
+            width: 260,
+            closable: true,
+            draggable: true,
+            modal: true,
+            items: [form]
+        });
+        
+        form.addButton({
+            text: 'Change password',
+            handler: function() {
+                var fields = this.form.getForm().getFieldValues();
+                this.form.getForm().submit({
+                    url: 'login',
+                    params: {
+                        request: "changePass",
+                        password: hex_md5(this.auth.user+":"+fields.password),
+                        newPassword: hex_md5(this.auth.user+":"+fields.newPassword)
+                    },
+                    success: function(form, action) {
+                        this.win.close();
+                        this.auth.fireEvent("password_changed");
+                        this.auth.doLogout();
+                        this.auth.showActionResult(form, action);
+                    },
+                    failure: this.auth.showActionResult,
+                    scope: this
+                });
+            },
+            scope: {auth: this, form: form, win: win}
+        });
+        
+        win.show();
     },
     
     showPasswordReminder: function() {
@@ -187,6 +311,7 @@ Authentication = Ext.extend(Ext.util.Observable, {
                     params: { request: "generatePass" },
                     success: function(form, action) {
                         this.win.close();
+                        this.auth.fireEvent("password_reminder_requested");
                         this.auth.showActionResult(form, action);
                     },
                     failure: this.auth.showActionResult,
@@ -209,11 +334,10 @@ Authentication = Ext.extend(Ext.util.Observable, {
         }
     },
     
-    
-   showActionResult: function(form, action) {
-       var success = action.result.success; //true or false;
-       var message = action.result.message;
-       alert(message);
+    showActionResult: function(form, action) {
+        // var success = action.result.success; // boolean;
+        var message = action.result.message;
+        alert(message);
     }
 });
 

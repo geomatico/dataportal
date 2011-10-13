@@ -66,7 +66,7 @@ public class LoginServlet extends HttpServlet {
                 User u = new User(user, password);
 
                 if(u.changePass(newPassword)) {
-                    out.print("{success:true,message:\"Password changed. Use new password to access.\"}");
+                    out.print("{success:true,message:\"Password changed. Use new password to Login.\"}");
                 } else {
                     out.print("{success:false,message:\"Access denied.\"}");
                 }
@@ -104,7 +104,7 @@ public class LoginServlet extends HttpServlet {
                 if(req.getParameter("hash")==null){
                     String password = req.getParameter("password");
                     User u = new User(user, password);
-                    if (u.exists()) {
+                    if (u.existsUsername()) {
                         out.print("{success:false,message:\"The user already exists.\"}");
                     } else {
                         String hash = u.save();

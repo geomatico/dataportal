@@ -31,9 +31,32 @@ public class User {
 		return this.getState().equals(ACTIVE);
 	}
 	
-	public boolean exists() throws Exception {
-		return !(this.getState().equals(NONEXISTENT));
-	}
+	public boolean existsUsername() throws Exception {
+        boolean exists = false;
+        Connection conn = null;
+        try {
+            conn = new Db().getConnection();
+            PreparedStatement st = conn.prepareStatement(
+                "SELECT state FROM users WHERE id = ?;"
+            );
+            st.setString(1, this.login);
+            ResultSet rs = st.executeQuery();
+        
+           exists = rs.next();
+           st.close();
+           conn.close();
+           conn = null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                if(conn != null) conn.close();
+            } catch (Exception ee){
+                ee.printStackTrace();
+            }
+            throw (new Exception(e));
+        }
+        return exists;
+    }
 	
 	public String save() throws Exception {
 		Connection conn = null;
