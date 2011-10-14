@@ -111,7 +111,7 @@ download.Panel =  Ext.extend(Ext.Panel, {
     },
     
     notLoggedIn: function() {
-        alert("You must be logged in to download data");
+        alert("Sorry, you must Login to download data");
     }
 });
 

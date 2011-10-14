@@ -29,15 +29,12 @@ public class LoginServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doPost(req,resp);
-        /*
         if(req.getParameter("hash") != null &&
             (req.getParameter("request").equals(REGISTER) || req.getParameter("request").equals(GENERATE_PASS)) ) {
                 doPost(req, resp);
         } else {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid request.");
         }
-        */
     }
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -69,23 +66,23 @@ public class LoginServlet extends HttpServlet {
                 User u = new User(user, password);
 
                 if(u.changePass(newPassword)) {
-                    out.print("{\"OK\":\"Password changed. Use new password to access.\"}");
+                    out.print("{success:true,message:\"Password changed. Use new password to Login.\"}");
                 } else {
-                    out.print("{\"ERROR\":\"Access denied.\"}");
+                    out.print("{success:false,message:\"Access denied.\"}");
                 }
                 
             } else if (request.equals(GENERATE_PASS)) {
                 if(req.getParameter("hash")==null){
                     String hash = new User().setHash(user, User.ACTIVE);
                     if(hash==null) {
-                        out.print("{\"ERROR\":\"Bad mail address.\"}");
+                        out.print("{success:false,message:\"No user registered with this mail address.\"}");
                     } else {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("link", req.getRequestURL().append("?request="+GENERATE_PASS+"&hash="+hash).toString());
                         params.put("contact", CONTACT_MAIL);
                         Mail.send(user, "[ICOS Data Portal] Password change confirmation", "newPassAskConfirmation", params);
                         
-                        out.print("{\"OK\":\"We have sent you instructions to proceed with password change. Check your inbox.\"}");
+                        out.print("{success:true,message:\"We have sent you instructions to proceed with password change. Check your inbox.\"}");
                     }
                 } else {
                     String hash = req.getParameter("hash");
@@ -107,19 +104,19 @@ public class LoginServlet extends HttpServlet {
                 if(req.getParameter("hash")==null){
                     String password = req.getParameter("password");
                     User u = new User(user, password);
-                    if (u.exists()) {
-                        out.print("{\"ERROR\":\"The user already exists.\"}");
+                    if (u.existsUsername()) {
+                        out.print("{success:false,message:\"The user already exists.\"}");
                     } else {
                         String hash = u.save();
                         if(hash==null) {
-                            out.print("{\"ERROR\":\"User could not be created.\"}");
+                            out.print("{success:false,message:\"User could not be created.\"}");
                         } else {
                             Map<String, String> params = new HashMap<String, String>();
                             params.put("link", req.getRequestURL().append("?request="+REGISTER+"&hash="+hash).toString());
                             params.put("contact", CONTACT_MAIL);
                             Mail.send(user, "[ICOS Data Portal] New user confirmation", "newUserAskConfirmation", params);
                             
-                            out.print("{\"OK\":\"We've sent you an email with further instructions to complete the registration.\"}");
+                            out.print("{success:true,message:\"We've sent you an email with further instructions to complete the registration.\"}");
                         }
                     }
                 } else {
