@@ -28,7 +28,7 @@
 			<roles>
 				<role>developer</role>
 			</roles>
-			<timezone>-2</timezone>
+			<timezone>+2</timezone>
 		</developer>
 		<developer>
 			<id>micho</id>
@@ -40,7 +40,7 @@
 			<roles>
 				<role>developer</role>
 			</roles>
-			<timezone>-2</timezone>
+			<timezone>+2</timezone>
 		</developer>
 		<developer>
 			<id>fernando</id>
@@ -52,7 +52,7 @@
 			<roles>
 				<role>developer</role>
 			</roles>
-			<timezone>-2</timezone>
+			<timezone>+2</timezone>
 		</developer>
 	</developers>
 	<properties>
@@ -210,7 +210,7 @@
 				<version>3.0.0-release</version>
 				<configuration>
 					<log4jConfiguration>${basedir}/src/main/resources/log4j.properties</log4jConfiguration>
-					<mappingIncludes>**/*.class</mappingIncludes>
+					<metadataIncludes>**/org/dataportal/model/*.class</metadataIncludes>
 					<verbose>true</verbose>
 					<enhancerName>ASM</enhancerName>
 					<api>JPA</api>
@@ -243,7 +243,7 @@
 				</dependencies>
 				<executions>
 					<execution>
-						<phase>compile</phase>
+						<phase>process-classes</phase>
 						<goals>
 							<goal>enhance</goal>
 						</goals>
@@ -277,8 +277,7 @@
 		</testResources>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
