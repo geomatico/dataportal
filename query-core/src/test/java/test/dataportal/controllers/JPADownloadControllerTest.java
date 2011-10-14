@@ -40,7 +40,8 @@ public class JPADownloadControllerTest extends TestCase {
 	/**
 	 * Check if object exits into RDBMS and returns
 	 * 
-	 * @param object ID
+	 * @param object
+	 *            ID
 	 * @return object record or null
 	 */
 	@SuppressWarnings("unchecked")
@@ -76,6 +77,11 @@ public class JPADownloadControllerTest extends TestCase {
 				"micho.garcia_20110509.zip",
 				Utils.extractDateSystemTimeStamp(), user);
 		boolean insertado = controladorDescarga.insert(download);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		Download downloadInsertada = controladorDescarga.exits(download);
 		boolean insertada = false;
 		if (downloadInsertada != null)
@@ -96,7 +102,7 @@ public class JPADownloadControllerTest extends TestCase {
 		Download download = new Download(idDownload,
 				"micho.garcia_20110509.zip",
 				Utils.extractDateSystemTimeStamp(), user);
-		
+
 		ArrayList<DownloadItem> items = new ArrayList<DownloadItem>();
 		DownloadItem item1 = new DownloadItem("un nombre de archivo");
 		items.add(item1);
@@ -104,18 +110,18 @@ public class JPADownloadControllerTest extends TestCase {
 		items.add(item2);
 		DownloadItem item3 = new DownloadItem("el ultimo nombre de archivo");
 		items.add(item3);
-		
+
 		boolean insertado = controladorDescarga.insertItems(download, items);
 		assertTrue(insertado);
-		
+
 		Download insertada = (Download) exits(idDownload, Download.class);
 		assertNotSame(insertada, null);
-		
+
 		controladorDescarga.delete(insertada);
-		
+
 		insertada = (Download) exits(idDownload, Download.class);
 		assertEquals(insertada, null);
-				
+
 	}
 
 	/**
