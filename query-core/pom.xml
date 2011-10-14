@@ -28,7 +28,7 @@
 			<roles>
 				<role>developer</role>
 			</roles>
-			<timezone>+2</timezone>
+			<timezone>-2</timezone>
 		</developer>
 		<developer>
 			<id>micho</id>
@@ -40,7 +40,7 @@
 			<roles>
 				<role>developer</role>
 			</roles>
-			<timezone>+2</timezone>
+			<timezone>-2</timezone>
 		</developer>
 		<developer>
 			<id>fernando</id>
@@ -52,7 +52,7 @@
 			<roles>
 				<role>developer</role>
 			</roles>
-			<timezone>+2</timezone>
+			<timezone>-2</timezone>
 		</developer>
 	</developers>
 	<properties>
@@ -210,7 +210,7 @@
 				<version>3.0.0-release</version>
 				<configuration>
 					<log4jConfiguration>${basedir}/src/main/resources/log4j.properties</log4jConfiguration>
-					<metadataIncludes>**/org/dataportal/model/*.class</metadataIncludes>
+					<mappingIncludes>**/*.class</mappingIncludes>
 					<verbose>true</verbose>
 					<enhancerName>ASM</enhancerName>
 					<api>JPA</api>
@@ -243,7 +243,7 @@
 				</dependencies>
 				<executions>
 					<execution>
-						<phase>process-classes</phase>
+						<phase>compile</phase>
 						<goals>
 							<goal>enhance</goal>
 						</goals>
