@@ -4,12 +4,80 @@
 	<groupId>cmima.icos</groupId>
 	<artifactId>dataportal</artifactId>
 	<packaging>war</packaging>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>ICOS Carbon Data Portal</name>
-	<url>http://geomati.co</url>
+	<url>http://www.icos-spain.es</url>
+	<organization>
+		<name>Geomati.co</name>
+		<url>http://geomati.co</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>MIT</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<id>oscar</id>
+			<name>Oscar Fonts</name>
+			<email>oscar.fonts@geomati.co</email>
+			<url>http://oscarfonts.cat</url>
+			<organization>Geomati.co</organization>
+			<organizationUrl>http://geomati.co</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>-2</timezone>
+		</developer>
+		<developer>
+			<id>micho</id>
+			<name>Micho Garcia</name>
+			<email>micho.garcia@gemati.co</email>
+			<url>http://michogarcia.org</url>
+			<organization>Geomati.co</organization>
+			<organizationUrl>http://geomati.co</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>-2</timezone>
+		</developer>
+		<developer>
+			<id>fernando</id>
+			<name>Fernando</name>
+			<email>fernando.gonzalez@geomati.co</email>
+			<url>http://fergonco.es</url>
+			<organization>Geomati.co</organization>
+			<organizationUrl>http://geomati.co</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>-2</timezone>
+		</developer>
+	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<local.doc.path>ruta local a la carpeta doc</local.doc.path>
 	</properties>
+	<repositories>
+		<repository>
+			<id>DataNucleus_Repos2</id>
+			<name>DataNucleus Repository</name>
+			<url>http://www.datanucleus.org/downloads/maven2</url>
+		</repository>
+		<repository> <!-- Required for transaction-api transitive dep -->
+			<id>Java_Net_LEGACY</id>
+			<name>Java.Net legacy</name>
+			<url>http://download.java.net/maven/1/</url>
+			<layout>legacy</layout>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>DataNucleus_2</id>
+			<url>http://www.datanucleus.org/downloads/maven2/</url>
+		</pluginRepository>
+	</pluginRepositories>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -116,6 +184,16 @@
 							<addClasspath>false</addClasspath>
 						</manifest>
 					</archive>
+					<webResources>
+						<resource>
+							<directory>${local.doc.path}/_build/html</directory>
+							<targetPath>doc</targetPath>
+							<includes>
+								<include>**/*</include>
+								<include>**/_*</include>
+							</includes>
+						</resource>
+					</webResources>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -131,6 +209,7 @@
 				<artifactId>maven-datanucleus-plugin</artifactId>
 				<version>3.0.0-release</version>
 				<configuration>
+					<log4jConfiguration>${basedir}/src/main/resources/log4j.properties</log4jConfiguration>
 					<mappingIncludes>**/*.class</mappingIncludes>
 					<verbose>true</verbose>
 					<enhancerName>ASM</enhancerName>
@@ -141,11 +220,25 @@
 						<groupId>org.datanucleus</groupId>
 						<artifactId>datanucleus-core</artifactId>
 						<version>3.0.0-release</version>
+						<scope>runtime</scope>
 					</dependency>
 					<dependency>
 						<groupId>org.datanucleus</groupId>
 						<artifactId>datanucleus-api-jpa</artifactId>
 						<version>3.0.0-release</version>
+						<scope>runtime</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.datanucleus</groupId>
+						<artifactId>datanucleus-enhancer</artifactId>
+						<version>3.0.0-release</version>
+						<scope>runtime</scope>
+					</dependency>
+					<dependency>
+						<groupId>org.datanucleus</groupId>
+						<artifactId>datanucleus-rdbms</artifactId>
+						<version>3.0.0-release</version>
+						<scope>runtime</scope>
 					</dependency>
 				</dependencies>
 				<executions>
@@ -158,10 +251,65 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<targetPath>META-INF</targetPath>
+				<directory>${basedir}/src/main/java/META-INF</directory>
+				<includes>
+					<include>persistence.xml</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+			</resource>
+		</resources>
 		<testResources>
+			<testResource>
+				<targetPath>META-INF</targetPath>
+				<directory>${basedir}/src/test/java/META-INF</directory>
+				<includes>
+					<include>persistence.xml</include>
+				</includes>
+			</testResource>
 			<testResource>
 				<directory>src/test/resources</directory>
 			</testResource>
 		</testResources>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.datanucleus
+										</groupId>
+										<artifactId>
+											maven-datanucleus-plugin
+										</artifactId>
+										<versionRange>
+											[3.0.0-release,)
+										</versionRange>
+										<goals>
+											<goal>enhance</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 </project>
