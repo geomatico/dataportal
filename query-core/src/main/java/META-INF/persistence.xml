@@ -10,9 +10,9 @@
 		<properties>
 			<property name="datanucleus.ConnectionDriverName" value="org.postgresql.Driver" />
 			<property name="datanucleus.ConnectionURL"
-				value="jdbc:postgresql://host:port/database" />
+				value="jdbc:postgresql://localhost:5432/dataportal" />
 			<property name="datanucleus.ConnectionUserName" value="icos" />
-			<property name="datanucleus.ConnectionPassword" value="XXXXXXXX" />
+			<property name="datanucleus.ConnectionPassword" value="ikosaedro12" />
 			<property name="datanucleus.autoCreateSchema" value="false" />
 			<property name="datanucleus.validateTables" value="false" />
 			<property name="datanucleus.validateConstraints" value="false" />
