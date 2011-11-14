@@ -28,7 +28,7 @@ public class GetRecords {
 
 	private static final String LF = "\n";
 
-	private CSWNamespaceContext namespacecontext = null;
+	private CSWNamespaceContext namespacecontext = new CSWNamespaceContext();
 
 	private String resulType = "hits";
 	private String outputFormat = "application/xml";
@@ -159,21 +159,6 @@ public class GetRecords {
 		this.startPosition = startPosition;
 	}
 
-	/**
-	 * @return the namespacecontext
-	 */
-	public CSWNamespaceContext getNamespacecontext() {
-		return namespacecontext;
-	}
-
-	/**
-	 * @param namespacecontext
-	 *            the namespacecontext to set
-	 */
-	public void setNamespacecontext(CSWNamespaceContext namespacecontext) {
-		this.namespacecontext = namespacecontext;
-	}
-
 	public String getExpresion() throws XMLStreamException {
 
 		XMLOutputFactory xmlFactoria = XMLOutputFactory.newInstance();
@@ -230,6 +215,9 @@ public class GetRecords {
 		xmlWriter.writeEndElement();
 		xmlWriter.writeDTD(LF);
 		xmlWriter.writeEndElement();
+		
+		xmlWriter.flush();
+		xmlWriter.close();
 
 		logger.debug(strWriter.toString());
 

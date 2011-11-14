@@ -34,8 +34,6 @@ public class GetRecordsTest extends TestCase {
 		
 		
 		GetRecords getrecords = new GetRecords();
-		CSWNamespaceContext namespacecontext = new CSWNamespaceContext();
-		getrecords.setNamespacecontext(namespacecontext);
 		getrecords.setTypeNames("gmd:MD_Metadata");
 		getrecords.setElementSetName("full");
 		try {
@@ -43,7 +41,7 @@ public class GetRecordsTest extends TestCase {
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
-		fail("Not yet implemented");
+		//fail("Not yet implemented");
 	}
 
 }

@@ -34,6 +34,10 @@ public class CSWNamespaceContext implements NamespaceContext{
 			uri = "http://www.opengis.net/cat/csw/2.0.2";
 		else if (prefix.equals("dc"))
 			uri = "http://purl.org/dc/elements/1.1/";
+		else if (prefix.equals("ogc"))
+			uri = "http://www.opengis.net/ogc";
+		else if (prefix.equals("gml"))
+			uri = "http://www.opengis.net/gml";
 		else
 			uri = null;
 		return uri;
@@ -60,6 +64,10 @@ public class CSWNamespaceContext implements NamespaceContext{
 			prefix = "csw";
 		else if (namespaceURI.equals("http://purl.org/dc/elements/1.1/"))
 			prefix = "dc";
+		else if (namespaceURI.equals("http://www.opengis.net/ogc"))
+			prefix = "ogc";
+		else if (namespaceURI.equals("http://www.opengis.net/gml"))
+			prefix = "gml";
 		else
 			prefix = null;
 		
