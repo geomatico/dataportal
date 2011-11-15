@@ -16,7 +16,7 @@ result.Map =  Ext.extend(GeoExt.MapPanel, {
         this.outProj = new OpenLayers.Projection("EPSG:4326");
         this.fullExtent = new OpenLayers.Bounds(-20037508, -20037508, 20037508, 20037508);
         
-        this.extentLayer = new OpenLayers.Layer.Vector("Extent");
+        this.extentLayer = new OpenLayers.Layer.Vector("Extent",{strategies:[new OpenLayers.Strategy.DrawTinyFeaturesAsPoints()]});
         
         this.extentReader = new OpenLayers.Format.WKT({
             internalProjection: this.mapProj,
