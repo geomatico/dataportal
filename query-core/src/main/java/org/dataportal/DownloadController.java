@@ -57,6 +57,7 @@ public class DownloadController {
 	private String tempDir;
 	private static CSWCatalog catalogo;
 	private User user = null;
+	private String id = null;
 	private JPAUserController userJPAController = null;
 	private JPADownloadController downloadJPAController = null;
 
@@ -190,6 +191,10 @@ public class DownloadController {
 
 		return response.toString();
 	}
+	
+	public String getId() {
+	    return this.id;
+	}
 
 	/**
 	 * 
@@ -205,7 +210,7 @@ public class DownloadController {
 	private void insertDownload(User user, String fileName,
 			ArrayList<String> urlsRequest) {
 
-		String DOI = getDOI();
+		String DOI = this.generateId();
 		Timestamp timeStamp = Utils.extractDateSystemTimeStamp();
 		Download download = new Download(DOI, fileName, timeStamp, user);
 		ArrayList<DownloadItem> items = new ArrayList<DownloadItem>();
@@ -223,9 +228,9 @@ public class DownloadController {
 	 * 
 	 * @return String with DOI
 	 */
-	private String getDOI() {
-		// Generating random UUID (java built-in)
-		return UUID.randomUUID().toString();
+	private String generateId() {
+		this.id = UUID.randomUUID().toString();
+		return this.id;
 	}
 
 	/**

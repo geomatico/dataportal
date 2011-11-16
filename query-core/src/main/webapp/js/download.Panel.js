@@ -33,12 +33,32 @@ download.Panel =  Ext.extend(Ext.Panel, {
                 var request = {
                     url: this.url,
                     success: function(response) {
+                        var id = Ext.DomQuery.selectValue("//download/id", response.responseXML);
                         var fileName = Ext.DomQuery.selectValue("//download/filename", response.responseXML);
                         var success = Ext.DomQuery.selectValue('/response/@success', response.responseXML);
                         if (fileName) {
-                            window.location = "download?file="+fileName+"&user="+this.user.user+"&password="+this.user.password;                            
+                            Ext.Msg.show({
+                                title: 'Download Ready',
+                                msg: 'Your data request with UUID<br/><b>'+id+'</b><br/>is ready.<br/><br/>Click OK to download.',
+                                width: 350,
+                                buttons: Ext.MessageBox.OK,
+                                fn: function(id, text, opt) {
+                                    window.location = "download?file="+fileName+"&user="+this.user.user+"&password="+this.user.password; 
+                                },
+                                icon: Ext.MessageBox.INFO,
+                                scope: this
+                             });
+                                                       
                         } else if (success=="false") {
-                            alert(Ext.DomQuery.selectValue('/response/error/message', response.responseXML));
+                            var err = Ext.DomQuery.selectValue('/response/error/message', response.responseXML);
+                            Ext.Msg.show({
+                                title: 'Download Error',
+                                msg: err,
+                                width: 300,
+                                buttons: Ext.MessageBox.OK,
+                                icon: Ext.MessageBox.ERROR,
+                                scope: this
+                             });                            
                         }
                     },
                     failure: function(response) {

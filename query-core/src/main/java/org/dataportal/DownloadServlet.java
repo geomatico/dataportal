@@ -37,17 +37,12 @@ public class DownloadServlet extends HttpServlet {
 	private static final String TYPEZIP = "application/zip";
 	private static final String UTF8 = "UTF-8";
 	
-	private DownloadController download;
-	
 	/* (non-Javadoc)
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
 	 */
 	@Override
 	public void init(ServletConfig config) throws ServletException {
-		logger.debug("INIT DownloadServlet");
-		
 		super.init(config);
-		download = new DownloadController();
 	}
 
 	/* (non-Javadoc)
@@ -62,10 +57,12 @@ public class DownloadServlet extends HttpServlet {
 		@SuppressWarnings("unchecked")
 		Map<String, String[]> params = req.getParameterMap();
 		
-		if (params.containsKey("file")) {
+		if (params.containsKey("file") && params.containsKey("user")) {
             
             String userName = params.get("user")[0];
             String fileName = params.get("file")[0];
+            
+            DownloadController download = new DownloadController();
             int fileSize = (int)download.getFileSize(fileName, userName);
 
             InputStream contents = download.getFileContents(fileName, userName);
@@ -99,10 +96,13 @@ public class DownloadServlet extends HttpServlet {
 		try {
 	        String userName = req.getParameter("user");
 	        logger.debug("UserName to download: " + userName);
-
+	        
+	        DownloadController download = new DownloadController();
 		    String fileName = download.askgn2download(isRequestXML, userName);
+		    String id = download.getId();
 	        logger.debug("FILE to download: " + fileName);
 	        writer2Client.println("<download>");
+	        writer2Client.println("  <id>"+id+"</id>");
 	        writer2Client.println("  <filename>"+fileName+"</filename>");
 	        writer2Client.println("</download>");
 	        writer2Client.flush();
