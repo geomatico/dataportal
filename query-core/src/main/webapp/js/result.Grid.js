@@ -42,13 +42,13 @@ result.Grid =  Ext.extend(Ext.grid.GridPanel, {
             if(!body.innerHTML) {
                 new Ext.Panel({
                     layout:'column',
-                    height: 'auto',
                     padding: 5,
                     layoutConfig: {
                         align : 'stretch'
                     },
                     defaults: {
-                        height: 285
+                        height: 285,
+                        padding: 5
                     },
                     items: [{
                         title: 'Summary',
@@ -56,14 +56,13 @@ result.Grid =  Ext.extend(Ext.grid.GridPanel, {
                         columnWidth: .70
                     },{
                         title: 'Spatial Extent',
-                        items: [new result.Map({resultExtent: record.get("geo_extent")})],
-                        width: 260,
-                        height: 300
+                        items: [new result.Map({resultExtent: record.get("geo_extent"), border: false})],
+                        padding: 0,
+                        width: 260
                     },{
                         title: 'Variables',
                         html: varnames.join("<br>"),
-                        padding: 5,
-                        columnWidth: .30
+                        columnWidth: .30 
                     }],
                     renderTo: body
                 });
