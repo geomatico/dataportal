@@ -47,8 +47,20 @@ App =  Ext.extend(Ext.Viewport, {
             {name: 'end_time', type: 'date'},
             'variables',
             'data_link'
-       ]);
-        
+        ]);
+
+        this.queryById = new query.Identifier({
+            listeners: {
+                scope: this,
+                render: function(form) {
+                    form.buttons[0].on({
+                        scope: this,
+                        click: this.doLoadDataset
+                    });
+                }
+            }
+        });
+
         this.queryForm = new query.Form({
             vocabulary: this.vocabulary,
             listeners: {
@@ -98,6 +110,7 @@ App =  Ext.extend(Ext.Viewport, {
                     animate: true
                 },
                 items: [
+                    this.queryById,
                     this.queryForm
                 ]
             }, {
@@ -127,8 +140,22 @@ App =  Ext.extend(Ext.Viewport, {
     doQuery: function() {
         this.resultGrid.load(this.queryForm.getParams());
     },
+
+    doLoadDataset: function() {
+        this.resultGrid.store.removeAll();
+        this.downloadPanel.store.removeAll();
+        this.resultGrid.load(this.queryById.getParams(), {
+            callback: function() {
+                // Propagate records to download list
+                this.resultGrid.store.each(function(record) {
+                    this.addRecordToDownload(record);
+                }, this);
+            },
+            scope: this
+        });
+    },
     
-    addRecordToDownload: function(record) {
+    addRecordToDownload: function(record, silent) {
         var clonedRecord = record.copy();
         if(this.downloadPanel.store.getById(clonedRecord.id)) {
             alert("This file is already set for download");

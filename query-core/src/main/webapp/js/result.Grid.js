@@ -104,14 +104,15 @@ result.Grid =  Ext.extend(Ext.grid.GridPanel, {
         result.Grid.superclass.initComponent.apply(this, arguments);
     },
     
-    load: function(params) {
+    load: function(params, options) {
         this.getStore().baseParams = params;
-        this.getStore().load({
+        var loadStoreOptions = options || {
             params: {
                 start: 0,
                 limit: this.pageSize
             }
-        });
+        };
+        this.getStore().load(loadStoreOptions);
     }
 
 });
