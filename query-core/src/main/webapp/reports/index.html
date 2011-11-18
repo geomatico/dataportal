@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+       <title>ICOS Carbon Data Portal - Usage Reports</title>
+       <link rel="shortcut icon" href="../img/icos.ico" />
+       <link rel="stylesheet" type="text/css" href="../js/ext3/resources/css/ext-all-notheme.css" />
+       <link rel="stylesheet" type="text/css" href="../js/ext3/resources/css/xtheme-gray.css" />
+       <link rel="stylesheet" type="text/css" href="../css/dataportal.css" />
+       <script type="text/javascript" src="../js/ext3/adapter/ext/ext-base-debug.js"></script>
+       <script type="text/javascript" src="../js/ext3/ext-all-debug-w-comments.js"></script>
+<script>
+
+Ext.onReady(function(){
+
+    var publisherData = [['Unidad de Tecnología Marina',115000],['Centro de Estudios Ambientales del Mediterráneo',250100],
+                         ['Agencia Española de METeorología',150000],['Institut Català de Ciències del Clima',75000]];
+    var publisherStore = new Ext.data.ArrayStore({
+        fields:[{name:'framework'},{name:'users', type:'float'}]
+    });
+    publisherStore.loadData(publisherData); // se carga la info en el store
+
+    var thematicData = [['Terrestrial',95000],['Oceanic',200000],['Atmospheric',150000]];
+    var thematicStore = new Ext.data.ArrayStore({
+        fields:[{name:'framework'},{name:'users', type:'float'}]
+    });
+    thematicStore.loadData(thematicData); // se carga la info en el store
+
+    var downloadsData = [[1,115000],[2,250100],[3,127452],[4,287563],[5,177353],
+                         [6,119875],[7,204882],[8,187160],[9,198461],[10,148361],
+                         [11,109573],[12,198351],[13,153442],[14,124565],[15,153737],
+                         [16,129875],[17,229837],[18,155763],[19,162367],[20,216342],
+                         [21,150971],[22,227572],[23,153457],[24,176236],[25,152356],
+                         [26,258836],[27,185828],[28,157623],[29,223456],[30,212376]];
+    var downloadsStore = new Ext.data.ArrayStore({
+        fields:[{name:'framework', type:'int'},{name:'users', type:'float'}]
+    });
+    downloadsStore.loadData(downloadsData); // se carga la info en el store
+
+    
+	var columnChart = new Ext.chart.ColumnChart({
+	    store: thematicStore,
+	    //url:'../ext-3.0-rc1/resources/charts.swf',
+	    xField: 'framework',
+	    yField: 'users'
+	});
+	
+	var lineChart = new Ext.chart.LineChart({
+	    store: downloadsStore,
+	    xField: 'framework',
+	    yField: 'users'
+	});
+	
+	var pieChart = new Ext.chart.PieChart({
+	    store: publisherStore,
+	    dataField: 'users', //la información a graficar
+	    categoryField : 'framework' //las etiquetas o categorías
+	});
+	
+	var columnpanel = new Ext.Panel({
+	    title: 'Downloads by thematic area',
+	    items:[columnChart]
+	});
+	
+	var linepanel = new Ext.Panel({
+	    title: 'Downloads by Date',
+	    items:[lineChart]
+	});
+	
+	var piepanel = new Ext.Panel({
+	    title: 'Downloads by publisher',
+	    items:[pieChart]
+	});
+	
+	var main = new Ext.Viewport({
+	    layout: 'border',
+	    items:[{
+	        region: 'north',
+	        html: '<div id="header"><img src="../img/icos-logo.png"/><div id="title">Usage Reports - October 2011</div></div>'
+	    },{
+		    region: 'center',
+		    autoScroll: true,
+		    defaults: {
+		        height:250,
+		        width:600,
+		        collapsible: true,
+		        border: true,
+		        titleCollapse: true
+		    },
+		    items: [piepanel, columnpanel, linepanel]
+		},{
+		    region: 'west',
+		    width: 250,
+		    items: [
+		        new Ext.form.FormPanel({
+		            labelAlign: 'top',
+		            autoScroll: true,
+		            height: 250,
+		            border: true,
+		            padding: 4,
+		            items: [
+		                new Ext.form.ComboBox({
+		                    mode: 'local',
+		                    fieldLabel: 'Periodicity',
+		                    store: new Ext.data.SimpleStore({  
+		                        fields: ['periodicity'],  
+		                        data: [['Monthly Report'], ['Yearly Report']],
+		                        id: 0
+		                    }),
+		                    displayField: 'periodicity',
+		                    valueField: 'periodicity'
+		                }),
+	                    new Ext.form.ComboBox({
+	                        mode: 'local',
+	                        fieldLabel: 'Month',
+	                        store: new Ext.data.SimpleStore({  
+	                            fields: ['month'],  
+	                            data: [['January'], ['February'], ['March'],
+	                                   ['April'], ['May'], ['June'],
+	                                   ['July'], ['August'], ['September'],
+	                                   ['October'], ['November'], ['December']],
+	                            id: 1
+	                        }),
+	                        displayField: 'month',
+	                        valueField: 'month'
+	                    }),
+	                    new Ext.form.ComboBox({
+	                        mode: 'local',
+	                        fieldLabel: 'Year',
+	                        store: new Ext.data.SimpleStore({  
+	                            fields: ['year'],  
+	                            data: [['2011'], ['2010'], ['2009']],
+	                            id: 2
+	                        }),
+	                        displayField: 'year',
+	                        valueField: 'year'
+	                    })
+		            ],
+		            buttons: [{
+		                text: 'Generate report >>'
+		            }]		            
+		        }) 
+		    ]
+		}]
+	});
+
+});
+</script>
+</head>
+<body>
+</body>
+</html>
