@@ -11,6 +11,7 @@ import org.dataportal.csw.Operator;
 import org.dataportal.csw.CSWNamespaceContext;
 import org.dataportal.csw.Filter;
 import org.dataportal.csw.Property;
+import org.dataportal.csw.SortBy;
 
 import junit.framework.TestCase;
 
@@ -51,6 +52,11 @@ public class FilterTest extends TestCase {
 			rules.add(menorque.getExpresion());
 			Operator and = new Operator("And");
 			and.setRules(rules);
+			
+			SortBy sortby = new SortBy();
+			sortby.setPropertyName("title");
+			sortby.setOrder(SortBy.ASC);
+			sortby.getExpresion();
 			
 			filtro.setRules(and.getExpresion());
 			filtro.getExpresion();
