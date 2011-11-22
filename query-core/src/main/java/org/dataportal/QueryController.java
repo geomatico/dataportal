@@ -8,9 +8,9 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -19,10 +19,13 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
-import org.dataportal.csw.CSWCatalog;
-import org.dataportal.csw.CSWGetRecords;
+import org.dataportal.csw.Catalog;
+import org.dataportal.csw.Filter;
+import org.dataportal.csw.GetRecords;
+import org.dataportal.csw.Operator;
+import org.dataportal.csw.Property;
+import org.dataportal.csw.SortBy;
 import org.dataportal.utils.BBox;
-import org.dataportal.utils.RangeDate;
 import org.dataportal.utils.Utils;
 
 /**
@@ -38,15 +41,15 @@ public class QueryController {
 	private static Logger logger = Logger.getLogger(QueryController.class);
 
 	private static final int FIRST = 0;
-	private static CSWCatalog catalogo;
+	private static Catalog catalogo;
 
 	/**
 	 * Constructor. Assign URL catalog server
 	 */
 	public QueryController() {
-	    String url = Config.get("csw.url");
-	    try {
-			catalogo = new CSWCatalog(url);
+		String url = Config.get("csw.url");
+		try {
+			catalogo = new Catalog(url);
 		} catch (MalformedURLException e) {
 			logger.error(e.getMessage());
 		}
@@ -79,8 +82,6 @@ public class QueryController {
 		return response;
 	}
 
-
-
 	/**
 	 * Transform the response from CSW Catalog into client response
 	 * 
@@ -90,7 +91,7 @@ public class QueryController {
 	private String transform(InputStream isCswResponse) {
 
 		StringWriter writer2Client = new StringWriter();
-		InputStream isXslt = CSWCatalog.class
+		InputStream isXslt = Catalog.class
 				.getResourceAsStream("/response2client.xsl");
 
 		try {
@@ -119,84 +120,147 @@ public class QueryController {
 
 	/**
 	 * Extract the params from a Map and create a Query in CSW 2.0.2 standard
+	 * using GetRecords class
 	 * 
 	 * @param parametros
 	 * @return String
 	 */
 	private String params2Query(Map<String, String[]> parametros) {
 
-		HashMap<String, Object> queryParams = new HashMap<String, Object>();
+		try {
 
-		if(parametros.get("id") != null) {
-           String id = parametros.get("id")[FIRST];
-           // TODO: Return a previously downloaded dataset, or an error if ID does not exist
-		}
-		
-		// bboxes
-		if(parametros.get("bboxes") != null) {
-		    String stringBBoxes = parametros.get("bboxes")[FIRST];
-		    ArrayList<BBox> bboxes = Utils.extractToBBoxes(stringBBoxes);
-		    if (bboxes != null)
-		        queryParams.put("bboxes", bboxes);
+			ArrayList<String> filterRules = new ArrayList<String>();
+			GetRecords getrecords = new GetRecords();
+			getrecords.setResulType("results");
+			getrecords.setOutputSchema("csw:IsoRecord");
+			getrecords.setTypeNames("gmd:MD_Metadata");
+
+			// id
+			if (parametros.get("id") != null) {
+				String id = parametros.get("id")[FIRST];
+				// TODO: Return a previously downloaded dataset, or an error if
+				// ID
+				// does not exist
+			}
+
+			// bboxes
+			Operator orBBox = new Operator("Or");
+
+			String stringBBoxes = parametros.get("bboxes")[FIRST];
+			ArrayList<BBox> bboxes = Utils.extractToBBoxes(stringBBoxes);
+			if (bboxes != null) {
+				if (bboxes.size() > 1) {
+					ArrayList<String> rulesBBox = new ArrayList<String>();
+					for (BBox bbox : bboxes) {
+						rulesBBox.add(bbox.toOGCBBox());
+					}
+					orBBox.setRules(rulesBBox);
+					filterRules.add(orBBox.getExpresion());
+				} else {
+					filterRules.add(bboxes.get(FIRST).toOGCBBox());
+				}
+			}
+
+			// temporal range			
+
+			String start_date = parametros.get("start_date")[FIRST];
+			Property greatherThanStartDate = new Property(
+					"PropertyIsGreaterThanOrEqualTo");
+			boolean exitsStartDate = false;
+			if (start_date != "") {
+				greatherThanStartDate.setPropertyName("TempExtent_begin");
+				greatherThanStartDate.setLiteral(start_date);
+				exitsStartDate = true;
+			}
+
+			String end_date = parametros.get("end_date")[FIRST];
+			if (end_date != "") {
+				Property lessThanEndDate = new Property(
+						"PropertyIsLessThanOrEqualTo");
+				lessThanEndDate.setPropertyName("TempExtent_end");
+				lessThanEndDate.setLiteral(end_date);
+
+				if (exitsStartDate) {
+					ArrayList<String> andRangeDateRules = new ArrayList<String>();
+					andRangeDateRules.add(greatherThanStartDate.getExpresion());
+					andRangeDateRules.add(lessThanEndDate.getExpresion());
+					Operator andRangeDate = new Operator("And");
+					andRangeDate.setRules(andRangeDateRules);
+					filterRules.add(andRangeDate.getExpresion());
+				} else {
+					filterRules.add(lessThanEndDate.getExpresion());
+				}
+			} else {
+				if (exitsStartDate)
+					filterRules.add(greatherThanStartDate.getExpresion());
+			}
+
+			// variables
+			String variables = parametros.get("variables")[FIRST];
+			if (variables != "") {
+				String queryVariables[] = variables.split(",");
+
+				if (queryVariables.length > 1) {
+					Operator orVariables = new Operator("Or");
+					ArrayList<String> arrayVariables = new ArrayList<String>();
+					for (String aVariable : queryVariables) {
+						Property propVariable = new Property("PropertyIsLike");
+						propVariable.setPropertyName("ContentInfo");
+						propVariable.setLiteral(aVariable);
+						arrayVariables.add(propVariable.getExpresion());
+					}
+					orVariables.setRules(arrayVariables);
+					filterRules.add(orVariables.getExpresion());
+				} else {
+					Property propVariable = new Property("PropertyIsLike");
+					propVariable.setPropertyName("ContentInfo");
+					propVariable.setLiteral(queryVariables[FIRST]);
+					filterRules.add(propVariable.getExpresion());
+				}
+			}
+			
+			// free text
+			String freeText = parametros.get("text")[FIRST];
+			if (freeText != "") {
+				Property propFreeText = new Property("PropertyIsLike");
+				propFreeText.setPropertyName("AnyText");
+				propFreeText.setLiteral(freeText);
+			}
+			
+			// Default pagination & ordering values
+			String startPosition = "1";
+			String maxRecords = "25";
+			String sort = "title";
+			String dir = "asc";
+			
+			startPosition = parametros.get("start")[FIRST];			
+			getrecords.setStartPosition(startPosition);		
+			
+			maxRecords = parametros.get("limit")[FIRST];
+			getrecords.setMaxRecords(maxRecords);		
+			
+			sort = parametros.get("sort")[FIRST];
+			dir = parametros.get("dir")[FIRST];
+			
+			SortBy sortby = new SortBy();
+			sortby.setPropertyName(sort);
+			sortby.setOrder(dir);
+			
+			getrecords.setSortby(sortby);
+
+			Filter filtro = new Filter();
+			filtro.setRules(filterRules);
+
+			getrecords.setFilter(filtro);
+
+			logger.debug(getrecords.getExpresion());
+			
+			return getrecords.getExpresion();
+
+		} catch (XMLStreamException e) {
+			logger.error(e.getMessage());
 		}
 
-		// temporal range
-		if(parametros.get("start_date") != null && parametros.get("end_date") != null) {
-		    String start_date = parametros.get("start_date")[FIRST];
-		    String end_date = parametros.get("end_date")[FIRST];
-		    if (start_date != "" && end_date != "") {
-		        RangeDate temporalExtent = new RangeDate(start_date, end_date);
-		        queryParams.put("temporalExtent", temporalExtent);
-		    }
-		}
-
-		// variables
-		if(parametros.get("variables") != null) {
-		    String variables = parametros.get("variables")[FIRST];
-		    if (variables != "") {
-		        String queryVariables[] = variables.split(",");
-		        queryParams.put("variables", queryVariables);
-		    }
-		}
-
-		// free text
-		if(parametros.get("text") != null) {
-		    String freeText = parametros.get("text")[FIRST];
-		    if (freeText != "")
-		        queryParams.put("text", freeText);
-		}
-
-		// Default pagination & ordering values
-		String startPosition = "0";
-        String maxRecords = "25";
-        String sort = "title";
-        String dir = "asc";
-		
-		// pagination
-		if(parametros.get("start") != null) {
-		    startPosition = parametros.get("start")[FIRST];
-		}
-		if(parametros.get("limit") != null) {
-		    maxRecords = parametros.get("limit")[FIRST];
-		}
-		
-		// Order
-		if(parametros.get("sort") != null) {
-		    sort = parametros.get("sort")[FIRST];
-		}
-		if(parametros.get("dir") != null) {
-		    dir = parametros.get("dir")[FIRST];
-		}
-		CSWGetRecords CSWrequest = new CSWGetRecords("gmd:MD_Metadata",
-				"csw:IsoRecord");
-		CSWrequest.setMaxRecords(maxRecords);
-		CSWrequest.setStartPosition(startPosition);
-		CSWrequest.setSort(sort);
-		CSWrequest.setDir(dir);
-
-		String aCSWQuery = CSWrequest.createQuery(queryParams);
-
-		return aCSWQuery;
+		return null;
 	}
-
 }
