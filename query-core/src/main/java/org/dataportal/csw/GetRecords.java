@@ -40,6 +40,21 @@ public class GetRecords {
 	private String elementSetName = null;
 	private String constraintVersion = "1.0.1";
 	private Filter filter;
+	private SortBy sortby;
+
+	/**
+	 * @return the sortby
+	 */
+	public SortBy getSortby() {
+		return sortby;
+	}
+
+	/**
+	 * @param sortby the sortby to set
+	 */
+	public void setSortby(SortBy sortby) {
+		this.sortby = sortby;
+	}
 
 	/**
 	 * @return the filter
@@ -224,12 +239,17 @@ public class GetRecords {
 		// Filter
 		xmlWriter.writeCharacters("");
 		xmlWriter.writeDTD(LF);
-		strWriter.append(filter.getExpresion());
+		strWriter.append(filter.getExpresion());		
+		xmlWriter.writeDTD(LF);
+		xmlWriter.writeEndElement();
 		
+		// Sort
+		xmlWriter.writeCharacters("");
+		xmlWriter.writeDTD(LF);
+		strWriter.append(sortby.getExpresion());		
 		xmlWriter.writeDTD(LF);
 		xmlWriter.writeEndElement();
-		xmlWriter.writeDTD(LF);
-		xmlWriter.writeEndElement();
+
 		xmlWriter.writeDTD(LF);
 		xmlWriter.writeEndElement();
 		

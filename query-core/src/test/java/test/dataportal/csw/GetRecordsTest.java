@@ -12,6 +12,7 @@ import org.dataportal.csw.Filter;
 import org.dataportal.csw.GetRecords;
 import org.dataportal.csw.Operator;
 import org.dataportal.csw.Property;
+import org.dataportal.csw.SortBy;
 
 import junit.framework.TestCase;
 
@@ -70,9 +71,18 @@ public class GetRecordsTest extends TestCase {
 			orRules.add(mayorque.getExpresion());
 			or.setRules(orRules);
 			
-			filtro.setRules(or.getExpresion());
+			ArrayList<String> filterRules = new ArrayList<String>();
+			filterRules.add(or.getExpresion());
+			
+			filtro.setRules(filterRules);
 
 			getrecords.setFilter(filtro);
+			
+			SortBy sortby = new SortBy();
+			sortby.setPropertyName("title");
+			sortby.setOrder(SortBy.ASC);
+			
+			getrecords.setSortby(sortby);
 			
 			getrecords.getExpresion();
 			

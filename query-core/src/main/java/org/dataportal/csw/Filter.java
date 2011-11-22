@@ -4,6 +4,7 @@
 package org.dataportal.csw;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -26,19 +27,19 @@ public class Filter {
 	
 	private static final String LF = "\n";
 	
-	private String rules;
+	private ArrayList<String> rules;
 
 	/**
 	 * @return the rules
 	 */
-	public String getRules() {
+	public ArrayList<String> getRules() {
 		return rules;
 	}
 
 	/**
 	 * @param rules the rules to set
 	 */
-	public void setRules(String rules) {
+	public void setRules(ArrayList<String> rules) {
 		this.rules = rules;
 	}
 
@@ -62,7 +63,9 @@ public class Filter {
 		xmlWriter.writeDTD(LF);
 		
 		// rules
-		strWriter = strWriter.append(rules);
+		for (String rule : rules) {
+			strWriter = strWriter.append(rule);
+		}
 		
 		xmlWriter.writeDTD(LF);
 		xmlWriter.writeEndElement();

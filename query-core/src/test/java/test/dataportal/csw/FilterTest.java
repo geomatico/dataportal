@@ -58,7 +58,10 @@ public class FilterTest extends TestCase {
 			sortby.setOrder(SortBy.ASC);
 			sortby.getExpresion();
 			
-			filtro.setRules(and.getExpresion());
+			ArrayList<String> filterRules = new ArrayList<String>();
+			filterRules.add(and.getExpresion());
+			
+			filtro.setRules(filterRules);
 			filtro.getExpresion();
 			
 		} catch (XMLStreamException e) {
