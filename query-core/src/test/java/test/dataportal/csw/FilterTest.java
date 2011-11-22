@@ -3,8 +3,11 @@
  */
 package test.dataportal.csw;
 
+import java.util.ArrayList;
+
 import javax.xml.stream.XMLStreamException;
 
+import org.dataportal.csw.Operator;
 import org.dataportal.csw.CSWNamespaceContext;
 import org.dataportal.csw.Filter;
 import org.dataportal.csw.Property;
@@ -32,17 +35,24 @@ public class FilterTest extends TestCase {
 		// TODO funcionality only launch the Filter
 		
 		Filter filtro = new Filter();
-		CSWNamespaceContext namespacecontext = new CSWNamespaceContext();
-		filtro.setNamespacecontext(namespacecontext);
 		
 		// creating rules
 		Property mayorque = new Property("PropertyIsLike");	
+		Property menorque = new Property("PropertyMinorThan");
 		
 		try {
+			ArrayList<String> rules = new ArrayList<String>();
 
 			mayorque.setLiteral("un valor");
-			mayorque.setPropertyName("una propiedad");			
-			filtro.setRules(mayorque.getExpresion());
+			mayorque.setPropertyName("una propiedad");	
+			rules.add(mayorque.getExpresion());
+			menorque.setLiteral("valor menor");
+			menorque.setPropertyName("propiedad menor");
+			rules.add(menorque.getExpresion());
+			Operator and = new Operator("And");
+			and.setRules(rules);
+			
+			filtro.setRules(and.getExpresion());
 			filtro.getExpresion();
 			
 		} catch (XMLStreamException e) {

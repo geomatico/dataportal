@@ -39,6 +39,21 @@ public class GetRecords {
 	private String typeNames = null;
 	private String elementSetName = null;
 	private String constraintVersion = "1.0.1";
+	private Filter filter;
+
+	/**
+	 * @return the filter
+	 */
+	public Filter getFilter() {
+		return filter;
+	}
+
+	/**
+	 * @param filtro the filter to set
+	 */
+	public void setFilter(Filter filtro) {
+		this.filter = filtro;
+	}
 
 	/**
 	 * @return the constraintVersion
@@ -207,7 +222,9 @@ public class GetRecords {
 		xmlWriter.writeAttribute("version", constraintVersion);
 		
 		// Filter
-		// TODO
+		xmlWriter.writeCharacters("");
+		xmlWriter.writeDTD(LF);
+		strWriter.append(filter.getExpresion());
 		
 		xmlWriter.writeDTD(LF);
 		xmlWriter.writeEndElement();
