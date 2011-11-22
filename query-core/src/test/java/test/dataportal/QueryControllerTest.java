@@ -14,7 +14,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.dataportal.QueryController;
-import org.dataportal.csw.CSWNamespaceContext;
+import org.dataportal.csw.DataPortalNS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -75,7 +75,7 @@ public class QueryControllerTest extends TestCase {
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document controllerXML = (Document) dBuilder.parse(isTestResponse);
 
-			CSWNamespaceContext ctx = new CSWNamespaceContext();
+			DataPortalNS ctx = new DataPortalNS();
 
 			XPathFactory factory = XPathFactory.newInstance();
 			XPath xpath = factory.newXPath();

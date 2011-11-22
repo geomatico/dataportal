@@ -1,5 +1,7 @@
 package test.dataportal.utils;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.dataportal.utils.BBox;
 
 import junit.framework.TestCase;
@@ -14,6 +16,13 @@ public class BBoxTest extends TestCase {
 		assertEquals(coords[1], bbox.getYmin());
 		assertEquals(coords[2], bbox.getXmax());
 		assertEquals(coords[3], bbox.getYmax());
+		
+		try {
+			bbox.toOGCBBox();
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

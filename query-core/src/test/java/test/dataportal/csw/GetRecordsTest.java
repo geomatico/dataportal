@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.dataportal.csw.CSWNamespaceContext;
+import org.dataportal.csw.DataPortalNS;
 import org.dataportal.csw.Filter;
 import org.dataportal.csw.GetRecords;
 import org.dataportal.csw.Operator;

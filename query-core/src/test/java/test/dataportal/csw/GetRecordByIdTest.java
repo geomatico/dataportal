@@ -4,17 +4,17 @@ import java.util.ArrayList;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.dataportal.csw.CSWGetRecordById;
+import org.dataportal.csw.GetRecordById;
 
 import junit.framework.TestCase;
 
-public class CSWGetRecordByIdTest extends TestCase {
+public class GetRecordByIdTest extends TestCase {
 	
-	private CSWGetRecordById getRecordById = null;
+	private GetRecordById getRecordById = null;
 
 	protected void setUp() throws Exception {
 		
-		getRecordById = new CSWGetRecordById("brief");
+		getRecordById = new GetRecordById("brief");
 		super.setUp();
 	}
 
