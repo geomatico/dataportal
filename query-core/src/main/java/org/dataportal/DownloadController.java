@@ -33,9 +33,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.dataportal.controllers.JPADownloadController;
 import org.dataportal.controllers.JPAUserController;
-import org.dataportal.csw.CSWCatalog;
-import org.dataportal.csw.CSWGetRecordById;
-import org.dataportal.csw.CSWNamespaceContext;
+import org.dataportal.csw.Catalog;
+import org.dataportal.csw.GetRecordById;
+import org.dataportal.csw.DataPortalNS;
 import org.dataportal.model.Download;
 import org.dataportal.model.DownloadItem;
 import org.dataportal.model.User;
@@ -55,7 +55,7 @@ public class DownloadController {
 	private static Logger logger = Logger.getLogger(DownloadController.class);
 
 	private String tempDir;
-	private static CSWCatalog catalogo;
+	private static Catalog catalogo;
 	private User user = null;
 	private String id = null;
 	private JPAUserController userJPAController = null;
@@ -68,7 +68,7 @@ public class DownloadController {
 		this.tempDir = Config.get("temp.dir");
 		String url = Config.get("csw.url");
 		try {
-			catalogo = new CSWCatalog(url);
+			catalogo = new Catalog(url);
 		} catch (MalformedURLException e) {
 			logger.error(e.getMessage());
 		}
@@ -115,7 +115,7 @@ public class DownloadController {
 			DocumentBuilder dbBuilder = dbFactoria.newDocumentBuilder();
 			Document downloadXML = (Document) dbBuilder.parse(isRequestXML);
 
-			CSWNamespaceContext ctx = new CSWNamespaceContext();
+			DataPortalNS ctx = new DataPortalNS();
 
 			XPathFactory factory = XPathFactory.newInstance();
 			XPath xpath = factory.newXPath();
@@ -127,7 +127,7 @@ public class DownloadController {
 			ArrayList<String> requestIdes = Utils
 					.nodeList2ArrayList(idNodeList);
 
-			CSWGetRecordById getRecordById = new CSWGetRecordById("brief");
+			GetRecordById getRecordById = new GetRecordById("brief");
 			String getRecordByIdQuery = getRecordById.createQuery(requestIdes);
 			InputStream isGetRecordByIdResponse = catalogo
 					.sendCatalogRequest(getRecordByIdQuery);
@@ -253,7 +253,7 @@ public class DownloadController {
 					.parse(isGetRecordByIdResponse);
 
 			// TODO Extraer esto a una clase
-			CSWNamespaceContext ctx = new CSWNamespaceContext();
+			DataPortalNS ctx = new DataPortalNS();
 
 			XPathFactory factory = XPathFactory.newInstance();
 			XPath xpath = factory.newXPath();

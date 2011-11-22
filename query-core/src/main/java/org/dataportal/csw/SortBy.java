@@ -25,7 +25,7 @@ public class SortBy {
 	public static final String ASC = "ASC";
 	public static final String DESC = "DESC";
 
-	private CSWNamespaceContext namespacecontext = new CSWNamespaceContext();
+	private DataPortalNS namespacecontext = new DataPortalNS();
 	private String order;
 	private String propertyName;
 

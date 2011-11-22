@@ -20,7 +20,7 @@ public class Filter {
 	
 	private static Logger logger = Logger.getLogger(Filter.class);
 	
-	private CSWNamespaceContext namespacecontext = new CSWNamespaceContext();
+	private DataPortalNS namespacecontext = new DataPortalNS();
 	
 	private static final String OGCNAMESPACE = "ogc";
 	private static final String GMLNAMESPACE = "gml";
@@ -54,9 +54,9 @@ public class Filter {
 		
 		xmlWriter.writeStartElement(
 				namespacecontext.getNamespaceURI(OGCNAMESPACE), "Filter");
-		xmlWriter.writeNamespace("ogc",
+		xmlWriter.writeNamespace(OGCNAMESPACE,
 				namespacecontext.getNamespaceURI(OGCNAMESPACE));
-		xmlWriter.writeNamespace("gml",
+		xmlWriter.writeNamespace(GMLNAMESPACE,
 				namespacecontext.getNamespaceURI(GMLNAMESPACE));
 		
 		xmlWriter.writeCharacters("");

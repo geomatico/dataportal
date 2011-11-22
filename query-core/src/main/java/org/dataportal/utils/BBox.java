@@ -3,7 +3,14 @@
  */
 package org.dataportal.utils;
 
+import java.io.StringWriter;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.log4j.Logger;
+import org.dataportal.csw.DataPortalNS;
 
 /**
  * @author Micho Garcia
@@ -12,6 +19,13 @@ import org.apache.log4j.Logger;
 public class BBox {
 
 	private static Logger logger = Logger.getLogger(BBox.class);
+
+	private DataPortalNS namespacecontext = new DataPortalNS();
+
+	private static final String OGCNAMESPACE = "ogc";
+	private static final String GMLNAMESPACE = "gml";
+
+	private static final String LF = "\n";
 
 	private String xmax;
 	private String xmin;
@@ -62,24 +76,46 @@ public class BBox {
 	public String getYmin() {
 		return ymin;
 	}
-	
+
 	/**
 	 * @param bbox
 	 * @return
+	 * @throws XMLStreamException
 	 */
-	public String toOGCBBox() {
-		
-		String ogcBBox = "<ogc:BBOX>\n"
-				+ "<ogc:PropertyName>iso:BoundingBox</ogc:PropertyName>\n"
-				+ "<gml:Envelope xmlns:gml=\"http://www.opengis.net/gml\">\n";
-		String lowerCorner = "<gml:lowerCorner>" + xmin + " "
-				+ ymin + "</gml:lowerCorner>\n";
-		String upperCorner = "<gml:upperCorner>" + xmax + " "
-				+ ymax + "</gml:upperCorner>\n";
-		String endGml = "</gml:Envelope>\n</ogc:BBOX>\n";
+	public String toOGCBBox() throws XMLStreamException {
 
-		String strBbox = ogcBBox + lowerCorner + upperCorner + endGml;
+		XMLOutputFactory xmlFactoria = XMLOutputFactory.newInstance();
+		StringWriter strWriter = new StringWriter();
+		XMLStreamWriter xmlWriter = xmlFactoria
+				.createXMLStreamWriter(strWriter);
+		xmlWriter.setNamespaceContext(namespacecontext);
+		xmlWriter.writeStartElement(
+				namespacecontext.getNamespaceURI(OGCNAMESPACE), "BBOX");
+		xmlWriter.writeDTD(LF);
+		xmlWriter.writeStartElement(
+				namespacecontext.getNamespaceURI(OGCNAMESPACE), "PropertyName");
+		xmlWriter.writeCharacters("iso:BoundingBox");
+		xmlWriter.writeEndElement();
+		xmlWriter.writeDTD(LF);
+		xmlWriter.writeStartElement(
+				namespacecontext.getNamespaceURI(GMLNAMESPACE), "Envelope");
+		xmlWriter.writeNamespace(GMLNAMESPACE,
+				namespacecontext.getNamespaceURI(GMLNAMESPACE));
+		xmlWriter.writeDTD(LF);
+		xmlWriter.writeStartElement(namespacecontext.getNamespaceURI(GMLNAMESPACE), "lowerCorner");
+		xmlWriter.writeCharacters("".concat(xmin).concat(" ").concat(ymin));
+		xmlWriter.writeEndElement();
+		xmlWriter.writeDTD(LF);
+		xmlWriter.writeStartElement(namespacecontext.getNamespaceURI(GMLNAMESPACE), "upperCorner");
+		xmlWriter.writeCharacters("".concat(xmax).concat(" ").concat(ymax));
+		xmlWriter.writeEndElement();
+		xmlWriter.writeDTD(LF);
+		xmlWriter.writeEndElement();
+		xmlWriter.writeDTD(LF);
+		xmlWriter.writeEndElement();
+
+		logger.debug(strWriter.toString());
 		
-		return strBbox;
+		return strWriter.toString();
 	}
 }

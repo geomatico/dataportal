@@ -28,7 +28,7 @@ public class GetRecords {
 
 	private static final String LF = "\n";
 
-	private CSWNamespaceContext namespacecontext = new CSWNamespaceContext();
+	private DataPortalNS namespacecontext = new DataPortalNS();
 
 	private String resulType = "hits";
 	private String outputFormat = "application/xml";
@@ -39,8 +39,8 @@ public class GetRecords {
 	private String typeNames = null;
 	private String elementSetName = null;
 	private String constraintVersion = "1.0.1";
-	private Filter filter;
-	private SortBy sortby;
+	private Filter filter = null;
+	private SortBy sortby = null;
 
 	/**
 	 * @return the sortby
@@ -50,7 +50,8 @@ public class GetRecords {
 	}
 
 	/**
-	 * @param sortby the sortby to set
+	 * @param sortby
+	 *            the sortby to set
 	 */
 	public void setSortby(SortBy sortby) {
 		this.sortby = sortby;
@@ -64,7 +65,8 @@ public class GetRecords {
 	}
 
 	/**
-	 * @param filtro the filter to set
+	 * @param filtro
+	 *            the filter to set
 	 */
 	public void setFilter(Filter filtro) {
 		this.filter = filtro;
@@ -78,7 +80,8 @@ public class GetRecords {
 	}
 
 	/**
-	 * @param constraintVersion the constraintVersion to set
+	 * @param constraintVersion
+	 *            the constraintVersion to set
 	 */
 	public void setConstraintVersion(String constraintVersion) {
 		this.constraintVersion = constraintVersion;
@@ -232,27 +235,29 @@ public class GetRecords {
 		}
 
 		// Constraint element
-		xmlWriter.writeStartElement(namespacecontext
-				.getNamespaceURI(CSWNAMESPACE), "Constraint");
+		xmlWriter.writeStartElement(
+				namespacecontext.getNamespaceURI(CSWNAMESPACE), "Constraint");
 		xmlWriter.writeAttribute("version", constraintVersion);
-		
+
 		// Filter
 		xmlWriter.writeCharacters("");
 		xmlWriter.writeDTD(LF);
-		strWriter.append(filter.getExpresion());		
-		xmlWriter.writeDTD(LF);
-		xmlWriter.writeEndElement();
-		
-		// Sort
-		xmlWriter.writeCharacters("");
-		xmlWriter.writeDTD(LF);
-		strWriter.append(sortby.getExpresion());		
+		strWriter.append(filter.getExpresion());
 		xmlWriter.writeDTD(LF);
 		xmlWriter.writeEndElement();
 
+		// Sort
+		if (sortby != null) {
+			xmlWriter.writeCharacters("");
+			xmlWriter.writeDTD(LF);
+			strWriter.append(sortby.getExpresion());
+			xmlWriter.writeDTD(LF);
+			xmlWriter.writeEndElement();
+		}
+
 		xmlWriter.writeDTD(LF);
 		xmlWriter.writeEndElement();
-		
+
 		xmlWriter.flush();
 		xmlWriter.close();
 

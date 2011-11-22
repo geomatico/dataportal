@@ -26,7 +26,7 @@ public class Property {
 	private static final String OGCNAMESPACE = "ogc";
 	private static final String LF = "\n";
 
-	private CSWNamespaceContext namespacecontext = new CSWNamespaceContext();
+	private DataPortalNS namespacecontext = new DataPortalNS();
 
 	public Property(String typeProperty) {
 		super();
