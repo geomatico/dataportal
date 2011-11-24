@@ -134,6 +134,7 @@ public class QueryController {
 			getrecords.setResulType("results");
 			getrecords.setOutputSchema("csw:IsoRecord");
 			getrecords.setTypeNames("gmd:MD_Metadata");
+			getrecords.setElementSetName(GetRecords.FULL);
 
 			// id
 			if (parametros.get("id") != null) {
@@ -225,6 +226,7 @@ public class QueryController {
 				Property propFreeText = new Property("PropertyIsLike");
 				propFreeText.setPropertyName("AnyText");
 				propFreeText.setLiteral(freeText);
+				filterRules.add(propFreeText.getExpresion());
 			}
 			
 			// Default pagination & ordering values

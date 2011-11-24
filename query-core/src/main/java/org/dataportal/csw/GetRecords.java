@@ -21,6 +21,11 @@ public class GetRecords {
 
 	public static final String SERVICE = "CSW";
 	public static final String CSWVERSION = "2.0.2";
+	public static final String FULL = "full";
+	public static final String SUMMARY = "summary";
+	public static final String BRIEF = "brief";
+	
+	
 	private static final String XMLENCODING = "UTF-8";
 	private static final String XMLVERSION = "1.0";
 	private static final String CSWNAMESPACE = "csw";
@@ -207,7 +212,7 @@ public class GetRecords {
 				namespacecontext.getNamespaceURI(CSWNAMESPACE), "GetRecords");
 		xmlWriter.writeAttribute("service", SERVICE);
 		xmlWriter.writeAttribute("version", CSWVERSION);
-		xmlWriter.writeAttribute("resulType", resulType);
+		xmlWriter.writeAttribute("resultType", resulType);
 		xmlWriter.writeAttribute("outputFormat", outputFormat);
 		xmlWriter.writeAttribute("outputSchema", outputSchema);
 		xmlWriter.writeNamespace("csw",
