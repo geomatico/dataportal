@@ -38,7 +38,7 @@ public class GetRecords {
 
 	private String typeNames = null;
 	private String elementSetName = null;
-	private String constraintVersion = "1.0.1";
+	private String constraintVersion = "1.1.0";
 	private Filter filter = null;
 	private SortBy sortby = null;
 
