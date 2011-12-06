@@ -27,6 +27,10 @@
 	<xsl:template match="gmd:MD_DataIdentification">
 		<xsl:element name="title"><xsl:value-of select="./gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString" /></xsl:element>
 		<xsl:element name="summary"><xsl:value-of select="./gmd:abstract/gco:CharacterString" /></xsl:element>
+		<xsl:element name="institution"><xsl:value-of select="./gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString" /></xsl:element>
+		<xsl:element name="creator_url"><xsl:value-of select="./gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:onlineResource/gmd:CI_OnlineResource/gmd:linkage/gmd:URL" /></xsl:element>
+		<xsl:element name="data_type"><xsl:value-of select="./gmd:spatialRepresentationType/gmd:MD_SpatialRepresentationTypeCode" /></xsl:element>
+		<xsl:element name="icos_domain"><xsl:value-of select="./gmd:topicCategory/gmd:MD_TopicCategoryCode" /></xsl:element>
 		<xsl:apply-templates select="./gmd:extent/gmd:EX_Extent" />
 	</xsl:template>
 
