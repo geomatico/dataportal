@@ -388,7 +388,42 @@
 							</fragment>
 						</xsl:if>
 					</replacementGroup>
-									
+
+					<!--Data Type [0..1] -->
+					
+					<xsl:variable name="cdm_data_type" select="nc:attribute[@name='cdm_data_type']/@value"/>
+					
+					<replacementGroup id="thredds.cdm_data_type">
+						<xsl:if test="$cdm_data_type!=''">
+							<fragment uuid="{util:toString(util:randomUUID())}" title="{concat($name,'_cdm_data_type')}">
+								<gmd:spatialRepresentationType>
+									<gmd:MD_SpatialRepresentationTypeCode>
+                                        <xsl:value-of select="$cdm_data_type"/>
+									</gmd:MD_SpatialRepresentationTypeCode>
+								</gmd:spatialRepresentationType>
+							</fragment>
+						</xsl:if>
+					</replacementGroup>
+                    
+                    <!-- Topic Category [1] -->
+                    
+					<xsl:variable name="icos_domain" select="nc:attribute[@name='icos_domain']/@value"/>
+					
+					<replacementGroup id="thredds.topic_category">
+                        <fragment uuid="{util:toString(util:randomUUID())}" title="{concat($name,'_topic_category')}">                    
+                            <gmd:topicCategory>
+                                <gmd:MD_TopicCategoryCode>
+                                    <xsl:choose>
+                                        <xsl:when test="$icos_domain!=''">
+                                            <xsl:value-of select="$icos_domain"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>climatologyMeteorologyAtmosphere</xsl:otherwise>
+                                    </xsl:choose>
+                                </gmd:MD_TopicCategoryCode>
+                            </gmd:topicCategory>
+                        </fragment>
+                    </replacementGroup>
+                                
 					<!-- Aggregation info (Project) [0-1] -->
 					
 					<xsl:variable name="project" select="nc:attribute[@name='project']/@value"/>
