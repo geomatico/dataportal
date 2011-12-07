@@ -90,7 +90,7 @@ public class JPADownloadController {
 			transaction.begin();
 			manager.persist(download);
 			for (DownloadItem item : items) {
-				item.setDownload(download);
+				item.setDownloadBean(download);
 				manager.persist(item);
 			}
 			transaction.commit();

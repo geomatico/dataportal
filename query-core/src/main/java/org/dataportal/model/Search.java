@@ -11,16 +11,12 @@ import java.util.Date;
  * 
  */
 @Entity
-@Table(name="search")
 public class Search implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(unique=true, nullable=false)
 	private Integer id;
 
-	@Column(length=2147483647)
 	private String bboxes;
 
     @Temporal( TemporalType.DATE)
@@ -31,12 +27,10 @@ public class Search implements Serializable {
 	@Column(name="start_date")
 	private Date startDate;
 
-	@Column(length=2147483647)
 	private String text;
 
 	private Timestamp timestamp;
 
-	@Column(length=2147483647)
 	private String variables;
 
 	//bi-directional many-to-one association to User

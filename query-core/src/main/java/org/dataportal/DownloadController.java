@@ -41,6 +41,7 @@ import org.dataportal.model.DownloadItem;
 import org.dataportal.model.User;
 import org.dataportal.utils.Utils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -150,28 +151,36 @@ public class DownloadController {
 			} else {
 				xpath.reset();
 				xpath.setNamespaceContext(ctx);
-				String urlsExpr = "//data_link/child::node()";
-				NodeList urlNodeList = (NodeList) xpath.evaluate(urlsExpr,
+				NodeList itemsNodeList = (NodeList) xpath.evaluate("//item",
 						downloadXML, XPathConstants.NODESET);
+				
+				// Generar coleccion de DownladItems con los datos que nos iteresa guardar.
+				int nItems = itemsNodeList.getLength();
+				ArrayList<DownloadItem> items = new ArrayList<DownloadItem>(nItems);
+				for (int i=0; i < nItems; i++) {
+				    DownloadItem item = new DownloadItem();
+				    Node itemDom = itemsNodeList.item(i);
+				    item.setItemId(xpath.evaluate("id", itemDom));
+				    item.setUrl(xpath.evaluate("data_link", itemDom));
+				    item.setInstitution(xpath.evaluate("institution", itemDom));
+				    item.setIcosDomain(xpath.evaluate("icos_domain", itemDom));
+				    items.add(item);
+				}
 
 				// TODO Enviar volumen descarga al usuario y actuar en función
-
-				ArrayList<String> urlsRequest = Utils
-						.nodeList2ArrayList(urlNodeList);
 
 				User anUser = new User(userName);
 				userJPAController = new JPAUserController();
 				user = userJPAController.exitsInto(anUser);
 
 				if (user != null) {
-					String resultDownload = downloadDatasets(urlsRequest,
-							userName);
+					String resultDownload = downloadDatasets(items, userName);
 
 					// TODO realizar comprobación antes inserción en base de
 					// datos
 					// modificar respuesta método downloadDatasets a tipo XML
 
-					insertDownload(user, resultDownload, urlsRequest);
+					insertDownload(user, resultDownload, items);
 					response.append(resultDownload);
 				} else {
 					DataPortalError error = new DataPortalError();
@@ -208,18 +217,16 @@ public class DownloadController {
 	 *            url request array
 	 */
 	private void insertDownload(User user, String fileName,
-			ArrayList<String> urlsRequest) {
+			ArrayList<DownloadItem> downloadItems) {
 
-		String DOI = this.generateId();
+		String uid = this.generateId();
 		Timestamp timeStamp = Utils.extractDateSystemTimeStamp();
-		Download download = new Download(DOI, fileName, timeStamp, user);
-		ArrayList<DownloadItem> items = new ArrayList<DownloadItem>();
-		for (String url : urlsRequest) {
-			DownloadItem item = new DownloadItem(url);
-			items.add(item);
-		}
+		Download download = new Download(uid, fileName, timeStamp, user);
 		downloadJPAController = new JPADownloadController();
-		downloadJPAController.insertItems(download, items);
+		// TODO Comprobar que insertItems NO DEVUELVE FALSE,
+		// en cuyo caso habrá que devolver un error.
+		// TODO idem donde se use (si se usa) cualquier otro JPAController.		
+		downloadJPAController.insertItems(download, downloadItems);
 	}
 
 	/**
@@ -286,7 +293,7 @@ public class DownloadController {
 	 * @throws ExecutionException
 	 * @throws IOException
 	 */
-	private String downloadDatasets(ArrayList<String> urlsRequest,
+	private String downloadDatasets(ArrayList<DownloadItem> downloadItems,
 			String userName) throws InterruptedException, ExecutionException,
 			IOException {
 
@@ -302,7 +309,7 @@ public class DownloadController {
 			response.append(error.getErrorMessage());
 			logger.error("FAILED create directory");
 		} else {
-			createDownloadThreads(urlsRequest, pathFile);
+			createDownloadThreads(downloadItems, pathFile);
 			String nameFile = userName + "_" + Utils.extractDateSystem();
 			String filePathName = compressFiles(pathFile, nameFile);
 			// TODO cambiar mensaje
@@ -324,27 +331,27 @@ public class DownloadController {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	private void createDownloadThreads(ArrayList<String> urlsRequest,
+	private void createDownloadThreads(ArrayList<DownloadItem> downloadItems,
 			String pathFile) throws MalformedURLException,
 			InterruptedException, ExecutionException {
-		int urls = urlsRequest.size();
+	    
+		int nItems = downloadItems.size();
 
 		ExecutorService threadsPool = Executors.newCachedThreadPool();
-		int future = 0;
-		Future futures[] = new Future[urls];
+		Future futures[] = new Future[nItems];
 
-		for (String url : urlsRequest) {
+		for(int i=0; i<nItems; i++) {
+		    String url = downloadItems.get(i).getUrl();
 			String name = StringUtils.substringAfterLast(url, "/");
 
 			DownloadCallable hiloDescarga = new DownloadCallable(url, name,
 					pathFile);
-			futures[future] = threadsPool.submit(hiloDescarga);
-			future += 1;
+			futures[i] = threadsPool.submit(hiloDescarga);
 
 			Thread.sleep(2000);
 		}
 
-		for (int i = 0; i < urls; i++) {
+		for (int i = 0; i < nItems; i++) {
 			String tarea = (String) futures[i].get();
 			logger.info("DOWNLOADING FINISH: " + tarea);
 		}

@@ -1,9 +1,8 @@
 package org.dataportal.model;
 
-
 import java.io.Serializable;
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -16,36 +15,32 @@ public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(unique=true, nullable=false, length=128)
 	private String id;
 
-	@Column(length=32)
 	private String hash;
 
-	@Column(nullable=false, length=32)
 	private String password;
 
-	@Column(nullable=false, length=16)
 	private String state;
 
 	//bi-directional many-to-one association to Download
 	@OneToMany(mappedBy="userBean")
-	private List<Download> downloads;
+	private Set<Download> downloads;
 
 	//bi-directional many-to-one association to Search
 	@OneToMany(mappedBy="userBean")
-	private List<Search> searches;
+	private Set<Search> searches;
 
     public User() {
     }
     
     public User(String id) {
-    	this.id = id;
+        this.id = id;
     }
     
     public User(String id, String password) {
-    	this.id = id;
-    	this.password = password;
+        this.id = id;
+        this.password = password;
     }
 
 	public String getId() {
@@ -80,19 +75,19 @@ public class User implements Serializable {
 		this.state = state;
 	}
 
-	public List<Download> getDownloads() {
+	public Set<Download> getDownloads() {
 		return this.downloads;
 	}
 
-	public void setDownloads(List<Download> downloads) {
+	public void setDownloads(Set<Download> downloads) {
 		this.downloads = downloads;
 	}
 	
-	public List<Search> getSearches() {
+	public Set<Search> getSearches() {
 		return this.searches;
 	}
 
-	public void setSearches(List<Search> searches) {
+	public void setSearches(Set<Search> searches) {
 		this.searches = searches;
 	}
 	

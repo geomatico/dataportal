@@ -1,6 +1,5 @@
 package org.dataportal.model;
 
-
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -14,53 +13,85 @@ import javax.persistence.*;
 public class DownloadItem implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="id_item", unique=true, nullable=false)
-	private Integer idItem;
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Integer id;
 
-	@Column(nullable=false, length=2147483647)
-	private String text;
+	@Column(name="icos_domain")
+	private String icosDomain;
+
+	private String institution;
+
+	@Column(name="item_id")
+	private String itemId;
+
+	private String url;
 
 	//bi-directional many-to-one association to Download
     @ManyToOne
-	@JoinColumn(name="id_download", nullable=false)
-	private Download download;
+	@JoinColumn(name="download")
+	private Download downloadBean;
 
     public DownloadItem() {
     }
     
-    public DownloadItem(String filename, Download download) {
-    	this.text = filename;
-    	this.download = download;
+    /*
+    public DownloadItem(String url) {
+        this.url = url;
     }
+    */
+    /*
+    public DownloadItem(String url, Download download) {
+        this.url = url;
+        this.downloadBean = download;
+    }
+    */
 
-	public DownloadItem(String filename) {
-		this.text = filename;
+	public Integer getId() {
+		return this.id;
 	}
 
-	public Integer getIdItem() {
-		return this.idItem;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
-	public void setIdItem(Integer idItem) {
-		this.idItem = idItem;
+	public String getIcosDomain() {
+		return this.icosDomain;
 	}
 
-	public String getText() {
-		return this.text;
+	public void setIcosDomain(String icosDomain) {
+		this.icosDomain = icosDomain;
 	}
 
-	public void setText(String text) {
-		this.text = text;
+	public String getInstitution() {
+		return this.institution;
 	}
 
-	public Download getDownload() {
-		return this.download;
+	public void setInstitution(String institution) {
+		this.institution = institution;
 	}
 
-	public void setDownload(Download download) {
-		this.download = download;
+	public String getItemId() {
+		return this.itemId;
+	}
+
+	public void setItemId(String itemId) {
+		this.itemId = itemId;
+	}
+
+	public String getUrl() {
+		return this.url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public Download getDownloadBean() {
+		return this.downloadBean;
+	}
+
+	public void setDownloadBean(Download downloadBean) {
+		this.downloadBean = downloadBean;
 	}
 	
 }

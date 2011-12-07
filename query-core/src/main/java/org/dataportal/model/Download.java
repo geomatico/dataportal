@@ -3,7 +3,7 @@ package org.dataportal.model;
 import java.io.Serializable;
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -11,18 +11,14 @@ import java.util.List;
  * 
  */
 @Entity
-@Table(name="download")
 public class Download implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(unique=true, nullable=false, length=128)
 	private String id;
 
-	@Column(length=2147483647)
 	private String filename;
 
-	@Column(nullable=false)
 	private Timestamp timestamp;
 
 	//bi-directional many-to-one association to User
@@ -31,21 +27,21 @@ public class Download implements Serializable {
 	private User userBean;
 
 	//bi-directional many-to-one association to DownloadItem
-	@OneToMany(mappedBy="download")
-	private List<DownloadItem> downloadItems;
+	@OneToMany(mappedBy="downloadBean")
+	private Set<DownloadItem> downloadItems;
 
     public Download() {
     }
     
     public Download(String id) {
-    	this.id = id;
+        this.id = id;
     }
     
     public Download(String id, String filename, Timestamp timestamp, User user) {
-    	this.id = id;
-    	this.filename = filename;
-    	this.timestamp = timestamp;
-    	this.userBean = user;
+        this.id = id;
+        this.filename = filename;
+        this.timestamp = timestamp;
+        this.userBean = user;
     }
 
 	public String getId() {
@@ -80,11 +76,11 @@ public class Download implements Serializable {
 		this.userBean = userBean;
 	}
 	
-	public List<DownloadItem> getDownloadItems() {
+	public Set<DownloadItem> getDownloadItems() {
 		return this.downloadItems;
 	}
 
-	public void setDownloadItems(List<DownloadItem> downloadItems) {
+	public void setDownloadItems(Set<DownloadItem> downloadItems) {
 		this.downloadItems = downloadItems;
 	}
 	
