@@ -77,7 +77,7 @@ public class DownloadController {
 
 	/**
 	 * Create the pathfile with the information extracted from properties and
-	 * create the directory if not exits
+	 * create the directory if not exists
 	 * 
 	 * @param userName
 	 *            User name from session (String)
@@ -86,8 +86,8 @@ public class DownloadController {
 
 		String pathFile = this.tempDir + "/" + userName;
 		File personalDirectory = new File(pathFile);
-		boolean exits = personalDirectory.exists();
-		if (!exits) {
+		boolean exists = personalDirectory.exists();
+		if (!exists) {
 			boolean createDir = personalDirectory.mkdir();
 			if (!createDir)
 				pathFile = null;
@@ -171,7 +171,7 @@ public class DownloadController {
 
 				User anUser = new User(userName);
 				userJPAController = new JPAUserController();
-				user = userJPAController.exitsInto(anUser);
+				user = userJPAController.existsInto(anUser);
 
 				if (user != null) {
 					String resultDownload = downloadDatasets(items, userName);

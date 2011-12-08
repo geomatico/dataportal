@@ -117,43 +117,42 @@ public class JPADownloadController {
 	 * @return boolean with operations result
 	 */
 	public boolean delete(Download download) {
-
-		// TODO elimine items en cascada
-
 		boolean deleted = false;
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
 		try {
 			transaction.begin();
-			Download downloadToRemove = manager.find(Download.class,
-					download.getId());
-			if (downloadToRemove != null)
-				manager.remove(downloadToRemove);
-			// TODO Something if else
+			download = manager.find(Download.class, download.getId());
+			if (download != null) {
+	            for (DownloadItem item : download.getDownloadItems()) {
+	                manager.remove(item);
+	            }
+			    manager.remove(download);
+			} // else?
 			transaction.commit();
 			deleted = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			deleted = false;
 		} finally {
-		    if (transaction.isActive())
-		    {
+		    if (transaction.isActive()) {
 		        transaction.rollback();
 		    }
-			if (manager != null)
+			if (manager != null) {
 				manager.close();
+			}
 		}
 		return deleted;
 	}
 
 	/**
 	 * 
-	 * Check if download received in params exits into RDBMS
+	 * Check if download received in params exists into RDBMS
 	 * 
 	 * @param download
-	 * @return Download records or null if record not exits
+	 * @return Download records or null if record not exists
 	 */
-	public Download exits(Download download) {
+	public Download exists(Download download) {
 
 		Download downloadInto = null;
 		EntityManager manager = getEntityManager();

@@ -4,6 +4,7 @@
 package test.dataportal.controllers;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -34,18 +35,18 @@ public class JPADownloadControllerTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		controladorDescarga = new JPADownloadController();
-		user = (User) exits("micho.garcia", User.class);
+		user = (User) exists("micho.garcia", User.class);
 	}
 
 	/**
-	 * Check if object exits into RDBMS and returns
+	 * Check if object exists into RDBMS and returns
 	 * 
 	 * @param object
 	 *            ID
 	 * @return object record or null
 	 */
 	@SuppressWarnings("unchecked")
-	private Object exits(String id, Class clase) {
+	private Object exists(String id, Class clase) {
 		EntityManager manager = getEntityManager();
 		Object objeto = manager.find(clase, id);
 		manager.close();
@@ -82,7 +83,7 @@ public class JPADownloadControllerTest extends TestCase {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		Download downloadInsertada = controladorDescarga.exits(download);
+		Download downloadInsertada = controladorDescarga.exists(download);
 		boolean insertada = false;
 		if (downloadInsertada != null)
 			insertada = true;
@@ -98,28 +99,39 @@ public class JPADownloadControllerTest extends TestCase {
 	 */
 	public void testInsertItems() {
 
-		String idDownload = "10.4324/4235";
+		String idDownload = UUID.randomUUID().toString();
 		Download download = new Download(idDownload,
 				"micho.garcia_20110509.zip",
 				Utils.extractDateSystemTimeStamp(), user);
 
 		ArrayList<DownloadItem> items = new ArrayList<DownloadItem>();
-		DownloadItem item1 = new DownloadItem("un nombre de archivo");
+		DownloadItem item1 = new DownloadItem();
+	    item1.setItemId(UUID.randomUUID().toString());
+	    item1.setUrl("un nombre de archivo");
+		item1.setDownloadBean(download);
 		items.add(item1);
-		DownloadItem item2 = new DownloadItem("otro nombre de un archivo");
+		
+		DownloadItem item2 = new DownloadItem();
+        item2.setItemId(UUID.randomUUID().toString());
+		item2.setUrl("otro nombre de un archivo");
+        item2.setDownloadBean(download);
 		items.add(item2);
-		DownloadItem item3 = new DownloadItem("el ultimo nombre de archivo");
+		
+		DownloadItem item3 = new DownloadItem();
+        item3.setItemId(UUID.randomUUID().toString());
+        item3.setUrl("el ultimo nombre de archivo");
+        item3.setDownloadBean(download);
 		items.add(item3);
 
 		boolean insertado = controladorDescarga.insertItems(download, items);
 		assertTrue(insertado);
 
-		Download insertada = (Download) exits(idDownload, Download.class);
+		Download insertada = (Download) exists(idDownload, Download.class);
 		assertNotSame(insertada, null);
 
-		controladorDescarga.delete(insertada);
+		controladorDescarga.delete(download);
 
-		insertada = (Download) exits(idDownload, Download.class);
+		insertada = (Download) exists(idDownload, Download.class);
 		assertEquals(insertada, null);
 
 	}
@@ -131,12 +143,12 @@ public class JPADownloadControllerTest extends TestCase {
 	 */
 	public void testDelete() {
 		Download download = new Download("10.4324/4234");
-		Download downloadToRemove = controladorDescarga.exits(download);
+		Download downloadToRemove = controladorDescarga.exists(download);
 		boolean borrada = false;
 		if (downloadToRemove != null)
 			borrada = true;
 		controladorDescarga.delete(downloadToRemove);
-		downloadToRemove = controladorDescarga.exits(download);
+		downloadToRemove = controladorDescarga.exists(download);
 
 		assertTrue(borrada);
 		assertEquals(downloadToRemove, null);

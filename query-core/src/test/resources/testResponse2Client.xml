@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
   
-  <response totalcount="1" success="true">
-  <item>
-    <id>icos-sample-1</id>
-    <title>Global Wind-Wave Forecast Model and Ocean Wave model</title>
-    <summary>This is a sample global ocean file that comes with default Thredds installation. Its global attributes have been modified to conform with Dataset Discovery convention</summary>
-    <geo_extent>POLYGON((-10 50,10 50,10 40,-10 40,-10 50))</geo_extent>
-    <start_time>2011-07-10T12:00:00Z</start_time>
-    <end_time>2011-07-15T12:00:00Z</end_time>
-    <variables>wind_speed_mean_value,wind_speed,wind_from_direction,air_temperature,relative_humidity,solar_radiation,air_pressure,date,longitude,latitude,acquisition_instrument_date,heading,speed,cog,sog,date,longitude,latitude,depth,reftime,datetime,forecasttime,model_id,nav_model,grid_type_code,grid_type,grid_name,grid_center,grid_number,i_dim,j_dim,Ni,Nj,La1,Lo1,La2,Lo2,Di,Dj,ResCompFlag,eastward_wind,northward_wind,significant_height_of_wind_and_swell_waves,wind_wave_period,direction_of_wind_wave_velocity,valtime,valtime_offset,lat,lon</variables>
-    <data_link>http://ciclope.cmima.csic.es:8080/thredds/fileServer/testDP/ocean-metadata-sample.nc</data_link>
-  </item>
+<response totalcount="1" success="true">
+    <item>
+        <id>icos-sample-1</id>
+            <title>Global Wind-Wave Forecast Model and Ocean Wave model</title>
+            <summary>This is a sample global ocean file that comes with default Thredds installation. Its global attributes have been modified to conform with Dataset Discovery convention</summary>
+            <institution>unidata</institution>
+            <creator_url>http://www.utm.csic.es/</creator_url>
+            <data_type>Grid</data_type>
+            <icos_domain>climatologyMeteorologyAtmosphere</icos_domain>
+            <geo_extent>POLYGON((-10 50,10 50,10 40,-10 40,-10 50))</geo_extent>
+            <start_time>2011-07-10T12:00:00Z</start_time>
+            <end_time>2011-07-15T12:00:00Z</end_time>
+            <variables>reftime,datetime,forecasttime,model_id,nav_model,grid_type_code,grid_type,grid_name,grid_center,grid_number,i_dim,j_dim,Ni,Nj,La1,Lo1,La2,Lo2,Di,Dj,ResCompFlag,eastward_wind,northward_wind,significant_height_of_wind_and_swell_waves,wind_wave_period,direction_of_wind_wave_velocity,valtime,valtime_offset,lat,lon</variables>
+            <data_link>http://ciclope.cmima.csic.es:8080/thredds/fileServer/dataportal/ocean-metadata-sample.nc</data_link>
+    </item>
 </response>

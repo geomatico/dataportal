@@ -167,11 +167,11 @@ public class QueryController {
 			String start_date = parametros.get("start_date")[FIRST];
 			Property greatherThanStartDate = new Property(
 					"PropertyIsGreaterThanOrEqualTo");
-			boolean exitsStartDate = false;
+			boolean existsStartDate = false;
 			if (start_date != "") {
 				greatherThanStartDate.setPropertyName("TempExtent_begin");
 				greatherThanStartDate.setLiteral(start_date);
-				exitsStartDate = true;
+				existsStartDate = true;
 			}
 
 			String end_date = parametros.get("end_date")[FIRST];
@@ -181,7 +181,7 @@ public class QueryController {
 				lessThanEndDate.setPropertyName("TempExtent_end");
 				lessThanEndDate.setLiteral(end_date);
 
-				if (exitsStartDate) {
+				if (existsStartDate) {
 					ArrayList<String> andRangeDateRules = new ArrayList<String>();
 					andRangeDateRules.add(greatherThanStartDate.getExpresion());
 					andRangeDateRules.add(lessThanEndDate.getExpresion());
@@ -192,7 +192,7 @@ public class QueryController {
 					filterRules.add(lessThanEndDate.getExpresion());
 				}
 			} else {
-				if (exitsStartDate)
+				if (existsStartDate)
 					filterRules.add(greatherThanStartDate.getExpresion());
 			}
 

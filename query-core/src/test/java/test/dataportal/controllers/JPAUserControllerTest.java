@@ -83,7 +83,7 @@ public class JPAUserControllerTest extends TestCase {
 	 */
 	public void testGetState() {
 		String state = null;
-		User userInto = controladorUsuario.exitsInto(user);
+		User userInto = controladorUsuario.existsInto(user);
 		state = controladorUsuario.getState(userInto);
 		assertEquals(state, "NOT_CONFIRMED");
 	}
@@ -95,7 +95,7 @@ public class JPAUserControllerTest extends TestCase {
 	 */
 	public void testActivate() {
 		String id = null;
-		User userInto = controladorUsuario.exitsInto(user);
+		User userInto = controladorUsuario.existsInto(user);
 		id = controladorUsuario.activate(userInto.getHash());
 		assertEquals(user.getId(), id);
 	}
@@ -128,8 +128,7 @@ public class JPAUserControllerTest extends TestCase {
 	 */
 	public void testNewPass() {
 		String newPass = null;
-		User userInto = controladorUsuario.exitsInto(user);
-		newPass = controladorUsuario.newPass(userInto.getHash());
+		newPass = controladorUsuario.newPass(user);
 		assertNotNull(newPass);
 	}
 
@@ -138,9 +137,9 @@ public class JPAUserControllerTest extends TestCase {
 	 * {@link org.dataportal.controllers.JPAUserController#exists()}.
 	 */
 	public void testExists() {
-		boolean exits = true;
-		exits = controladorUsuario.exits(user);
-		assertFalse(exits);
+		boolean exists = true;
+		exists = controladorUsuario.exists(user);
+		assertFalse(exists);
 	}
 
 	/**
@@ -150,7 +149,7 @@ public class JPAUserControllerTest extends TestCase {
 	 */
 	public void testChangePass() {
 		String newPassword = hex_md5("va a ser otra mas");
-		User userInto = controladorUsuario.exitsInto(user);
+		User userInto = controladorUsuario.existsInto(user);
 		boolean changed = controladorUsuario.changePass(userInto, newPassword);
 		assertTrue(changed);
 	}
@@ -164,7 +163,7 @@ public class JPAUserControllerTest extends TestCase {
 		String state = "ACTIVE";
 		user.setState(state);
 		controladorUsuario.changeState(user);
-		User userInto = controladorUsuario.exitsInto(user);
+		User userInto = controladorUsuario.existsInto(user);
 		assertEquals(userInto.getState(), state);
 	}
 
@@ -174,7 +173,7 @@ public class JPAUserControllerTest extends TestCase {
 	 */
 	public void testDelete() {
 		controladorUsuario.delete(user);
-		User userInto = controladorUsuario.exitsInto(user);
+		User userInto = controladorUsuario.existsInto(user);
 		assertNull(userInto);
 	}
 }

@@ -31,17 +31,17 @@ public class JPASearchControllerTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		controladorBusqueda = new JPASearchController();
-		user = (User) exits("micho.garcia@geomati.co", User.class);
+		user = (User) exists("micho.garcia@geomati.co", User.class);
 	}
 
 	/**
-	 * Check if object exits into RDBMS and returns
+	 * Check if object exists into RDBMS and returns
 	 * 
 	 * @param object ID
 	 * @return object record or null
 	 */
 	@SuppressWarnings("unchecked")
-	private Object exits(String id, Class clase) {
+	private Object exists(String id, Class clase) {
 		EntityManager manager = getEntityManager();
 		Object objeto = manager.find(clase, id);
 		manager.close();

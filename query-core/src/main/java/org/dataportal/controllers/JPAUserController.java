@@ -77,7 +77,7 @@ public class JPAUserController {
 	 * @param user
 	 * @return
 	 */
-	public User exitsInto(User user) {
+	public User existsInto(User user) {
 
 		User userInto = null;
 		EntityManager manager = getEntityManager();
@@ -135,7 +135,7 @@ public class JPAUserController {
 		EntityTransaction transaction = manager.getTransaction();
 		try {
 			transaction.begin();
-			User userInto = exitsInto(user);
+			User userInto = existsInto(user);
 			if (userInto != null)
 				userInto.setHash(hash);
 			transaction.commit();
@@ -178,35 +178,36 @@ public class JPAUserController {
 			return null;
 	}
 
-	public String newPass(String hash) {
+	public String newPass(User user) {
 		String password = randomString(6);
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
 		try {
-			User userInto = getUserByHash(manager, hash);
+			User userInto = manager.find(User.class, user.getId());
 			if (userInto != null) {
 				transaction.begin();
 				userInto.setHash("");
 				userInto.setPassword(hex_md5(userInto.getId() + ":" + password));
 				transaction.commit();
-			} else
+			} else {
 				password = null;
+			}
 			return password;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		} finally {
-		    if (transaction.isActive())
-		    {
+		    if (transaction.isActive()) {
 		        transaction.rollback();
 		    }
-			if (manager != null)
+			if (manager != null) {
 				manager.close();
+			}
 		}
 	}
 
 	public boolean isActive(User user) {
-		User userInto = exitsInto(user);
+		User userInto = existsInto(user);
 		if (userInto != null)
 			return userInto.getState().equals(ACTIVE);
 		else
@@ -240,8 +241,8 @@ public class JPAUserController {
 		}
 	}
 
-	public boolean exits(User user) {
-		User userInto = exitsInto(user);
+	public boolean exists(User user) {
+		User userInto = existsInto(user);
 		return userInto.getState().equals(NONEXISTENT);
 	}
 
@@ -283,7 +284,7 @@ public class JPAUserController {
 	}
 
 	public void changeState(User user) {
-		User userInto = exitsInto(user);
+		User userInto = existsInto(user);
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
 		try {
