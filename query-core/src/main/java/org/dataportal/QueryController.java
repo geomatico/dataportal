@@ -162,7 +162,7 @@ public class QueryController {
 				}
 			}
 
-			// temporal range			
+			// temporal range
 
 			String start_date = parametros.get("start_date")[FIRST];
 			Property greatherThanStartDate = new Property(
@@ -219,7 +219,7 @@ public class QueryController {
 					filterRules.add(propVariable.getExpresion());
 				}
 			}
-			
+
 			// free text
 			String freeText = parametros.get("text")[FIRST];
 			if (freeText != "") {
@@ -228,26 +228,27 @@ public class QueryController {
 				propFreeText.setLiteral(freeText);
 				filterRules.add(propFreeText.getExpresion());
 			}
-			
+
 			// Default pagination & ordering values
 			String startPosition = "1";
 			String maxRecords = "25";
 			String sort = "title";
 			String dir = "asc";
-			
-			startPosition = parametros.get("start")[FIRST];			
-			getrecords.setStartPosition(startPosition);		
-			
+
+			startPosition = String.valueOf(Integer.valueOf(parametros
+					.get("start")[FIRST]) + 1);
+			getrecords.setStartPosition(startPosition);
+
 			maxRecords = parametros.get("limit")[FIRST];
-			getrecords.setMaxRecords(maxRecords);		
-			
+			getrecords.setMaxRecords(maxRecords);
+
 			sort = parametros.get("sort")[FIRST];
 			dir = parametros.get("dir")[FIRST];
-			
+
 			SortBy sortby = new SortBy();
 			sortby.setPropertyName(sort);
 			sortby.setOrder(dir);
-			
+
 			getrecords.setSortby(sortby);
 
 			Filter filtro = new Filter();
@@ -256,7 +257,7 @@ public class QueryController {
 			getrecords.setFilter(filtro);
 
 			logger.debug(getrecords.getExpresion());
-			
+
 			return getrecords.getExpresion();
 
 		} catch (XMLStreamException e) {

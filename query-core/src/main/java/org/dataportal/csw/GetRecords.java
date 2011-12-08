@@ -220,7 +220,7 @@ public class GetRecords {
 		xmlWriter.writeNamespace("gmd",
 				namespacecontext.getNamespaceURI(GMDNAMESPACE));
 		xmlWriter.writeAttribute("maxRecords", maxRecords);
-		xmlWriter.writeAttribute("starPosition", startPosition);
+		xmlWriter.writeAttribute("startPosition", startPosition);
 
 		// Query element
 		xmlWriter.writeDTD(LF);
