@@ -123,6 +123,7 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 			writer2Client.println("</download>");
 		} catch (Exception e) {
 			Class<?> clase = e.getClass();
+			error = new DataPortalError();
 			if (clase.equals(DataPortalException.class)) {
 				DataPortalException dtException = (DataPortalException) e;
 				error.setCode(dtException.getCode());

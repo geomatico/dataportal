@@ -3,6 +3,7 @@
  */
 package org.dataportal;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -129,13 +130,12 @@ public class DownloadController implements DataportalCodes {
 
 		StringBuffer response = new StringBuffer();
 
-		if (isRequestXML.markSupported())
-			isRequestXML.mark(MARK);
-		InputStream bufferedIsRequestXML = IOUtils
-				.toBufferedInputStream(isRequestXML);
-		isRequestXML.reset();
+		// No tengo claro esto...
+		byte[] b = IOUtils.toByteArray(isRequestXML);
+		InputStream aBufferedIsRequestXML = new ByteArrayInputStream(b);
+		InputStream otherBufferedIsRequestXML2 = new ByteArrayInputStream(b);
 
-		NodeList idNodeList = extractNodeList(isRequestXML, IDS);
+		NodeList idNodeList = extractNodeList(aBufferedIsRequestXML, IDS);
 		ArrayList<String> requestIdes = Utils.nodeList2ArrayList(idNodeList);
 
 		GetRecordById getRecordById = new GetRecordById("brief");
@@ -162,7 +162,7 @@ public class DownloadController implements DataportalCodes {
 			dtException.setCode(IDNOTFOUND);
 			throw dtException;
 		} else {
-			NodeList itemsNodeList = extractNodeList(bufferedIsRequestXML,
+			NodeList itemsNodeList = extractNodeList(otherBufferedIsRequestXML2,
 					ITEMS);
 
 			int nItems = itemsNodeList.getLength();
