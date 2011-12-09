@@ -6,11 +6,8 @@ package test.dataportal.controllers;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
 import org.dataportal.controllers.JPADownloadController;
+import org.dataportal.controllers.JPAUserController;
 import org.dataportal.model.Download;
 import org.dataportal.model.DownloadItem;
 import org.dataportal.model.User;
@@ -24,57 +21,27 @@ import junit.framework.TestCase;
  */
 public class JPADownloadControllerTest extends TestCase {
 
-	private JPADownloadController controladorDescarga;
-	private User user = null;
+	private JPADownloadController controladorDescarga = new JPADownloadController();
+	private JPAUserController controladorUsuario = new JPAUserController();
+	private User user = new User("user.test", "password.test");
+	static final String IDDOWNLOADTEST = "306689ec-a58a-4e47-9dc9-78c5dc5f72f5";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-		controladorDescarga = new JPADownloadController();
-		user = (User) exists("micho.garcia", User.class);
-	}
-
-	/**
-	 * Check if object exists into RDBMS and returns
-	 * 
-	 * @param object
-	 *            ID
-	 * @return object record or null
-	 */
-	@SuppressWarnings("unchecked")
-	private Object exists(String id, Class clase) {
-		EntityManager manager = getEntityManager();
-		Object objeto = manager.find(clase, id);
-		manager.close();
-		if (objeto != null)
-			return objeto;
-		else
-			return null;
-	}
-
-	/**
-	 * Create an EntityManager
-	 */
-	public EntityManager getEntityManager() {
-		EntityManagerFactory factoria = Persistence
-				.createEntityManagerFactory("dataportal");
-		EntityManager manager = factoria.createEntityManager();
-		return manager;
+	private void createUser() {
+		user.setState(JPAUserController.ACTIVE);
+		controladorUsuario.insert(user);
 	}
 
 	/**
 	 * Test method for
 	 * {@link org.dataportal.controllers.JPADownloadController#insert(Download)}
 	 * .
+	 * @throws Exception 
 	 */
-	public void testInsert() {
+	public void testInsert() throws Exception {
+		
+		createUser();
 
-		String idDownload = "10.4324/4234";
-		Download download = new Download(idDownload,
+		Download download = new Download(IDDOWNLOADTEST,
 				"micho.garcia_20110509.zip",
 				Utils.extractDateSystemTimeStamp(), user);
 		boolean insertado = controladorDescarga.insert(download);
@@ -96,14 +63,11 @@ public class JPADownloadControllerTest extends TestCase {
 	 * Test method for
 	 * {@link org.dataportal.controllers.JPADownloadController#insert(Download)}
 	 * .
+	 * @throws Exception 
 	 */
-	public void testInsertItems() {
+	public void testInsertItems() throws Exception {
 
-		String idDownload = UUID.randomUUID().toString();
-		Download download = new Download(idDownload,
-				"micho.garcia_20110509.zip",
-				Utils.extractDateSystemTimeStamp(), user);
-
+		Download download = controladorDescarga.exists(new Download(IDDOWNLOADTEST));
 		ArrayList<DownloadItem> items = new ArrayList<DownloadItem>();
 		DownloadItem item1 = new DownloadItem();
 	    item1.setItemId(UUID.randomUUID().toString());
@@ -126,13 +90,8 @@ public class JPADownloadControllerTest extends TestCase {
 		boolean insertado = controladorDescarga.insertItems(download, items);
 		assertTrue(insertado);
 
-		Download insertada = (Download) exists(idDownload, Download.class);
+		Download insertada = controladorDescarga.exists(download);
 		assertNotSame(insertada, null);
-
-		controladorDescarga.delete(download);
-
-		insertada = (Download) exists(idDownload, Download.class);
-		assertEquals(insertada, null);
 
 	}
 
@@ -140,9 +99,10 @@ public class JPADownloadControllerTest extends TestCase {
 	 * Test method for
 	 * {@link org.dataportal.controllers.JPADownloadController#delete(Download)}
 	 * .
+	 * @throws Exception 
 	 */
-	public void testDelete() {
-		Download download = new Download("10.4324/4234");
+	public void testDelete() throws Exception {
+		Download download = new Download(IDDOWNLOADTEST);
 		Download downloadToRemove = controladorDescarga.exists(download);
 		boolean borrada = false;
 		if (downloadToRemove != null)
@@ -152,6 +112,8 @@ public class JPADownloadControllerTest extends TestCase {
 
 		assertTrue(borrada);
 		assertEquals(downloadToRemove, null);
+		
+		if (controladorUsuario.existsInto(user) != null)
+			controladorUsuario.delete(user);
 	}
-
 }

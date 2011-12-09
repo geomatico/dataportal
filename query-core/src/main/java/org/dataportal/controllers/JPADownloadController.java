@@ -46,8 +46,9 @@ public class JPADownloadController {
 	 * 
 	 * @param download
 	 * @return boolean with operations result
+	 * @throws Exception 
 	 */
-	public boolean insert(Download download) {
+	public boolean insert(Download download) throws Exception {
 
 		boolean inserted = false;
 		EntityManager manager = getEntityManager();
@@ -60,6 +61,7 @@ public class JPADownloadController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			inserted = false;
+			throw e;
 		} finally {
 		    if (transaction.isActive())
 		    {
@@ -80,15 +82,17 @@ public class JPADownloadController {
 	 * @param items
 	 *            DownloadItem ArrayList
 	 * @return
+	 * @throws Exception 
 	 */
-	public boolean insertItems(Download download, ArrayList<DownloadItem> items) {
+	public boolean insertItems(Download download, ArrayList<DownloadItem> items) throws Exception {
 
 		boolean inserted = false;
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
 		try {
 			transaction.begin();
-			manager.persist(download);
+			if (exists(download) == null)
+				manager.persist(download);
 			for (DownloadItem item : items) {
 				item.setDownloadBean(download);
 				manager.persist(item);
@@ -98,6 +102,7 @@ public class JPADownloadController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			inserted = false;
+			throw e;
 		} finally {
 		    if (transaction.isActive())
 		    {
@@ -115,8 +120,9 @@ public class JPADownloadController {
 	 * 
 	 * @param download
 	 * @return boolean with operations result
+	 * @throws Exception 
 	 */
-	public boolean delete(Download download) {
+	public boolean delete(Download download) throws Exception {
 		boolean deleted = false;
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
@@ -134,6 +140,7 @@ public class JPADownloadController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			deleted = false;
+			throw e;
 		} finally {
 		    if (transaction.isActive()) {
 		        transaction.rollback();

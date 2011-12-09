@@ -22,13 +22,17 @@ import java.util.concurrent.Future;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.dataportal.controllers.JPADownloadController;
@@ -39,10 +43,12 @@ import org.dataportal.csw.DataPortalNS;
 import org.dataportal.model.Download;
 import org.dataportal.model.DownloadItem;
 import org.dataportal.model.User;
+import org.dataportal.utils.DataPortalException;
 import org.dataportal.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Class to control the files download. Use a Cached Thread Pool to download
@@ -51,9 +57,15 @@ import org.w3c.dom.NodeList;
  * @author Micho Garcia
  * 
  */
-public class DownloadController {
+public class DownloadController implements DataportalCodes{
 
 	private static Logger logger = Logger.getLogger(DownloadController.class);
+
+	private static final String IDS = "//id/child::node()";
+	private static final String IDENTIFIERS = "//BriefRecord/identifier/child::node()";
+	private static final String ITEMS = "//item";
+
+	private static final int MARK = 1;
 
 	private String tempDir;
 	private static Catalog catalogo;
@@ -61,6 +73,8 @@ public class DownloadController {
 	private String id = null;
 	private JPAUserController userJPAController = null;
 	private JPADownloadController downloadJPAController = null;
+	private DataPortalNS dataPortalCtx = new DataPortalNS();
+	private DataPortalException dtException;
 
 	/**
 	 * Constructor. Reads tempDir from properties file.
@@ -104,105 +118,94 @@ public class DownloadController {
 	 * 
 	 * @param InputStream
 	 *            with the XML sends by client
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public String askgn2download(InputStream isRequestXML, String userName) throws Exception {
+	public String askgn2download(InputStream isRequestXML, String userName)
+			throws Exception {
 
 		StringBuffer response = new StringBuffer();
 
-		try {
-			DocumentBuilderFactory dbFactoria = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder dbBuilder = dbFactoria.newDocumentBuilder();
-			Document downloadXML = (Document) dbBuilder.parse(isRequestXML);
+		if (isRequestXML.markSupported())
+			isRequestXML.mark(MARK);
+		InputStream bufferedIsRequestXML = IOUtils
+				.toBufferedInputStream(isRequestXML);
+		isRequestXML.reset();
 
-			DataPortalNS ctx = new DataPortalNS();
+		NodeList idNodeList = extractNodeList(isRequestXML, IDS);
+		ArrayList<String> requestIdes = Utils.nodeList2ArrayList(idNodeList);
+
+		GetRecordById getRecordById = new GetRecordById("brief");
+		String getRecordByIdQuery = getRecordById.createQuery(requestIdes);
+		InputStream isGetRecordByIdResponse = catalogo
+				.sendCatalogRequest(getRecordByIdQuery);
+
+		// TODO Controlar excepción retornada del servidor
+		NodeList identifierNodeList = extractNodeList(isGetRecordByIdResponse,
+				IDENTIFIERS);
+		ArrayList<String> responseIdes = Utils
+				.nodeList2ArrayList(identifierNodeList);
+
+		ArrayList<String> noIdsResponse = Utils.compare2Arraylist(requestIdes,
+				responseIdes);
+
+		if (noIdsResponse.size() != 0) {
+			logger.info("ID'S NO ENCONTRADOS: "
+					+ String.valueOf(noIdsResponse.size()) + " -> "
+					+ StringUtils.join(noIdsResponse, " : "));
+			 dtException = new DataPortalException("The following dataset IDs where not found: "
+					+ StringUtils.join(noIdsResponse, ", "));
+			dtException.setCode(IDNOTFOUND);
+			throw dtException;
+		} else {
+			NodeList itemsNodeList = extractNodeList(bufferedIsRequestXML,
+					ITEMS);
+
+			int nItems = itemsNodeList.getLength();
+			ArrayList<DownloadItem> items = new ArrayList<DownloadItem>(nItems);
 
 			XPathFactory factory = XPathFactory.newInstance();
 			XPath xpath = factory.newXPath();
-			xpath.setNamespaceContext(ctx);
-
-			String variablesExpr = "//id/child::node()";
-			NodeList idNodeList = (NodeList) xpath.evaluate(variablesExpr,
-					downloadXML, XPathConstants.NODESET);
-			ArrayList<String> requestIdes = Utils
-					.nodeList2ArrayList(idNodeList);
-
-			GetRecordById getRecordById = new GetRecordById("brief");
-			String getRecordByIdQuery = getRecordById.createQuery(requestIdes);
-			InputStream isGetRecordByIdResponse = catalogo
-					.sendCatalogRequest(getRecordByIdQuery);
-
-			// TODO Controlar excepción retornada del servidor
-
-			ArrayList<String> responseIdes = recordIdes(isGetRecordByIdResponse);
-
-			ArrayList<String> noIdsResponse = Utils.compare2Arraylist(
-					requestIdes, responseIdes);
-
-			if (noIdsResponse.size() != 0) {
-				logger.info("ID'S NO ENCONTRADOS: "
-						+ String.valueOf(noIdsResponse.size()) + " -> "
-						+ StringUtils.join(noIdsResponse, " : "));
-				DataPortalError error = new DataPortalError();
-				error.setCode("id.not.found");
-				error.setMessage("The following dataset IDs where not found: " + StringUtils.join(noIdsResponse, ", "));
-				response.append(error.getErrorMessage());
-			} else {
-				xpath.reset();
-				xpath.setNamespaceContext(ctx);
-				NodeList itemsNodeList = (NodeList) xpath.evaluate("//item",
-						downloadXML, XPathConstants.NODESET);
-				
-				// Generar coleccion de DownladItems con los datos que nos iteresa guardar.
-				int nItems = itemsNodeList.getLength();
-				ArrayList<DownloadItem> items = new ArrayList<DownloadItem>(nItems);
-				for (int i=0; i < nItems; i++) {
-				    DownloadItem item = new DownloadItem();
-				    Node itemDom = itemsNodeList.item(i);
-				    item.setItemId(xpath.evaluate("id", itemDom));
-				    item.setUrl(xpath.evaluate("data_link", itemDom));
-				    item.setInstitution(xpath.evaluate("institution", itemDom));
-				    item.setIcosDomain(xpath.evaluate("icos_domain", itemDom));
-				    items.add(item);
-				}
-
-				// TODO Enviar volumen descarga al usuario y actuar en función
-
-				User anUser = new User(userName);
-				userJPAController = new JPAUserController();
-				user = userJPAController.existsInto(anUser);
-
-				if (user != null) {
-					String resultDownload = downloadDatasets(items, userName);
-
-					// TODO realizar comprobación antes inserción en base de
-					// datos
-					// modificar respuesta método downloadDatasets a tipo XML
-
-					insertDownload(user, resultDownload, items);
-					response.append(resultDownload);
-				} else {
-					DataPortalError error = new DataPortalError();
-					error.setCode("user.not.found");
-					error.setMessage("The following User where not found: " + userName);
-					response.append(error.getErrorMessage());
-				}
+			xpath.setNamespaceContext(dataPortalCtx);
+			for (int i = 0; i < nItems; i++) {
+				DownloadItem item = new DownloadItem();
+				Node itemDom = itemsNodeList.item(i);
+				item.setItemId(xpath.evaluate("id", itemDom));
+				item.setUrl(xpath.evaluate("data_link", itemDom));
+				item.setInstitution(xpath.evaluate("institution", itemDom));
+				item.setIcosDomain(xpath.evaluate("icos_domain", itemDom));
+				items.add(item);
 			}
 
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-			throw(e);
+			// TODO Enviar volumen descarga al usuario y actuar en función
+
+			User anUser = new User(userName);
+			userJPAController = new JPAUserController();
+			user = userJPAController.existsInto(anUser);
+
+			if (user != null) {
+				String resultDownload = downloadDatasets(items, userName);
+
+				// TODO realizar comprobación antes inserción en base de
+				// datos
+				// modificar respuesta método downloadDatasets a tipo XML
+
+				insertDownload(user, resultDownload, items);
+				response.append(resultDownload);
+			} else {
+				dtException = new DataPortalException("The following User where not found: "
+						+ userName);
+				dtException.setCode(USERNOTFOUND);
+				throw dtException;	
+			}
 		}
 
 		logger.debug("RESPONSE CONTROLLER: " + response.toString());
 
 		return response.toString();
 	}
-	
+
 	public String getId() {
-	    return this.id;
+		return this.id;
 	}
 
 	/**
@@ -215,17 +218,15 @@ public class DownloadController {
 	 *            String with filename
 	 * @param urlsRequest
 	 *            url request array
+	 * @throws Exception
 	 */
 	private void insertDownload(User user, String fileName,
-			ArrayList<DownloadItem> downloadItems) {
+			ArrayList<DownloadItem> downloadItems) throws Exception {
 
 		String uid = this.generateId();
 		Timestamp timeStamp = Utils.extractDateSystemTimeStamp();
 		Download download = new Download(uid, fileName, timeStamp, user);
 		downloadJPAController = new JPADownloadController();
-		// TODO Comprobar que insertItems NO DEVUELVE FALSE,
-		// en cuyo caso habrá que devolver un error.
-		// TODO idem donde se use (si se usa) cualquier otro JPAController.		
 		downloadJPAController.insertItems(download, downloadItems);
 	}
 
@@ -241,46 +242,31 @@ public class DownloadController {
 	}
 
 	/**
-	 * 
-	 * Extract an array with id's from GetRecordByID response from CSW Server
-	 * 
-	 * @param InputStream
-	 *            with the response sends by server
-	 * @return ArrayList with id's from response
+	 * @param inputStream
+	 * @param expresion
+	 * @return
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws XPathExpressionException
 	 */
-	private ArrayList<String> recordIdes(InputStream isGetRecordByIdResponse) {
+	private NodeList extractNodeList(InputStream inputStream, String expresion)
+			throws ParserConfigurationException, SAXException, IOException,
+			XPathExpressionException {
 
-		NodeList ides = null;
-		ArrayList<String> arrayIdes = new ArrayList<String>();
-
+		NodeList nodelist;
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		try {
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document xmlGetRecordsById = (Document) dBuilder
-					.parse(isGetRecordByIdResponse);
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document documentXML = (Document) dBuilder.parse(inputStream);
 
-			// TODO Extraer esto a una clase
-			DataPortalNS ctx = new DataPortalNS();
+		XPathFactory factory = XPathFactory.newInstance();
+		XPath xpath = factory.newXPath();
+		xpath.setNamespaceContext(dataPortalCtx);
 
-			XPathFactory factory = XPathFactory.newInstance();
-			XPath xpath = factory.newXPath();
-			xpath.setNamespaceContext(ctx);
+		nodelist = (NodeList) xpath.evaluate(expresion, documentXML,
+				XPathConstants.NODESET);
 
-			String recordsExpr = "//BriefRecord/identifier/child::node()";
-			ides = (NodeList) xpath.evaluate(recordsExpr, xmlGetRecordsById,
-					XPathConstants.NODESET);
-			// TODO EOF
-			if (ides.getLength() != 0)
-				arrayIdes = Utils.nodeList2ArrayList(ides);
-
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-
-		logger.debug("RECORDS: " + String.valueOf(arrayIdes.size()));
-
-		return arrayIdes;
+		return nodelist;
 	}
 
 	/**
@@ -298,14 +284,13 @@ public class DownloadController {
 			IOException {
 
 		// TODO cambiar esto por una clase mensaje de dataportal
-		StringBuffer response = null;
+		StringBuffer response = new StringBuffer();
 
 		String pathFile = createPathFile(userName);
 		if (pathFile == null) {
 			DataPortalError error = new DataPortalError();
 			error.setCode("failed.create.directory");
 			error.setMessage("Failed to create directory");
-			response = new StringBuffer();
 			response.append(error.getErrorMessage());
 			logger.error("FAILED create directory");
 		} else {
@@ -314,7 +299,6 @@ public class DownloadController {
 			String filePathName = compressFiles(pathFile, nameFile);
 			// TODO cambiar mensaje
 			logger.debug("FILE to download: " + filePathName);
-			response = new StringBuffer();
 			response.append(StringUtils.substringAfterLast(filePathName, "/"));
 		}
 
@@ -325,8 +309,10 @@ public class DownloadController {
 	 * 
 	 * Create all Threads to download files
 	 * 
-	 * @param urlsRequest URL's ArrayList
-	 * @param pathFile path to save files
+	 * @param urlsRequest
+	 *            URL's ArrayList
+	 * @param pathFile
+	 *            path to save files
 	 * @throws MalformedURLException
 	 * @throws InterruptedException
 	 * @throws ExecutionException
@@ -334,14 +320,14 @@ public class DownloadController {
 	private void createDownloadThreads(ArrayList<DownloadItem> downloadItems,
 			String pathFile) throws MalformedURLException,
 			InterruptedException, ExecutionException {
-	    
+
 		int nItems = downloadItems.size();
 
 		ExecutorService threadsPool = Executors.newCachedThreadPool();
 		Future futures[] = new Future[nItems];
 
-		for(int i=0; i<nItems; i++) {
-		    String url = downloadItems.get(i).getUrl();
+		for (int i = 0; i < nItems; i++) {
+			String url = downloadItems.get(i).getUrl();
 			String name = StringUtils.substringAfterLast(url, "/");
 
 			DownloadCallable hiloDescarga = new DownloadCallable(url, name,
@@ -422,7 +408,7 @@ public class DownloadController {
 			zipOs.write(FileUtils.readFileToByteArray(fl));
 			zipOs.flush();
 			zipOs.closeArchiveEntry();
-			
+
 			FileUtils.forceDelete(fl);
 		}
 
