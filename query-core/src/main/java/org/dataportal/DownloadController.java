@@ -13,7 +13,9 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -22,11 +24,8 @@ import java.util.concurrent.Future;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -48,7 +47,6 @@ import org.dataportal.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * Class to control the files download. Use a Cached Thread Pool to download
@@ -69,9 +67,10 @@ public class DownloadController implements DataportalCodes {
 
 	private static final int MARK = 1;
 
+	private static final String ZIP = ".zip";
+
 	private String tempDir;
 	private static Catalog catalogo;
-	private User user = null;
 	private String id = null;
 	private JPAUserController userJPAController = null;
 	private JPADownloadController downloadJPAController = null;
@@ -184,24 +183,8 @@ public class DownloadController implements DataportalCodes {
 
 			// TODO Enviar volumen descarga al usuario y actuar en función
 
-			User anUser = new User(userName);
-			userJPAController = new JPAUserController();
-			user = userJPAController.existsInto(anUser);
-
-			if (user != null) {
-				String resultDownload = downloadDatasets(items, userName);
-
-				// TODO realizar comprobación antes inserción en base de
-				// datos
-
-				insertDownload(user, resultDownload, items);
-				response.append(resultDownload);
-			} else {
-				dtException = new DataPortalException(
-						"The following User where not found: " + userName);
-				dtException.setCode(USERNOTFOUND);
-				throw dtException;
-			}
+			String resultDownload = downloadDatasets(items, userName);
+			response.append(resultDownload);
 		}
 
 		logger.debug("RESPONSE CONTROLLER: " + response.toString());
@@ -225,10 +208,9 @@ public class DownloadController implements DataportalCodes {
 	 *            url request array
 	 * @throws Exception
 	 */
-	private void insertDownload(User user, String fileName,
+	private void insertDownload(User user, String uid, String fileName,
 			ArrayList<DownloadItem> downloadItems) throws Exception {
 
-		String uid = this.generateId();
 		Timestamp timeStamp = Utils.extractDateSystemTimeStamp();
 		Download download = new Download(uid, fileName, timeStamp, user);
 		downloadJPAController = new JPADownloadController();
@@ -271,7 +253,9 @@ public class DownloadController implements DataportalCodes {
 	}
 
 	/**
-	 * Method to download files from a url's array.
+	 * Method to download files from a url's array and make some necessary
+	 * operations like create readme file, compress files and save to rdbms the
+	 * download information
 	 * 
 	 * @param urlsRequest
 	 *            ArrayList with url's (ArrayList)
@@ -281,25 +265,59 @@ public class DownloadController implements DataportalCodes {
 	private String downloadDatasets(ArrayList<DownloadItem> downloadItems,
 			String userName) throws Exception {
 
-		// TODO cambiar esto por una clase mensaje de dataportal
-		StringBuffer response = new StringBuffer();
+		User anUser = new User(userName);
+		userJPAController = new JPAUserController();
+		User user = userJPAController.existsInto(anUser);
 
+		if (user == null) {
+			dtException = new DataPortalException(
+					"The following User where not found: " + userName);
+			dtException.setCode(USERNOTFOUND);
+			throw dtException;
+		}
+
+		StringBuffer response = new StringBuffer();
 		String pathFile = createPathFile(userName);
+		String nameFile = userName + UNDERSCORE + Utils.extractDateSystem();
+
 		if (pathFile == null) {
 			dtException = new DataPortalException("Failed to create directory");
 			dtException.setCode(FAILECREATEDIRECTORY);
 			throw dtException;
 		} else {
 			createDownloadThreads(downloadItems, pathFile);
-			String nameFile = userName + UNDERSCORE + Utils.extractDateSystem();
-			String filePathName = compressFiles(pathFile, nameFile);
-			// TODO cambiar mensaje
-			logger.debug("FILE to download: " + filePathName);
-			//response.append(StringUtils.substringAfterLast(filePathName, SLASH));
-			response.append(nameFile + ".zip");
+			String uid = this.generateId();
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("ddi", uid);
+			createReadmeFile(params, pathFile);
+			compressFiles(pathFile, nameFile);
+			insertDownload(user, uid, nameFile + ZIP, downloadItems);
+
+			logger.debug("FILE to download: " + nameFile + ZIP);
+			response.append(nameFile + ZIP);
 		}
 
 		return response.toString();
+	}
+
+	/**
+	 * Create README file in user folder with download information
+	 * 
+	 * @param vars
+	 * @param pathFile
+	 * @throws IOException
+	 */
+	private void createReadmeFile(Map<String, String> vars, String pathFile)
+			throws IOException {
+		InputStream is = DownloadController.class
+				.getResourceAsStream("/README.txt");
+		String readmeString = IOUtils.toString(is, "UTF-8");
+		for (Map.Entry<String, String> var : vars.entrySet()) {
+			readmeString = readmeString.replaceAll(
+					"\\{" + var.getKey() + "\\}", var.getValue());
+		}
+		File readmeFile = new File(pathFile + "/README.txt");
+		FileUtils.writeStringToFile(readmeFile, readmeString);
 	}
 
 	/**
@@ -385,7 +403,7 @@ public class DownloadController implements DataportalCodes {
 	 *            archive name (String)
 	 * @throws IOException
 	 */
-	private String compressFiles(String pathDir, String nameFile)
+	private void compressFiles(String pathDir, String nameFile)
 			throws IOException {
 
 		String filePathName = pathDir + SLASH + nameFile + ".zip";
@@ -393,8 +411,7 @@ public class DownloadController implements DataportalCodes {
 		ZipArchiveOutputStream zipOs = new ZipArchiveOutputStream(os);
 
 		File directory = new File(pathDir);
-		String extensions[] = { "nc" };
-		@SuppressWarnings("unchecked")
+		String extensions[] = { "nc", "txt" };
 		Iterator<File> itFiles = FileUtils.iterateFiles(directory, extensions,
 				false);
 
@@ -413,8 +430,6 @@ public class DownloadController implements DataportalCodes {
 		zipOs.close();
 
 		os.close();
-
-		return filePathName;
 	}
 
 }
