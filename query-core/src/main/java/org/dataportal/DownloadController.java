@@ -57,13 +57,15 @@ import org.xml.sax.SAXException;
  * @author Micho Garcia
  * 
  */
-public class DownloadController implements DataportalCodes{
+public class DownloadController implements DataportalCodes {
 
 	private static Logger logger = Logger.getLogger(DownloadController.class);
 
 	private static final String IDS = "//id/child::node()";
 	private static final String IDENTIFIERS = "//BriefRecord/identifier/child::node()";
 	private static final String ITEMS = "//item";
+	private static final String UNDERSCORE = "_";
+	private static final String SLASH = "/";
 
 	private static final int MARK = 1;
 
@@ -98,7 +100,7 @@ public class DownloadController implements DataportalCodes{
 	 */
 	public String createPathFile(String userName) {
 
-		String pathFile = this.tempDir + "/" + userName;
+		String pathFile = this.tempDir + SLASH + userName;
 		File personalDirectory = new File(pathFile);
 		boolean exists = personalDirectory.exists();
 		if (!exists) {
@@ -118,6 +120,9 @@ public class DownloadController implements DataportalCodes{
 	 * 
 	 * @param InputStream
 	 *            with the XML sends by client
+	 * @param userName
+	 *            String with user name
+	 * @return
 	 * @throws Exception
 	 */
 	public String askgn2download(InputStream isRequestXML, String userName)
@@ -152,8 +157,9 @@ public class DownloadController implements DataportalCodes{
 			logger.info("ID'S NO ENCONTRADOS: "
 					+ String.valueOf(noIdsResponse.size()) + " -> "
 					+ StringUtils.join(noIdsResponse, " : "));
-			 dtException = new DataPortalException("The following dataset IDs where not found: "
-					+ StringUtils.join(noIdsResponse, ", "));
+			dtException = new DataPortalException(
+					"The following dataset IDs where not found: "
+							+ StringUtils.join(noIdsResponse, ", "));
 			dtException.setCode(IDNOTFOUND);
 			throw dtException;
 		} else {
@@ -187,15 +193,14 @@ public class DownloadController implements DataportalCodes{
 
 				// TODO realizar comprobación antes inserción en base de
 				// datos
-				// modificar respuesta método downloadDatasets a tipo XML
 
 				insertDownload(user, resultDownload, items);
 				response.append(resultDownload);
 			} else {
-				dtException = new DataPortalException("The following User where not found: "
-						+ userName);
+				dtException = new DataPortalException(
+						"The following User where not found: " + userName);
 				dtException.setCode(USERNOTFOUND);
-				throw dtException;	
+				throw dtException;
 			}
 		}
 
@@ -245,14 +250,10 @@ public class DownloadController implements DataportalCodes{
 	 * @param inputStream
 	 * @param expresion
 	 * @return
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws IOException
-	 * @throws XPathExpressionException
+	 * @throws Exception
 	 */
 	private NodeList extractNodeList(InputStream inputStream, String expresion)
-			throws ParserConfigurationException, SAXException, IOException,
-			XPathExpressionException {
+			throws Exception {
 
 		NodeList nodelist;
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -274,32 +275,28 @@ public class DownloadController implements DataportalCodes{
 	 * 
 	 * @param urlsRequest
 	 *            ArrayList with url's (ArrayList)
-	 * @return Message
-	 * @throws InterruptedException
-	 * @throws ExecutionException
-	 * @throws IOException
+	 * @return String with file name
+	 * @throws Exception
 	 */
 	private String downloadDatasets(ArrayList<DownloadItem> downloadItems,
-			String userName) throws InterruptedException, ExecutionException,
-			IOException {
+			String userName) throws Exception {
 
 		// TODO cambiar esto por una clase mensaje de dataportal
 		StringBuffer response = new StringBuffer();
 
 		String pathFile = createPathFile(userName);
 		if (pathFile == null) {
-			DataPortalError error = new DataPortalError();
-			error.setCode("failed.create.directory");
-			error.setMessage("Failed to create directory");
-			response.append(error.getErrorMessage());
-			logger.error("FAILED create directory");
+			dtException = new DataPortalException("Failed to create directory");
+			dtException.setCode(FAILECREATEDIRECTORY);
+			throw dtException;
 		} else {
 			createDownloadThreads(downloadItems, pathFile);
-			String nameFile = userName + "_" + Utils.extractDateSystem();
+			String nameFile = userName + UNDERSCORE + Utils.extractDateSystem();
 			String filePathName = compressFiles(pathFile, nameFile);
 			// TODO cambiar mensaje
 			logger.debug("FILE to download: " + filePathName);
-			response.append(StringUtils.substringAfterLast(filePathName, "/"));
+			//response.append(StringUtils.substringAfterLast(filePathName, SLASH));
+			response.append(nameFile + ".zip");
 		}
 
 		return response.toString();
@@ -328,7 +325,7 @@ public class DownloadController implements DataportalCodes{
 
 		for (int i = 0; i < nItems; i++) {
 			String url = downloadItems.get(i).getUrl();
-			String name = StringUtils.substringAfterLast(url, "/");
+			String name = StringUtils.substringAfterLast(url, SLASH);
 
 			DownloadCallable hiloDescarga = new DownloadCallable(url, name,
 					pathFile);
@@ -355,7 +352,7 @@ public class DownloadController implements DataportalCodes{
 	 */
 	public InputStream getFileContents(String fileName, String userName)
 			throws FileNotFoundException {
-		File file = new File(this.tempDir + "/" + userName + "/" + fileName);
+		File file = new File(this.tempDir + SLASH + userName + SLASH + fileName);
 		return new FileInputStream(file);
 	}
 
@@ -371,7 +368,7 @@ public class DownloadController implements DataportalCodes{
 	 */
 	public long getFileSize(String fileName, String userName)
 			throws FileNotFoundException {
-		File file = new File(this.tempDir + "/" + userName + "/" + fileName);
+		File file = new File(this.tempDir + SLASH + userName + SLASH + fileName);
 		if (file.exists() && file.isFile())
 			return file.length();
 		else
@@ -391,7 +388,7 @@ public class DownloadController implements DataportalCodes{
 	private String compressFiles(String pathDir, String nameFile)
 			throws IOException {
 
-		String filePathName = pathDir + "/" + nameFile + ".zip";
+		String filePathName = pathDir + SLASH + nameFile + ".zip";
 		OutputStream os = new FileOutputStream(filePathName);
 		ZipArchiveOutputStream zipOs = new ZipArchiveOutputStream(os);
 

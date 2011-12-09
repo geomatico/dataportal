@@ -33,5 +33,10 @@ public interface DataportalCodes {
 	 * 
 	 */
 	static final String RDBMSERROR = "error.data.server";
+	
+	/**
+	 * 
+	 */
+	static final String FAILECREATEDIRECTORY = "error.failed.create.directory";
 
 }
