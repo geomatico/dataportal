@@ -72,7 +72,7 @@ Cambios con respecto a la convención (implícita) de la fase 1
 - Se usaría un UUID como "id" (fácil de generar en java, a falta de DOIs).
 - Especificación del atributo global "naming_autority=es.icos.dataportal".
 - Especificación del atributo global "standard_name_vocabulary=URL del vocabulario icos-spain"
-- Especificación del atributo global "icos_domain" con valores (atmósfera|ecosistema|oceánico)
+- Especificación del atributo global "icos_domain" con valores (atmosfera|ecosistema|oceanico)
 - Especificación del atributo "cdm_data_type" con uno de los valores de tipo de datos thredds[4].
 - Codificación de las trayectorias, mallas, etc. como se especifica en CF (ver :ref:`coordsys`), incluyendo el atributo "axis" y un "standard_name" que indique una variable existente en el vocabulario.
 - Especificación del atributo global "conventions = CF-1.5".
