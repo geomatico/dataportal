@@ -320,10 +320,9 @@ public class Converter {
 	public static <T> ArrayInt get1Int(Variable var, List<T> list,
 			IntSampleGetter<T> getter) throws IOException,
 			InvalidRangeException {
-		Dimension dimension = var.getDimensions().get(0);
-		ArrayInt A = new ArrayInt.D1(dimension.getLength());
+		ArrayInt A = new ArrayInt.D1(list.size());
 		Index ima = A.getIndex();
-		for (int i = 0; i < dimension.getLength(); i++) {
+		for (int i = 0; i < list.size(); i++) {
 			A.setInt(ima.set(i), getter.get(list.get(i)));
 		}
 		return A;

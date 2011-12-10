@@ -75,12 +75,14 @@ public class SampleDataset implements StationDataset {
 		ret.add(20);
 		ret.add(30);
 		ret.add(40);
+		ret.add(50);
+		ret.add(60);
 		return ret;
 	}
 
 	@Override
 	public double getStationData(int stationIndex, int timestampIndex) {
-		return 30;
+		return 30 + timestampIndex;
 	}
 
 }
