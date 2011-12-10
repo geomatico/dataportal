@@ -64,6 +64,9 @@ public class Converter {
 			throw new ConverterException("Cannot create the file", e);
 		}
 
+		/*
+		 * Global metadata
+		 */
 		nc.addGlobalAttribute("uuid", UUID.randomUUID().toString());
 		nc.addGlobalAttribute("naming_authority", "es.icos.dataportal");
 		nc.addGlobalAttribute("standard_name_vocabulary",
@@ -75,35 +78,23 @@ public class Converter {
 		nc.addGlobalAttribute("institution", dataset.getInstitution());
 		nc.addGlobalAttribute("creator_url", dataset.getCreatorURL());
 
-		BoundingInfo info = null;
 		if (dataset instanceof StationDataset) {
-			nc.addGlobalAttribute("cdm_data_type",
-					CDMDataType.STATION.toString());
-			info = addStation(nc, (StationDataset) dataset);
+			/*
+			 * bbox and time range
+			 */
+			StationDataset stationDataset = (StationDataset) dataset;
+			addStation(nc, stationDataset);
 		} else if (dataset instanceof TrajectoryDataset) {
 			nc.addGlobalAttribute("cdm_data_type",
 					CDMDataType.TRAJECTORY.toString());
-			info = addTrajectory(nc, (TrajectoryDataset) dataset);
+			addTrajectory(nc, (TrajectoryDataset) dataset);
 		} else if (dataset instanceof GridDataset) {
 			nc.addGlobalAttribute("cdm_data_type",
 					CDMDataType.TRAJECTORY.toString());
-			info = addGrid(nc, (GridDataset) dataset);
+			addGrid(nc, (GridDataset) dataset);
 		} else {
 			throw new ConverterException("Unsupported Dataset implementation");
 		}
-
-		/*
-		 * bbox and time range
-		 */
-		nc.addGlobalAttribute("geospatial_lat_min", info.bbox.getMinY());
-		nc.addGlobalAttribute("geospatial_lat_max", info.bbox.getMaxY());
-		nc.addGlobalAttribute("geospatial_lon_min", info.bbox.getMinX());
-		nc.addGlobalAttribute("geospatial_lon_max", info.bbox.getMaxX());
-		DateTimeFormatter parser = ISODateTimeFormat.dateTime();
-		nc.addGlobalAttribute("time_coverage_start",
-				parser.print(info.timeBox[0]));
-		nc.addGlobalAttribute("time_coverage_end",
-				parser.print(info.timeBox[1]));
 
 		try {
 			nc.close();
@@ -112,25 +103,38 @@ public class Converter {
 		}
 	}
 
-	private static BoundingInfo addStation(NetcdfFileWriteable nc,
+	private static void addStation(NetcdfFileWriteable nc,
 			StationDataset dataset) throws ConverterException {
-		ArrayList<Dimension> mainVarDimensions = new ArrayList<Dimension>();
+		List<Point2D> stationPositions = dataset.getPositions();
+		List<Integer> times = dataset.getTimeStamps();
+		Date referenceDate = dataset.getReferenceDate();
+		TimeUnit timeUnit = dataset.getTimeUnits();
 
-		int stationCount = dataset.getSampleCount();
+		Rectangle2D bbox = getBBox(stationPositions);
+		long[] timeBox = getTimeBox(times, referenceDate, timeUnit);
+		nc.addGlobalAttribute("geospatial_lat_min", bbox.getMinY());
+		nc.addGlobalAttribute("geospatial_lat_max", bbox.getMaxY());
+		nc.addGlobalAttribute("geospatial_lon_min", bbox.getMinX());
+		nc.addGlobalAttribute("geospatial_lon_max", bbox.getMaxX());
+		DateTimeFormatter parser = ISODateTimeFormat.dateTime();
+		nc.addGlobalAttribute("time_coverage_start", parser.print(timeBox[0]));
+		nc.addGlobalAttribute("time_coverage_end", parser.print(timeBox[1]));
+		nc.addGlobalAttribute("cdm_data_type", CDMDataType.STATION.toString());
+
+		ArrayList<Dimension> mainVarDimensions = new ArrayList<Dimension>();
 
 		// time dimension variable
 		Dimension timeDim = nc.addUnlimitedDimension("time");
 		Variable time = nc.addVariable("time", DataType.INT,
 				new Dimension[] { timeDim });
-		TimeUnit timeUnit = dataset.getTimeUnits();
-		Date referenceDate = dataset.getReferenceDate();
 		time.addAttribute(new Attribute("units", timeUnit.toString()
 				+ " since " + dateFormat.format(referenceDate)));
 		time.addAttribute(new Attribute("axis", "T"));
 		mainVarDimensions.add(timeDim);
 
 		// Position dimension
-		Dimension stationDimension = nc.addDimension("station", stationCount);
+		Dimension stationDimension = nc.addDimension("station",
+				stationPositions.size());
 		// Position variables
 		Variable lat = nc.addVariable("lat", DataType.DOUBLE,
 				new Dimension[] { stationDimension });
@@ -168,8 +172,6 @@ public class Converter {
 			/*
 			 * Write time
 			 */
-			List<Integer> times = dataset.getTimeStamps();
-			long[] timeBox = getTimeBox(times, referenceDate, timeUnit);
 			try {
 				nc.write(time.getName(),
 						get1Int(lat, times, new IntSampleGetter<Integer>() {
@@ -187,12 +189,10 @@ public class Converter {
 			/*
 			 * write positions
 			 */
-			List<Point2D> points = dataset.getPositions();
-			Rectangle2D bbox = getBBox(points);
 			try {
 				nc.write(
 						lat.getName(),
-						get1Double(lat, points,
+						get1Double(lat, stationPositions,
 								new DoubleSampleGetter<Point2D>() {
 
 									@Override
@@ -202,7 +202,7 @@ public class Converter {
 								}));
 				nc.write(
 						lon.getName(),
-						get1Double(lat, points,
+						get1Double(lat, stationPositions,
 								new DoubleSampleGetter<Point2D>() {
 
 									@Override
@@ -233,7 +233,6 @@ public class Converter {
 						e);
 			}
 
-			return new BoundingInfo(bbox, timeBox);
 		} catch (IOException e) {
 			throw new ConverterException("Cannot create netcdf file", e);
 		}
@@ -298,13 +297,11 @@ public class Converter {
 		return new Rectangle2D.Double(minX, minY, width, height);
 	}
 
-	private static BoundingInfo addTrajectory(NetcdfFileWriteable nc,
-			Dataset dataset) {
+	private static void addTrajectory(NetcdfFileWriteable nc, Dataset dataset) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
-	private static BoundingInfo addGrid(NetcdfFileWriteable nc, Dataset dataset) {
+	private static void addGrid(NetcdfFileWriteable nc, Dataset dataset) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 
@@ -331,15 +328,4 @@ public class Converter {
 		}
 		return A;
 	}
-
-	private static class BoundingInfo {
-		private Rectangle2D bbox;
-		private long[] timeBox;
-
-		public BoundingInfo(Rectangle2D bbox, long[] timeBox) {
-			this.bbox = bbox;
-			this.timeBox = timeBox;
-		}
-	}
-
 }

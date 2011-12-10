@@ -8,8 +8,6 @@ public interface Dataset {
 
 	String getCreatorURL();
 
-	int getSampleCount();
-
 	String getVariableName();
 
 	String getVariableLongName();
