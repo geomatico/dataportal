@@ -9,7 +9,7 @@ import ucar.ma2.DataType;
 /**
  * A dataset containing a station variable (main variable), a time unlimited
  * coordinate variable, latitude and longitude coordinate auxiliary variables as
- * specified in CF convention and as many additional dimensions as desired
+ * specified in CF convention
  * 
  * @author fergonco
  */
@@ -28,14 +28,6 @@ public interface StationDataset extends Dataset {
 	 * @return
 	 */
 	Date getReferenceDate();
-
-	/**
-	 * Get a descriptor for each dimension of the dataset main variable except
-	 * time and station
-	 * 
-	 * @return
-	 */
-	DimensionDescriptor[] getDimensionDescriptors();
 
 	/**
 	 * Get the type of the dataset main variable
@@ -57,5 +49,7 @@ public interface StationDataset extends Dataset {
 	 * @return
 	 */
 	List<Integer> getTimeStamps();
+
+	double getStationData(int stationIndex, int timestampIndex);
 
 }

@@ -12,4 +12,10 @@ public interface Dataset {
 
 	String getVariableName();
 
+	String getVariableLongName();
+
+	String getVariableStandardName();
+
+	String getVariableUnits();
+
 }
