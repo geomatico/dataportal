@@ -3,7 +3,6 @@
  */
 package org.dataportal;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -65,8 +64,9 @@ public class DownloadController implements DataportalCodes {
 	private static final String ITEMS = "//item";
 	private static final String UNDERSCORE = "_";
 	private static final String SLASH = "/";
-
-	private static final int MARK = 1;
+	private static final int IDSNODELIST = 0;
+	private static final int ITEMSSNODELIST = 1;
+	private static final int IDENTIFIERSNODELIST = 0;
 
 	private static final String ZIP = ".zip";
 
@@ -129,14 +129,12 @@ public class DownloadController implements DataportalCodes {
 			throws Exception {
 
 		StringBuffer response = new StringBuffer();
+		
+		String[] expresions = {IDS, ITEMS};
+		ArrayList<NodeList> nodes = new ArrayList<NodeList>();
 
-		// No tengo claro esto...
-		byte[] b = IOUtils.toByteArray(isRequestXML);
-		InputStream aBufferedIsRequestXML = new ByteArrayInputStream(b);
-		InputStream otherBufferedIsRequestXML2 = new ByteArrayInputStream(b);
-
-		NodeList idNodeList = extractNodeList(aBufferedIsRequestXML, IDS);
-		ArrayList<String> requestIdes = Utils.nodeList2ArrayList(idNodeList);
+		nodes = extractNodeList(isRequestXML,  expresions);
+		ArrayList<String> requestIdes = Utils.nodeList2ArrayList(nodes.get(IDSNODELIST));
 
 		GetRecordById getRecordById = new GetRecordById("brief");
 		String getRecordByIdQuery = getRecordById.createQuery(requestIdes);
@@ -144,10 +142,11 @@ public class DownloadController implements DataportalCodes {
 				.sendCatalogRequest(getRecordByIdQuery);
 
 		// TODO Controlar excepción retornada del servidor
-		NodeList identifierNodeList = extractNodeList(isGetRecordByIdResponse,
-				IDENTIFIERS);
+		String[] identifiers = {IDENTIFIERS};
+		 ArrayList<NodeList> identifierArrayList = extractNodeList(isGetRecordByIdResponse,
+				identifiers);
 		ArrayList<String> responseIdes = Utils
-				.nodeList2ArrayList(identifierNodeList);
+				.nodeList2ArrayList(identifierArrayList.get(IDENTIFIERSNODELIST));
 
 		ArrayList<String> noIdsResponse = Utils.compare2Arraylist(requestIdes,
 				responseIdes);
@@ -162,8 +161,7 @@ public class DownloadController implements DataportalCodes {
 			dtException.setCode(IDNOTFOUND);
 			throw dtException;
 		} else {
-			NodeList itemsNodeList = extractNodeList(otherBufferedIsRequestXML2,
-					ITEMS);
+			NodeList itemsNodeList = nodes.get(ITEMSSNODELIST);
 
 			int nItems = itemsNodeList.getLength();
 			ArrayList<DownloadItem> items = new ArrayList<DownloadItem>(nItems);
@@ -229,27 +227,32 @@ public class DownloadController implements DataportalCodes {
 	}
 
 	/**
-	 * @param inputStream
-	 * @param expresion
+	 * @param Document
+	 * @param expresions
+	 *            array
 	 * @return
 	 * @throws Exception
 	 */
-	private NodeList extractNodeList(InputStream inputStream, String expresion)
-			throws Exception {
+	private ArrayList<NodeList> extractNodeList(InputStream inputStream,
+			String[] expresions) throws Exception {
 
-		NodeList nodelist;
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document documentXML = (Document) dBuilder.parse(inputStream);
 
+		NodeList nodelist;
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 		xpath.setNamespaceContext(dataPortalCtx);
+		ArrayList<NodeList> nodos = new ArrayList<NodeList>();
 
-		nodelist = (NodeList) xpath.evaluate(expresion, documentXML,
-				XPathConstants.NODESET);
+		for (int n = 0; n < expresions.length; n++) {
+			nodelist = (NodeList) xpath.evaluate(expresions[n], documentXML,
+					XPathConstants.NODESET);
+			nodos.add(nodelist);
+		}
 
-		return nodelist;
+		return nodos;
 	}
 
 	/**
