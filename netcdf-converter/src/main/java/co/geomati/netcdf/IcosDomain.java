@@ -1,7 +1,7 @@
 package co.geomati.netcdf;
 
 public enum IcosDomain {
-	ATMOSFERA("atmosfera"), ECOSISTEMA("ecosistema"), OCEANICO("oceanico");
+	ATMOSPHERE("atmosphere"), ECOSYSTEM("ecosystem"), OCEANIC("oceanic");
 
 	private String text;
 
