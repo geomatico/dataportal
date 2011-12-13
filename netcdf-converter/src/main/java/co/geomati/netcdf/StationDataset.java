@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.Date;
 import java.util.List;
 
+import ucar.ma2.Array;
 import ucar.ma2.DataType;
 
 /**
@@ -50,6 +51,13 @@ public interface StationDataset extends Dataset {
 	 */
 	List<Integer> getTimeStamps();
 
-	double getStationData(int stationIndex, int timestampIndex);
+	/**
+	 * Get the station data array. It has two dimensions, being time the first
+	 * one and the slowest changing one and station position index the second
+	 * one.
+	 * 
+	 * @return
+	 */
+	Array getStationData();
 
 }

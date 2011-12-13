@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ucar.ma2.Array;
+import ucar.ma2.ArrayDouble;
 import ucar.ma2.DataType;
+import ucar.ma2.Index;
 
 public class SampleDataset implements StationDataset {
 
@@ -81,8 +84,18 @@ public class SampleDataset implements StationDataset {
 	}
 
 	@Override
-	public double getStationData(int stationIndex, int timestampIndex) {
-		return 30 + timestampIndex;
+	public Array getStationData() {
+		int timeSize = getTimeStamps().size();
+		int stationSize = getPositions().size();
+		ArrayDouble a = new ArrayDouble.D2(timeSize, stationSize);
+		Index ima = a.getIndex();
+		for (int i = 0; i < timeSize; i++) {
+			for (int j = 0; j < stationSize; j++) {
+				a.setDouble(ima.set(i, j), 30 + i);
+			}
+		}
+
+		return a;
 	}
 
 }

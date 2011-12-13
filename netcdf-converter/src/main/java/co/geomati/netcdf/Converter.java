@@ -17,6 +17,7 @@ import java.util.UUID;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayInt;
 import ucar.ma2.DataType;
@@ -219,16 +220,9 @@ public class Converter {
 			/*
 			 * write main variable
 			 */
-			ArrayDouble A = new ArrayDouble.D2(timeDim.getLength(),
-					stationDimension.getLength());
-			Index ima = A.getIndex();
-			for (int i = 0; i < timeDim.getLength(); i++) {
-				for (int j = 0; j < stationDimension.getLength(); j++) {
-					A.setDouble(ima.set(i, j), dataset.getStationData(j, i));
-				}
-			}
+			Array a = dataset.getStationData();
 			try {
-				nc.write(mainVar.getName(), A);
+				nc.write(mainVar.getName(), a);
 			} catch (InvalidRangeException e) {
 				throw new ConverterException("Too many data on main variable",
 						e);
