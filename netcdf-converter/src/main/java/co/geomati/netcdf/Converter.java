@@ -154,7 +154,7 @@ public class Converter {
 		 */
 
 		/*
-		 * Add variable
+		 * Add main variable
 		 */
 		mainVarDimensions.add(stationDimension);
 		String variableName = dataset.getVariableName();
@@ -227,7 +227,6 @@ public class Converter {
 				throw new ConverterException("Too many data on main variable",
 						e);
 			}
-
 		} catch (IOException e) {
 			throw new ConverterException("Cannot create netcdf file", e);
 		}

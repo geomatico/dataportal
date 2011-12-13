@@ -1,7 +1,8 @@
 package co.geomati.netcdf;
 
 public enum TimeUnit {
-	SECOND("second"), MINUTE("minute"), HOUR("hour"), DAYS("days");
+	SECOND("second"), MINUTE("minute"), HOUR("hour"), DAYS("days"), COMMON_YEAR(
+			"common_year");
 
 	private String text;
 

@@ -38,7 +38,8 @@ public interface StationDataset extends Dataset {
 	DataType getVariableType();
 
 	/**
-	 * Get the positions of the stations
+	 * Get the positions of the stations. Return null if there is no position
+	 * info
 	 * 
 	 * @return
 	 */

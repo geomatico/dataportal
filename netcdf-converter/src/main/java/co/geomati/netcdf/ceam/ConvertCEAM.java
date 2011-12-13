@@ -1,5 +1,6 @@
-package co.geomati;
+package co.geomati.netcdf.ceam;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,17 +14,23 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-public class App {
+import co.geomati.netcdf.Converter;
+import co.geomati.netcdf.ConverterException;
+
+public class ConvertCEAM {
 	private static final int WAITING_START = 1;
 	private static final int VARIABLE_VALUES = 2;
 
 	public static void main(String[] args) throws FileNotFoundException,
 			IOException {
+		String creatorURL = "http://www.ceam.es/~becario";
+
 		Workbook wb = new HSSFWorkbook(new FileInputStream(
-				"data/ceam/BADM_ES-LMa_2006.xls"));
+				"../../data/ceam/BADM_ES-LMa_2006.xls"));
 		Sheet biodata = wb.getSheet("BioData");
 		Iterator<Row> rowIterator = biodata.rowIterator();
 
+		ArrayList<Variable> variableGroup = new ArrayList<Variable>();
 		int state = WAITING_START;
 		Variable currentVar;
 		while (rowIterator.hasNext()) {
@@ -62,10 +69,38 @@ public class App {
 					currentVar.setValues(values);
 				}
 
-				System.out.println(currentVar);
+				if (currentVar.getValueCount() > 0) {
+					if (variableGroup.isEmpty()) {
+						variableGroup.add(currentVar);
+					} else {
+						String varName = variableGroup.get(0).getName();
+						if (currentVar.getName().startsWith(varName + "_")) {
+							variableGroup.add(currentVar);
+						} else {
+							createNC(variableGroup, creatorURL);
+						}
+					}
+				}
 				break;
 			}
 
+		}
+	}
+
+	private static void createNC(ArrayList<Variable> variableGroup,
+			String creatorURL) {
+		if (variableGroup.size() == 0) {
+			return;
+		}
+
+		CEAMDataset dataset = new CEAMDataset(variableGroup, creatorURL);
+		File tempFile = new File(System.getProperty("java.io.tmpdir") + "/"
+				+ dataset.getVariableName() + ".nc");
+		try {
+			Converter.convert(dataset, tempFile);
+		} catch (ConverterException e) {
+			System.err.println("Cannot convert");
+			e.printStackTrace();
 		}
 	}
 
@@ -85,33 +120,6 @@ public class App {
 			return cell.getBooleanCellValue();
 		default:
 			throw new RuntimeException();
-		}
-	}
-
-	private static class Variable {
-		private String name;
-		private String longName;
-		private String units;
-		private ArrayList<Object> values = new ArrayList<Object>();
-
-		public Variable(String name, String longName, String units) {
-			super();
-			this.name = name;
-			this.longName = longName;
-			this.units = units;
-		}
-
-		public void setValues(ArrayList<Object> values) {
-			this.values = values;
-		}
-
-		@Override
-		public String toString() {
-			String ret = name + "(" + longName + ")(" + units + "):";
-			for (Object value : values) {
-				ret += value + ",";
-			}
-			return ret;
 		}
 	}
 }

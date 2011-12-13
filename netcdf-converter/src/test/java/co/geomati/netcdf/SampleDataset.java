@@ -14,7 +14,7 @@ public class SampleDataset implements StationDataset {
 
 	@Override
 	public IcosDomain getIcosDomain() {
-		return IcosDomain.ATMOSFERA;
+		return IcosDomain.ATMOSPHERE;
 	}
 
 	@Override
@@ -97,5 +97,4 @@ public class SampleDataset implements StationDataset {
 
 		return a;
 	}
-
 }
