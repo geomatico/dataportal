@@ -117,6 +117,7 @@ public class Converter {
 		nc.addGlobalAttribute("geospatial_lon_min", bbox.getMinX());
 		nc.addGlobalAttribute("geospatial_lon_max", bbox.getMaxX());
 		DateTimeFormatter parser = ISODateTimeFormat.dateTime();
+		parser = parser.withZoneUTC();
 		nc.addGlobalAttribute("time_coverage_start", parser.print(timeBox[0]));
 		nc.addGlobalAttribute("time_coverage_end", parser.print(timeBox[1]));
 		nc.addGlobalAttribute("cdm_data_type", CDMDataType.STATION.toString());
