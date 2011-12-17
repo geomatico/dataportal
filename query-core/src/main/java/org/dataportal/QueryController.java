@@ -14,6 +14,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -26,6 +27,7 @@ import org.dataportal.csw.Operator;
 import org.dataportal.csw.Property;
 import org.dataportal.csw.SortBy;
 import org.dataportal.utils.BBox;
+import org.dataportal.utils.DataPortalException;
 import org.dataportal.utils.Utils;
 
 /**
@@ -36,24 +38,18 @@ import org.dataportal.utils.Utils;
  * @author Micho Garcia
  * 
  */
-public class QueryController {
+public class QueryController extends DataPortalController {
 
 	private static Logger logger = Logger.getLogger(QueryController.class);
 
 	private static final int FIRST = 0;
-	private static Catalog catalogo;
 
 	/**
 	 * Constructor. Assign URL catalog server
+	 * @throws MalformedURLException 
 	 */
-	public QueryController() {
-		String url = Config.get("csw.url");
-		try {
-			catalogo = new Catalog(url);
-		} catch (MalformedURLException e) {
-			logger.error(e.getMessage());
-		}
-
+	public QueryController() throws MalformedURLException {
+		super();
 	}
 
 	/**
@@ -61,22 +57,30 @@ public class QueryController {
 	 * CSWCatalog
 	 * 
 	 * @param parametros
+	 * @return
+	 * @throws IOException
+	 * @throws TransformerException
 	 */
-	public String ask2gn(Map<String, String[]> parametros) {
+	public String ask2gn(Map<String, String[]> parametros)
+			throws IOException, TransformerException {
 
 		InputStream isCswResponse = null;
-		String aCSWQuery = params2Query(parametros);
 		String response = "";
 
-		try {
+		// id
+		if (parametros.get("id") != null) {
+			String id = parametros.get("id")[FIRST];
+			// TODO: Return a previously downloaded dataset, or an error if
+			// ID
+			// does not exist
+		} else {
+			String aCSWQuery = params2Query(parametros);
+
 			isCswResponse = catalogo.sendCatalogRequest(aCSWQuery);
 			response = transform(isCswResponse);
 			isCswResponse.close();
 
 			logger.debug("RESPONSE2CLIENT: " + response);
-
-		} catch (IOException e) {
-			logger.error("ERROR: " + e.getMessage());
 		}
 
 		return response;
@@ -87,33 +91,30 @@ public class QueryController {
 	 * 
 	 * @param isCswResponse
 	 * @return String
+	 * @throws TransformerException
+	 * @throws IOException
+	 * @throws DataPortalException
 	 */
-	private String transform(InputStream isCswResponse) {
+	private String transform(InputStream isCswResponse)
+			throws TransformerException, IOException {
 
 		StringWriter writer2Client = new StringWriter();
 		InputStream isXslt = Catalog.class
 				.getResourceAsStream("/response2client.xsl");
 
-		try {
-			Source responseSource = new StreamSource(isCswResponse);
-			Source xsltSource = new StreamSource(isXslt);
+		Source responseSource = new StreamSource(isCswResponse);
+		Source xsltSource = new StreamSource(isXslt);
 
-			TransformerFactory transFact = TransformerFactory.newInstance();
-			Templates template = transFact.newTemplates(xsltSource);
-			Transformer transformer = template.newTransformer();
+		TransformerFactory transFact = TransformerFactory.newInstance();
+		Templates template = transFact.newTemplates(xsltSource);
+		Transformer transformer = template.newTransformer();
 
-			transformer.transform(responseSource, new StreamResult(
-					writer2Client));
+		transformer.transform(responseSource, new StreamResult(writer2Client));
 
-			writer2Client.flush();
-			writer2Client.close();
+		writer2Client.flush();
+		writer2Client.close();
 
-			isXslt.close();
-
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
+		isXslt.close();
 
 		return writer2Client.toString();
 	}
@@ -136,14 +137,6 @@ public class QueryController {
 			getrecords.setTypeNames("gmd:MD_Metadata");
 			getrecords.setElementSetName(GetRecords.FULL);
 
-			// id
-			if (parametros.get("id") != null) {
-				String id = parametros.get("id")[FIRST];
-				// TODO: Return a previously downloaded dataset, or an error if
-				// ID
-				// does not exist
-			}
-
 			// bboxes
 			Operator orBBox = new Operator("Or");
 
@@ -163,7 +156,6 @@ public class QueryController {
 			}
 
 			// temporal range
-
 			String start_date = parametros.get("start_date")[FIRST];
 			Property greatherThanStartDate = new Property(
 					"PropertyIsGreaterThanOrEqualTo");

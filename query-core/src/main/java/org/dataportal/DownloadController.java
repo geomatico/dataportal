@@ -55,7 +55,7 @@ import org.w3c.dom.NodeList;
  * @author Micho Garcia
  * 
  */
-public class DownloadController implements DataportalCodes {
+public class DownloadController extends DataPortalController {
 
 	private static Logger logger = Logger.getLogger(DownloadController.class);
 
@@ -71,24 +71,19 @@ public class DownloadController implements DataportalCodes {
 	private static final String ZIP = ".zip";
 
 	private String tempDir;
-	private static Catalog catalogo;
+
 	private String id = null;
 	private JPAUserController userJPAController = null;
 	private JPADownloadController downloadJPAController = null;
 	private DataPortalNS dataPortalCtx = new DataPortalNS();
-	private DataPortalException dtException;
 
 	/**
 	 * Constructor. Reads tempDir from properties file.
+	 * @throws MalformedURLException 
 	 */
-	public DownloadController() {
+	public DownloadController() throws MalformedURLException {
+		super();
 		this.tempDir = Config.get("temp.dir");
-		String url = Config.get("csw.url");
-		try {
-			catalogo = new Catalog(url);
-		} catch (MalformedURLException e) {
-			logger.error(e.getMessage());
-		}
 	}
 
 	/**
@@ -129,12 +124,13 @@ public class DownloadController implements DataportalCodes {
 			throws Exception {
 
 		StringBuffer response = new StringBuffer();
-		
-		String[] expresions = {IDS, ITEMS};
+
+		String[] expresions = { IDS, ITEMS };
 		ArrayList<NodeList> nodes = new ArrayList<NodeList>();
 
-		nodes = extractNodeList(isRequestXML,  expresions);
-		ArrayList<String> requestIdes = Utils.nodeList2ArrayList(nodes.get(IDSNODELIST));
+		nodes = extractNodeList(isRequestXML, expresions);
+		ArrayList<String> requestIdes = Utils.nodeList2ArrayList(nodes
+				.get(IDSNODELIST));
 
 		GetRecordById getRecordById = new GetRecordById("brief");
 		String getRecordByIdQuery = getRecordById.createQuery(requestIdes);
@@ -142,11 +138,12 @@ public class DownloadController implements DataportalCodes {
 				.sendCatalogRequest(getRecordByIdQuery);
 
 		// TODO Controlar excepción retornada del servidor
-		String[] identifiers = {IDENTIFIERS};
-		 ArrayList<NodeList> identifierArrayList = extractNodeList(isGetRecordByIdResponse,
-				identifiers);
+		String[] identifiers = { IDENTIFIERS };
+		ArrayList<NodeList> identifierArrayList = extractNodeList(
+				isGetRecordByIdResponse, identifiers);
 		ArrayList<String> responseIdes = Utils
-				.nodeList2ArrayList(identifierArrayList.get(IDENTIFIERSNODELIST));
+				.nodeList2ArrayList(identifierArrayList
+						.get(IDENTIFIERSNODELIST));
 
 		ArrayList<String> noIdsResponse = Utils.compare2Arraylist(requestIdes,
 				responseIdes);

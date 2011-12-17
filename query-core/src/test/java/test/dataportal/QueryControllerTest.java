@@ -4,11 +4,13 @@
 package test.dataportal;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -26,12 +28,14 @@ import junit.framework.TestCase;
  */
 public class QueryControllerTest extends TestCase {
 
-	private QueryController controlador = new QueryController();
+	private QueryController controlador;
 	private Document expectedXML;
 	private HashMap<String, String[]> params;
 
 	@Override
 	protected void setUp() throws Exception {
+		
+		controlador = new QueryController();
 		
 		InputStream isTestResponse = getClass().getResourceAsStream(
 				"/testResponse2Client.xml");
@@ -64,7 +68,16 @@ public class QueryControllerTest extends TestCase {
 
 	public void testAsk2gn() {
 		
-		String controllerResponse = controlador.ask2gn(params);
+		String controllerResponse = null;
+		try {
+			controllerResponse = controlador.ask2gn(params);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (TransformerException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		try {
 			

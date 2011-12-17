@@ -7,16 +7,21 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
+import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
+
+import org.dataportal.utils.DataPortalException;
 
 /**
  * @author Micho Garcia
  *
  */
-public class QueryServlet extends HttpServlet {
+public class QueryServlet extends HttpServlet implements DataportalCodes {
 	
     private static final long serialVersionUID = 1L;
+    
+    private DataPortalError error;
 
     /**
 	 * Receive the request from client with parameters
@@ -32,13 +37,30 @@ public class QueryServlet extends HttpServlet {
 		Map<String, String[]> parametros = req.getParameterMap();
 		
 		QueryController controller = new QueryController();
-		String response = controller.ask2gn(parametros);
+		StringBuffer response = new StringBuffer();
+		
+		try {
+			response.append(controller.ask2gn(parametros));
+		} catch (Exception e) {
+			Class<?> clase = e.getClass();
+			error = new DataPortalError();
+			if (clase.equals(DataPortalException.class)) {
+				DataPortalException dtException = (DataPortalException) e;
+				error.setCode(dtException.getCode());
+			} else if (clase.equals(RollbackException.class)) {
+				error.setCode(RDBMSERROR);
+			} else {
+				error.setCode(RUNTIMEERROR);				
+			}
+			error.setMessage(e.getMessage());
+			response.append(error.getErrorMessage());
+		}
 		
 		String contentType = req.getParameter("response_format");
 		res.setContentType(contentType);
 		res.setCharacterEncoding("UTF-8");
 		PrintWriter writer2Client = res.getWriter();
-		writer2Client.print(response);
+		writer2Client.print(response.toString());
 		writer2Client.flush();
 		writer2Client.close();
 		

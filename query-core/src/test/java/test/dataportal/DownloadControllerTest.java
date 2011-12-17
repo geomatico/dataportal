@@ -6,9 +6,9 @@ package test.dataportal;
 import java.io.InputStream;
 
 import org.dataportal.DownloadController;
+import org.dataportal.controllers.JPADownloadController;
 import org.dataportal.controllers.JPAUserController;
 import org.dataportal.model.User;
-import org.dataportal.utils.DataPortalException;
 
 import junit.framework.TestCase;
 
@@ -18,8 +18,9 @@ import junit.framework.TestCase;
  */
 public class DownloadControllerTest extends TestCase {
 
-	private DownloadController controladorDescarga = new DownloadController();
+	private DownloadController controladorDescarga;
 	private JPAUserController controladorUsuario = new JPAUserController();
+	private JPADownloadController controladorDownload = new JPADownloadController();
 	User user;
 	
 	boolean insertado = true;
@@ -32,7 +33,9 @@ public class DownloadControllerTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {		
 		
-		user = new User("micho.garcia", "unapassword");
+		controladorDescarga = new DownloadController();
+		
+		user = new User("user.test@mail.com", "password.test");
 		
 		if (controladorUsuario.existsInto(user) == null) {			
 			user.setState("ACTIVE");			
@@ -52,8 +55,9 @@ public class DownloadControllerTest extends TestCase {
 		InputStream isRequestXML = getClass().getResourceAsStream(
 				"/testResponse2Client.xml");
 		
+		// TODO Hacer que elimine los tests de la base de datos IMPORTANTE
 		if (insertado)
-			controladorDescarga.askgn2download(isRequestXML, "micho.garcia");
+			controladorDescarga.askgn2download(isRequestXML, user.getId());
 	}
 
 	/* (non-Javadoc)
@@ -61,8 +65,7 @@ public class DownloadControllerTest extends TestCase {
 	 */
 	@Override
 	protected void tearDown() throws Exception {
-		
-		//controladorUsuario.delete(user);
+			
 		super.tearDown();
 	}
 	
