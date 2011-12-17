@@ -22,7 +22,7 @@
 			<id>oscar</id>
 			<name>Oscar Fonts</name>
 			<email>oscar.fonts@geomati.co</email>
-			<url>http://oscarfonts.cat</url>
+			<url>http://fonts.cat</url>
 			<organization>Geomati.co</organization>
 			<organizationUrl>http://geomati.co</organizationUrl>
 			<roles>
@@ -121,6 +121,13 @@
 			<artifactId>postgresql</artifactId>
 			<version>8.4-702.jdbc4</version>
 		</dependency>
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
+            <classifier>jdk15</classifier>
+        </dependency>
+        
 		<!-- Datanucleus dependencies -->
 		<dependency>
 			<groupId>org.datanucleus</groupId>

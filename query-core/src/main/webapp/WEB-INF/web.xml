@@ -37,11 +37,11 @@
         <url-pattern>/download</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>TestAuthenticationServlet</servlet-name>
-        <servlet-class>org.dataportal.TestAuthenticationServlet</servlet-class>
+        <servlet-name>ReportServlet</servlet-name>
+        <servlet-class>org.dataportal.ReportServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>TestAuthenticationServlet</servlet-name>
-        <url-pattern>/testauth</url-pattern>
+        <servlet-name>ReportServlet</servlet-name>
+        <url-pattern>/report</url-pattern>
     </servlet-mapping>
 </web-app>

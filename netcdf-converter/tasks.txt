@@ -1,0 +1,11 @@
+Create implementation for CEAM data
+
+Create a program to migrate all CEAM Data
+
+Modify conversor to get ancillary variables and write them
+
+relate main var and ancillary
+
+Update documentation
+
+Make conversor write stations with no lat/lon
