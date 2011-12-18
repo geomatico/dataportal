@@ -6,6 +6,8 @@ import java.util.Map.Entry;
 
 import javax.persistence.*;
 
+import org.dataportal.utils.DataPortalException;
+
 public class JPAGenericController {
 
     private EntityManagerFactory entityFactory;
@@ -15,7 +17,7 @@ public class JPAGenericController {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public List select(String jpqlQuery, Map<String, Object> queryParams, Class returnClass) {
+    public List select(String jpqlQuery, Map<String, Object> queryParams, Class returnClass) throws DataPortalException {
         List data = null;
         EntityManager entityManager = this.entityFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
@@ -28,7 +30,8 @@ public class JPAGenericController {
             data = query.getResultList();
             transaction.commit();
         } catch (Exception e) {
-            e.printStackTrace(); // TODO: Database error handling
+            e.printStackTrace();
+            throw new DataPortalException(DataPortalException.RDBMSERROR, e);
         } finally {
             if (transaction.isActive()) {
                 transaction.rollback();
