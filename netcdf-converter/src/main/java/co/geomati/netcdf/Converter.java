@@ -100,6 +100,8 @@ public class Converter {
 
 		if (dataset instanceof StationDataset) {
 			addStation(nc, (StationDataset) dataset);
+		} else if (dataset instanceof TimeSerieDataset) {
+			addTimeSerie(nc, (TimeSerieDataset) dataset);
 		} else if (dataset instanceof TrajectoryDataset) {
 			nc.addGlobalAttribute("cdm_data_type",
 					CDMDataType.TRAJECTORY.toString());
@@ -119,19 +121,66 @@ public class Converter {
 		}
 	}
 
+	/**
+	 * Write a timeseries using a coordinate variable called "time" to store the
+	 * time
+	 * 
+	 * @param nc
+	 * @param dataset
+	 * @throws ConverterException
+	 */
+	private static void addTimeSerie(NetcdfFileWriteable nc,
+			TimeSerieDataset dataset) throws ConverterException {
+		writeTimeBox(nc, dataset);
+		// time dimension variable
+		Variable time = createTimeVariable(nc, dataset);
+		/*
+		 * TODO vertical coordinate
+		 */
+
+		/*
+		 * Add main variable
+		 */
+		ArrayList<Dimension> mainVarDimensions = new ArrayList<Dimension>();
+		mainVarDimensions.add(time.getDimension(0));
+		String variableName = dataset.getVariableName();
+		Variable mainVar = nc.addVariable(variableName,
+				dataset.getVariableType(),
+				mainVarDimensions.toArray(new Dimension[0]));
+		mainVar.addAttribute(new Attribute("long_name", dataset
+				.getVariableLongName()));
+		mainVar.addAttribute(new Attribute("standard_name", dataset
+				.getVariableStandardName()));
+		mainVar.addAttribute(new Attribute("units", dataset.getVariableUnits()));
+
+		try {
+			nc.create();
+
+			/*
+			 * Write time
+			 */
+			writeTimeValues(nc, dataset, time);
+
+			/*
+			 * write main variable
+			 */
+			Array a = dataset.getData();
+			try {
+				nc.write(mainVar.getName(), a);
+			} catch (InvalidRangeException e) {
+				throw new ConverterException("Too many data on main variable",
+						e);
+			}
+
+		} catch (IOException e) {
+			throw new ConverterException("Cannot create netcdf file", e);
+		}
+
+	}
+
 	private static void addStation(NetcdfFileWriteable nc,
 			StationDataset dataset) throws ConverterException {
-		List<Integer> times = dataset.getTimeStamps();
-		Date referenceDate = dataset.getReferenceDate();
-		TimeUnit timeUnit = dataset.getTimeUnits();
-		if (times != null) {
-			long[] timeBox = getTimeBox(times, referenceDate, timeUnit);
-			DateTimeFormatter parser = ISODateTimeFormat.dateTime();
-			parser = parser.withZoneUTC();
-			nc.addGlobalAttribute("time_coverage_start",
-					parser.print(timeBox[0]));
-			nc.addGlobalAttribute("time_coverage_end", parser.print(timeBox[1]));
-		}
+		writeTimeBox(nc, dataset);
 
 		List<Point2D> stationPositions = dataset.getPositions();
 		Rectangle2D bbox = getBBox(stationPositions);
@@ -141,19 +190,8 @@ public class Converter {
 		nc.addGlobalAttribute("geospatial_lon_max", bbox.getMaxX());
 		nc.addGlobalAttribute("cdm_data_type", CDMDataType.STATION.toString());
 
-		ArrayList<Dimension> mainVarDimensions = new ArrayList<Dimension>();
-
 		// time dimension variable
-		Variable time = null;
-		if (times != null) {
-			Dimension timeDim = nc.addUnlimitedDimension("time");
-			time = nc.addVariable("time", DataType.INT,
-					new Dimension[] { timeDim });
-			time.addAttribute(new Attribute("units", timeUnit.toString()
-					+ " since " + dateFormat.format(referenceDate)));
-			time.addAttribute(new Attribute("axis", "T"));
-			mainVarDimensions.add(timeDim);
-		}
+		Variable time = createTimeVariable(nc, dataset);
 
 		// Position dimension
 		Dimension stationDimension = nc.addDimension("station",
@@ -177,7 +215,11 @@ public class Converter {
 		/*
 		 * Add main variable
 		 */
+		ArrayList<Dimension> mainVarDimensions = new ArrayList<Dimension>();
 		mainVarDimensions.add(stationDimension);
+		if (time != null) {
+			mainVarDimensions.add(time.getDimension(0));
+		}
 		String variableName = dataset.getVariableName();
 		Variable mainVar = nc.addVariable(variableName,
 				dataset.getVariableType(),
@@ -195,21 +237,7 @@ public class Converter {
 			/*
 			 * Write time
 			 */
-			if (times != null) {
-				try {
-					nc.write(time.getName(),
-							get1Int(lat, times, new IntSampleGetter<Integer>() {
-
-								@Override
-								public int get(Integer t) {
-									return t;
-								}
-							}));
-				} catch (InvalidRangeException e) {
-					throw new RuntimeException("Bug. This should not "
-							+ "happen since time is unlimited", e);
-				}
-			}
+			writeTimeValues(nc, dataset, time);
 
 			/*
 			 * write positions
@@ -217,7 +245,7 @@ public class Converter {
 			try {
 				nc.write(
 						lat.getName(),
-						get1Double(lat, stationPositions,
+						get1Double(stationPositions,
 								new DoubleSampleGetter<Point2D>() {
 
 									@Override
@@ -227,7 +255,7 @@ public class Converter {
 								}));
 				nc.write(
 						lon.getName(),
-						get1Double(lat, stationPositions,
+						get1Double(stationPositions,
 								new DoubleSampleGetter<Point2D>() {
 
 									@Override
@@ -243,7 +271,7 @@ public class Converter {
 			/*
 			 * write main variable
 			 */
-			Array a = dataset.getStationData();
+			Array a = dataset.getData();
 			try {
 				nc.write(mainVar.getName(), a);
 			} catch (InvalidRangeException e) {
@@ -252,6 +280,60 @@ public class Converter {
 			}
 		} catch (IOException e) {
 			throw new ConverterException("Cannot create netcdf file", e);
+		}
+	}
+
+	private static void writeTimeValues(NetcdfFileWriteable nc,
+			TimeSerieDataset dataset, Variable time) throws IOException {
+		if (time != null) {
+			try {
+				nc.write(
+						time.getName(),
+						get1Int(dataset.getTimeStamps(),
+								new IntSampleGetter<Integer>() {
+
+									@Override
+									public int get(Integer t) {
+										return t;
+									}
+								}));
+			} catch (InvalidRangeException e) {
+				throw new RuntimeException("Bug. This should not "
+						+ "happen since time is unlimited", e);
+			}
+		}
+	}
+
+	private static Variable createTimeVariable(NetcdfFileWriteable nc,
+			TimeSerieDataset dataset) {
+		Variable time = null;
+		List<Integer> times = dataset.getTimeStamps();
+		Date referenceDate = dataset.getReferenceDate();
+		TimeUnit timeUnit = dataset.getTimeUnits();
+		if (times != null) {
+			Dimension timeDim = nc.addUnlimitedDimension("time");
+			time = nc.addVariable("time", DataType.INT,
+					new Dimension[] { timeDim });
+			time.addAttribute(new Attribute("units", timeUnit.toString()
+					+ " since " + dateFormat.format(referenceDate)));
+			time.addAttribute(new Attribute("axis", "T"));
+		}
+
+		return time;
+	}
+
+	private static void writeTimeBox(NetcdfFileWriteable nc,
+			TimeSerieDataset dataset) {
+		List<Integer> times = dataset.getTimeStamps();
+		Date referenceDate = dataset.getReferenceDate();
+		TimeUnit timeUnit = dataset.getTimeUnits();
+		if (times != null) {
+			long[] timeBox = getTimeBox(times, referenceDate, timeUnit);
+			DateTimeFormatter parser = ISODateTimeFormat.dateTime();
+			parser = parser.withZoneUTC();
+			nc.addGlobalAttribute("time_coverage_start",
+					parser.print(timeBox[0]));
+			nc.addGlobalAttribute("time_coverage_end", parser.print(timeBox[1]));
 		}
 	}
 
@@ -317,28 +399,26 @@ public class Converter {
 	}
 
 	private static void addTrajectory(NetcdfFileWriteable nc, Dataset dataset) {
-		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
 	}
 
 	private static void addGrid(NetcdfFileWriteable nc, Dataset dataset) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 
-	public static <T> ArrayDouble get1Double(Variable var, List<T> list,
+	public static <T> ArrayDouble get1Double(List<T> list,
 			DoubleSampleGetter<T> getter) throws IOException,
 			InvalidRangeException {
-		Dimension dimension = var.getDimensions().get(0);
-		ArrayDouble A = new ArrayDouble.D1(dimension.getLength());
+		ArrayDouble A = new ArrayDouble.D1(list.size());
 		Index ima = A.getIndex();
-		for (int i = 0; i < dimension.getLength(); i++) {
+		for (int i = 0; i < list.size(); i++) {
 			A.setDouble(ima.set(i), getter.get(list.get(i)));
 		}
 		return A;
 	}
 
-	public static <T> ArrayInt get1Int(Variable var, List<T> list,
-			IntSampleGetter<T> getter) throws IOException,
-			InvalidRangeException {
+	public static <T> ArrayInt get1Int(List<T> list, IntSampleGetter<T> getter)
+			throws IOException, InvalidRangeException {
 		ArrayInt A = new ArrayInt.D1(list.size());
 		Index ima = A.getIndex();
 		for (int i = 0; i < list.size(); i++) {

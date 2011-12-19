@@ -5,7 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,12 +26,132 @@ import co.geomati.netcdf.DatasetConversion;
 public class ConvertCEAM {
 	private static final int WAITING_START = 1;
 	private static final int VARIABLE_VALUES = 2;
+	private static Properties ceamVocabulary;
 
 	public static void main(String[] args) throws FileNotFoundException,
 			IOException, ConverterException {
 		final String creatorURL = "http://www.ceam.es/~becario";
 		// TODO there is e-mail in xls
 
+		// convertBADM(creatorURL);
+		convertTemporalSeries(creatorURL);
+	}
+
+	private static void convertTemporalSeries(final String creatorURL)
+			throws IOException {
+		String[] files = new String[] { "ES-LMa_FLX_2010_01_12_newformat" };
+		for (final String fileName : files) {
+			Workbook wb = new HSSFWorkbook(new FileInputStream(
+					"../../data/ceam/" + fileName + ".xls"));
+			Sheet data = wb.getSheetAt(0);
+			Iterator<Row> rowIterator = data.rowIterator();
+
+			Row row = null;
+			final ArrayList<Variable> variables = new ArrayList<Variable>();
+			int firstVarColumn = -1;
+			boolean hasTime = false;
+			if (rowIterator.hasNext()) {
+				row = rowIterator.next();
+				Iterator<Cell> cellIterator = row.cellIterator();
+				int cellIndex = -1;
+				while (cellIterator.hasNext()) {
+					Cell cell = cellIterator.next();
+					cellIndex++;
+					String cellValue = cell.getStringCellValue();
+					if (cellValue.equals("date")) {
+						continue;
+					} else if (!cellValue.equals("time")) {
+						if (firstVarColumn == -1) {
+							firstVarColumn = cellIndex;
+						}
+						String varName = getVarName(cellValue);
+						Variable var = new Variable(varName,
+								getLongName(varName), getUnits(varName));
+						variables.add(var);
+					} else {
+						hasTime = true;
+					}
+				}
+			}
+
+			final ArrayList<Integer> timestamps = new ArrayList<Integer>();
+			while (rowIterator.hasNext()) {
+				row = rowIterator.next();
+				Date date = row.getCell(0).getDateCellValue();
+				int seconds = (int) (date.getTime() / 1000);
+				if (hasTime) {
+					Date time = row.getCell(0).getDateCellValue();
+					// System.out.println(time);
+				}
+				timestamps.add(seconds);
+			}
+
+			for (int i = 0; i < variables.size(); i++) {
+				rowIterator = data.rowIterator();
+				rowIterator.next();
+				ArrayList<Object> values = new ArrayList<Object>();
+				while (rowIterator.hasNext()) {
+					row = rowIterator.next();
+
+					double numericCellValue = row.getCell(firstVarColumn + i)
+							.getNumericCellValue();
+					System.out.println(numericCellValue);
+					values.add(numericCellValue);
+				}
+				variables.get(i).setValues(values);
+			}
+
+			Converter.convert(new DatasetConversion() {
+
+				@Override
+				public String getOutputFileName(Dataset dataset) {
+					return fileName + "_" + dataset.getVariableStandardName();
+				}
+
+				@Override
+				public int getDatasetCount() {
+					return variables.size();
+				}
+
+				@Override
+				public Dataset getDataset(int index) throws ConverterException {
+					return new CEAMDataset(variables.get(index), timestamps,
+							creatorURL);
+				}
+			});
+		}
+	}
+
+	private static String getVarName(String cellValue) {
+		Pattern p = Pattern.compile("(.*)_\\d_\\d_\\d");
+		Matcher matcher = p.matcher(cellValue);
+		if (matcher.find()) {
+			return matcher.group(1);
+		} else {
+			return cellValue;
+		}
+	}
+
+	private static String getUnits(String name) throws IOException {
+		return getCEAMVocabulary().getProperty(name + "_UNITS");
+	}
+
+	private static String getLongName(String name) throws IOException {
+		return getCEAMVocabulary().getProperty(name);
+	}
+
+	private static Properties getCEAMVocabulary() throws IOException {
+		if (ceamVocabulary == null) {
+			ceamVocabulary = new Properties();
+			ceamVocabulary.load(ConvertCEAM.class
+					.getResourceAsStream("variables.properties"));
+		}
+
+		return ceamVocabulary;
+	}
+
+	private static void convertBADM(final String creatorURL)
+			throws IOException, FileNotFoundException, ConverterException {
 		String[] files = new String[] { "BADM_ES-LMa_2005", "BADM_ES-LMa_2006",
 				"BADM_ES-LMa_2007", "BADM_ES-LMa_2008", "BADM_ES-LMa_2009",
 				"BADM_ES-LMa_2010" };
@@ -187,7 +309,7 @@ public class ConvertCEAM {
 
 		@Override
 		public Dataset getDataset(int index) throws ConverterException {
-			return new CEAMDataset(groups.get(index), creatorURL, position);
+			return new BADMDataset(groups.get(index), creatorURL, position);
 		}
 	}
 }

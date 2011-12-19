@@ -9,22 +9,13 @@ import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
+import co.geomati.netcdf.ceam.AbstractCEAMDataset;
 
-public class SampleDataset implements StationDataset {
+public class SampleDataset extends AbstractCEAMDataset implements
+		StationDataset {
 
-	@Override
-	public IcosDomain getIcosDomain() {
-		return IcosDomain.ATMOSPHERE;
-	}
-
-	@Override
-	public String getInstitution() {
-		return "Centro Nacional de Atmosferas Unidas";
-	}
-
-	@Override
-	public String getCreatorURL() {
-		return "http://www.cnau.es";
+	public SampleDataset() {
+		super("http://www.ceam.es");
 	}
 
 	@Override
@@ -84,7 +75,7 @@ public class SampleDataset implements StationDataset {
 	}
 
 	@Override
-	public Array getStationData() {
+	public Array getData() {
 		int timeSize = getTimeStamps().size();
 		int stationSize = getPositions().size();
 		ArrayDouble a = new ArrayDouble.D2(timeSize, stationSize);
@@ -97,4 +88,5 @@ public class SampleDataset implements StationDataset {
 
 		return a;
 	}
+
 }
