@@ -30,86 +30,75 @@ public class ConvertCEAM {
 		final String creatorURL = "http://www.ceam.es/~becario";
 		// TODO there is e-mail in xls
 
-		Workbook wb = new HSSFWorkbook(new FileInputStream(
-				"../../data/ceam/BADM_ES-LMa_2006.xls"));
-		final Point2D position = getPosition(wb);
-		Sheet biodata = wb.getSheet("BioData");
-		Iterator<Row> rowIterator = biodata.rowIterator();
+		String[] files = new String[] { "BADM_ES-LMa_2005", "BADM_ES-LMa_2006",
+				"BADM_ES-LMa_2007", "BADM_ES-LMa_2008", "BADM_ES-LMa_2009",
+				"BADM_ES-LMa_2010" };
+		for (String fileName : files) {
+			final ArrayList<VariableGroup> groups = new ArrayList<VariableGroup>();
+			Workbook wb = new HSSFWorkbook(new FileInputStream(
+					"../../data/ceam/" + fileName + ".xls"));
+			final Point2D position = getPosition(wb);
+			Sheet biodata = wb.getSheet("BioData");
+			Iterator<Row> rowIterator = biodata.rowIterator();
 
-		final ArrayList<VariableGroup> groups = new ArrayList<VariableGroup>();
-		VariableGroup variableGroup = new VariableGroup();
-		int state = WAITING_START;
-		Variable currentVar;
-		while (rowIterator.hasNext()) {
-			Row row = rowIterator.next();
-			String firstCellValue = row.getCell(0).getStringCellValue();
-			switch (state) {
-			case WAITING_START:
-				if (firstCellValue.equals("Variable")) {
-					state = VARIABLE_VALUES;
-				}
-				break;
-			case VARIABLE_VALUES:
-				String longName = row.getCell(1).getStringCellValue();
-				String units;
-				Cell unitsCell = row.getCell(2);
-				if (unitsCell != null) {
-					units = unitsCell.getStringCellValue();
-				} else {
-					units = null;
-				}
-				currentVar = new Variable(netcdfize(firstCellValue), longName,
-						units);
-				Iterator<Cell> cellIterator = row.cellIterator();
-				for (int i = 0; i < 3 && cellIterator.hasNext(); i++) {
-					cellIterator.next();
-				}
-				if (cellIterator.hasNext()) {
-					ArrayList<Object> values = new ArrayList<Object>();
-					while (cellIterator.hasNext()) {
-						Cell cell = cellIterator.next();
-						Object cellValue = getCellValue(cell);
-						if (cellValue == null) {
-							continue;
-						}
-						values.add(cellValue);
+			VariableGroup variableGroup = new VariableGroup();
+			int state = WAITING_START;
+			Variable currentVar;
+			while (rowIterator.hasNext()) {
+				Row row = rowIterator.next();
+				String firstCellValue = row.getCell(0).getStringCellValue();
+				switch (state) {
+				case WAITING_START:
+					if (firstCellValue.equals("Variable")) {
+						state = VARIABLE_VALUES;
 					}
-					currentVar.setValues(values);
-				}
-
-				if (currentVar.getValueCount() > 0) {
-					if (variableGroup.isEmpty()) {
-						variableGroup.add(currentVar);
+					break;
+				case VARIABLE_VALUES:
+					String longName = row.getCell(1).getStringCellValue();
+					String units;
+					Cell unitsCell = row.getCell(2);
+					if (unitsCell != null) {
+						units = unitsCell.getStringCellValue();
 					} else {
-						String varName = variableGroup.get(0).getName();
-						if (!currentVar.getName().startsWith(varName + "_")) {
-							groups.add(variableGroup);
-							variableGroup = new VariableGroup();
-						}
-						variableGroup.add(currentVar);
+						units = null;
 					}
+					currentVar = new Variable(netcdfize(firstCellValue),
+							longName, units);
+					Iterator<Cell> cellIterator = row.cellIterator();
+					for (int i = 0; i < 3 && cellIterator.hasNext(); i++) {
+						cellIterator.next();
+					}
+					if (cellIterator.hasNext()) {
+						ArrayList<Object> values = new ArrayList<Object>();
+						while (cellIterator.hasNext()) {
+							Cell cell = cellIterator.next();
+							Object cellValue = getCellValue(cell);
+							if (cellValue == null) {
+								continue;
+							}
+							values.add(cellValue);
+						}
+						currentVar.setValues(values);
+					}
+
+					if (currentVar.getValueCount() > 0) {
+						if (variableGroup.isEmpty()) {
+							variableGroup.add(currentVar);
+						} else {
+							String varName = variableGroup.get(0).getName();
+							if (!currentVar.getName().startsWith(varName + "_")) {
+								groups.add(variableGroup);
+								variableGroup = new VariableGroup();
+							}
+							variableGroup.add(currentVar);
+						}
+					}
+					break;
 				}
-				break;
 			}
+			Converter.convert(new CEAMDatasetConversion(groups, position,
+					creatorURL, fileName));
 		}
-
-		Converter.convert(new DatasetConversion() {
-
-			@Override
-			public String getOutputFileName(Dataset dataset) {
-				return dataset.getVariableName();
-			}
-
-			@Override
-			public int getDatasetCount() {
-				return groups.size();
-			}
-
-			@Override
-			public Dataset getDataset(int index) throws ConverterException {
-				return new CEAMDataset(groups.get(index), creatorURL, position);
-			}
-		});
 	}
 
 	private static String netcdfize(String varName) {
@@ -168,6 +157,37 @@ public class ConvertCEAM {
 			return cell.getBooleanCellValue();
 		default:
 			throw new RuntimeException();
+		}
+	}
+
+	private static final class CEAMDatasetConversion implements
+			DatasetConversion {
+		private final ArrayList<VariableGroup> groups;
+		private final Point2D position;
+		private final String creatorURL;
+		private final String fileName;
+
+		private CEAMDatasetConversion(ArrayList<VariableGroup> groups,
+				Point2D position, String creatorURL, String fileName) {
+			this.groups = groups;
+			this.position = position;
+			this.creatorURL = creatorURL;
+			this.fileName = fileName;
+		}
+
+		@Override
+		public String getOutputFileName(Dataset dataset) {
+			return fileName + "_" + dataset.getVariableName();
+		}
+
+		@Override
+		public int getDatasetCount() {
+			return groups.size();
+		}
+
+		@Override
+		public Dataset getDataset(int index) throws ConverterException {
+			return new CEAMDataset(groups.get(index), creatorURL, position);
 		}
 	}
 }

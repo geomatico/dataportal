@@ -283,8 +283,7 @@ public class Converter {
 		} else if (unit == TimeUnit.DAYS) {
 			return magnitude * 1000 * 60 * 60 * 24;
 		} else if (unit == TimeUnit.COMMON_YEAR) {
-			return magnitude * 1000 * 60 * 60 * 24 * 365; // TODO I guess 365 is
-															// wrong
+			return magnitude * 1000 * 60 * 60 * 24 * 365;
 		} else {
 			throw new RuntimeException("Bug");
 		}

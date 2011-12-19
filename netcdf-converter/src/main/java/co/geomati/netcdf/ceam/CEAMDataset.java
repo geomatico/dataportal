@@ -97,10 +97,6 @@ public class CEAMDataset implements StationDataset {
 		} else {
 			throw new UnsupportedOperationException();
 		}
-
-		// this.timeUnits = null;
-		// this.referenceDate = null;
-		// this.timeStamps = null;
 	}
 
 	private DataType getDataType(Variable variable) {
@@ -201,7 +197,9 @@ public class CEAMDataset implements StationDataset {
 			Index ima = a.getIndex();
 			for (int i = 0; i < timeSize; i++) {
 				for (int j = 0; j < stationSize; j++) {
-					a.setDouble(ima.set(i, j), 30 + i);
+					Double value = (Double) variable.getValues().get(
+							i * stationSize + j);
+					a.setDouble(ima.set(i, j), value);
 				}
 			}
 
