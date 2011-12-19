@@ -1,11 +1,13 @@
 package co.geomati.netcdf.ceam;
 
-import java.io.File;
+import java.awt.geom.Point2D;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -16,21 +18,26 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import co.geomati.netcdf.Converter;
 import co.geomati.netcdf.ConverterException;
+import co.geomati.netcdf.Dataset;
+import co.geomati.netcdf.DatasetConversion;
 
 public class ConvertCEAM {
 	private static final int WAITING_START = 1;
 	private static final int VARIABLE_VALUES = 2;
 
 	public static void main(String[] args) throws FileNotFoundException,
-			IOException {
-		String creatorURL = "http://www.ceam.es/~becario";
+			IOException, ConverterException {
+		final String creatorURL = "http://www.ceam.es/~becario";
+		// TODO there is e-mail in xls
 
 		Workbook wb = new HSSFWorkbook(new FileInputStream(
 				"../../data/ceam/BADM_ES-LMa_2006.xls"));
+		final Point2D position = getPosition(wb);
 		Sheet biodata = wb.getSheet("BioData");
 		Iterator<Row> rowIterator = biodata.rowIterator();
 
-		ArrayList<Variable> variableGroup = new ArrayList<Variable>();
+		final ArrayList<VariableGroup> groups = new ArrayList<VariableGroup>();
+		VariableGroup variableGroup = new VariableGroup();
 		int state = WAITING_START;
 		Variable currentVar;
 		while (rowIterator.hasNext()) {
@@ -51,7 +58,8 @@ public class ConvertCEAM {
 				} else {
 					units = null;
 				}
-				currentVar = new Variable(firstCellValue, longName, units);
+				currentVar = new Variable(netcdfize(firstCellValue), longName,
+						units);
 				Iterator<Cell> cellIterator = row.cellIterator();
 				for (int i = 0; i < 3 && cellIterator.hasNext(); i++) {
 					cellIterator.next();
@@ -74,34 +82,74 @@ public class ConvertCEAM {
 						variableGroup.add(currentVar);
 					} else {
 						String varName = variableGroup.get(0).getName();
-						if (currentVar.getName().startsWith(varName + "_")) {
-							variableGroup.add(currentVar);
-						} else {
-							createNC(variableGroup, creatorURL);
+						if (!currentVar.getName().startsWith(varName + "_")) {
+							groups.add(variableGroup);
+							variableGroup = new VariableGroup();
 						}
+						variableGroup.add(currentVar);
 					}
 				}
 				break;
 			}
-
 		}
+
+		Converter.convert(new DatasetConversion() {
+
+			@Override
+			public String getOutputFileName(Dataset dataset) {
+				return dataset.getVariableName();
+			}
+
+			@Override
+			public int getDatasetCount() {
+				return groups.size();
+			}
+
+			@Override
+			public Dataset getDataset(int index) throws ConverterException {
+				return new CEAMDataset(groups.get(index), creatorURL, position);
+			}
+		});
 	}
 
-	private static void createNC(ArrayList<Variable> variableGroup,
-			String creatorURL) {
-		if (variableGroup.size() == 0) {
-			return;
-		}
+	private static String netcdfize(String varName) {
+		return varName.replaceAll("[<>]", "_").replaceAll("\\s", "");
+	}
 
-		CEAMDataset dataset = new CEAMDataset(variableGroup, creatorURL);
-		File tempFile = new File(System.getProperty("java.io.tmpdir") + "/"
-				+ dataset.getVariableName() + ".nc");
-		try {
-			Converter.convert(dataset, tempFile);
-		} catch (ConverterException e) {
-			System.err.println("Cannot convert");
-			e.printStackTrace();
+	private static Point2D getPosition(Workbook wb) throws ConverterException {
+		Sheet siteData = wb.getSheet("SiteBioAncData");
+
+		Iterator<Row> rowIterator = siteData.rowIterator();
+		while (rowIterator.hasNext()) {
+			Row row = rowIterator.next();
+			String firstCellValue = row.getCell(0).getStringCellValue();
+			if (firstCellValue.equals("SITE_DESC")) {
+				String description = row.getCell(2).getStringCellValue();
+				Pattern p = Pattern.compile("(\\d*\\.\\d*)º\\s[NW]");
+				Matcher matcher = p.matcher(description);
+
+				double lat;
+				double lon;
+				if (matcher.find()) {
+					lat = Double.parseDouble(matcher.group(1));
+				} else {
+					throw getNoPositionException();
+				}
+				if (matcher.find()) {
+					lon = Double.parseDouble(matcher.group(1));
+				} else {
+					throw getNoPositionException();
+				}
+
+				return new Point2D.Double(lon, lat);
+			}
 		}
+		throw getNoPositionException();
+	}
+
+	private static ConverterException getNoPositionException() {
+		return new ConverterException("Cannot find position "
+				+ "information in siteBioAncData sheet");
 	}
 
 	private static Object getCellValue(Cell cell) {

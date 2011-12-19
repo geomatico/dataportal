@@ -46,7 +46,8 @@ public interface StationDataset extends Dataset {
 	List<Point2D> getPositions();
 
 	/**
-	 * Get the times containing the measures of the main variable
+	 * Get the times containing the measures of the main variable. Null if the
+	 * main variable has no temporal dimension
 	 * 
 	 * @return
 	 */

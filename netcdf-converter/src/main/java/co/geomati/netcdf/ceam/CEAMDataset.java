@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
+import co.geomati.netcdf.ConverterException;
 import co.geomati.netcdf.IcosDomain;
 import co.geomati.netcdf.StationDataset;
 import co.geomati.netcdf.TimeUnit;
@@ -18,23 +20,29 @@ import co.geomati.netcdf.TimeUnit;
 public class CEAMDataset implements StationDataset {
 
 	private String creatorURL;
+	private Point2D position;
 	private Variable variable;
 	private DataType dataType;
 	private TimeUnit timeUnits;
 	private Date referenceDate;
 	private List<Integer> timeStamps;
 
-	public CEAMDataset(ArrayList<Variable> variableGroup, String creatorURL) {
+	public CEAMDataset(VariableGroup variableGroup, String creatorURL,
+			Point2D position) throws ConverterException {
 		this.creatorURL = creatorURL;
+		this.position = position;
 		this.variable = getMainVariable(variableGroup);
 		this.dataType = getDataType(this.variable);
 		Variable timeVariable = getTimeVariable(variableGroup);
-		setTimeInfo(timeVariable);
+		if (timeVariable != null) {
+			setTimeInfo(timeVariable);
+		}
 	}
 
-	private Variable getTimeVariable(ArrayList<Variable> variableGroup) {
+	private Variable getTimeVariable(VariableGroup variableGroup) {
 		for (Variable variable : variableGroup) {
-			if (variable.getName().endsWith("_DATE")) {
+			if (variable.getName().endsWith("_DATE")
+					|| variable.getName().endsWith("_YEAR")) {
 				return variable;
 			}
 		}
@@ -42,7 +50,7 @@ public class CEAMDataset implements StationDataset {
 		return null;
 	}
 
-	private void setTimeInfo(Variable timeVariable) {
+	private void setTimeInfo(Variable timeVariable) throws ConverterException {
 		String units = timeVariable.getUnits();
 		if (units.equals("YYYY")) {
 			timeUnits = TimeUnit.COMMON_YEAR;
@@ -62,15 +70,22 @@ public class CEAMDataset implements StationDataset {
 			timeUnits = TimeUnit.DAYS;
 			ArrayList<Integer> times = new ArrayList<Integer>();
 			ArrayList<Object> values = timeVariable.getValues();
-			String referenceYear = null;
+			Date referenceYear = null;
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
 			for (Object object : values) {
 				String dayYear = (String) object;
 				String[] dayYearArray = dayYear.split("/");
 				int day = Integer.parseInt(dayYearArray[0]);
-				String year = dayYearArray[1];
+				Date year;
+				try {
+					year = sdf.parse(dayYearArray[1]);
+				} catch (ParseException e) {
+					throw new ConverterException("invalid year forma: "
+							+ dayYearArray[1]);
+				}
 				if (referenceYear == null) {
 					referenceYear = year;
-				} else if (referenceYear != year) {
+				} else if (!referenceYear.equals(year)) {
 					throw new RuntimeException("Wrong reference "
 							+ "year for variable: " + timeVariable.getName());
 				}
@@ -78,12 +93,7 @@ public class CEAMDataset implements StationDataset {
 			}
 			timeStamps = times;
 
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-			try {
-				referenceDate = sdf.parse(referenceYear);
-			} catch (ParseException e) {
-				throw new RuntimeException("bug");
-			}
+			referenceDate = referenceYear;
 		} else {
 			throw new UnsupportedOperationException();
 		}
@@ -108,7 +118,7 @@ public class CEAMDataset implements StationDataset {
 		}
 	}
 
-	private Variable getMainVariable(ArrayList<Variable> variableGroup) {
+	private Variable getMainVariable(VariableGroup variableGroup) {
 		int minLength = Integer.MAX_VALUE;
 		Variable argMinLength = null;
 		for (Variable variable : variableGroup) {
@@ -173,7 +183,7 @@ public class CEAMDataset implements StationDataset {
 
 	@Override
 	public List<Point2D> getPositions() {
-		return null;
+		return Collections.singletonList(position);
 	}
 
 	@Override
@@ -183,17 +193,29 @@ public class CEAMDataset implements StationDataset {
 
 	@Override
 	public Array getStationData() {
-		int timeSize = getTimeStamps().size();
-		int stationSize = getPositions().size();
-		ArrayDouble a = new ArrayDouble.D2(timeSize, stationSize);
-		Index ima = a.getIndex();
-		for (int i = 0; i < timeSize; i++) {
-			for (int j = 0; j < stationSize; j++) {
-				a.setDouble(ima.set(i, j), 30 + i);
+		List<Integer> timeStamps = getTimeStamps();
+		if (timeStamps != null) {
+			int timeSize = timeStamps.size();
+			int stationSize = getPositions().size();
+			ArrayDouble a = new ArrayDouble.D2(timeSize, stationSize);
+			Index ima = a.getIndex();
+			for (int i = 0; i < timeSize; i++) {
+				for (int j = 0; j < stationSize; j++) {
+					a.setDouble(ima.set(i, j), 30 + i);
+				}
 			}
-		}
 
-		return a;
+			return a;
+		} else {
+			int stationSize = getPositions().size();
+			ArrayDouble a = new ArrayDouble.D1(stationSize);
+			Index ima = a.getIndex();
+			for (int j = 0; j < stationSize; j++) {
+				a.setDouble(ima.set(j), 30 + j);
+			}
+
+			return a;
+		}
 	}
 
 }

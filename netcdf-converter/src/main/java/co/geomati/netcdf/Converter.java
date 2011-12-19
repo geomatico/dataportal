@@ -33,8 +33,27 @@ public class Converter {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss:S");
 
-	public static void convert(Dataset dataset, File file)
-			throws ConverterException {
+	public static void convert(DatasetConversion conversion) {
+		Report r = new Report();
+		for (int i = 0; i < conversion.getDatasetCount(); i++) {
+			try {
+				r.addRecord();
+				Dataset dataset = conversion.getDataset(i);
+				r.setDatasetName(dataset.getVariableStandardName());
+				File tempFile = new File(System.getProperty("java.io.tmpdir")
+						+ "/" + conversion.getOutputFileName(dataset) + ".nc");
+				convert(dataset, tempFile);
+			} catch (RuntimeException e) {
+				r.datasetError(e);
+			} catch (ConverterException e) {
+				r.datasetError(e);
+			}
+		}
+
+		System.out.println(r);
+	}
+
+	static void convert(Dataset dataset, File file) throws ConverterException {
 
 		Properties props = new Properties();
 		BufferedInputStream is;
@@ -80,11 +99,7 @@ public class Converter {
 		nc.addGlobalAttribute("creator_url", dataset.getCreatorURL());
 
 		if (dataset instanceof StationDataset) {
-			/*
-			 * bbox and time range
-			 */
-			StationDataset stationDataset = (StationDataset) dataset;
-			addStation(nc, stationDataset);
+			addStation(nc, (StationDataset) dataset);
 		} else if (dataset instanceof TrajectoryDataset) {
 			nc.addGlobalAttribute("cdm_data_type",
 					CDMDataType.TRAJECTORY.toString());
@@ -106,33 +121,39 @@ public class Converter {
 
 	private static void addStation(NetcdfFileWriteable nc,
 			StationDataset dataset) throws ConverterException {
-		List<Point2D> stationPositions = dataset.getPositions();
 		List<Integer> times = dataset.getTimeStamps();
 		Date referenceDate = dataset.getReferenceDate();
 		TimeUnit timeUnit = dataset.getTimeUnits();
+		if (times != null) {
+			long[] timeBox = getTimeBox(times, referenceDate, timeUnit);
+			DateTimeFormatter parser = ISODateTimeFormat.dateTime();
+			parser = parser.withZoneUTC();
+			nc.addGlobalAttribute("time_coverage_start",
+					parser.print(timeBox[0]));
+			nc.addGlobalAttribute("time_coverage_end", parser.print(timeBox[1]));
+		}
 
+		List<Point2D> stationPositions = dataset.getPositions();
 		Rectangle2D bbox = getBBox(stationPositions);
-		long[] timeBox = getTimeBox(times, referenceDate, timeUnit);
 		nc.addGlobalAttribute("geospatial_lat_min", bbox.getMinY());
 		nc.addGlobalAttribute("geospatial_lat_max", bbox.getMaxY());
 		nc.addGlobalAttribute("geospatial_lon_min", bbox.getMinX());
 		nc.addGlobalAttribute("geospatial_lon_max", bbox.getMaxX());
-		DateTimeFormatter parser = ISODateTimeFormat.dateTime();
-		parser = parser.withZoneUTC();
-		nc.addGlobalAttribute("time_coverage_start", parser.print(timeBox[0]));
-		nc.addGlobalAttribute("time_coverage_end", parser.print(timeBox[1]));
 		nc.addGlobalAttribute("cdm_data_type", CDMDataType.STATION.toString());
 
 		ArrayList<Dimension> mainVarDimensions = new ArrayList<Dimension>();
 
 		// time dimension variable
-		Dimension timeDim = nc.addUnlimitedDimension("time");
-		Variable time = nc.addVariable("time", DataType.INT,
-				new Dimension[] { timeDim });
-		time.addAttribute(new Attribute("units", timeUnit.toString()
-				+ " since " + dateFormat.format(referenceDate)));
-		time.addAttribute(new Attribute("axis", "T"));
-		mainVarDimensions.add(timeDim);
+		Variable time = null;
+		if (times != null) {
+			Dimension timeDim = nc.addUnlimitedDimension("time");
+			time = nc.addVariable("time", DataType.INT,
+					new Dimension[] { timeDim });
+			time.addAttribute(new Attribute("units", timeUnit.toString()
+					+ " since " + dateFormat.format(referenceDate)));
+			time.addAttribute(new Attribute("axis", "T"));
+			mainVarDimensions.add(timeDim);
+		}
 
 		// Position dimension
 		Dimension stationDimension = nc.addDimension("station",
@@ -174,18 +195,20 @@ public class Converter {
 			/*
 			 * Write time
 			 */
-			try {
-				nc.write(time.getName(),
-						get1Int(lat, times, new IntSampleGetter<Integer>() {
+			if (times != null) {
+				try {
+					nc.write(time.getName(),
+							get1Int(lat, times, new IntSampleGetter<Integer>() {
 
-							@Override
-							public int get(Integer t) {
-								return t;
-							}
-						}));
-			} catch (InvalidRangeException e) {
-				throw new RuntimeException("Bug. This should not "
-						+ "happen since time is unlimited", e);
+								@Override
+								public int get(Integer t) {
+									return t;
+								}
+							}));
+				} catch (InvalidRangeException e) {
+					throw new RuntimeException("Bug. This should not "
+							+ "happen since time is unlimited", e);
+				}
 			}
 
 			/*
@@ -259,6 +282,9 @@ public class Converter {
 			return magnitude * 1000 * 60 * 60;
 		} else if (unit == TimeUnit.DAYS) {
 			return magnitude * 1000 * 60 * 60 * 24;
+		} else if (unit == TimeUnit.COMMON_YEAR) {
+			return magnitude * 1000 * 60 * 60 * 24 * 365; // TODO I guess 365 is
+															// wrong
 		} else {
 			throw new RuntimeException("Bug");
 		}
