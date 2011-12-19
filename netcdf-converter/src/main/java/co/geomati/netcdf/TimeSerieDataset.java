@@ -5,6 +5,7 @@ import java.util.List;
 
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
+import ucar.nc2.Attribute;
 
 /**
  * A dataset containing a (main variable) depending on a time unlimited
@@ -45,4 +46,10 @@ public interface TimeSerieDataset extends Dataset {
 
 	Array getData();
 
+	/**
+	 * Get the _FillValue attribute or null if no _FillValue is used
+	 * 
+	 * @return
+	 */
+	Attribute getFillValueAttribute();
 }

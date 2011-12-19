@@ -30,7 +30,7 @@ public class ConvertCEAM {
 
 	public static void main(String[] args) throws FileNotFoundException,
 			IOException, ConverterException {
-		final String creatorURL = "http://www.ceam.es/~becario";
+		final String creatorURL = "http://www.ceam.es/";
 		// TODO there is e-mail in xls
 
 		// convertBADM(creatorURL);
@@ -95,7 +95,6 @@ public class ConvertCEAM {
 
 					double numericCellValue = row.getCell(firstVarColumn + i)
 							.getNumericCellValue();
-					System.out.println(numericCellValue);
 					values.add(numericCellValue);
 				}
 				variables.get(i).setValues(values);

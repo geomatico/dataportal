@@ -12,6 +12,7 @@ import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
+import ucar.nc2.Attribute;
 import co.geomati.netcdf.ConverterException;
 import co.geomati.netcdf.StationDataset;
 import co.geomati.netcdf.TimeUnit;
@@ -198,6 +199,11 @@ public class BADMDataset extends AbstractCEAMDataset implements StationDataset {
 
 			return a;
 		}
+	}
+
+	@Override
+	public Attribute getFillValueAttribute() {
+		return null;
 	}
 
 }

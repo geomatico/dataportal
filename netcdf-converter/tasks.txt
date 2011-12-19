@@ -1,7 +1,5 @@
 Create a program to migrate all CEAM Data
-	Date box seems wrong
 	Migrate temporal series
-		Take no-data into account
 		Take into account the level of the variable?
 
 Modify conversor to get ancillary variables and write them?

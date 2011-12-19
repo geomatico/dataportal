@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.joda.time.format.DateTimeFormatter;
@@ -32,6 +33,10 @@ public class Converter {
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss:S");
+
+	static {
+		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT0"));
+	}
 
 	public static void convert(DatasetConversion conversion) {
 		Report r = new Report();
@@ -152,6 +157,10 @@ public class Converter {
 		mainVar.addAttribute(new Attribute("standard_name", dataset
 				.getVariableStandardName()));
 		mainVar.addAttribute(new Attribute("units", dataset.getVariableUnits()));
+		Attribute fillValueAttribute = dataset.getFillValueAttribute();
+		if (fillValueAttribute != null) {
+			mainVar.addAttribute(fillValueAttribute);
+		}
 
 		try {
 			nc.create();
@@ -357,15 +366,15 @@ public class Converter {
 
 	private static long getMilliseconds(Integer magnitude, TimeUnit unit) {
 		if (unit == TimeUnit.SECOND) {
-			return magnitude * 1000;
+			return magnitude * 1000L;
 		} else if (unit == TimeUnit.MINUTE) {
-			return magnitude * 1000 * 60;
+			return magnitude * 1000L * 60;
 		} else if (unit == TimeUnit.HOUR) {
-			return magnitude * 1000 * 60 * 60;
+			return magnitude * 1000L * 60 * 60;
 		} else if (unit == TimeUnit.DAYS) {
-			return magnitude * 1000 * 60 * 60 * 24;
+			return magnitude * 1000L * 60 * 60 * 24;
 		} else if (unit == TimeUnit.COMMON_YEAR) {
-			return magnitude * 1000 * 60 * 60 * 24 * 365;
+			return magnitude * 1000L * 60 * 60 * 24 * 365;
 		} else {
 			throw new RuntimeException("Bug");
 		}

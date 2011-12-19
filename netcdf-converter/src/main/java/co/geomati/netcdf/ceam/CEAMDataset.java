@@ -8,6 +8,7 @@ import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
+import ucar.nc2.Attribute;
 import co.geomati.netcdf.TimeSerieDataset;
 import co.geomati.netcdf.TimeUnit;
 
@@ -77,4 +78,8 @@ public class CEAMDataset extends AbstractCEAMDataset implements
 		return a;
 	}
 
+	@Override
+	public Attribute getFillValueAttribute() {
+		return new Attribute("_FillValue", -9999);
+	}
 }
