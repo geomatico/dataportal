@@ -209,7 +209,8 @@ public class CEAMDataset implements StationDataset {
 			ArrayDouble a = new ArrayDouble.D1(stationSize);
 			Index ima = a.getIndex();
 			for (int j = 0; j < stationSize; j++) {
-				a.setDouble(ima.set(j), 30 + j);
+				Double value = (Double) variable.getValues().get(j);
+				a.setDouble(ima.set(j), value);
 			}
 
 			return a;
