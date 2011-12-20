@@ -12,7 +12,7 @@ public abstract class AbstractCEAMDataset implements Dataset {
 
 	@Override
 	public IcosDomain getIcosDomain() {
-		return IcosDomain.ECOSYSTEM;
+		return IcosDomain.ENVIRONMENT;
 	}
 
 	@Override
