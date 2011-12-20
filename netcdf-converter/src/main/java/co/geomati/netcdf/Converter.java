@@ -93,7 +93,7 @@ public class Converter {
 		 * Global metadata
 		 */
 		nc.addGlobalAttribute("id", UUID.randomUUID().toString());
-		nc.addGlobalAttribute("naming_authority", "es.icos.dataportal");
+		nc.addGlobalAttribute("naming_authority", "UUID");
 		nc.addGlobalAttribute("standard_name_vocabulary",
 				props.getProperty("vocabulary_url"));
 		nc.addGlobalAttribute("icos_domain", dataset.getIcosDomain().toString());
