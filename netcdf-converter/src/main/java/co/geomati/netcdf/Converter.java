@@ -225,10 +225,10 @@ public class Converter {
 		 * Add main variable
 		 */
 		ArrayList<Dimension> mainVarDimensions = new ArrayList<Dimension>();
-		mainVarDimensions.add(stationDimension);
 		if (time != null) {
 			mainVarDimensions.add(time.getDimension(0));
 		}
+		mainVarDimensions.add(stationDimension);
 		String variableName = dataset.getVariableName();
 		Variable mainVar = nc.addVariable(variableName,
 				dataset.getVariableType(),
