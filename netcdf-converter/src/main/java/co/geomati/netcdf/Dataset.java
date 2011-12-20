@@ -4,9 +4,7 @@ public interface Dataset {
 
 	IcosDomain getIcosDomain();
 
-	String getInstitution();
-
-	String getCreatorURL();
+	Institution getInstitution();
 
 	String getVariableName();
 

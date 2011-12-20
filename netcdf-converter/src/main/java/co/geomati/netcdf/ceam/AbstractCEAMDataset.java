@@ -2,13 +2,9 @@ package co.geomati.netcdf.ceam;
 
 import co.geomati.netcdf.Dataset;
 import co.geomati.netcdf.IcosDomain;
+import co.geomati.netcdf.Institution;
 
 public abstract class AbstractCEAMDataset implements Dataset {
-	private String creatorURL;
-
-	public AbstractCEAMDataset(String creatorURL) {
-		this.creatorURL = creatorURL;
-	}
 
 	@Override
 	public IcosDomain getIcosDomain() {
@@ -16,13 +12,8 @@ public abstract class AbstractCEAMDataset implements Dataset {
 	}
 
 	@Override
-	public String getInstitution() {
-		return "CEAM";
-	}
-
-	@Override
-	public String getCreatorURL() {
-		return creatorURL;
+	public Institution getInstitution() {
+		return Institution.CEAM;
 	}
 
 }

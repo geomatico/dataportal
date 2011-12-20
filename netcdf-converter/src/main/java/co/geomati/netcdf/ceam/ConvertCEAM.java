@@ -30,15 +30,13 @@ public class ConvertCEAM {
 
 	public static void main(String[] args) throws FileNotFoundException,
 			IOException, ConverterException {
-		final String creatorURL = "http://www.ceam.es/";
 		// TODO there is e-mail in xls
 
-		// convertBADM(creatorURL);
-		convertTemporalSeries(creatorURL);
+		convertBADM();
+		convertTemporalSeries();
 	}
 
-	private static void convertTemporalSeries(final String creatorURL)
-			throws IOException {
+	private static void convertTemporalSeries() throws IOException {
 		String[] files = new String[] { "ES-LMa_FLX_2010_01_12_newformat" };
 		for (final String fileName : files) {
 			Workbook wb = new HSSFWorkbook(new FileInputStream(
@@ -81,7 +79,8 @@ public class ConvertCEAM {
 				int seconds = (int) (date.getTime() / 1000);
 				if (hasTime) {
 					Date time = row.getCell(0).getDateCellValue();
-					// System.out.println(time);
+					throw new UnsupportedOperationException(
+							"sheet with 'time' not supported");
 				}
 				timestamps.add(seconds);
 			}
@@ -114,8 +113,7 @@ public class ConvertCEAM {
 
 				@Override
 				public Dataset getDataset(int index) throws ConverterException {
-					return new CEAMDataset(variables.get(index), timestamps,
-							creatorURL);
+					return new CEAMDataset(variables.get(index), timestamps);
 				}
 			});
 		}
@@ -149,8 +147,8 @@ public class ConvertCEAM {
 		return ceamVocabulary;
 	}
 
-	private static void convertBADM(final String creatorURL)
-			throws IOException, FileNotFoundException, ConverterException {
+	private static void convertBADM() throws IOException,
+			FileNotFoundException, ConverterException {
 		String[] files = new String[] { "BADM_ES-LMa_2005", "BADM_ES-LMa_2006",
 				"BADM_ES-LMa_2007", "BADM_ES-LMa_2008", "BADM_ES-LMa_2009",
 				"BADM_ES-LMa_2010" };
@@ -218,7 +216,7 @@ public class ConvertCEAM {
 				}
 			}
 			Converter.convert(new CEAMDatasetConversion(groups, position,
-					creatorURL, fileName));
+					fileName));
 		}
 	}
 
@@ -285,14 +283,12 @@ public class ConvertCEAM {
 			DatasetConversion {
 		private final ArrayList<VariableGroup> groups;
 		private final Point2D position;
-		private final String creatorURL;
 		private final String fileName;
 
 		private CEAMDatasetConversion(ArrayList<VariableGroup> groups,
-				Point2D position, String creatorURL, String fileName) {
+				Point2D position, String fileName) {
 			this.groups = groups;
 			this.position = position;
-			this.creatorURL = creatorURL;
 			this.fileName = fileName;
 		}
 
@@ -308,7 +304,7 @@ public class ConvertCEAM {
 
 		@Override
 		public Dataset getDataset(int index) throws ConverterException {
-			return new BADMDataset(groups.get(index), creatorURL, position);
+			return new BADMDataset(groups.get(index), position);
 		}
 	}
 }

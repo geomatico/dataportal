@@ -100,8 +100,8 @@ public class Converter {
 		nc.addGlobalAttribute("conventions", "CF-1.5");
 		nc.addGlobalAttribute("Metadata_Conventions",
 				"Unidata Dataset Discovery v1.0");
-		nc.addGlobalAttribute("institution", dataset.getInstitution());
-		nc.addGlobalAttribute("creator_url", dataset.getCreatorURL());
+		nc.addGlobalAttribute("institution", dataset.getInstitution().getName());
+		nc.addGlobalAttribute("creator_url", dataset.getInstitution().getUrl());
 
 		if (dataset instanceof StationDataset) {
 			addStation(nc, (StationDataset) dataset);

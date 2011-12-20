@@ -18,9 +18,7 @@ public class CEAMDataset extends AbstractCEAMDataset implements
 	private Variable variable;
 	private ArrayList<Integer> timestamps;
 
-	public CEAMDataset(Variable variable, ArrayList<Integer> seconds,
-			String creatorURL) {
-		super(creatorURL);
+	public CEAMDataset(Variable variable, ArrayList<Integer> seconds) {
 		this.variable = variable;
 		this.timestamps = seconds;
 	}

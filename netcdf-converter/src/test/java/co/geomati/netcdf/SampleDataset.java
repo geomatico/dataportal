@@ -15,10 +15,6 @@ import co.geomati.netcdf.ceam.AbstractCEAMDataset;
 public class SampleDataset extends AbstractCEAMDataset implements
 		StationDataset {
 
-	public SampleDataset() {
-		super("http://www.ceam.es");
-	}
-
 	@Override
 	public String getVariableName() {
 		return "temperature";

@@ -26,9 +26,8 @@ public class BADMDataset extends AbstractCEAMDataset implements StationDataset {
 	private Date referenceDate;
 	private List<Integer> timeStamps;
 
-	public BADMDataset(VariableGroup variableGroup, String creatorURL,
-			Point2D position) throws ConverterException {
-		super(creatorURL);
+	public BADMDataset(VariableGroup variableGroup, Point2D position)
+			throws ConverterException {
 		this.position = position;
 		this.variable = getMainVariable(variableGroup);
 		this.dataType = getDataType(this.variable);

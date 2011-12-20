@@ -10,6 +10,7 @@ import ucar.ma2.DataType;
 import ucar.ma2.Index;
 import ucar.nc2.Attribute;
 import co.geomati.netcdf.IcosDomain;
+import co.geomati.netcdf.Institution;
 import co.geomati.netcdf.StationDataset;
 import co.geomati.netcdf.TimeUnit;
 
@@ -84,13 +85,8 @@ public class AEMETDataset implements StationDataset {
 	}
 
 	@Override
-	public String getInstitution() {
-		return "AEMET";
-	}
-
-	@Override
-	public String getCreatorURL() {
-		return "http://www.aemet.es";
+	public Institution getInstitution() {
+		return Institution.AEMET;
 	}
 
 	@Override
