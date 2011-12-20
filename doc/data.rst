@@ -229,7 +229,7 @@ Convención datos
 ----------------
 
 Observaciones norma seguida por NetCDF de la UTM presentes en Thredds
-.......................................................................
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Los ficheros NetCDF existentes en la instancia de Thredds de cíclope especifican un atributo "conventions=Unidata Observation Dataset v1.0".
 
@@ -250,7 +250,7 @@ misma variable en medidas distintas. Por ejemplo dos instituciones distintas pue
 información de profundidad, una en metros y la otra en kilómetros.
 
 Descripción de la convención
-............................
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 Para cada variable se especificará el atributo "units". Por el momento se usará una cadena de carácter 
@@ -304,12 +304,12 @@ Las definiciones que más nos pueden interesar son las relativas a la organizaci
 A continuación se describe su versión 1.5.
 
 Descripción de los contenidos
-..............................
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Descripción de los contenidos del fichero. En particular "institution" permite describir la organización que produjo los datos
 
 Descripción de los datos
-........................
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Se requiere el atributo "units" para todas las variables dimensionales (creo que se refiere a aquellas que tienen unidad, las que no son porcentajes, ratios, etc.)
 
@@ -320,7 +320,7 @@ long_name es el nombre de la variable que se presenta a los usuarios
 standard_name define una manera de identificar unívocamente la magnitud que se está representando. Consta de una referencia a la tabla de standard names seguida opcionalmente de algunos modificadores.
 
 Descripción de las coordenadas
-...................................
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Las variables que representan latitud y longitud deben llevar siempre el atributo "units". Se recomienda:
 
@@ -331,7 +331,7 @@ Opcionalmente, para indicar que una variable representa datos de latitud o longi
 un attributo (standard_name="latitude" | standard_name="longitude") o un atributo (axis="Y" | axis="X")
 
 Descripción altura o profundidad
-..................................
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Las variables que representan altura o profundidad deben llevar siempre el atributo "units".
 
@@ -348,7 +348,7 @@ Opcionalmente, para indicar que una variable representa coordenadas verticales e
 En caso de coordenadas adimensionales, es posible, aunque desaconsejado, utilizar "level", "layer" o "sigma_level" como valor de "units". La forma recomendada por la convención CF es utilizar una serie de atributos que definen una fórmula que transforma un determinado valor de "level" a un valor dimensional. Estos atributos son "standard_name" para identificar la formula y "formula_terms" para especificar las entradas.
 
 Descripción variables de tiempo
-....................................
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Las variables que representan tiempo deben llevar siempre el atributo "units". Se especifica::
 
@@ -365,17 +365,17 @@ Una variable temporal puede ser identificada con las unidades sólo, pero tambi�
 .. _coordsys:
 
 Sistemas de coordenadas
-.............................
+^^^^^^^^^^^^^^^^^^^^^^^
 
 Las dimensiones de una variable espacio temporal son utilizadas para localizar los valores de la variable en el espacio y en el tiempo. Existen varias maneras de localizar dichos valores.
 
 Latitud, longitud, vertical y tiempo independiente
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+.......................................................
 
 Cada una de las dimensiones es identificada por una "coordinate variable" según se explica en el NetCDF User Guide.
 
 Series temporales de datos estacionarios
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+.......................................................
 
 La variable tiene, en lugar de dimensiones latitud y longitud, una dimensión que identifica la posición de la medida. Variables coordenada auxiliares dan la latitud y longitud para cada posición. En el siguiente ejemplo se puede ver como una de las dimensiones de "humidity" es "station" y que las variables lat y lon tienen como única dimensión "station". Es decir, existe un valor de lat/lon para cada valor de station::
 
@@ -401,7 +401,7 @@ La variable tiene, en lugar de dimensiones latitud y longitud, una dimensión qu
 	  pressure:units = "hPa" ;
 
 Trayectorias
-,,,,,,,,,,,,,
+.......................................................
 
 El mismo caso que el anterior pero la variable tiene una dimensión temporal y existen variables coordenada auxiliares que dan la latitud, longitud y coordenada vertical para cada valor de tiempo.
 En el siguiente ejemplo está la variable coordenada "time" que es la dimensión de todas las variables coordenada auxiliares: lat, lon y z::
