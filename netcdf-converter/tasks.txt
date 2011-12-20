@@ -1,8 +1,6 @@
 Tasks
 =====
 
-Only ask for the _FillValue attribute value
-
 Only deal with integer and double variables. Create interfaces for integer and double.
 
 

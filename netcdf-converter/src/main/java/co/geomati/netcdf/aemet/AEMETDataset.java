@@ -8,7 +8,6 @@ import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
-import ucar.nc2.Attribute;
 import co.geomati.netcdf.IcosDomain;
 import co.geomati.netcdf.Institution;
 import co.geomati.netcdf.StationDataset;
@@ -75,8 +74,8 @@ public class AEMETDataset implements StationDataset {
 	}
 
 	@Override
-	public Attribute getFillValueAttribute() {
-		return new Attribute("_FillValue", -9999);
+	public double getFillValue() {
+		return -9999;
 	}
 
 	@Override

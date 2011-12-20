@@ -157,9 +157,13 @@ public class Converter {
 		mainVar.addAttribute(new Attribute("standard_name", dataset
 				.getVariableStandardName()));
 		mainVar.addAttribute(new Attribute("units", dataset.getVariableUnits()));
-		Attribute fillValueAttribute = dataset.getFillValueAttribute();
-		if (fillValueAttribute != null) {
-			mainVar.addAttribute(fillValueAttribute);
+
+		double fillValue = dataset.getFillValue();
+		if (Double.isNaN(fillValue)) {
+			Attribute fillValueAttribute = new Attribute("", fillValue);
+			if (fillValueAttribute != null) {
+				mainVar.addAttribute(fillValueAttribute);
+			}
 		}
 
 		try {
