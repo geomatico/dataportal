@@ -15,4 +15,3 @@ Contents:
    install
    data
    search-service
-   conventions
