@@ -38,5 +38,10 @@ public interface DataportalCodes {
 	 * 
 	 */
 	static final String FAILECREATEDIRECTORY = "error.failed.create.directory";
+	
+	/**
+	 * 
+	 */
+	static final String DDINOTFOUND = "error.ddi.not.found";
 
 }
