@@ -1,0 +1,35 @@
+package co.geomati.netcdf;
+
+import co.geomati.netcdf.dataset.Dataset;
+
+/**
+ * A class representing a set of Dataset to be converted to NetCDF
+ * 
+ * @author fergonco
+ */
+public interface DatasetConversion {
+
+	/**
+	 * Number of datasets to convert to NetCDF
+	 * 
+	 * @return
+	 */
+	int getDatasetCount();
+
+	/**
+	 * Get the i-th dataset to convert
+	 * 
+	 * @param index
+	 * @return
+	 * @throws ConverterException
+	 */
+	Dataset getDataset(int index) throws ConverterException;
+
+	/**
+	 * Get the file name of the generated NetCDF for the specified Dataset
+	 * 
+	 * @param dataset
+	 * @return
+	 */
+	String getOutputFileName(Dataset dataset);
+}

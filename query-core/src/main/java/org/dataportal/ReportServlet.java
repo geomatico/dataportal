@@ -10,13 +10,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
+import org.dataportal.utils.DataPortalException;
+import org.dataportal.utils.ResponseWrapper;
 
 @SuppressWarnings({"rawtypes","unchecked"})
 public class ReportServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    // Prepare response headers & writers
+	    PrintWriter out = resp.getWriter();
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json");	    
 
 	    // Retrieve parameters
         Map<String, String[]> params = req.getParameterMap();
@@ -26,19 +31,17 @@ public class ReportServlet extends HttpServlet {
         
         // Parameter validation
         if (request != null && year > 0 && month >= 0 && month <= 12) {
-            // Get data
-            ReportController stats = new ReportController();
-            List data = stats.get(request, year, month);
-
-            // Serialize response as JSON
-            resp.setCharacterEncoding("UTF-8");
-            resp.setContentType("application/json");
-            PrintWriter out = resp.getWriter();
-            JSONArray.fromObject(data).write(out);
-            out.close();
+            try {
+                // Get data
+                List data = new ReportController().get(request, year, month);
+                // Wrap & serialize response as JSON
+                out.print(new ResponseWrapper(true, data).asJSON());
+            } catch (DataPortalException dpe) {
+                out.print(new ResponseWrapper(false, dpe.getMessage()).asJSON());
+            }
         } else {
-            PrintWriter out = resp.getWriter();
-            out.println("Parameter validation error: expected 'request', 'year' and, optionally, 'month'.");
+            String message = "Parameter error: expected 'request', 'year' and, optionally, 'month' as parameters.";
+            out.print(new ResponseWrapper(false, message).asJSON());
         }
 
 	}

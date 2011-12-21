@@ -1,125 +1,152 @@
 package co.geomati.netcdf.ceam;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.Properties;
+import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import co.geomati.netcdf.Converter;
 import co.geomati.netcdf.ConverterException;
+import co.geomati.netcdf.DatasetConversion;
+import co.geomati.netcdf.dataset.Dataset;
 
 public class ConvertCEAM {
-	private static final int WAITING_START = 1;
-	private static final int VARIABLE_VALUES = 2;
+	private static Properties ceamVocabulary;
 
 	public static void main(String[] args) throws FileNotFoundException,
-			IOException {
-		String creatorURL = "http://www.ceam.es/~becario";
+			IOException, ConverterException {
+		convertTemporalSeries();
+	}
 
-		Workbook wb = new HSSFWorkbook(new FileInputStream(
-				"../../data/ceam/BADM_ES-LMa_2006.xls"));
-		Sheet biodata = wb.getSheet("BioData");
-		Iterator<Row> rowIterator = biodata.rowIterator();
+	private static void convertTemporalSeries() throws IOException {
+		String[] files = new String[] { "ES-LMa_FLX_2010_01_12_newformat" };
+		for (final String fileName : files) {
+			Workbook wb = new HSSFWorkbook(new FileInputStream(
+					"../../data/ceam/" + fileName + ".xls"));
+			Sheet data = wb.getSheetAt(0);
+			Iterator<Row> rowIterator = data.rowIterator();
 
-		ArrayList<Variable> variableGroup = new ArrayList<Variable>();
-		int state = WAITING_START;
-		Variable currentVar;
-		while (rowIterator.hasNext()) {
-			Row row = rowIterator.next();
-			String firstCellValue = row.getCell(0).getStringCellValue();
-			switch (state) {
-			case WAITING_START:
-				if (firstCellValue.equals("Variable")) {
-					state = VARIABLE_VALUES;
-				}
-				break;
-			case VARIABLE_VALUES:
-				String longName = row.getCell(1).getStringCellValue();
-				String units;
-				Cell unitsCell = row.getCell(2);
-				if (unitsCell != null) {
-					units = unitsCell.getStringCellValue();
-				} else {
-					units = null;
-				}
-				currentVar = new Variable(firstCellValue, longName, units);
+			Row row = null;
+			final ArrayList<Variable> variables = new ArrayList<Variable>();
+			int firstVarColumn = -1;
+			boolean hasTime = false;
+			if (rowIterator.hasNext()) {
+				row = rowIterator.next();
 				Iterator<Cell> cellIterator = row.cellIterator();
-				for (int i = 0; i < 3 && cellIterator.hasNext(); i++) {
-					cellIterator.next();
-				}
-				if (cellIterator.hasNext()) {
-					ArrayList<Object> values = new ArrayList<Object>();
-					while (cellIterator.hasNext()) {
-						Cell cell = cellIterator.next();
-						Object cellValue = getCellValue(cell);
-						if (cellValue == null) {
-							continue;
+				int cellIndex = -1;
+				while (cellIterator.hasNext()) {
+					Cell cell = cellIterator.next();
+					cellIndex++;
+					String cellValue = cell.getStringCellValue();
+					if (cellValue.equals("date")) {
+						continue;
+					} else if (!cellValue.equals("time")) {
+						if (firstVarColumn == -1) {
+							firstVarColumn = cellIndex;
 						}
-						values.add(cellValue);
-					}
-					currentVar.setValues(values);
-				}
-
-				if (currentVar.getValueCount() > 0) {
-					if (variableGroup.isEmpty()) {
-						variableGroup.add(currentVar);
+						String varName = getVarName(cellValue);
+						Variable var = new Variable(varName,
+								getLongName(varName), getUnits(varName));
+						variables.add(var);
 					} else {
-						String varName = variableGroup.get(0).getName();
-						if (currentVar.getName().startsWith(varName + "_")) {
-							variableGroup.add(currentVar);
-						} else {
-							createNC(variableGroup, creatorURL);
-						}
+						hasTime = true;
 					}
 				}
-				break;
 			}
 
+			final ArrayList<Integer> timestamps = new ArrayList<Integer>();
+			while (rowIterator.hasNext()) {
+				row = rowIterator.next();
+				Date date = row.getCell(0).getDateCellValue();
+				int seconds = (int) (date.getTime() / 1000);
+				if (hasTime) {
+					String time = row.getCell(1).getStringCellValue();
+					try {
+						SimpleDateFormat timeFormat = new SimpleDateFormat(
+								"hh:mm");
+						timeFormat.setTimeZone(TimeZone.getTimeZone("GMT0"));
+						seconds += (int) (timeFormat.parse(time).getTime() / 1000);
+					} catch (ParseException e) {
+						throw new RuntimeException("Invalid time format", e);
+					}
+				}
+				timestamps.add(seconds);
+			}
+
+			for (int i = 0; i < variables.size(); i++) {
+				rowIterator = data.rowIterator();
+				rowIterator.next();
+				ArrayList<Object> values = new ArrayList<Object>();
+				while (rowIterator.hasNext()) {
+					row = rowIterator.next();
+
+					double numericCellValue = row.getCell(firstVarColumn + i)
+							.getNumericCellValue();
+					values.add(numericCellValue);
+				}
+				variables.get(i).setValues(values);
+			}
+
+			Converter.convert(new DatasetConversion() {
+
+				@Override
+				public String getOutputFileName(Dataset dataset) {
+					return fileName + "_"
+							+ dataset.getMainVariable().getStandardName();
+				}
+
+				@Override
+				public int getDatasetCount() {
+					return variables.size();
+				}
+
+				@Override
+				public Dataset getDataset(int index) throws ConverterException {
+					return new CEAMDataset(variables.get(index), timestamps);
+				}
+			});
 		}
 	}
 
-	private static void createNC(ArrayList<Variable> variableGroup,
-			String creatorURL) {
-		if (variableGroup.size() == 0) {
-			return;
-		}
-
-		CEAMDataset dataset = new CEAMDataset(variableGroup, creatorURL);
-		File tempFile = new File(System.getProperty("java.io.tmpdir") + "/"
-				+ dataset.getVariableName() + ".nc");
-		try {
-			Converter.convert(dataset, tempFile);
-		} catch (ConverterException e) {
-			System.err.println("Cannot convert");
-			e.printStackTrace();
+	private static String getVarName(String cellValue) {
+		Pattern p = Pattern.compile("(.*)_\\d_\\d_\\d");
+		Matcher matcher = p.matcher(cellValue);
+		if (matcher.find()) {
+			return matcher.group(1);
+		} else {
+			return cellValue;
 		}
 	}
 
-	private static Object getCellValue(Cell cell) {
-		switch (cell.getCellType()) {
-		case Cell.CELL_TYPE_BLANK:
-			return null;
-		case Cell.CELL_TYPE_STRING:
-			return cell.getRichStringCellValue().getString();
-		case Cell.CELL_TYPE_NUMERIC:
-			if (DateUtil.isCellDateFormatted(cell)) {
-				return cell.getDateCellValue();
-			} else {
-				return cell.getNumericCellValue();
-			}
-		case Cell.CELL_TYPE_BOOLEAN:
-			return cell.getBooleanCellValue();
-		default:
-			throw new RuntimeException();
+	private static String getUnits(String name) throws IOException {
+		return getCEAMVocabulary().getProperty(name + "_UNITS");
+	}
+
+	private static String getLongName(String name) throws IOException {
+		return getCEAMVocabulary().getProperty(name);
+	}
+
+	private static Properties getCEAMVocabulary() throws IOException {
+		if (ceamVocabulary == null) {
+			ceamVocabulary = new Properties();
+			ceamVocabulary.load(ConvertCEAM.class
+					.getResourceAsStream("variables.properties"));
 		}
+
+		return ceamVocabulary;
 	}
 }

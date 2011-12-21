@@ -3,6 +3,7 @@ package org.dataportal;
 import java.util.*;
 
 import org.dataportal.model.report.*;
+import org.dataportal.utils.DataPortalException;
 import org.dataportal.controllers.JPAGenericController;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -14,7 +15,7 @@ public class ReportController {
         this.database = new JPAGenericController("dataportal");
     }
     
-    public List get(String request, int year, int month) {
+    public List get(String request, int year, int month) throws DataPortalException {
         
         Map<String, Integer> requestParams = new HashMap();
         requestParams.put("year", year);
@@ -29,11 +30,11 @@ public class ReportController {
         } else if (request.equalsIgnoreCase("GetDownloadsByDate")) {
             return getDownloadsByDate(requestParams);
         } else {
-            return null; // TODO: Validation error handling
+            throw new DataPortalException(DataPortalException.INVALIDREQUEST);
         }
     }
     
-    private List getDownloadsByInstitution(Map params) {
+    private List getDownloadsByInstitution(Map params) throws DataPortalException {
         String jpql = "SELECT item.institution as institution, count(item.institution) as downloads FROM DownloadItem item JOIN item.downloadBean download WHERE year(download.timestamp) = :year";
         if (params.containsKey("month")) {
             jpql += " AND month(download.timestamp) = :month";
@@ -42,7 +43,7 @@ public class ReportController {
         return this.database.select(jpql, params, InstitutionDownloads.class);
     }
 
-    private List getDownloadsByDomain(Map params) {
+    private List getDownloadsByDomain(Map params) throws DataPortalException {
         String jpql = "SELECT item.icosDomain as domain, count(item.icosDomain) as downloads FROM DownloadItem item JOIN item.downloadBean download WHERE year(download.timestamp) = :year";
         if (params.containsKey("month")) {
             jpql += " AND month(download.timestamp) = :month";
@@ -51,7 +52,7 @@ public class ReportController {
         return this.database.select(jpql, params, DomainDownloads.class);
     }
     
-    private List getDownloadsByDate(Map params) {
+    private List getDownloadsByDate(Map params) throws DataPortalException {
         String jpql;
         if (params.containsKey("month")) {
             jpql  = " SELECT day(download.timestamp) as date, count(day(download.timestamp)) as downloads FROM Download download";

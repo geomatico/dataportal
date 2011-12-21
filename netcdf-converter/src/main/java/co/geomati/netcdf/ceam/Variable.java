@@ -6,7 +6,7 @@ class Variable {
 	private String name;
 	private String longName;
 	private String units;
-	private ArrayList<Object> values = new ArrayList<Object>();
+	private ArrayList<Object> values;
 
 	public Variable(String name, String longName, String units) {
 		super();
@@ -28,10 +28,6 @@ class Variable {
 		return ret;
 	}
 
-	public int getValueCount() {
-		return values.size();
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -46,5 +42,9 @@ class Variable {
 
 	public ArrayList<Object> getValues() {
 		return values;
+	}
+
+	public boolean isEmpty() {
+		return values != null && values.size() > 0;
 	}
 }

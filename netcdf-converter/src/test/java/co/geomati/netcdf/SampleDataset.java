@@ -5,46 +5,55 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import ucar.ma2.Array;
-import ucar.ma2.ArrayDouble;
-import ucar.ma2.DataType;
-import ucar.ma2.Index;
+import co.geomati.netcdf.dataset.Dataset;
+import co.geomati.netcdf.dataset.DatasetDoubleVariable;
+import co.geomati.netcdf.dataset.DatasetVariable;
+import co.geomati.netcdf.dataset.GeoreferencedStation;
+import co.geomati.netcdf.dataset.TimeSerie;
 
-public class SampleDataset implements StationDataset {
-
-	@Override
-	public IcosDomain getIcosDomain() {
-		return IcosDomain.ATMOSPHERE;
-	}
+public class SampleDataset implements Dataset, GeoreferencedStation, TimeSerie {
 
 	@Override
-	public String getInstitution() {
-		return "Centro Nacional de Atmosferas Unidas";
-	}
+	public DatasetVariable getMainVariable() {
+		return new DatasetDoubleVariable() {
 
-	@Override
-	public String getCreatorURL() {
-		return "http://www.cnau.es";
-	}
+			@Override
+			public String getUnits() {
+				return "grados";
+			}
 
-	@Override
-	public String getVariableName() {
-		return "temperature";
-	}
+			@Override
+			public String getStandardName() {
+				return "air_temperature";
+			}
 
-	@Override
-	public String getVariableLongName() {
-		return "Air temperature at see level";
-	}
+			@Override
+			public String getName() {
+				return "temperatura";
+			}
 
-	@Override
-	public String getVariableStandardName() {
-		return "air_temperature";
-	}
+			@Override
+			public String getLongName() {
+				return "Air temperature at see level";
+			}
 
-	@Override
-	public String getVariableUnits() {
-		return "grados jarrrrl";
+			@Override
+			public Number getFillValue() {
+				return -9999;
+			}
+
+			@Override
+			public List<Double> getData() {
+				ArrayList<Double> ret = new ArrayList<Double>();
+				for (int i = 0; i < getTimeStamps().size(); i++) {
+					for (int j = 0; j < getStationPositions().size(); j++) {
+						ret.add(30d + i);
+					}
+				}
+
+				return ret;
+			}
+		};
 	}
 
 	@Override
@@ -58,12 +67,22 @@ public class SampleDataset implements StationDataset {
 	}
 
 	@Override
-	public DataType getVariableType() {
-		return DataType.DOUBLE;
+	public IcosDomain getIcosDomain() {
+		return IcosDomain.OCEANS;
 	}
 
 	@Override
-	public List<Point2D> getPositions() {
+	public Institution getInstitution() {
+		return Institution.IC3;
+	}
+
+	@Override
+	public int getStationCount() {
+		return getStationPositions().size();
+	}
+
+	@Override
+	public List<Point2D> getStationPositions() {
 		ArrayList<Point2D> ret = new ArrayList<Point2D>();
 		ret.add(new Point2D.Double(10, 10));
 		ret.add(new Point2D.Double(20, 20));
@@ -83,18 +102,4 @@ public class SampleDataset implements StationDataset {
 		return ret;
 	}
 
-	@Override
-	public Array getStationData() {
-		int timeSize = getTimeStamps().size();
-		int stationSize = getPositions().size();
-		ArrayDouble a = new ArrayDouble.D2(timeSize, stationSize);
-		Index ima = a.getIndex();
-		for (int i = 0; i < timeSize; i++) {
-			for (int j = 0; j < stationSize; j++) {
-				a.setDouble(ima.set(i, j), 30 + i);
-			}
-		}
-
-		return a;
-	}
 }

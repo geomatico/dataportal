@@ -1,11 +1,16 @@
-Create implementation for CEAM data
+Tasks
+=====
 
-Create a program to migrate all CEAM Data
+Only deal with integer and double variables. Create interfaces for integer and double.
 
-Modify conversor to get ancillary variables and write them
 
-relate main var and ancillary
+Limitations
+===========
 
-Update documentation
+The CEAM converter does not take into account the n_n_n parameters in the variable name.
 
-Make conversor write stations with no lat/lon
+No converter takes into account ancillary variables. Only a main variable and "axis" variables are stored in the file.
+
+AEMET dataset only accepts N W latitude/longitude. If S or E is read, it fails.
+
+ 

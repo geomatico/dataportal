@@ -3,11 +3,13 @@
  */
 package org.dataportal.utils;
 
+import org.dataportal.DataportalCodes;
+
 /**
  * @author Micho Garcia
  *
  */
-public class DataPortalException extends Exception {
+public class DataPortalException extends Exception implements DataportalCodes {
 	
 	/**
 	 * 
