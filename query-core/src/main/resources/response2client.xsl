@@ -13,6 +13,15 @@
 			<xsl:apply-templates select="./gmd:MD_Metadata" />
 		</xsl:element>
 	</xsl:template>
+	
+	<xsl:template match="csw:GetRecordByIdResponse">
+        <xsl:element name="response">
+            <!-- <xsl:attribute name="totalcount"><xsl:value-of
+                select="@numberOfRecordsMatched" /></xsl:attribute> -->
+            <xsl:attribute name="success">true</xsl:attribute>
+            <xsl:apply-templates select="./gmd:MD_Metadata" />
+        </xsl:element>
+    </xsl:template>
 
 	<xsl:template match="gmd:MD_Metadata">
 	<xsl:element name="item">
