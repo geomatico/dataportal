@@ -70,55 +70,45 @@ public class GetRecordById {
 	}
 
 	/**
-	 * 
-	 * Constructor with elementSetName & outputFormat
-	 * 
-	 * @param ElementSetName
-	 * @param outputFormat
+	 * @return the namespacecontext
 	 */
-	public GetRecordById(String elementSetNameValue, String outputFormatValue) {
-		super();
-		String elementSName;
-		if (elementSetNameValue.equals(FULL))
-			elementSName = FULL;
-		else if (elementSetNameValue.equals(SUMMARY))
-			elementSName = SUMMARY;
-		else
-			elementSName = BRIEF;
-		elementSetName = elementSName;
-		if (!outputFormatValue.equals(""))
-			outputFormat = outputFormatValue;
-		else
-			outputFormat = OUTPUTFORMAT;
-		outputSchema = NAMESPACE_CSW;
+	public DataPortalNS getNamespacecontext() {
+		return namespacecontext;
 	}
 
 	/**
-	 * Constructor with elementSetName, outputFormat & outputSchemaValue
-	 * 
-	 * @param elementSetNameValue
-	 * @param outputFormatValue
-	 * @param outputSchemaValue
+	 * @param namespacecontext the namespacecontext to set
 	 */
-	public GetRecordById(String elementSetNameValue,
-			String outputFormatValue, String outputSchemaValue) {
-		super();
-		String elementSName;
-		if (elementSetNameValue.equals(FULL))
-			elementSName = FULL;
-		else if (elementSetNameValue.equals(SUMMARY))
-			elementSName = SUMMARY;
-		else
-			elementSName = BRIEF;
-		elementSetName = elementSName;
-		if (!outputFormatValue.equals(""))
-			outputFormat = outputFormatValue;
-		else
-			outputFormat = OUTPUTFORMAT;
-		if (!outputSchemaValue.equals(""))
-			outputSchema = outputSchemaValue;
-		else
-			outputSchema = NAMESPACE_CSW;
+	public void setNamespacecontext(DataPortalNS namespacecontext) {
+		this.namespacecontext = namespacecontext;
+	}
+
+	/**
+	 * @return the outputFormat
+	 */
+	public String getOutputFormat() {
+		return outputFormat;
+	}
+
+	/**
+	 * @param outputFormat the outputFormat to set
+	 */
+	public void setOutputFormat(String outputFormat) {
+		this.outputFormat = outputFormat;
+	}
+
+	/**
+	 * @return the outputSchema
+	 */
+	public String getOutputSchema() {
+		return outputSchema;
+	}
+
+	/**
+	 * @param outputSchema the outputSchema to set
+	 */
+	public void setOutputSchema(String outputSchema) {
+		this.outputSchema = outputSchema;
 	}
 
 	/**
