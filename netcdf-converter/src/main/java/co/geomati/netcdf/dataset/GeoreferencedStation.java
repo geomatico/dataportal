@@ -4,9 +4,10 @@ import java.awt.geom.Point2D;
 import java.util.List;
 
 /**
- * Datasets implementing this interface will be created as station data
- * following the CF convention. The main variable will depend on a station
- * dimension.
+ * Datasets implementing this interface will be created as time series of
+ * station data following the CF convention. The main variable will depend on a
+ * station dimension. Two lat/lon auxiliary coordinate variables will depend on
+ * them.
  * 
  * @author fergonco
  */

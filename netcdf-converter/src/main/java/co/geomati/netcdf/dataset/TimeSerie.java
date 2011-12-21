@@ -28,7 +28,8 @@ public interface TimeSerie {
 	Date getReferenceDate();
 
 	/**
-	 * Get the times containing the measures of the main variable.
+	 * Get the times containing the measures of the main variable. Times are
+	 * specified as a number of units since the reference date.
 	 * 
 	 * @return never null
 	 */
