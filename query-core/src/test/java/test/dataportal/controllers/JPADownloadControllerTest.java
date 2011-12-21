@@ -4,6 +4,7 @@
 package test.dataportal.controllers;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.UUID;
 
 import org.dataportal.controllers.JPADownloadController;
@@ -93,6 +94,18 @@ public class JPADownloadControllerTest extends TestCase {
 		Download insertada = controladorDescarga.exists(download);
 		assertNotSame(insertada, null);
 
+	}
+	
+	/**
+	 * Test method for
+	 * {@link org.dataportal.controllers.JPADownloadController#getDownloadItems(Download)}
+	 * .
+	 * @throws Exception
+	 */
+	public void testGetDownloadItems() throws Exception {
+		Download download = controladorDescarga.exists(new Download(IDDOWNLOADTEST));
+		ArrayList<DownloadItem> items = controladorDescarga.getDownloadItems(download);
+		assertEquals(3, items.size());
 	}
 
 	/**

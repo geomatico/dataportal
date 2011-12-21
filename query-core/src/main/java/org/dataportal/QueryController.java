@@ -19,13 +19,18 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.dataportal.controllers.JPADownloadController;
 import org.dataportal.csw.Catalog;
 import org.dataportal.csw.Filter;
+import org.dataportal.csw.GetRecordById;
 import org.dataportal.csw.GetRecords;
 import org.dataportal.csw.Operator;
 import org.dataportal.csw.Property;
 import org.dataportal.csw.SortBy;
+import org.dataportal.model.Download;
+import org.dataportal.model.DownloadItem;
 import org.dataportal.utils.BBox;
 import org.dataportal.utils.DataPortalException;
 import org.dataportal.utils.Utils;
@@ -46,7 +51,8 @@ public class QueryController extends DataPortalController {
 
 	/**
 	 * Constructor. Assign URL catalog server
-	 * @throws MalformedURLException 
+	 * 
+	 * @throws MalformedURLException
 	 */
 	public QueryController() throws MalformedURLException {
 		super();
@@ -58,21 +64,17 @@ public class QueryController extends DataPortalController {
 	 * 
 	 * @param parametros
 	 * @return
-	 * @throws IOException
-	 * @throws TransformerException
+	 * @throws Exception
 	 */
-	public String ask2gn(Map<String, String[]> parametros)
-			throws IOException, TransformerException {
+	public String ask2gn(Map<String, String[]> parametros) throws Exception {
 
 		InputStream isCswResponse = null;
 		String response = "";
 
 		// id
 		if (parametros.get("id") != null) {
-			String id = parametros.get("id")[FIRST];
-			// TODO: Return a previously downloaded dataset, or an error if
-			// ID
-			// does not exist
+			String ddi = parametros.get("id")[FIRST];
+			response = getItemsDDI(ddi);
 		} else {
 			String aCSWQuery = params2Query(parametros);
 
@@ -84,6 +86,35 @@ public class QueryController extends DataPortalController {
 		}
 
 		return response;
+	}
+
+	private String getItemsDDI(String ddi) throws Exception {
+
+		Download download = new Download(ddi);
+		downloadJPAController = new JPADownloadController();
+		ArrayList<DownloadItem> items = downloadJPAController
+				.getDownloadItems(download);
+		if (items.size() == 0) {
+			dtException = new DataPortalException("DDI not found or not items");
+			dtException.setCode(DDINOTFOUND);
+			throw dtException;
+		}
+		ArrayList<String> isItems = new ArrayList<String>();
+		for (DownloadItem item : items) {
+			isItems.add(item.getItemId());
+		}
+		GetRecordById getRecordById = new GetRecordById(GetRecordById.FULL);
+		getRecordById.setOutputSchema("csw:IsoRecord");
+		String cswQuery = getRecordById.createQuery(isItems);
+		InputStream catalogResponse = catalogo.sendCatalogRequest(cswQuery);
+
+		// TODO crear plantilla para respuesta GetRecordsById - modificar
+		// respuesta server
+		String strCatalogResponse = transform(catalogResponse);
+
+		logger.debug("GetRecordsById RESPONSE: " + strCatalogResponse);
+
+		return strCatalogResponse;
 	}
 
 	/**

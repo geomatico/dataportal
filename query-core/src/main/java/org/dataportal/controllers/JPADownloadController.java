@@ -46,7 +46,7 @@ public class JPADownloadController {
 	 * 
 	 * @param download
 	 * @return boolean with operations result
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public boolean insert(Download download) throws Exception {
 
@@ -63,10 +63,9 @@ public class JPADownloadController {
 			inserted = false;
 			throw e;
 		} finally {
-		    if (transaction.isActive())
-		    {
-		        transaction.rollback();
-		    }
+			if (transaction.isActive()) {
+				transaction.rollback();
+			}
 			if (manager != null)
 				manager.close();
 		}
@@ -82,9 +81,10 @@ public class JPADownloadController {
 	 * @param items
 	 *            DownloadItem ArrayList
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public boolean insertItems(Download download, ArrayList<DownloadItem> items) throws Exception {
+	public boolean insertItems(Download download, ArrayList<DownloadItem> items)
+			throws Exception {
 
 		boolean inserted = false;
 		EntityManager manager = getEntityManager();
@@ -104,10 +104,9 @@ public class JPADownloadController {
 			inserted = false;
 			throw e;
 		} finally {
-		    if (transaction.isActive())
-		    {
-		        transaction.rollback();
-		    }
+			if (transaction.isActive()) {
+				transaction.rollback();
+			}
 			if (manager != null)
 				manager.close();
 		}
@@ -120,7 +119,7 @@ public class JPADownloadController {
 	 * 
 	 * @param download
 	 * @return boolean with operations result
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public boolean delete(Download download) throws Exception {
 		boolean deleted = false;
@@ -130,10 +129,10 @@ public class JPADownloadController {
 			transaction.begin();
 			download = manager.find(Download.class, download.getId());
 			if (download != null) {
-	            for (DownloadItem item : download.getDownloadItems()) {
-	                manager.remove(item);
-	            }
-			    manager.remove(download);
+				for (DownloadItem item : download.getDownloadItems()) {
+					manager.remove(item);
+				}
+				manager.remove(download);
 			} // else?
 			transaction.commit();
 			deleted = true;
@@ -142,9 +141,9 @@ public class JPADownloadController {
 			deleted = false;
 			throw e;
 		} finally {
-		    if (transaction.isActive()) {
-		        transaction.rollback();
-		    }
+			if (transaction.isActive()) {
+				transaction.rollback();
+			}
 			if (manager != null) {
 				manager.close();
 			}
@@ -167,6 +166,35 @@ public class JPADownloadController {
 		manager.close();
 
 		return downloadInto;
+	}
+
+	public ArrayList<DownloadItem> getDownloadItems(Download download)
+			throws Exception {
+
+		EntityManager manager = getEntityManager();
+		EntityTransaction transaction = manager.getTransaction();
+		ArrayList<DownloadItem> items = new ArrayList<DownloadItem>();
+		try {
+			transaction.begin();
+			download = manager.find(Download.class, download.getId());
+			if (download != null) {
+				for (DownloadItem item : download.getDownloadItems()) {
+					items.add(item);
+				}
+			}
+			transaction.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if (transaction.isActive()) {
+				transaction.rollback();
+			}
+			if (manager != null) {
+				manager.close();
+			}
+		}
+		return items;
 	}
 
 }
