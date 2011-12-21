@@ -71,11 +71,7 @@ public class DownloadController extends DataPortalController {
 	private static final String ZIP = ".zip";
 
 	private String tempDir;
-
 	private String id = null;
-	private JPAUserController userJPAController = null;
-	private JPADownloadController downloadJPAController = null;
-	private DataPortalNS dataPortalCtx = new DataPortalNS();
 
 	/**
 	 * Constructor. Reads tempDir from properties file.
