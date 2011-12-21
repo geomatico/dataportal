@@ -9,6 +9,7 @@ import java.util.List;
  * specified in CF convention
  * 
  * @author fergonco
+ * @deprecated
  */
 public interface StationDataset extends TimeSerieDataset {
 

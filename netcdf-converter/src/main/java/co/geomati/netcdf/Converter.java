@@ -28,9 +28,20 @@ import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFileWriteable;
 import ucar.nc2.Variable;
+import co.geomati.netcdf.dataset.Dataset;
+import co.geomati.netcdf.dataset.DatasetDoubleVariable;
+import co.geomati.netcdf.dataset.DatasetIntVariable;
+import co.geomati.netcdf.dataset.GeoreferencedStation;
+import co.geomati.netcdf.dataset.Station;
+import co.geomati.netcdf.dataset.TimeSerie;
 
 public class Converter {
 
+	private static final ConverterException WRONG_VARIABLE_IMPLEMENTATION = new ConverterException(
+			"Variables must " + "implement IntVariable or DoubleVariable");
+	private static final String LON_VARIABLE_NAME = "lon";
+	private static final String LAT_VARIABLE_NAME = "lat";
+	private static final String TIME_VARIABLE_AND_DIMENSION_NAME = "time";
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss:S");
 
@@ -44,7 +55,7 @@ public class Converter {
 			try {
 				r.addRecord();
 				Dataset dataset = conversion.getDataset(i);
-				r.setDatasetName(dataset.getVariableStandardName());
+				r.setDatasetName(dataset.getMainVariable().getStandardName());
 				File tempFile = new File(System.getProperty("java.io.tmpdir")
 						+ "/" + conversion.getOutputFileName(dataset) + ".nc");
 				convert(dataset, tempFile);
@@ -103,20 +114,132 @@ public class Converter {
 		nc.addGlobalAttribute("institution", dataset.getInstitution().getName());
 		nc.addGlobalAttribute("creator_url", dataset.getInstitution().getUrl());
 
-		if (dataset instanceof StationDataset) {
-			addStation(nc, (StationDataset) dataset);
-		} else if (dataset instanceof TimeSerieDataset) {
-			addTimeSerie(nc, (TimeSerieDataset) dataset);
-		} else if (dataset instanceof TrajectoryDataset) {
+		/*
+		 * Add main variable
+		 */
+		ArrayList<Dimension> mainVarDimensions = new ArrayList<Dimension>();
+		if (dataset instanceof TimeSerie) {
+			writeTimeBox(nc, (TimeSerie) dataset);
+			// time dimension variable
+			Variable time = createTimeVariable(nc, (TimeSerie) dataset);
+			mainVarDimensions.add(time.getDimension(0));
+		}
+		if (dataset instanceof Station) {
 			nc.addGlobalAttribute("cdm_data_type",
-					CDMDataType.TRAJECTORY.toString());
-			addTrajectory(nc, (TrajectoryDataset) dataset);
-		} else if (dataset instanceof GridDataset) {
-			nc.addGlobalAttribute("cdm_data_type",
-					CDMDataType.TRAJECTORY.toString());
-			addGrid(nc, (GridDataset) dataset);
-		} else {
-			throw new ConverterException("Unsupported Dataset implementation");
+					CDMDataType.STATION.toString());
+			// Position dimension
+			Dimension stationDimension = nc.addDimension("station",
+					((Station) dataset).getStationCount());
+			mainVarDimensions.add(stationDimension);
+			if (dataset instanceof GeoreferencedStation) {
+				List<Point2D> stationPositions = ((GeoreferencedStation) dataset)
+						.getPositions();
+				Rectangle2D bbox = getBBox(stationPositions);
+				nc.addGlobalAttribute("geospatial_lat_min", bbox.getMinY());
+				nc.addGlobalAttribute("geospatial_lat_max", bbox.getMaxY());
+				nc.addGlobalAttribute("geospatial_lon_min", bbox.getMinX());
+				nc.addGlobalAttribute("geospatial_lon_max", bbox.getMaxX());
+
+				// Position variables
+				Variable lat = nc.addVariable(LAT_VARIABLE_NAME,
+						DataType.DOUBLE, new Dimension[] { stationDimension });
+				lat.addAttribute(new Attribute("axis", "Y"));
+				lat.addAttribute(new Attribute("standard_name", "latitude"));
+				lat.addAttribute(new Attribute("units", "degrees_north"));
+				Variable lon = nc.addVariable(LON_VARIABLE_NAME,
+						DataType.DOUBLE, new Dimension[] { stationDimension });
+				lon.addAttribute(new Attribute("axis", "X"));
+				lon.addAttribute(new Attribute("standard_name", "longitude"));
+				lon.addAttribute(new Attribute("units", "degrees_east"));
+			}
+		}
+		co.geomati.netcdf.dataset.DatasetVariable mainVariable = dataset
+				.getMainVariable();
+		String variableName = mainVariable.getName();
+		Variable mainVar = nc.addVariable(variableName,
+				getVariableType(mainVariable),
+				mainVarDimensions.toArray(new Dimension[0]));
+		mainVar.addAttribute(new Attribute("coordinates", LAT_VARIABLE_NAME
+				+ " " + LON_VARIABLE_NAME));
+		mainVar.addAttribute(new Attribute("long_name", mainVariable
+				.getLongName()));
+		mainVar.addAttribute(new Attribute("standard_name", mainVariable
+				.getStandardName()));
+		mainVar.addAttribute(new Attribute("units", mainVariable.getUnits()
+				.trim()));
+
+		Number fillValue = mainVariable.getFillValue();
+		if (fillValue != null) {
+			mainVar.addAttribute(new Attribute("_FillValue", fillValue));
+		}
+
+		try {
+			nc.create();
+
+			/*
+			 * Write time
+			 */
+			if (dataset instanceof TimeSerie) {
+				writeTimeValues(nc, ((TimeSerie) dataset).getTimeStamps(),
+						TIME_VARIABLE_AND_DIMENSION_NAME);
+			}
+
+			/*
+			 * write positions
+			 */
+			if (dataset instanceof GeoreferencedStation) {
+				List<Point2D> stationPositions = ((GeoreferencedStation) dataset)
+						.getPositions();
+				try {
+					nc.write(
+							LAT_VARIABLE_NAME,
+							get1Double(stationPositions,
+									new DoubleSampleGetter<Point2D>() {
+
+										@Override
+										public double get(Point2D t) {
+											return t.getY();
+										}
+									}));
+					nc.write(
+							LON_VARIABLE_NAME,
+							get1Double(stationPositions,
+									new DoubleSampleGetter<Point2D>() {
+
+										@Override
+										public double get(Point2D t) {
+											return t.getX();
+										}
+									}));
+				} catch (InvalidRangeException e) {
+					throw new ConverterException(
+							"The specified positions exceed "
+									+ "the number of stations", e);
+				}
+			}
+
+			/*
+			 * write main variable
+			 */
+			Array a;
+			if (mainVariable instanceof DatasetIntVariable) {
+				a = intToArray(((DatasetIntVariable) mainVariable).getData(),
+						getShape(dataset));
+			} else if (mainVariable instanceof DatasetDoubleVariable) {
+				a = doubleToArray(
+						((DatasetDoubleVariable) mainVariable).getData(),
+						getShape(dataset));
+			} else {
+				throw WRONG_VARIABLE_IMPLEMENTATION;
+			}
+			try {
+				nc.write(mainVar.getName(), a);
+			} catch (InvalidRangeException e) {
+				throw new ConverterException("Too many data on main variable",
+						e);
+			}
+		} catch (IOException e) {
+			throw new ConverterException("Cannot create netcdf file", e);
 		}
 
 		try {
@@ -126,228 +249,136 @@ public class Converter {
 		}
 	}
 
-	/**
-	 * Write a timeseries using a coordinate variable called "time" to store the
-	 * time
-	 * 
-	 * @param nc
-	 * @param dataset
-	 * @throws ConverterException
-	 */
-	private static void addTimeSerie(NetcdfFileWriteable nc,
-			TimeSerieDataset dataset) throws ConverterException {
-		writeTimeBox(nc, dataset);
-		// time dimension variable
-		Variable time = createTimeVariable(nc, dataset);
-		/*
-		 * TODO vertical coordinate
-		 */
-
-		/*
-		 * Add main variable
-		 */
-		ArrayList<Dimension> mainVarDimensions = new ArrayList<Dimension>();
-		mainVarDimensions.add(time.getDimension(0));
-		String variableName = dataset.getVariableName();
-		Variable mainVar = nc.addVariable(variableName,
-				dataset.getVariableType(),
-				mainVarDimensions.toArray(new Dimension[0]));
-		mainVar.addAttribute(new Attribute("long_name", dataset
-				.getVariableLongName()));
-		mainVar.addAttribute(new Attribute("standard_name", dataset
-				.getVariableStandardName()));
-		mainVar.addAttribute(new Attribute("units", dataset.getVariableUnits()));
-
-		double fillValue = dataset.getFillValue();
-		if (Double.isNaN(fillValue)) {
-			Attribute fillValueAttribute = new Attribute("", fillValue);
-			if (fillValueAttribute != null) {
-				mainVar.addAttribute(fillValueAttribute);
-			}
+	private static int[] getShape(Dataset dataset) {
+		ArrayList<Integer> shape = new ArrayList<Integer>();
+		if (dataset instanceof TimeSerie) {
+			shape.add(((TimeSerie) dataset).getTimeStamps().size());
+		}
+		if (dataset instanceof Station) {
+			shape.add(((Station) dataset).getStationCount());
 		}
 
-		try {
-			nc.create();
+		int[] ret = new int[shape.size()];
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = shape.get(i);
+		}
 
-			/*
-			 * Write time
-			 */
-			writeTimeValues(nc, dataset, time);
+		return ret;
+	}
 
-			/*
-			 * write main variable
-			 */
-			Array a = dataset.getData();
-			try {
-				nc.write(mainVar.getName(), a);
-			} catch (InvalidRangeException e) {
-				throw new ConverterException("Too many data on main variable",
-						e);
+	private static Array doubleToArray(List<Double> data, int[] shape) {
+		Array a = ArrayDouble.factory(DataType.DOUBLE, shape);
+		Index ima = a.getIndex();
+		IndexDecorator index = new IndexDecorator(ima, shape);
+		for (Double sample : data) {
+			a.setDouble(index.get(), sample);
+
+			index.inc();
+		}
+
+		return a;
+	}
+
+	private static class IndexDecorator {
+
+		private Index index;
+		private int[] indices;
+		private int[] shape;
+
+		public IndexDecorator(Index ima, int[] shape) {
+			this.index = ima;
+			this.indices = new int[shape.length];
+			this.shape = shape;
+		}
+
+		public Index get() {
+			return index.set(indices);
+		}
+
+		public void inc() {
+			int currentChangingIndex = indices.length - 1;
+			while (currentChangingIndex >= 0) {
+				indices[currentChangingIndex]++;
+				if (indices[currentChangingIndex] == shape[currentChangingIndex]) {
+					indices[currentChangingIndex] = 0;
+					currentChangingIndex--;
+				} else {
+					break;
+				}
 			}
 
-		} catch (IOException e) {
-			throw new ConverterException("Cannot create netcdf file", e);
 		}
 
 	}
 
-	private static void addStation(NetcdfFileWriteable nc,
-			StationDataset dataset) throws ConverterException {
-		writeTimeBox(nc, dataset);
+	private static Array intToArray(List<Integer> data, int[] shape) {
+		Array a = ArrayInt.factory(DataType.INT, shape);
+		Index ima = a.getIndex();
+		IndexDecorator index = new IndexDecorator(ima, shape);
+		for (Integer sample : data) {
+			a.setInt(index.get(), sample);
 
-		List<Point2D> stationPositions = dataset.getPositions();
-		Rectangle2D bbox = getBBox(stationPositions);
-		nc.addGlobalAttribute("geospatial_lat_min", bbox.getMinY());
-		nc.addGlobalAttribute("geospatial_lat_max", bbox.getMaxY());
-		nc.addGlobalAttribute("geospatial_lon_min", bbox.getMinX());
-		nc.addGlobalAttribute("geospatial_lon_max", bbox.getMaxX());
-		nc.addGlobalAttribute("cdm_data_type", CDMDataType.STATION.toString());
-
-		// time dimension variable
-		Variable time = createTimeVariable(nc, dataset);
-
-		// Position dimension
-		Dimension stationDimension = nc.addDimension("station",
-				stationPositions.size());
-		// Position variables
-		Variable lat = nc.addVariable("lat", DataType.DOUBLE,
-				new Dimension[] { stationDimension });
-		lat.addAttribute(new Attribute("axis", "Y"));
-		lat.addAttribute(new Attribute("standard_name", "latitude"));
-		lat.addAttribute(new Attribute("units", "degrees_north"));
-		Variable lon = nc.addVariable("lon", DataType.DOUBLE,
-				new Dimension[] { stationDimension });
-		lon.addAttribute(new Attribute("axis", "X"));
-		lon.addAttribute(new Attribute("standard_name", "longitude"));
-		lon.addAttribute(new Attribute("units", "degrees_east"));
-
-		/*
-		 * TODO vertical coordinate
-		 */
-
-		/*
-		 * Add main variable
-		 */
-		ArrayList<Dimension> mainVarDimensions = new ArrayList<Dimension>();
-		if (time != null) {
-			mainVarDimensions.add(time.getDimension(0));
+			index.inc();
 		}
-		mainVarDimensions.add(stationDimension);
-		String variableName = dataset.getVariableName();
-		Variable mainVar = nc.addVariable(variableName,
-				dataset.getVariableType(),
-				mainVarDimensions.toArray(new Dimension[0]));
-		mainVar.addAttribute(new Attribute("coordinates", "lat lon"));
-		mainVar.addAttribute(new Attribute("long_name", dataset
-				.getVariableLongName()));
-		mainVar.addAttribute(new Attribute("standard_name", dataset
-				.getVariableStandardName()));
-		mainVar.addAttribute(new Attribute("units", dataset.getVariableUnits()));
 
-		try {
-			nc.create();
+		return a;
+	}
 
-			/*
-			 * Write time
-			 */
-			writeTimeValues(nc, dataset, time);
-
-			/*
-			 * write positions
-			 */
-			try {
-				nc.write(
-						lat.getName(),
-						get1Double(stationPositions,
-								new DoubleSampleGetter<Point2D>() {
-
-									@Override
-									public double get(Point2D t) {
-										return t.getY();
-									}
-								}));
-				nc.write(
-						lon.getName(),
-						get1Double(stationPositions,
-								new DoubleSampleGetter<Point2D>() {
-
-									@Override
-									public double get(Point2D t) {
-										return t.getX();
-									}
-								}));
-			} catch (InvalidRangeException e) {
-				throw new ConverterException("The specified positions exceed "
-						+ "the number of stations", e);
-			}
-
-			/*
-			 * write main variable
-			 */
-			Array a = dataset.getData();
-			try {
-				nc.write(mainVar.getName(), a);
-			} catch (InvalidRangeException e) {
-				throw new ConverterException("Too many data on main variable",
-						e);
-			}
-		} catch (IOException e) {
-			throw new ConverterException("Cannot create netcdf file", e);
+	private static DataType getVariableType(
+			co.geomati.netcdf.dataset.DatasetVariable mainVariable)
+			throws ConverterException {
+		if (mainVariable instanceof DatasetIntVariable) {
+			return DataType.INT;
+		} else if (mainVariable instanceof DatasetDoubleVariable) {
+			return DataType.DOUBLE;
+		} else {
+			throw WRONG_VARIABLE_IMPLEMENTATION;
 		}
 	}
 
 	private static void writeTimeValues(NetcdfFileWriteable nc,
-			TimeSerieDataset dataset, Variable time) throws IOException {
-		if (time != null) {
-			try {
-				nc.write(
-						time.getName(),
-						get1Int(dataset.getTimeStamps(),
-								new IntSampleGetter<Integer>() {
+			List<Integer> timestamps, String timeVariableName)
+			throws IOException {
+		try {
+			nc.write(timeVariableName,
+					get1Int(timestamps, new IntSampleGetter<Integer>() {
 
-									@Override
-									public int get(Integer t) {
-										return t;
-									}
-								}));
-			} catch (InvalidRangeException e) {
-				throw new RuntimeException("Bug. This should not "
-						+ "happen since time is unlimited", e);
-			}
+						@Override
+						public int get(Integer t) {
+							return t;
+						}
+					}));
+		} catch (InvalidRangeException e) {
+			throw new RuntimeException("Bug. This should not "
+					+ "happen since time is unlimited", e);
 		}
 	}
 
 	private static Variable createTimeVariable(NetcdfFileWriteable nc,
-			TimeSerieDataset dataset) {
+			TimeSerie dataset) {
 		Variable time = null;
-		List<Integer> times = dataset.getTimeStamps();
 		Date referenceDate = dataset.getReferenceDate();
 		TimeUnit timeUnit = dataset.getTimeUnits();
-		if (times != null) {
-			Dimension timeDim = nc.addUnlimitedDimension("time");
-			time = nc.addVariable("time", DataType.INT,
-					new Dimension[] { timeDim });
-			time.addAttribute(new Attribute("units", timeUnit.toString()
-					+ " since " + dateFormat.format(referenceDate)));
-			time.addAttribute(new Attribute("axis", "T"));
-		}
+		Dimension timeDim = nc
+				.addUnlimitedDimension(TIME_VARIABLE_AND_DIMENSION_NAME);
+		time = nc.addVariable(TIME_VARIABLE_AND_DIMENSION_NAME, DataType.INT,
+				new Dimension[] { timeDim });
+		time.addAttribute(new Attribute("units", timeUnit.toString()
+				+ " since " + dateFormat.format(referenceDate)));
+		time.addAttribute(new Attribute("axis", "T"));
 
 		return time;
 	}
 
-	private static void writeTimeBox(NetcdfFileWriteable nc,
-			TimeSerieDataset dataset) {
+	private static void writeTimeBox(NetcdfFileWriteable nc, TimeSerie dataset) {
 		List<Integer> times = dataset.getTimeStamps();
 		Date referenceDate = dataset.getReferenceDate();
 		TimeUnit timeUnit = dataset.getTimeUnits();
-		if (times != null) {
-			long[] timeBox = getTimeBox(times, referenceDate, timeUnit);
-			DateTimeFormatter parser = ISODateTimeFormat.dateTime();
-			parser = parser.withZoneUTC();
-			nc.addGlobalAttribute("time_coverage_start",
-					parser.print(timeBox[0]));
-			nc.addGlobalAttribute("time_coverage_end", parser.print(timeBox[1]));
-		}
+		long[] timeBox = getTimeBox(times, referenceDate, timeUnit);
+		DateTimeFormatter parser = ISODateTimeFormat.dateTime();
+		parser = parser.withZoneUTC();
+		nc.addGlobalAttribute("time_coverage_start", parser.print(timeBox[0]));
+		nc.addGlobalAttribute("time_coverage_end", parser.print(timeBox[1]));
 	}
 
 	private static long[] getTimeBox(List<Integer> times, Date referenceDate,
@@ -409,14 +440,6 @@ public class Converter {
 		double width = maxX - minX;
 		double height = maxY - minY;
 		return new Rectangle2D.Double(minX, minY, width, height);
-	}
-
-	private static void addTrajectory(NetcdfFileWriteable nc, Dataset dataset) {
-		throw new UnsupportedOperationException();
-	}
-
-	private static void addGrid(NetcdfFileWriteable nc, Dataset dataset) {
-		throw new UnsupportedOperationException("Not implemented yet");
 	}
 
 	public static <T> ArrayDouble get1Double(List<T> list,

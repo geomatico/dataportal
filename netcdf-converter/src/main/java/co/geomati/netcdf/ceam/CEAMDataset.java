@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import ucar.ma2.Array;
-import ucar.ma2.ArrayDouble;
-import ucar.ma2.DataType;
-import ucar.ma2.Index;
-import co.geomati.netcdf.TimeSerieDataset;
+import co.geomati.netcdf.IcosDomain;
+import co.geomati.netcdf.Institution;
 import co.geomati.netcdf.TimeUnit;
+import co.geomati.netcdf.dataset.Dataset;
+import co.geomati.netcdf.dataset.DatasetDoubleVariable;
+import co.geomati.netcdf.dataset.Station;
+import co.geomati.netcdf.dataset.TimeSerie;
 
-public class CEAMDataset extends AbstractCEAMDataset implements
-		TimeSerieDataset {
+public class CEAMDataset implements Dataset, TimeSerie, Station {
 
 	private Variable variable;
 	private ArrayList<Integer> timestamps;
@@ -23,23 +23,54 @@ public class CEAMDataset extends AbstractCEAMDataset implements
 	}
 
 	@Override
-	public String getVariableName() {
-		return variable.getName();
+	public IcosDomain getIcosDomain() {
+		return IcosDomain.ENVIRONMENT;
 	}
 
 	@Override
-	public String getVariableLongName() {
-		return variable.getLongName();
+	public Institution getInstitution() {
+		return Institution.CEAM;
 	}
 
 	@Override
-	public String getVariableStandardName() {
-		return variable.getName();
-	}
+	public co.geomati.netcdf.dataset.DatasetVariable getMainVariable() {
+		return new DatasetDoubleVariable() {
 
-	@Override
-	public String getVariableUnits() {
-		return variable.getUnits();
+			@Override
+			public String getUnits() {
+				return variable.getUnits();
+			}
+
+			@Override
+			public String getStandardName() {
+				return variable.getName();
+			}
+
+			@Override
+			public String getName() {
+				return variable.getName();
+			}
+
+			@Override
+			public String getLongName() {
+				return variable.getLongName();
+			}
+
+			@Override
+			public Number getFillValue() {
+				return null;
+			}
+
+			@Override
+			public List<Double> getData() {
+				ArrayList<Object> values = variable.getValues();
+				ArrayList<Double> ret = new ArrayList<Double>();
+				for (Object sample : values) {
+					ret.add((Double) sample);
+				}
+				return ret;
+			}
+		};
 	}
 
 	@Override
@@ -53,30 +84,12 @@ public class CEAMDataset extends AbstractCEAMDataset implements
 	}
 
 	@Override
-	public DataType getVariableType() {
-		return DataType.DOUBLE;
-	}
-
-	@Override
 	public List<Integer> getTimeStamps() {
 		return timestamps;
 	}
 
 	@Override
-	public Array getData() {
-		int timeCount = getTimeStamps().size();
-		ArrayDouble a = new ArrayDouble.D1(timeCount);
-		Index ima = a.getIndex();
-		for (int j = 0; j < timeCount; j++) {
-			Double value = (Double) variable.getValues().get(j);
-			a.setDouble(ima.set(j), value);
-		}
-
-		return a;
-	}
-
-	@Override
-	public double getFillValue() {
-		return -9999;
+	public int getStationCount() {
+		return 1;
 	}
 }

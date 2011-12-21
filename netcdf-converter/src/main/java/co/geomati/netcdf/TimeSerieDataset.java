@@ -5,12 +5,14 @@ import java.util.List;
 
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
+import co.geomati.netcdf.dataset.Dataset;
 
 /**
  * A dataset containing a (main variable) depending on a time unlimited
  * coordinate variable
  * 
  * @author fergonco
+ * @deprecated
  */
 public interface TimeSerieDataset extends Dataset {
 

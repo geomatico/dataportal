@@ -21,9 +21,9 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import co.geomati.netcdf.Converter;
 import co.geomati.netcdf.ConverterException;
-import co.geomati.netcdf.Dataset;
 import co.geomati.netcdf.DatasetConversion;
 import co.geomati.netcdf.TimeUnit;
+import co.geomati.netcdf.dataset.Dataset;
 
 /**
  * <p>
@@ -42,8 +42,9 @@ public class ConvertAEMET {
 	private static Properties vocabulary;
 
 	public static void main(String[] args) throws ConverterException {
-		String[] files = new String[] { "izoco2hour_10_" };
-		String[] co2suffix = new String[] { "hourly" };
+		String[] files = new String[] { "izoco2hour_10_newformat",
+				"izoco2daily_night_newformat", "izoco2monthly_night_newformat" };
+		String[] co2suffix = new String[] { "hourly", "daily_night", "monthly" };
 		for (int i = 0; i < co2suffix.length; i++) {
 			final String fileName = files[i];
 			String suffix = co2suffix[i];
@@ -51,7 +52,7 @@ public class ConvertAEMET {
 			try {
 				BufferedInputStream is = new BufferedInputStream(
 						new FileInputStream(new File("../../data/aemet/"
-								+ fileName + "newformat.txt")));
+								+ fileName + ".txt")));
 				os = new ByteArrayOutputStream();
 				IOUtils.copy(is, os);
 				is.close();
@@ -147,7 +148,7 @@ public class ConvertAEMET {
 
 				@Override
 				public String getOutputFileName(Dataset dataset) {
-					return dataset.getVariableName();
+					return dataset.getMainVariable().getName();
 				}
 
 				@Override

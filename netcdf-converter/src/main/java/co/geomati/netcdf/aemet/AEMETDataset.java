@@ -4,16 +4,16 @@ import java.awt.geom.Point2D;
 import java.util.Date;
 import java.util.List;
 
-import ucar.ma2.Array;
-import ucar.ma2.ArrayDouble;
-import ucar.ma2.DataType;
-import ucar.ma2.Index;
 import co.geomati.netcdf.IcosDomain;
 import co.geomati.netcdf.Institution;
-import co.geomati.netcdf.StationDataset;
 import co.geomati.netcdf.TimeUnit;
+import co.geomati.netcdf.dataset.Dataset;
+import co.geomati.netcdf.dataset.DatasetDoubleVariable;
+import co.geomati.netcdf.dataset.DatasetVariable;
+import co.geomati.netcdf.dataset.GeoreferencedStation;
+import co.geomati.netcdf.dataset.TimeSerie;
 
-public class AEMETDataset implements StationDataset {
+public class AEMETDataset implements Dataset, GeoreferencedStation, TimeSerie {
 
 	private List<Point2D> stationPosition;
 	private String variableUnits;
@@ -49,33 +49,8 @@ public class AEMETDataset implements StationDataset {
 	}
 
 	@Override
-	public DataType getVariableType() {
-		return DataType.DOUBLE;
-	}
-
-	@Override
 	public List<Integer> getTimeStamps() {
 		return timeStamps;
-	}
-
-	@Override
-	public Array getData() {
-		int timeSize = getTimeStamps().size();
-		int stationSize = getPositions().size();
-		ArrayDouble a = new ArrayDouble.D2(timeSize, stationSize);
-		Index ima = a.getIndex();
-		for (int i = 0; i < timeSize; i++) {
-			for (int j = 0; j < stationSize; j++) {
-				a.setDouble(ima.set(i, j), values.get(j * stationSize + i));
-			}
-		}
-
-		return a;
-	}
-
-	@Override
-	public double getFillValue() {
-		return -9999;
 	}
 
 	@Override
@@ -89,23 +64,44 @@ public class AEMETDataset implements StationDataset {
 	}
 
 	@Override
-	public String getVariableName() {
-		return variableName;
+	public DatasetVariable getMainVariable() {
+		return new DatasetDoubleVariable() {
+
+			@Override
+			public String getUnits() {
+				return variableUnits;
+			}
+
+			@Override
+			public String getStandardName() {
+				return variableName;
+			}
+
+			@Override
+			public String getName() {
+				return variableName;
+			}
+
+			@Override
+			public String getLongName() {
+				return variableLongName;
+			}
+
+			@Override
+			public Number getFillValue() {
+				return -99999.99;
+			}
+
+			@Override
+			public List<Double> getData() {
+				return values;
+			}
+		};
 	}
 
 	@Override
-	public String getVariableLongName() {
-		return variableLongName;
-	}
-
-	@Override
-	public String getVariableStandardName() {
-		return variableName;
-	}
-
-	@Override
-	public String getVariableUnits() {
-		return variableUnits;
+	public int getStationCount() {
+		return 1;
 	}
 
 	@Override

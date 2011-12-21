@@ -5,33 +5,55 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import ucar.ma2.Array;
-import ucar.ma2.ArrayDouble;
-import ucar.ma2.DataType;
-import ucar.ma2.Index;
-import co.geomati.netcdf.ceam.AbstractCEAMDataset;
+import co.geomati.netcdf.dataset.Dataset;
+import co.geomati.netcdf.dataset.DatasetDoubleVariable;
+import co.geomati.netcdf.dataset.DatasetVariable;
+import co.geomati.netcdf.dataset.GeoreferencedStation;
+import co.geomati.netcdf.dataset.TimeSerie;
 
-public class SampleDataset extends AbstractCEAMDataset implements
-		StationDataset {
-
-	@Override
-	public String getVariableName() {
-		return "temperature";
-	}
+public class SampleDataset implements Dataset, GeoreferencedStation, TimeSerie {
 
 	@Override
-	public String getVariableLongName() {
-		return "Air temperature at see level";
-	}
+	public DatasetVariable getMainVariable() {
+		return new DatasetDoubleVariable() {
 
-	@Override
-	public String getVariableStandardName() {
-		return "air_temperature";
-	}
+			@Override
+			public String getUnits() {
+				return "grados";
+			}
 
-	@Override
-	public String getVariableUnits() {
-		return "grados jarrrrl";
+			@Override
+			public String getStandardName() {
+				return "air_temperature";
+			}
+
+			@Override
+			public String getName() {
+				return "temperatura";
+			}
+
+			@Override
+			public String getLongName() {
+				return "Air temperature at see level";
+			}
+
+			@Override
+			public Number getFillValue() {
+				return -9999;
+			}
+
+			@Override
+			public List<Double> getData() {
+				ArrayList<Double> ret = new ArrayList<Double>();
+				for (int i = 0; i < getTimeStamps().size(); i++) {
+					for (int j = 0; j < getPositions().size(); j++) {
+						ret.add(30d + i);
+					}
+				}
+
+				return ret;
+			}
+		};
 	}
 
 	@Override
@@ -45,8 +67,18 @@ public class SampleDataset extends AbstractCEAMDataset implements
 	}
 
 	@Override
-	public DataType getVariableType() {
-		return DataType.DOUBLE;
+	public IcosDomain getIcosDomain() {
+		return IcosDomain.OCEANS;
+	}
+
+	@Override
+	public Institution getInstitution() {
+		return Institution.IC3;
+	}
+
+	@Override
+	public int getStationCount() {
+		return getPositions().size();
 	}
 
 	@Override
@@ -68,26 +100,6 @@ public class SampleDataset extends AbstractCEAMDataset implements
 		ret.add(50);
 		ret.add(60);
 		return ret;
-	}
-
-	@Override
-	public Array getData() {
-		int timeSize = getTimeStamps().size();
-		int stationSize = getPositions().size();
-		ArrayDouble a = new ArrayDouble.D2(timeSize, stationSize);
-		Index ima = a.getIndex();
-		for (int i = 0; i < timeSize; i++) {
-			for (int j = 0; j < stationSize; j++) {
-				a.setDouble(ima.set(i, j), 30 + i);
-			}
-		}
-
-		return a;
-	}
-
-	@Override
-	public double getFillValue() {
-		return Double.NaN;
 	}
 
 }
