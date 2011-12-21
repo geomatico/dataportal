@@ -24,7 +24,7 @@ public class BADMTimeSerieStationDataset extends BADMTimeSerieDataset implements
 	}
 
 	@Override
-	public List<Point2D> getPositions() {
+	public List<Point2D> getStationPositions() {
 		return Collections.singletonList(position);
 	}
 

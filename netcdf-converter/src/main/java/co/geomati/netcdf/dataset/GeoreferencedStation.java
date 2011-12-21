@@ -21,6 +21,6 @@ public interface GeoreferencedStation extends Station {
 	 * 
 	 * @return
 	 */
-	List<Point2D> getPositions();
+	List<Point2D> getStationPositions();
 
 }

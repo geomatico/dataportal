@@ -2,16 +2,12 @@ package co.geomati.netcdf;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -34,11 +30,15 @@ import co.geomati.netcdf.dataset.DatasetIntVariable;
 import co.geomati.netcdf.dataset.GeoreferencedStation;
 import co.geomati.netcdf.dataset.Station;
 import co.geomati.netcdf.dataset.TimeSerie;
+import co.geomati.netcdf.dataset.Trajectory;
 
 public class Converter {
 
+	private static final String VOCABULARY_URL = "http://ciclope.cmima.csic.es:8080/dataportal/xml/vocabulario.xml";
 	private static final ConverterException WRONG_VARIABLE_IMPLEMENTATION = new ConverterException(
-			"Variables must " + "implement IntVariable or DoubleVariable");
+			"Variables must " + "implement "
+					+ DatasetIntVariable.class.getName() + " or "
+					+ DatasetDoubleVariable.class.getName());
 	private static final String LON_VARIABLE_NAME = "lon";
 	private static final String LAT_VARIABLE_NAME = "lat";
 	private static final String TIME_VARIABLE_AND_DIMENSION_NAME = "time";
@@ -70,29 +70,6 @@ public class Converter {
 	}
 
 	static void convert(Dataset dataset, File file) throws ConverterException {
-
-		Properties props = new Properties();
-		BufferedInputStream is;
-		try {
-			is = new BufferedInputStream(new FileInputStream(new File(
-					"conversion.properties")));
-		} catch (FileNotFoundException e) {
-			throw new ConverterException("Cannot find 'conversion.properties'",
-					e);
-		}
-
-		try {
-			props.load(is);
-		} catch (IOException e) {
-			throw new ConverterException("Error reading properties", e);
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				// ignore
-			}
-		}
-
 		NetcdfFileWriteable nc;
 		try {
 			nc = NetcdfFileWriteable.createNew(file.getAbsolutePath(), false);
@@ -105,8 +82,7 @@ public class Converter {
 		 */
 		nc.addGlobalAttribute("id", UUID.randomUUID().toString());
 		nc.addGlobalAttribute("naming_authority", "UUID");
-		nc.addGlobalAttribute("standard_name_vocabulary",
-				props.getProperty("vocabulary_url"));
+		nc.addGlobalAttribute("standard_name_vocabulary", VOCABULARY_URL);
 		nc.addGlobalAttribute("icos_domain", dataset.getIcosDomain().toString());
 		nc.addGlobalAttribute("conventions", "CF-1.5");
 		nc.addGlobalAttribute("Metadata_Conventions",
@@ -118,13 +94,33 @@ public class Converter {
 		 * Add main variable
 		 */
 		ArrayList<Dimension> mainVarDimensions = new ArrayList<Dimension>();
+		Dimension timeDimension = null;
 		if (dataset instanceof TimeSerie) {
 			writeTimeBox(nc, (TimeSerie) dataset);
 			// time dimension variable
 			Variable time = createTimeVariable(nc, (TimeSerie) dataset);
-			mainVarDimensions.add(time.getDimension(0));
+			timeDimension = time.getDimension(0);
+			mainVarDimensions.add(timeDimension);
 		}
-		if (dataset instanceof Station) {
+		if (dataset instanceof Trajectory) {
+			nc.addGlobalAttribute("cdm_data_type",
+					CDMDataType.TRAJECTORY.toString());
+			List<Point2D> trajectoryPoints = ((Trajectory) dataset)
+					.getTrajectoryPoints();
+			writeBBoxGlobalAttributes(nc, trajectoryPoints);
+
+			// Position variables
+			Variable lat = nc.addVariable(LAT_VARIABLE_NAME, DataType.DOUBLE,
+					new Dimension[] { timeDimension });
+			lat.addAttribute(new Attribute("axis", "Y"));
+			lat.addAttribute(new Attribute("standard_name", "latitude"));
+			lat.addAttribute(new Attribute("units", "degrees_north"));
+			Variable lon = nc.addVariable(LON_VARIABLE_NAME, DataType.DOUBLE,
+					new Dimension[] { timeDimension });
+			lon.addAttribute(new Attribute("axis", "X"));
+			lon.addAttribute(new Attribute("standard_name", "longitude"));
+			lon.addAttribute(new Attribute("units", "degrees_east"));
+		} else if (dataset instanceof Station) {
 			nc.addGlobalAttribute("cdm_data_type",
 					CDMDataType.STATION.toString());
 			// Position dimension
@@ -133,12 +129,8 @@ public class Converter {
 			mainVarDimensions.add(stationDimension);
 			if (dataset instanceof GeoreferencedStation) {
 				List<Point2D> stationPositions = ((GeoreferencedStation) dataset)
-						.getPositions();
-				Rectangle2D bbox = getBBox(stationPositions);
-				nc.addGlobalAttribute("geospatial_lat_min", bbox.getMinY());
-				nc.addGlobalAttribute("geospatial_lat_max", bbox.getMaxY());
-				nc.addGlobalAttribute("geospatial_lon_min", bbox.getMinX());
-				nc.addGlobalAttribute("geospatial_lon_max", bbox.getMaxX());
+						.getStationPositions();
+				writeBBoxGlobalAttributes(nc, stationPositions);
 
 				// Position variables
 				Variable lat = nc.addVariable(LAT_VARIABLE_NAME,
@@ -176,6 +168,15 @@ public class Converter {
 		try {
 			nc.create();
 
+			int requiredSize = 1;
+			if (dataset instanceof TimeSerie) {
+				List<Integer> timeStamps = ((TimeSerie) dataset)
+						.getTimeStamps();
+				requiredSize = timeStamps.size();
+			}
+			if (dataset instanceof Station) {
+				requiredSize *= ((Station) dataset).getStationCount();
+			}
 			/*
 			 * Write time
 			 */
@@ -187,30 +188,18 @@ public class Converter {
 			/*
 			 * write positions
 			 */
+			List<Point2D> points = null;
 			if (dataset instanceof GeoreferencedStation) {
-				List<Point2D> stationPositions = ((GeoreferencedStation) dataset)
-						.getPositions();
+				points = ((GeoreferencedStation) dataset).getStationPositions();
+			} else if (dataset instanceof Trajectory) {
+				points = ((Trajectory) dataset).getTrajectoryPoints();
+			}
+			if (points != null) {
 				try {
-					nc.write(
-							LAT_VARIABLE_NAME,
-							get1Double(stationPositions,
-									new DoubleSampleGetter<Point2D>() {
-
-										@Override
-										public double get(Point2D t) {
-											return t.getY();
-										}
-									}));
-					nc.write(
-							LON_VARIABLE_NAME,
-							get1Double(stationPositions,
-									new DoubleSampleGetter<Point2D>() {
-
-										@Override
-										public double get(Point2D t) {
-											return t.getX();
-										}
-									}));
+					nc.write(LAT_VARIABLE_NAME,
+							get1Double(points, new YGetter()));
+					nc.write(LON_VARIABLE_NAME,
+							get1Double(points, new XGetter()));
 				} catch (InvalidRangeException e) {
 					throw new ConverterException(
 							"The specified positions exceed "
@@ -223,12 +212,15 @@ public class Converter {
 			 */
 			Array a;
 			if (mainVariable instanceof DatasetIntVariable) {
-				a = intToArray(((DatasetIntVariable) mainVariable).getData(),
-						getShape(dataset));
+				List<Integer> data = ((DatasetIntVariable) mainVariable)
+						.getData();
+				checkSize(requiredSize, data);
+				a = intToArray(data, getShape(dataset));
 			} else if (mainVariable instanceof DatasetDoubleVariable) {
-				a = doubleToArray(
-						((DatasetDoubleVariable) mainVariable).getData(),
-						getShape(dataset));
+				List<Double> data = ((DatasetDoubleVariable) mainVariable)
+						.getData();
+				checkSize(requiredSize, data);
+				a = doubleToArray(data, getShape(dataset));
 			} else {
 				throw WRONG_VARIABLE_IMPLEMENTATION;
 			}
@@ -247,6 +239,23 @@ public class Converter {
 		} catch (IOException e) {
 			throw new ConverterException("Cannot close created nc file", e);
 		}
+	}
+
+	private static void checkSize(int requiredSize, List<?> data)
+			throws ConverterException {
+		if (data.size() != requiredSize) {
+			throw new ConverterException("Wrong number of "
+					+ "main variable samples. " + requiredSize + " expected");
+		}
+	}
+
+	private static void writeBBoxGlobalAttributes(NetcdfFileWriteable nc,
+			List<Point2D> stationPositions) {
+		Rectangle2D bbox = getBBox(stationPositions);
+		nc.addGlobalAttribute("geospatial_lat_min", bbox.getMinY());
+		nc.addGlobalAttribute("geospatial_lat_max", bbox.getMaxY());
+		nc.addGlobalAttribute("geospatial_lon_min", bbox.getMinX());
+		nc.addGlobalAttribute("geospatial_lon_max", bbox.getMaxX());
 	}
 
 	private static int[] getShape(Dataset dataset) {
@@ -279,6 +288,33 @@ public class Converter {
 		return a;
 	}
 
+	private static Array intToArray(List<Integer> data, int[] shape) {
+		Array a = ArrayInt.factory(DataType.INT, shape);
+		Index ima = a.getIndex();
+		IndexDecorator index = new IndexDecorator(ima, shape);
+		for (Integer sample : data) {
+			a.setInt(index.get(), sample);
+
+			index.inc();
+		}
+
+		return a;
+	}
+
+	private static final class XGetter implements DoubleSampleGetter<Point2D> {
+		@Override
+		public double get(Point2D t) {
+			return t.getX();
+		}
+	}
+
+	private static final class YGetter implements DoubleSampleGetter<Point2D> {
+		@Override
+		public double get(Point2D t) {
+			return t.getY();
+		}
+	}
+
 	private static class IndexDecorator {
 
 		private Index index;
@@ -309,19 +345,6 @@ public class Converter {
 
 		}
 
-	}
-
-	private static Array intToArray(List<Integer> data, int[] shape) {
-		Array a = ArrayInt.factory(DataType.INT, shape);
-		Index ima = a.getIndex();
-		IndexDecorator index = new IndexDecorator(ima, shape);
-		for (Integer sample : data) {
-			a.setInt(index.get(), sample);
-
-			index.inc();
-		}
-
-		return a;
 	}
 
 	private static DataType getVariableType(

@@ -46,7 +46,7 @@ public class SampleDataset implements Dataset, GeoreferencedStation, TimeSerie {
 			public List<Double> getData() {
 				ArrayList<Double> ret = new ArrayList<Double>();
 				for (int i = 0; i < getTimeStamps().size(); i++) {
-					for (int j = 0; j < getPositions().size(); j++) {
+					for (int j = 0; j < getStationPositions().size(); j++) {
 						ret.add(30d + i);
 					}
 				}
@@ -78,11 +78,11 @@ public class SampleDataset implements Dataset, GeoreferencedStation, TimeSerie {
 
 	@Override
 	public int getStationCount() {
-		return getPositions().size();
+		return getStationPositions().size();
 	}
 
 	@Override
-	public List<Point2D> getPositions() {
+	public List<Point2D> getStationPositions() {
 		ArrayList<Point2D> ret = new ArrayList<Point2D>();
 		ret.add(new Point2D.Double(10, 10));
 		ret.add(new Point2D.Double(20, 20));

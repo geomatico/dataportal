@@ -105,7 +105,7 @@ public class AEMETDataset implements Dataset, GeoreferencedStation, TimeSerie {
 	}
 
 	@Override
-	public List<Point2D> getPositions() {
+	public List<Point2D> getStationPositions() {
 		return stationPosition;
 	}
 
