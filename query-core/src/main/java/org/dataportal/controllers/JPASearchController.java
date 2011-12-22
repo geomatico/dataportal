@@ -40,20 +40,21 @@ public class JPASearchController {
 	 * 
 	 * @param search
 	 * @return boolean with operations result
+	 * @throws Exception 
 	 */
-	public boolean insert(Search search) {
+	public Integer insert(Search search) throws Exception {
 
-		boolean inserted = false;
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
 		try {
 			transaction.begin();
 			manager.persist(search);
 			transaction.commit();
-			inserted = true;
+			Integer id = search.getId();
+			return id;
 		} catch (Exception e) {
 			e.printStackTrace();
-			inserted = false;
+			throw e;
 		} finally {
 		    if (transaction.isActive())
 		    {
@@ -62,6 +63,29 @@ public class JPASearchController {
 			if (manager != null)
 				manager.close();
 		}
-		return inserted;
+	}
+	
+	public void delete(Search search) throws Exception {
+		
+		EntityManager manager = getEntityManager();
+		EntityTransaction transaction = manager.getTransaction();
+		try {
+			transaction.begin();
+			Search searchInto = manager.find(Search.class, search.getId());
+			if (searchInto != null) {
+				manager.remove(searchInto);
+				transaction.commit();
+			} else {
+				transaction.rollback();
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (transaction.isActive()) {
+				transaction.rollback();
+			}
+			if (manager != null)
+				manager.close();
+		}
 	}
 }

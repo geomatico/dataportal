@@ -48,8 +48,9 @@ public class JPAUserController {
 	/**
 	 * @param user
 	 * @return
+	 * @throws Exception
 	 */
-	public boolean insert(User user) {
+	public boolean insert(User user) throws Exception {
 
 		boolean inserted = false;
 		EntityManager manager = getEntityManager();
@@ -60,13 +61,11 @@ public class JPAUserController {
 			transaction.commit();
 			inserted = true;
 		} catch (Exception e) {
-			e.printStackTrace();
-			inserted = false;
+			throw e;
 		} finally {
-		    if (transaction.isActive())
-		    {
-		        transaction.rollback();
-		    }
+			if (transaction.isActive()) {
+				transaction.rollback();
+			}
 			if (manager != null)
 				manager.close();
 		}
@@ -87,7 +86,7 @@ public class JPAUserController {
 		return userInto;
 	}
 
-	public String save(User user) {
+	public String save(User user) throws Exception {
 		String now = Long.toString(new Date().getTime());
 		String hash = hex_md5(user.getId() + now);
 		user.setState(NOT_CONFIRMED);
@@ -100,23 +99,20 @@ public class JPAUserController {
 			return hash;
 	}
 
-	private String hex_md5(String stringToHash) {
+	private String hex_md5(String stringToHash) throws NoSuchAlgorithmException {
 		MessageDigest md;
-		try {
-			md = MessageDigest.getInstance("MD5");
-			byte[] bytes = md.digest(stringToHash.getBytes());
-			StringBuilder sb = new StringBuilder(2 * bytes.length);
-			for (int i = 0; i < bytes.length; i++) {
-				int low = (int) (bytes[i] & 0x0f);
-				int high = (int) ((bytes[i] & 0xf0) >> 4);
-				sb.append(HEX[high]);
-				sb.append(HEX[low]);
-			}
-			return sb.toString();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-			return null;
+
+		md = MessageDigest.getInstance("MD5");
+		byte[] bytes = md.digest(stringToHash.getBytes());
+		StringBuilder sb = new StringBuilder(2 * bytes.length);
+		for (int i = 0; i < bytes.length; i++) {
+			int low = (int) (bytes[i] & 0x0f);
+			int high = (int) ((bytes[i] & 0xf0) >> 4);
+			sb.append(HEX[high]);
+			sb.append(HEX[low]);
 		}
+		return sb.toString();
+
 	}
 
 	private String randomString(int length) {
@@ -128,7 +124,7 @@ public class JPAUserController {
 		return sb.toString();
 	}
 
-	public String setHash(User user) {
+	public String setHash(User user) throws Exception {
 		String now = Long.toString(new Date().getTime());
 		String hash = hex_md5(user.getId() + now);
 		EntityManager manager = getEntityManager();
@@ -141,13 +137,11 @@ public class JPAUserController {
 			transaction.commit();
 			return hash;
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			throw e;
 		} finally {
-		    if (transaction.isActive())
-		    {
-		        transaction.rollback();
-		    }
+			if (transaction.isActive()) {
+				transaction.rollback();
+			}
 			if (manager != null)
 				manager.close();
 		}
@@ -178,7 +172,7 @@ public class JPAUserController {
 			return null;
 	}
 
-	public String newPass(User user) {
+	public String newPass(User user) throws Exception {
 		String password = randomString(6);
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
@@ -194,12 +188,11 @@ public class JPAUserController {
 			}
 			return password;
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			throw e;
 		} finally {
-		    if (transaction.isActive()) {
-		        transaction.rollback();
-		    }
+			if (transaction.isActive()) {
+				transaction.rollback();
+			}
 			if (manager != null) {
 				manager.close();
 			}
@@ -214,7 +207,7 @@ public class JPAUserController {
 			return false;
 	}
 
-	public String activate(String hash) {
+	public String activate(String hash) throws Exception {
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
 		User userInto = getUserByHash(manager, hash);
@@ -229,13 +222,11 @@ public class JPAUserController {
 			}
 			return userInto.getId();
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			throw e;
 		} finally {
-		    if (transaction.isActive())
-		    {
-		        transaction.rollback();
-		    }
+			if (transaction.isActive()) {
+				transaction.rollback();
+			}
 			if (manager != null)
 				manager.close();
 		}
@@ -259,7 +250,7 @@ public class JPAUserController {
 			return NONEXISTENT;
 	}
 
-	public boolean changePass(User user, String newPassword) {
+	public boolean changePass(User user, String newPassword) throws Exception {
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
 		User userInto = getUserByIdAndPassword(manager, user.getId(),
@@ -274,19 +265,17 @@ public class JPAUserController {
 			}
 			return true;
 		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
+			throw e;
 		} finally {
-		    if (transaction.isActive())
-		    {
-		        transaction.rollback();
-		    }
+			if (transaction.isActive()) {
+				transaction.rollback();
+			}
 			if (manager != null)
 				manager.close();
 		}
 	}
 
-	public void changeState(User user) {
+	public void changeState(User user) throws Exception {
 		User userInto = existsInto(user);
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
@@ -297,18 +286,17 @@ public class JPAUserController {
 				transaction.commit();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
-		    if (transaction.isActive())
-		    {
-		        transaction.rollback();
-		    }
+			if (transaction.isActive()) {
+				transaction.rollback();
+			}
 			if (manager != null)
 				manager.close();
 		}
 	}
 
-	public void delete(User user) {
+	public void delete(User user) throws Exception {
 
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
@@ -322,12 +310,11 @@ public class JPAUserController {
 				transaction.rollback();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
-		    if (transaction.isActive())
-		    {
-		        transaction.rollback();
-		    }
+			if (transaction.isActive()) {
+				transaction.rollback();
+			}
 			if (manager != null)
 				manager.close();
 		}

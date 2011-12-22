@@ -70,8 +70,9 @@ public class JPAUserControllerTest extends TestCase {
 	/**
 	 * Test method for
 	 * {@link org.dataportal.controllers.JPAUserController#save()}.
+	 * @throws Exception 
 	 */
-	public void testSave() {
+	public void testSave() throws Exception {
 		String hash = null;
 		hash = controladorUsuario.save(user);
 		assertNotNull(hash);
@@ -92,8 +93,9 @@ public class JPAUserControllerTest extends TestCase {
 	 * Test method for
 	 * {@link org.dataportal.controllers.JPAUserController#activate(java.lang.String)}
 	 * .
+	 * @throws Exception 
 	 */
-	public void testActivate() {
+	public void testActivate() throws Exception {
 		String id = null;
 		User userInto = controladorUsuario.existsInto(user);
 		id = controladorUsuario.activate(userInto.getHash());
@@ -114,8 +116,9 @@ public class JPAUserControllerTest extends TestCase {
 	 * Test method for
 	 * {@link org.dataportal.controllers.JPAUserController#setHash(java.lang.String, java.lang.String)}
 	 * .
+	 * @throws Exception 
 	 */
-	public void testSetHash() {
+	public void testSetHash() throws Exception {
 		String hash = null;
 		hash = controladorUsuario.setHash(user);
 		assertNotNull(hash);
@@ -125,8 +128,9 @@ public class JPAUserControllerTest extends TestCase {
 	 * Test method for
 	 * {@link org.dataportal.controllers.JPAUserController#newPass(java.lang.String)}
 	 * .
+	 * @throws Exception 
 	 */
-	public void testNewPass() {
+	public void testNewPass() throws Exception {
 		String newPass = null;
 		newPass = controladorUsuario.newPass(user);
 		assertNotNull(newPass);
@@ -146,8 +150,9 @@ public class JPAUserControllerTest extends TestCase {
 	 * Test method for
 	 * {@link org.dataportal.controllers.JPAUserController#changePass(java.lang.String)}
 	 * .
+	 * @throws Exception 
 	 */
-	public void testChangePass() {
+	public void testChangePass() throws Exception {
 		String newPassword = hex_md5("va a ser otra mas");
 		User userInto = controladorUsuario.existsInto(user);
 		boolean changed = controladorUsuario.changePass(userInto, newPassword);
@@ -158,8 +163,9 @@ public class JPAUserControllerTest extends TestCase {
 	 * Test method for
 	 * {@link org.dataportal.controllers.JPAUserController#changeState(int, java.lang.String)}
 	 * .
+	 * @throws Exception 
 	 */
-	public void testChangeState() {
+	public void testChangeState() throws Exception {
 		String state = "ACTIVE";
 		user.setState(state);
 		controladorUsuario.changeState(user);
@@ -170,8 +176,9 @@ public class JPAUserControllerTest extends TestCase {
 	/**
 	 * Test method for
 	 * {@link org.dataportal.controllers.JPAUserController#delete(int)}.
+	 * @throws Exception 
 	 */
-	public void testDelete() {
+	public void testDelete() throws Exception {
 		controladorUsuario.delete(user);
 		User userInto = controladorUsuario.existsInto(user);
 		assertNull(userInto);

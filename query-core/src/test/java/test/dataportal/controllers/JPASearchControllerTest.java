@@ -11,27 +11,30 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.dataportal.controllers.JPASearchController;
-import org.dataportal.model.Download;
+import org.dataportal.controllers.JPAUserController;
 import org.dataportal.model.Search;
 import org.dataportal.model.User;
 
 import junit.framework.TestCase;
 
 /**
- * @author michogar
+ * @author Micho Garcia
  *
  */
 public class JPASearchControllerTest extends TestCase {
 
-	private JPASearchController controladorBusqueda = null;
+	private JPASearchController controladorBusqueda = new JPASearchController();
+	private JPAUserController controladorUsuario = new JPAUserController();
 	private User user = null;
+	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		controladorBusqueda = new JPASearchController();
-		user = (User) exists("micho.garcia@geomati.co", User.class);
+		user = new User("un.correo@un.dominio.com", "unapassword");
+		user.setState(JPAUserController.ACTIVE);
+		controladorUsuario.insert(user);
 	}
 
 	/**
@@ -40,13 +43,12 @@ public class JPASearchControllerTest extends TestCase {
 	 * @param object ID
 	 * @return object record or null
 	 */
-	@SuppressWarnings("unchecked")
-	private Object exists(String id, Class clase) {
+	private Search exists(Integer id, Class<Search> clase) {
 		EntityManager manager = getEntityManager();
-		Object objeto = manager.find(clase, id);
+		Search search = manager.find(clase, id);
 		manager.close();
-		if (objeto != null)
-			return objeto;
+		if (search != null)
+			return search;
 		else
 			return null;
 	}
@@ -63,10 +65,11 @@ public class JPASearchControllerTest extends TestCase {
 	
 	/**
 	 * Test method for
-	 * {@link org.dataportal.controllers.JPADownloadController#insert(Download)}
+	 * {@link org.dataportal.controllers.JPADownloadController#insert(Search)}
 	 * .
+	 * @throws Exception 
 	 */
-	public void testInsert() {
+	public void testInsert() throws Exception {
 
 		Search search = new Search();
 		search.setText("oceans");
@@ -78,6 +81,24 @@ public class JPASearchControllerTest extends TestCase {
 		Date endDate = new Date(Calendar.getInstance().getTimeInMillis());
 		search.setEndDate(endDate);
 		
-		controladorBusqueda.insert(search);
+		Integer id = controladorBusqueda.insert(search);
+		Search oneMoreTimeSearch = exists(id, Search.class);
+		assertNotNull(oneMoreTimeSearch);
+		
+		controladorBusqueda.delete(oneMoreTimeSearch);
+		oneMoreTimeSearch = exists(id, Search.class);
+		assertNull(oneMoreTimeSearch);
 	}
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		controladorUsuario.delete(user);
+		super.tearDown();
+	}
+	
+	
+	
 }

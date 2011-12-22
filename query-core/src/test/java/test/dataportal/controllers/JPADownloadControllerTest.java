@@ -4,7 +4,6 @@
 package test.dataportal.controllers;
 
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.UUID;
 
 import org.dataportal.controllers.JPADownloadController;
@@ -27,7 +26,7 @@ public class JPADownloadControllerTest extends TestCase {
 	private User user = new User("user.test", "password.test");
 	static final String IDDOWNLOADTEST = "306689ec-a58a-4e47-9dc9-78c5dc5f72f5";
 
-	private void createUser() {
+	private void createUser() throws Exception {
 		user.setState(JPAUserController.ACTIVE);
 		controladorUsuario.insert(user);
 	}
