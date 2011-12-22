@@ -103,7 +103,7 @@ public class QueryController extends DataPortalController {
 		for (DownloadItem item : items) {
 			isItems.add(item.getItemId());
 		}
-		GetRecordById getRecordById = new GetRecordById(GetRecordById.FULL);
+		GetRecordById getRecordById = new GetRecordById(GetRecordById.BRIEF);
 		getRecordById.setOutputSchema("csw:IsoRecord");
 		String cswQuery = getRecordById.createQuery(isItems);
 		InputStream catalogResponse = catalogo.sendCatalogRequest(cswQuery);

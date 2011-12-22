@@ -14,6 +14,8 @@
 		</xsl:element>
 	</xsl:template>
 	
+	<!-- Transformation to GetRecordById response  -->
+	
 	<xsl:template match="csw:GetRecordByIdResponse">
         <xsl:element name="response">
             <xsl:attribute name="totalcount"><xsl:value-of
