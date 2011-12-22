@@ -153,7 +153,7 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 			}
 		} catch (Exception e) {
 			DataPortalError error = new DataPortalError();
-			error.setCode("error.login");
+			error.setCode(ERRORLOGIN);
 			error.setMessage("Error authenticating user");
 			resp.getWriter().print(error.getErrorMessage());
 		}

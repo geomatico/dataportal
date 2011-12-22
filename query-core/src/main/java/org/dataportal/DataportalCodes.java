@@ -44,7 +44,15 @@ public interface DataportalCodes {
 	 */
 	static final String DDINOTFOUND = "error.ddi.not.found";
 
+	/**
+	 * 
+	 */
 	static final String INVALIDREQUEST = "error.invalid.request";
+	
+	/**
+	 * 
+	 */
+	static final String ERRORLOGIN = "error.login";
 
 
 }

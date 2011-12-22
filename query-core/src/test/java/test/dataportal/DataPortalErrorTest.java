@@ -22,4 +22,8 @@ public class DataPortalErrorTest extends TestCase {
 	public void testGetCode() {
 		assertEquals("test.code", error.getCode());
 	}
+	
+	public void testGetErrorMessage() {
+		error.getErrorMessage();
+	}
 }

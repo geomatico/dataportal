@@ -9,6 +9,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.log4j.Logger;
+
 /**
  * 
  * Class to manage error from server to client dataportal
@@ -17,6 +19,8 @@ import javax.xml.stream.XMLStreamWriter;
  * 
  */
 public class DataPortalError {
+	
+	private static Logger logger = Logger.getLogger(DataPortalError.class);
 
 	private static final String XMLENCODING = "UTF-8";
 	private static final String XMLVERSION = "1.0";
@@ -90,6 +94,8 @@ public class DataPortalError {
 		} catch (XMLStreamException xmlE) {
 			xmlE.printStackTrace();
 		}
+		
+		logger.debug(strWriter.toString());
 
 		return strWriter.toString();
 	}
