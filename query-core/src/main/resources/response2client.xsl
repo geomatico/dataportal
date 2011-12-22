@@ -16,8 +16,8 @@
 	
 	<xsl:template match="csw:GetRecordByIdResponse">
         <xsl:element name="response">
-            <!-- <xsl:attribute name="totalcount"><xsl:value-of
-                select="@numberOfRecordsMatched" /></xsl:attribute> -->
+            <xsl:attribute name="totalcount"><xsl:value-of
+                select="count(//gmd:MD_Metadata)" /></xsl:attribute>
             <xsl:attribute name="success">true</xsl:attribute>
             <xsl:apply-templates select="./gmd:MD_Metadata" />
         </xsl:element>
