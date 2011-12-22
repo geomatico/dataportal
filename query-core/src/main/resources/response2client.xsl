@@ -3,7 +3,7 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:gmd="http://www.isotc211.org/2005/gmd"
 	xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gml="http://www.opengis.net/gml"
 	xmlns:geonet="http://www.fao.org/geonetwork" xmlns:csw="http://www.opengis.net/cat/csw/2.0.2"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gmi="http://www.isotc211.org/2005/gmi">
 
 	<xsl:template match="csw:GetRecordsResponse/csw:SearchResults">
 		<xsl:element name="response">
@@ -75,7 +75,7 @@
 
 	<xsl:template match="gmd:contentInfo">
 		<xsl:variable name="variables">
-			<xsl:for-each select="//gmd:dimension">
+			<xsl:for-each select="gmi:MI_CoverageDescription//gmd:dimension">
 				<xsl:value-of
 					select="concat(',',gmd:MD_Band/gmd:sequenceIdentifier/gco:MemberName/gco:aName/gco:CharacterString)"></xsl:value-of>
 			</xsl:for-each>
