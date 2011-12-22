@@ -6,6 +6,12 @@ Disclaimer:
 This is only a quick and dirty installation guide for those who need to configure GeoNetwork quickly.
 If you want to hack & tweak, we *do* have an excellent documentation elsewhere.
 
+Custom GetRecordById response
+-----------------------------
+
+1. Replaced the iso-brief.xsl with this iso-brief.xsl file in folder $TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/present/csw/ 
+
+Now all the *brief* GetRecordById responses be served with the structure defined in iso-brief.xsl.    
 
 Custom Thredds to GeoNetwork harvesting
 ---------------------------------------
