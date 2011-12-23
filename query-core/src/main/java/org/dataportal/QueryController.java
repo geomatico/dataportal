@@ -19,7 +19,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.dataportal.controllers.JPADownloadController;
 import org.dataportal.csw.Catalog;
@@ -187,38 +186,37 @@ public class QueryController extends DataPortalController {
 			}
 
 			// temporal range
-			String start_date = parametros.get("start_date")[FIRST];
-			Property greatherThanStartDate = new Property(
-					"PropertyIsGreaterThanOrEqualTo");
-			boolean existsStartDate = false;
+			Property fromDate = null, toDate = null;
+
+	        String start_date = parametros.get("start_date")[FIRST];
 			if (start_date != "") {
-				greatherThanStartDate.setPropertyName("TempExtent_begin");
-				greatherThanStartDate.setLiteral(start_date);
-				existsStartDate = true;
+			    fromDate = new Property("PropertyIsGreaterThanOrEqualTo");
+			    fromDate.setPropertyName("TempExtent_end");
+			    // From the beginning of the day ('t' and 'z' must be lowercase)
+			    fromDate.setLiteral(start_date+"t00:00:00.00z");
 			}
 
-			String end_date = parametros.get("end_date")[FIRST];
+            String end_date = parametros.get("end_date")[FIRST];
 			if (end_date != "") {
-				Property lessThanEndDate = new Property(
-						"PropertyIsLessThanOrEqualTo");
-				lessThanEndDate.setPropertyName("TempExtent_end");
-				lessThanEndDate.setLiteral(end_date);
-
-				if (existsStartDate) {
-					ArrayList<String> andRangeDateRules = new ArrayList<String>();
-					andRangeDateRules.add(greatherThanStartDate.getExpresion());
-					andRangeDateRules.add(lessThanEndDate.getExpresion());
-					Operator andRangeDate = new Operator("And");
-					andRangeDate.setRules(andRangeDateRules);
-					filterRules.add(andRangeDate.getExpresion());
-				} else {
-					filterRules.add(lessThanEndDate.getExpresion());
-				}
-			} else {
-				if (existsStartDate)
-					filterRules.add(greatherThanStartDate.getExpresion());
+				toDate = new Property("PropertyIsLessThanOrEqualTo");
+				toDate.setPropertyName("TempExtent_begin");
+				 // To the end of the day ('t' and 'z' must be lowercase)
+				toDate.setLiteral(end_date+"t23:59:59.99z");
 			}
-
+			
+			if (fromDate != null && toDate != null) {
+                ArrayList<String> dates = new ArrayList<String>(2);
+                dates.add(fromDate.getExpresion());
+                dates.add(toDate.getExpresion());
+                Operator withinDates = new Operator("And");
+                withinDates.setRules(dates);
+                filterRules.add(withinDates.getExpresion());
+			} else if (fromDate != null) {
+			    filterRules.add(fromDate.getExpresion());
+			} else if (toDate != null) {
+			    filterRules.add(toDate.getExpresion());
+			}
+			
 			// variables
 			String variables = parametros.get("variables")[FIRST];
 			if (variables != "") {
