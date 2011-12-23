@@ -155,8 +155,9 @@ public class QueryController extends DataPortalController {
 	 * 
 	 * @param parametros
 	 * @return String
+	 * @throws XMLStreamException 
 	 */
-	private String params2Query(Map<String, String[]> parametros) {
+	private String params2Query(Map<String, String[]> parametros) throws XMLStreamException {
 
 		try {
 
@@ -283,8 +284,7 @@ public class QueryController extends DataPortalController {
 
 		} catch (XMLStreamException e) {
 			logger.error(e.getMessage());
+			throw e;
 		}
-
-		return null;
 	}
 }
