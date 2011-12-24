@@ -12,20 +12,35 @@ result.Grid =  Ext.extend(Ext.grid.GridPanel, {
         
         ds = new Ext.data.Store({
             autoLoad: false,
-            url: 'search', // 'xml/fakeSearch.xml',
+            url: 'search',
             storeId: 'searchResponse',
             reader: new Ext.data.XmlReader({
                 root: 'response',
                 record: 'item',
                 id: 'id',
-                totalProperty: '@totalcount'
+                totalProperty: '@totalcount',
+                successProperty: '@success',
+                messageProperty: 'error/message'
             }, this.recordType ),
             remoteSort: true,
             sortInfo: {
                 field: 'title',
                 direction: 'ASC'
+            },
+            listeners: {
+                exception: function(proxy, type, action, options, response) {
+                    if (type=="remote" && response && response.success == false) {
+                        Ext.Msg.show({
+                            title: 'Search Error',
+                            msg: response.message || 'Unspecified Query Error',
+                            width: 300,
+                            buttons: Ext.MessageBox.OK,
+                            icon: Ext.MessageBox.ERROR
+                         });
+                    }
+                }
             }
-        });        
+        });
         
         var expander = new Ext.ux.grid.RowExpander();
         

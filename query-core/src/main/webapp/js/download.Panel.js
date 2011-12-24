@@ -58,7 +58,7 @@ download.Panel =  Ext.extend(Ext.Panel, {
                                 buttons: Ext.MessageBox.OK,
                                 icon: Ext.MessageBox.ERROR,
                                 scope: this
-                             });                            
+                             });
                         }
                     },
                     failure: function(response) {
