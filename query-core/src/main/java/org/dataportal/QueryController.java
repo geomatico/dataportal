@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
@@ -280,8 +281,14 @@ public class QueryController extends DataPortalController {
 			sort = parametros.get("sort")[FIRST];
 			dir = parametros.get("dir")[FIRST];
 
+			Map<String, String> sortPropertyDict = new HashMap<String, String>();
+			sortPropertyDict.put("id", "Identifier");
+			sortPropertyDict.put("title", "Title");
+			sortPropertyDict.put("start_time", "TempExtent_begin");
+			sortPropertyDict.put("end_time", "TempExtent_end");
+
 			SortBy sortby = new SortBy();
-			sortby.setPropertyName(sort);
+			sortby.setPropertyName(sortPropertyDict.get(sort));
 			sortby.setOrder(dir);
 
 			getrecords.setSortby(sortby);
