@@ -53,6 +53,11 @@ public interface DataportalCodes {
 	 * 
 	 */
 	static final String ERRORLOGIN = "error.login";
+	
+	/**
+	 * 
+	 */
+	static final String USERACCESS = "org.dataportal.LoginServlet.user";
 
 
 }

@@ -7,9 +7,11 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.NodeList;
@@ -26,6 +28,7 @@ public class Utils {
 	private static Logger logger = Logger.getLogger(Utils.class);
 
 	public static final String DATE_FORMAT_NOW = "yyyyMMddHHmmss";
+	public static final String DATEFORMAT = "yyyy-MM-dd";
 
 	public static String convertStreamToString(InputStream is) throws Exception {
 
@@ -149,5 +152,16 @@ public class Utils {
 		Timestamp timestamp = new Timestamp(calendario.getTimeInMillis());
 
 		return timestamp;
+	}
+	
+	/**
+	 * @throws ParseException 
+	 * 
+	 */
+	public static Date convertToDate(String dateString) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMAT);
+		Date date = sdf.parse(dateString);
+		
+		return date;
 	}
 }

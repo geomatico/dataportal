@@ -21,6 +21,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 import org.dataportal.controllers.JPADownloadController;
+import org.dataportal.controllers.JPASearchController;
 import org.dataportal.csw.Catalog;
 import org.dataportal.csw.Filter;
 import org.dataportal.csw.GetRecordById;
@@ -30,6 +31,7 @@ import org.dataportal.csw.Property;
 import org.dataportal.csw.SortBy;
 import org.dataportal.model.Download;
 import org.dataportal.model.DownloadItem;
+import org.dataportal.model.Search;
 import org.dataportal.utils.BBox;
 import org.dataportal.utils.DataPortalException;
 import org.dataportal.utils.Utils;
@@ -157,7 +159,7 @@ public class QueryController extends DataPortalController {
 	 * @return String
 	 * @throws XMLStreamException 
 	 */
-	private String params2Query(Map<String, String[]> parametros) throws XMLStreamException {
+	private String params2Query(Map<String, String[]> parametros) throws Exception {
 
 		try {
 
@@ -167,6 +169,10 @@ public class QueryController extends DataPortalController {
 			getrecords.setOutputSchema("csw:IsoRecord");
 			getrecords.setTypeNames("gmd:MD_Metadata");
 			getrecords.setElementSetName(GetRecords.FULL);
+			
+			Search search = new Search();
+			if (getUser() != null)
+				search.setUserBean(user);
 
 			// bboxes
 			Operator orBBox = new Operator("Or");
@@ -184,6 +190,7 @@ public class QueryController extends DataPortalController {
 				} else {
 					filterRules.add(bboxes.get(FIRST).toOGCBBox());
 				}
+				search.setBboxes(stringBBoxes);
 			}
 
 			// temporal range
@@ -212,10 +219,14 @@ public class QueryController extends DataPortalController {
                 Operator withinDates = new Operator("And");
                 withinDates.setRules(dates);
                 filterRules.add(withinDates.getExpresion());
+                search.setStartDate(Utils.convertToDate(start_date));
+                search.setEndDate(Utils.convertToDate(end_date));
 			} else if (fromDate != null) {
 			    filterRules.add(fromDate.getExpresion());
+			    search.setStartDate(Utils.convertToDate(start_date));
 			} else if (toDate != null) {
 			    filterRules.add(toDate.getExpresion());
+			    search.setEndDate(Utils.convertToDate(end_date));
 			}
 			
 			// variables
@@ -240,6 +251,7 @@ public class QueryController extends DataPortalController {
 					propVariable.setLiteral(queryVariables[FIRST]);
 					filterRules.add(propVariable.getExpresion());
 				}
+				search.setVariables(variables);
 			}
 
 			// free text
@@ -249,6 +261,7 @@ public class QueryController extends DataPortalController {
 				propFreeText.setPropertyName("AnyText");
 				propFreeText.setLiteral(freeText);
 				filterRules.add(propFreeText.getExpresion());
+				search.setText(freeText);
 			}
 
 			// Default pagination & ordering values
@@ -279,6 +292,10 @@ public class QueryController extends DataPortalController {
 			getrecords.setFilter(filtro);
 
 			logger.debug(getrecords.getExpresion());
+			
+			searchJPAController = new JPASearchController();
+			search.setTimestamp(Utils.extractDateSystemTimeStamp());
+			searchJPAController.insert(search);
 
 			return getrecords.getExpresion();
 

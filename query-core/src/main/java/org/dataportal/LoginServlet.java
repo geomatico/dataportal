@@ -9,12 +9,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.dataportal.datasources.Mail;
 import org.dataportal.users.User;
 import org.dataportal.Config;
 
-public class LoginServlet extends HttpServlet {
+public class LoginServlet extends HttpServlet implements DataportalCodes{
 	private static final long serialVersionUID = 1L;
 
     private static final String ACCESS = "access";
@@ -54,8 +55,11 @@ public class LoginServlet extends HttpServlet {
             if (request.equals(ACCESS)) {
                 String password = req.getParameter("password");
                 User u = new User(user, password);
+                org.dataportal.model.User dtUser = new org.dataportal.model.User(user);
                 if(u.isActive()) {
-                    out.print("{success:true,message:\""+user+"\"}");
+                    out.print("{success:true,message:\""+dtUser+"\"}");
+                    HttpSession session = req.getSession(true);
+                    session.setAttribute(USERACCESS, dtUser);
                 } else {
                     out.print("{success:false,message:\"Access denied.\"}");
                 }

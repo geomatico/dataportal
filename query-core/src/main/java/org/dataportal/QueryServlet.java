@@ -11,6 +11,7 @@ import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
+import org.dataportal.model.User;
 import org.dataportal.utils.DataPortalException;
 
 /**
@@ -33,10 +34,16 @@ public class QueryServlet extends HttpServlet implements DataportalCodes {
 	 */
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
 		
+		HttpSession session = req.getSession();
+		User user = (User) session.getAttribute(USERACCESS);
+				
 		@SuppressWarnings("unchecked")
 		Map<String, String[]> parametros = req.getParameterMap();
 		
 		QueryController controller = new QueryController();
+		if (user != null)
+			controller.setUser(user);
+		
 		StringBuffer response = new StringBuffer();
 		
 		try {

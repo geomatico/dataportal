@@ -11,6 +11,7 @@ import org.dataportal.controllers.JPASearchController;
 import org.dataportal.controllers.JPAUserController;
 import org.dataportal.csw.Catalog;
 import org.dataportal.csw.DataPortalNS;
+import org.dataportal.model.User;
 import org.dataportal.utils.DataPortalException;
 
 /**
@@ -27,14 +28,33 @@ public class DataPortalController implements DataportalCodes {
 	protected JPADownloadController downloadJPAController;
 	protected JPASearchController searchJPAController;
 	protected DataPortalNS dataPortalCtx = new DataPortalNS();
+	protected User user;
 
 	/**
 	 * @throws MalformedURLException
 	 */
 	public DataPortalController() throws MalformedURLException {
+		
+		userJPAController = new JPAUserController();
 
 		String url = Config.get("csw.url");
 		catalogo = new Catalog(url);
 		logger.debug("Catalog created with URL: " + url);
 	}
+
+	/**
+	 * @return the user
+	 */
+	public User getUser() {
+		return user;
+	}
+
+	/**
+	 * @param user the user to set
+	 */
+	public void setUser(User user) {
+		this.user = userJPAController.existsInto(user);
+	}
+	
+	
 }
