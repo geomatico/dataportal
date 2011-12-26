@@ -326,16 +326,26 @@ Authentication = Ext.extend(Ext.util.Observable, {
     
     doLogout: function() {
         if(this.user != null) {
-            Ext.get("loggedLinks").hide();
-            this.user = null;
-            this.password = null;
-            Ext.get("notLoggedLinks").show();
-            this.fireEvent("logged_out");            
+            Ext.Ajax.request({
+                url: 'login',
+                params: {request: 'logout'},
+                waitMsg: 'Logging out',
+                success: function(response, opts) {
+                    Ext.get("loggedLinks").hide();
+                    this.user = null;
+                    this.password = null;
+                    Ext.get("notLoggedLinks").show();
+                    this.fireEvent("logged_out");
+                },
+                failure: function(response, opts) {
+                    alert('Server-side failure with status code ' + response.status);
+                },
+                scope: this
+            });
         }
     },
     
     showActionResult: function(form, action) {
-        // var success = action.result.success; // boolean;
         var message = action.result.message;
         alert(message);
     }
