@@ -419,7 +419,7 @@ public class Converter {
 			}
 		}
 
-		return new long[] { maxTime, minTime };
+		return new long[] { minTime, maxTime };
 	}
 
 	private static long getMilliseconds(Integer magnitude, TimeUnit unit) {
