@@ -2,6 +2,17 @@ Ext.namespace('download');
 
 download.Panel =  Ext.extend(Ext.Panel, {
     
+    /* i18n */
+    downloadReadyTitle: "Download Ready",
+    downloadReadyMessage: "Your data request with UUID<br/><b>{0}</b><br/>is ready.<br/><br/>Click OK to download.",
+    downloadErrorTitle: "Download Error",
+    downloadButtonText: "Download",
+    idColumnHeader: "Id",
+    titleColumnHeader: "Title",
+    removeColumnTooltip: "Remove from Downloads",
+    loginRequiredMessage: "Sorry, you must Login to download data",
+    /* ~i18n */
+    
     store: null,
     recordType: null,
     user: null,
@@ -38,8 +49,8 @@ download.Panel =  Ext.extend(Ext.Panel, {
                         var success = Ext.DomQuery.selectValue('/response/@success', response.responseXML);
                         if (fileName) {
                             Ext.Msg.show({
-                                title: 'Download Ready',
-                                msg: 'Your data request with UUID<br/><b>'+id+'</b><br/>is ready.<br/><br/>Click OK to download.',
+                                title: this.downloadReadyTitle,
+                                msg: String.format(this.downloadReadyMessage, id),
                                 width: 350,
                                 buttons: Ext.MessageBox.OK,
                                 fn: function(id, text, opt) {
@@ -52,7 +63,7 @@ download.Panel =  Ext.extend(Ext.Panel, {
                         } else if (success=="false") {
                             var err = Ext.DomQuery.selectValue('/response/error/message', response.responseXML);
                             Ext.Msg.show({
-                                title: 'Download Error',
+                                title: this.downloadErrorTitle,
                                 msg: err,
                                 width: 300,
                                 buttons: Ext.MessageBox.OK,
@@ -78,7 +89,7 @@ download.Panel =  Ext.extend(Ext.Panel, {
         });
         
         this.downloadButton = new Ext.Button({
-            text: "Download",
+            text: this.downloadButtonText,
             margins: '5'
         });
         
@@ -108,13 +119,13 @@ download.Panel =  Ext.extend(Ext.Panel, {
                     autoExpandColumn: "title",
                     ds: this.store,
                     cm: new Ext.grid.ColumnModel([
-                        {header: "Id", width: 30, sortable: true, dataIndex: 'id'},
-                        {id: "title", header: "Title", width: 'auto', sortable: true, dataIndex: 'title'},
+                        {header: this.idColumnHeader, width: 30, sortable: true, dataIndex: 'id'},
+                        {id: "title", header: this.titleColumnHeader, width: 'auto', sortable: true, dataIndex: 'title'},
                         {
                             xtype: "actioncolumn",
                             width: 30,
                             iconCls: "icon-delete",
-                            tooltip: "Remove from Downloads",
+                            tooltip: this.removeColumnTooltip,
                             align: "center",
                             handler: function(grid, rowIndex, colIndex) {
                                 grid.store.remove(grid.store.getAt(rowIndex));
@@ -131,7 +142,7 @@ download.Panel =  Ext.extend(Ext.Panel, {
     },
     
     notLoggedIn: function() {
-        alert("Sorry, you must Login to download data");
+        alert(this.loginRequiredMessage);
     }
 });
 

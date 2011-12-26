@@ -1,4 +1,16 @@
 App =  Ext.extend(Ext.Viewport, {
+
+    /* i18n */
+    queriesTitle: "1. Queries",
+    resultsTitle: "2. Results",
+    downloadsTitle: "3. Downloads",
+    fileDownloadMessage: "This file is already set for download",
+    homeTitle: "ICOS Spain Carbon Data Portal",
+    homeLogin: "Login",
+    homeCreateUser: "Sign Up",
+    homeLogout: "Logout",
+    homeUpdateUser: "Change Password",
+    /* ~i18n */
     
     vocabulary: null,
     dataRecordType: null,
@@ -12,6 +24,8 @@ App =  Ext.extend(Ext.Viewport, {
         //Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
         
         Ext.QuickTips.init();
+        
+        this.setHomeLocale();
         
         this.user = new Authentication(/*{
             listeners: {
@@ -103,7 +117,7 @@ App =  Ext.extend(Ext.Viewport, {
                 xtype: 'box',
                 height: 64
             }, {
-                title: '1. Queries',
+                title: this.queriesTitle,
                 region: 'west',
                 split: false,
                 width: 287,
@@ -118,7 +132,7 @@ App =  Ext.extend(Ext.Viewport, {
                     this.queryForm
                 ]
             }, {
-                title: '2. Results',
+                title: this.resultsTitle,
                 region: 'center',
                 layout: 'fit',
                 items: [
@@ -126,7 +140,7 @@ App =  Ext.extend(Ext.Viewport, {
                 ],
                 autoScroll: true
             }, {
-                title: '3. Downloads',
+                title: this.downloadsTitle,
                 region: 'east',
                 layout: 'fit',
                 split: false,
@@ -162,10 +176,18 @@ App =  Ext.extend(Ext.Viewport, {
     addRecordToDownload: function(record, silent) {
         var clonedRecord = record.copy();
         if(this.downloadPanel.store.getById(clonedRecord.id)) {
-            alert("This file is already set for download");
+            alert(this.fileDownloadMessage);
         } else {
             this.downloadPanel.store.add(clonedRecord);
         }
+    },
+    
+    setHomeLocale: function() {
+        Ext.get("title").update(this.homeTitle);
+        Ext.get("login").update(this.homeLogin);
+        Ext.get("createUser").update(this.homeCreateUser);
+        Ext.get("logout").update(this.homeLogout);
+        Ext.get("updateUser").update(this.homeUpdateUser);
     }
     
 });

@@ -2,6 +2,15 @@ Ext.namespace('query');
 
 query.Form =  Ext.extend(Ext.form.FormPanel, {
 
+    /* i18n */
+    textFieldLabel: "Text:",
+    startDateFieldLabel: "From:",
+    endDateFieldLabel: "To:",
+    searchButtonText: "Search >>",
+    variablesFieldTitle: "Variables",
+    dateDisplayFormat: "M j, Y",
+    /* ~i18n */
+    
     map: null,
     vocabulary: null,
         
@@ -18,7 +27,7 @@ query.Form =  Ext.extend(Ext.form.FormPanel, {
             items: [{
                 border: false,
                 items: [{
-                    text: 'Text:',
+                    text: this.textFieldLabel,
                     xtype: 'label'
                 },{
                     name: 'text',
@@ -36,28 +45,28 @@ query.Form =  Ext.extend(Ext.form.FormPanel, {
                     columnWidth: 0.5,                                
                     border: false,
                     items: [{
-                        text: 'From:',
+                        text: this.startDateFieldLabel,
                         xtype: 'label'
                     }, {
                         name: 'start_date',
                         xtype: 'datefield',
-                        format: 'Y-m-d'
+                        format: this.dateDisplayFormat
                     }]
                 }, {
                     columnWidth: 0.5,
                     border: false,
                     items: [{
-                        text: 'To:',
+                        text: this.endDateFieldLabel,
                         xtype: 'label'
                     }, {
                         name: 'end_date',
                         xtype: 'datefield',
-                        format: 'Y-m-d'
+                        format: this.dateDisplayFormat
                     }]
                 }]
             }],
             buttons: [{
-                text: 'Search >>'
+                text: this.searchButtonText
             }]
         };
         Ext.apply(this, Ext.apply(this.initialConfig, config));
@@ -87,7 +96,7 @@ query.Form =  Ext.extend(Ext.form.FormPanel, {
         });
        
         this.add({ 
-            title: 'Variables',
+            title: this.variablesFieldTitle,
             xtype: 'fieldset',
             fieldLabel: "&nbsp;", // Ah, si, si, creetelo!
             hideLabel: true,

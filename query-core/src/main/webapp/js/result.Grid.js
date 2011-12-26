@@ -2,6 +2,22 @@ Ext.namespace('result');
 
 result.Grid =  Ext.extend(Ext.grid.GridPanel, {
     
+    /* i18n */
+    errorTitle: "Search Error",
+    genericErrorMessage: "Unspecified Query Error",
+    summaryHeader: "Summary",
+    extentHeader: "Spatial Extent",
+    variablesHeader: "Variables",
+    idHeader: "Id",
+    titleHeader: "Title",
+    fromDateHeader: "From date",
+    toDateHeader: "To date",
+    downloadActionTooltip: "Add to Downloads",
+    dateDisplayFormat: "M j, Y",
+    pagingDisplayMessage: "Displaying data records {0} - {1} of {2}",
+    pagingEmptyMessage: "No data records to display",
+    /* ~i18n */
+    
     pageSize: 25,
     vocabulary: null,
     recordType: null,
@@ -31,14 +47,15 @@ result.Grid =  Ext.extend(Ext.grid.GridPanel, {
                 exception: function(proxy, type, action, options, response) {
                     if (type=="remote" && response && response.success == false) {
                         Ext.Msg.show({
-                            title: 'Search Error',
-                            msg: response.message || 'Unspecified Query Error',
+                            title: this.errorTitle,
+                            msg: response.message || this.genericErrorMessage,
                             width: 300,
                             buttons: Ext.MessageBox.OK,
                             icon: Ext.MessageBox.ERROR
                          });
                     }
-                }
+                },
+                scope: this
             }
         });
         
@@ -66,16 +83,16 @@ result.Grid =  Ext.extend(Ext.grid.GridPanel, {
                         padding: 5
                     },
                     items: [{
-                        title: 'Summary',
+                        title: this.summaryHeader,
                         html: record.get("summary"),
                         columnWidth: .70
                     },{
-                        title: 'Spatial Extent',
+                        title: this.extentHeader,
                         items: [new result.Map({resultExtent: record.get("geo_extent"), border: false})],
                         padding: 0,
                         width: 260
                     },{
-                        title: 'Variables',
+                        title: this.variablesHeader,
                         html: varnames.join("<br>"),
                         columnWidth: .30 
                     }],
@@ -91,15 +108,15 @@ result.Grid =  Ext.extend(Ext.grid.GridPanel, {
             ds: ds,
             cm: new Ext.grid.ColumnModel([
                 expander,
-                {header: "Id", width: 150, sortable: true, dataIndex: 'id'},
-                {id: "title", header: "Title", width: 'auto', sortable: true, dataIndex: 'title'},
-                {header: "From date", width: 90, sortable: true, dataIndex: 'start_time', renderer: Ext.util.Format.dateRenderer('Y-m-d')}, // H:i:s
-                {header: "To date", width: 90, sortable: true, dataIndex: 'end_time', renderer: Ext.util.Format.dateRenderer('Y-m-d')},
+                {header: this.idHeader, width: 150, sortable: true, dataIndex: 'id'},
+                {id: "title", header: this.titleHeader, width: 'auto', sortable: true, dataIndex: 'title'},
+                {header: this.fromDateHeader, width: 90, sortable: true, dataIndex: 'start_time', renderer: Ext.util.Format.dateRenderer(this.dateDisplayFormat)},
+                {header: this.toDateHeader, width: 90, sortable: true, dataIndex: 'end_time', renderer: Ext.util.Format.dateRenderer(this.dateDisplayFormat)},
                 {
                     xtype: "actioncolumn",
                     width: 30,
                     iconCls: "icon-download",
-                    tooltip: "Add to Downloads",
+                    tooltip: this.downloadActionTooltip,
                     align: "center",
                     handler: this.downloadHandler,
                     scope: this.handlerScope
@@ -109,8 +126,8 @@ result.Grid =  Ext.extend(Ext.grid.GridPanel, {
                 pageSize: this.pageSize,
                 store: ds,
                 displayInfo: true,
-                displayMsg: 'Displaying data records {0} - {1} of {2}',
-                emptyMsg: "No data records to display"
+                displayMsg: this.pagingDisplayMessage,
+                emptyMsg: this.pagingEmptyMessage
             }),
             plugins: expander
         };

@@ -1,4 +1,29 @@
 Authentication = Ext.extend(Ext.util.Observable, {
+
+    /* i18n */
+    userFieldLabel: "Email address",
+    userBlankText: "Enter your email address",
+    passwordFieldLabel: "Password",
+    passwordBlankText: "Enter your password",
+    forgotPasswordMessage: "Forgot your password?",
+    loginButtonText: "Login",
+    loginWaitMessage: "Checking identity",
+    loginFailureMessage: "Server-side failure with status code ",
+    loginWindowTitle: "Welcome to the ICOS Spain Carbon Data Portal",
+    newUserTitle: "New User",
+    newUserButtonText: "Sign Up",
+    oldPasswordFieldLabel: "Old Password",
+    oldPasswordBlankText: "Enter your Old Password",
+    newPasswordFieldLabel: "New Password",
+    newPasswordBlankText: "Enter your New Password",
+    changePasswordTitle: "Change Password",
+    changePasswordButtonText: "Change password",
+    passwordChangeMessage: "Your password is about to be reset. Please check your inbox for further instructions.",
+    passwordReminderTitle: "Password Reminder",
+    passwordReminderButton: "Reset password",
+    logoutWaitMessage: "Logging out",
+    /* ~i18n */
+    
     user: null,
     password: null,
     loginForm: null,
@@ -16,10 +41,10 @@ Authentication = Ext.extend(Ext.util.Observable, {
 
         Authentication.superclass.constructor.call(this, config);
         
-        Ext.select('.login').on('click', this.showLogin, this);
-        Ext.select('.logout').on('click', this.doLogout, this);
-        Ext.select('.createUser').on('click', this.showSignup, this);
-        Ext.select('.updateUser').on('click', this.showProperties, this);
+        Ext.get('login').on('click', this.showLogin, this);
+        Ext.get('logout').on('click', this.doLogout, this);
+        Ext.get('createUser').on('click', this.showSignup, this);
+        Ext.get('updateUser').on('click', this.showProperties, this);
     },
     
     showLogin: function() {
@@ -33,10 +58,10 @@ Authentication = Ext.extend(Ext.util.Observable, {
             items: [
                 new Ext.form.TextField({
                     name: "user",
-                    fieldLabel: "Email address",
+                    fieldLabel: this.userFieldLabel,
                     vtype: "email",
                     allowBlank: false,
-                    blankText: "Enter your email address",
+                    blankText: this.userBlankText,
                     enableKeyEvents: true,
                     listeners: {
                         'keyup': function(field, e){
@@ -49,10 +74,10 @@ Authentication = Ext.extend(Ext.util.Observable, {
                 }),
                 new Ext.form.TextField({
                     name: "password",
-                    fieldLabel: "Password",
+                    fieldLabel: this.passwordFieldLabel,
                     inputType: 'password',
                     allowBlank: false,
-                    blankText: "Enter your password",
+                    blankText: this.passwordBlankText,
                     enableKeyEvents: true,
                     listeners: {
                         'keyup': function(field, e){
@@ -66,7 +91,7 @@ Authentication = Ext.extend(Ext.util.Observable, {
                     }
                 }),
                 new Ext.form.DisplayField({
-                    html: '<a href="#">'+"Forgot your password?"+'</a>',
+                    html: '<a href="#">'+this.forgotPasswordMessage+'</a>',
                     listeners: {
                         render: function(c) {
                             c.getEl().on('click', function(ev, el) {
@@ -79,7 +104,7 @@ Authentication = Ext.extend(Ext.util.Observable, {
                 })
             ],
             buttons: [{
-                text: 'Login',
+                text: this.loginButtonText,
                 handler: function(){
                     if(this.loginForm.getForm().isValid()){
                         var params = this.loginForm.getForm().getValues();
@@ -88,7 +113,7 @@ Authentication = Ext.extend(Ext.util.Observable, {
                         Ext.Ajax.request({
                             url: 'login',
                             params: params,
-                            waitMsg: 'Checking identity',
+                            waitMsg: this.loginWaitMessage,
                             success: function(response, opts) {
                                 var result = Ext.decode(response.responseText);
                                 if(result.success) {
@@ -104,7 +129,7 @@ Authentication = Ext.extend(Ext.util.Observable, {
                                 }
                             },
                             failure: function(response, opts) {
-                                alert('Server-side failure with status code ' + response.status);
+                                alert(this.loginFailureMessage + response.status);
                             },
                             scope: this
                         });
@@ -120,7 +145,7 @@ Authentication = Ext.extend(Ext.util.Observable, {
         });
 
         this.loginWindow = new Ext.Window({
-            title: 'Welcome to ICOS Carbon Data Portal',
+            title: this.loginWindowTitle,
             layout: 'fit',
             height: 165,
             width: 260,
@@ -144,24 +169,24 @@ Authentication = Ext.extend(Ext.util.Observable, {
             items: [
                 new Ext.form.TextField({
                     name: "user",
-                    fieldLabel: "Email address",
+                    fieldLabel: this.userFieldLabel,
                     vtype: "email",
                     allowBlank: false,
-                    blankText: "Enter your email address"
+                    blankText: this.userBlankText
                 }),
                 new Ext.form.TextField({
                     name: "password",
-                    fieldLabel: "Password",
+                    fieldLabel: this.passwordFieldLabel,
                     inputType: 'password',
                     allowBlank: false,
                     submitValue: false,
-                    blankText: "Enter your Password"
+                    blankText: this.passwordBlankText
                 })
             ]
         });
 
         var win = new Ext.Window({
-            title: 'New User',
+            title: this.newUserTitle,
             layout: 'fit',
             height: 165,
             width: 260,
@@ -172,7 +197,7 @@ Authentication = Ext.extend(Ext.util.Observable, {
         });
         
         form.addButton({
-            text: 'Sign Up',
+            text: this.newUserButtonText,
             handler: function() {
                 var fields = this.form.getForm().getFieldValues();
                 this.form.getForm().submit({
@@ -207,32 +232,32 @@ Authentication = Ext.extend(Ext.util.Observable, {
             items: [
                 new Ext.form.TextField({
                     name: "user",
-                    fieldLabel: "Email address",
+                    fieldLabel: this.userFieldLabel,
                     vtype: "email",
                     value: this.user,
                     readOnly: true
                 }),
                 new Ext.form.TextField({
                     name: "password",
-                    fieldLabel: "Old Password",
+                    fieldLabel: this.oldPasswordFieldLabel,
                     inputType: 'password',
                     allowBlank: false,
                     submitValue: false,
-                    blankText: "Enter your Old Password"
+                    blankText: this.oldPasswordBlankText
                 }),
                 new Ext.form.TextField({
                     name: "newPassword",
-                    fieldLabel: "New Password",
+                    fieldLabel: this.newPasswordFieldLabel,
                     inputType: 'password',
                     allowBlank: false,
                     submitValue: false,
-                    blankText: "Enter your New Password"
+                    blankText: this.newPasswordBlankText
                 })
             ]
         });
 
         var win = new Ext.Window({
-            title: 'Change Password',
+            title: this.changePasswordTitle,
             layout: 'fit',
             height: 190,
             width: 260,
@@ -243,7 +268,7 @@ Authentication = Ext.extend(Ext.util.Observable, {
         });
         
         form.addButton({
-            text: 'Change password',
+            text: this.changePasswordButtonText,
             handler: function() {
                 var fields = this.form.getForm().getFieldValues();
                 this.form.getForm().submit({
@@ -280,20 +305,20 @@ Authentication = Ext.extend(Ext.util.Observable, {
             items: [
                 new Ext.form.TextField({
                     name: "user",
-                    fieldLabel: "Email address",
+                    fieldLabel: this.userFieldLabel,
                     vtype: "email",
                     allowBlank: false,
-                    blankText: "Enter your email address",
+                    blankText: this.userBlankText,
                     enableKeyEvents: true
                 }),
                 new Ext.form.DisplayField({
-                    value: "Your password is about to be reset. Please check your inbox for further instructions."
+                    value: this.passwordChangeMessage
                 })
             ]
         });
 
         var win = new Ext.Window({
-            title: 'Password Reminder',
+            title: this.passwordReminderTitle,
             layout: 'fit',
             height: 165,
             width: 260,
@@ -304,7 +329,7 @@ Authentication = Ext.extend(Ext.util.Observable, {
         });
         
         form.addButton({
-            text: 'Reset password',
+            text: this.passwordReminderButton,
             handler: function() {
                 this.form.getForm().submit({
                     url: 'login',
@@ -329,7 +354,7 @@ Authentication = Ext.extend(Ext.util.Observable, {
             Ext.Ajax.request({
                 url: 'login',
                 params: {request: 'logout'},
-                waitMsg: 'Logging out',
+                waitMsg: this.logoutWaitMessage,
                 success: function(response, opts) {
                     Ext.get("loggedLinks").hide();
                     this.user = null;
@@ -338,7 +363,7 @@ Authentication = Ext.extend(Ext.util.Observable, {
                     this.fireEvent("logged_out");
                 },
                 failure: function(response, opts) {
-                    alert('Server-side failure with status code ' + response.status);
+                    alert(this.loginFailureMessage + response.status);
                 },
                 scope: this
             });

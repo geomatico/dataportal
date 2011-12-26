@@ -26,7 +26,14 @@
 		<script type="text/javascript" src="js/result.Map.js"></script>
 		<script type="text/javascript" src="js/download.Panel.js"></script>
 
+        <script type="text/javascript" src="js/locale/App-en.js"></script>
+        <script type="text/javascript" src="js/locale/App-es.js"></script>
+        <script type="text/javascript" src="js/locale/App-ca.js"></script>
+        
 		<script type="text/javascript">
+        if (GeoExt.Lang) {
+            GeoExt.Lang.set(OpenLayers.Util.getParameters()["lang"] || GeoExt.Lang.locale || "en");
+        }
 		var app;
 		Ext.onReady(function(){
 	        app = new App();
@@ -36,12 +43,12 @@
 	<body>
 		<div id="header">
 			 <img src="img/icos-logo.png"/>
-			 <div id="title">ICOS Carbon Data Portal</div>
+			 <div id="title">ICOS Spain Carbon Data Portal</div>
 			 <div id="notLoggedLinks">
-			     <a href="javascript:void(0);" class="login">Login</a> or <a href="javascript:void(0);" class="createUser">Sign up</a>
+			     <a href="javascript:void(0);" id="login">Login</a> / <a href="javascript:void(0);" id="createUser">Sign up</a>
 			 </div>
              <div id="loggedLinks" style="display:none">
-                 <a href="javascript:void(0);" class="logout">Logout</a> / <a href="javascript:void(0);" class="updateUser">Change password</a>
+                 <a href="javascript:void(0);" id="logout">Logout</a> / <a href="javascript:void(0);" id="updateUser">Change password</a>
              </div>
 		</div>
     </body>

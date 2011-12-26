@@ -1,6 +1,13 @@
 Ext.namespace('query');
 
 query.Map =  Ext.extend(GeoExt.MapPanel, {
+    
+    /* i18n */
+    titleText: "Location:",
+    navigationButtonTooltip: "Navigate",
+    addBoxButtonTooltip: "Add Box",
+    removeBoxButtonTooltip: "Remove Box",
+    /* ~i18n */
 
     map: null,
     bboxLayer: null,
@@ -55,7 +62,7 @@ query.Map =  Ext.extend(GeoExt.MapPanel, {
             tbar: [
                 {
                     xtype: 'tbtext',
-                    text: 'Location:'
+                    text: this.titleText
                 }, "->",
                 new GeoExt.Action({
                     control: new OpenLayers.Control.Navigation(),
@@ -63,7 +70,7 @@ query.Map =  Ext.extend(GeoExt.MapPanel, {
                     toggleGroup: "draw",
                     allowDepress: false,
                     pressed: true,
-                    tooltip: "Navigate",
+                    tooltip: this.navigationButtonTooltip,
                     iconCls: 'mapNav',
                     group: "draw",
                     checked: true
@@ -75,7 +82,7 @@ query.Map =  Ext.extend(GeoExt.MapPanel, {
                     map: this.map,
                     toggleGroup: "draw",
                     allowDepress: false,
-                    tooltip: "Add Box",
+                    tooltip: this.addBoxButtonTooltip,
                     iconCls: 'bboxAdd',
                     group: "draw"
                 }),
@@ -84,7 +91,7 @@ query.Map =  Ext.extend(GeoExt.MapPanel, {
                     map: this.map,
                     toggleGroup: "draw",
                     allowDepress: false,
-                    tooltip: "Remove Box",
+                    tooltip: this.removeBoxButtonTooltip,
                     iconCls: 'bboxDel',
                     group: "draw"
                 })                

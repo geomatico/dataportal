@@ -2,6 +2,11 @@ Ext.namespace('query');
 
 query.Identifier =  Ext.extend(Ext.form.FormPanel, {
 
+    /* i18n */
+    idFieldLabel: "Dataset Identifier:",
+    showButtonText: "Show Dataset >>",
+    /* ~i18n */
+    
     initComponent: function() {
                       
         var config = {
@@ -10,8 +15,8 @@ query.Identifier =  Ext.extend(Ext.form.FormPanel, {
             items: [{
                 border: false,
                 items: [{
-                    text: 'Dataset Identifier:',
-                    xtype: 'label'                    
+                    text: this.idFieldLabel,
+                    xtype: 'label'
                 },{
                     name: 'id',
                     value: '',
@@ -20,7 +25,7 @@ query.Identifier =  Ext.extend(Ext.form.FormPanel, {
                 }]
             }],
             buttons: [{
-                text: 'Show Dataset >>'
+                text: this.showButtonText
             }]
         };
         Ext.apply(this, Ext.apply(this.initialConfig, config));
