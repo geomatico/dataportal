@@ -22,8 +22,11 @@ public class LoginServlet extends HttpServlet implements DataportalCodes{
     private static final String CHANGE_PASS = "changePass";
     private static final String GENERATE_PASS = "generatePass";
     private static final String REGISTER = "register";
+    private static final Object LOGOUT = "logout";
     
     private static final String CONTACT_MAIL = Config.get("mail.address");
+
+	
 
     public LoginServlet() {
         super();
@@ -137,6 +140,9 @@ public class LoginServlet extends HttpServlet implements DataportalCodes{
                     }
                 }               
                 
+            } else if (request.equals(LOGOUT)){
+                HttpSession session = req.getSession();
+                session.setAttribute(USERACCESS, null);            	
             } else {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid request.");
             } 

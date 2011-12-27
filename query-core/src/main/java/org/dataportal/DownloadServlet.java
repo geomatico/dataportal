@@ -15,10 +15,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.dataportal.users.User;
+import org.dataportal.model.User;
 import org.dataportal.utils.DataPortalException;
 
 /**
@@ -61,7 +62,8 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		if (!this.authenticate(req, resp))
+		User user = this.authenticate(req, resp);
+		if (user == null)
 			return;
 
 		@SuppressWarnings("unchecked")
@@ -69,13 +71,12 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 
 		if (params.containsKey("file") && params.containsKey("user")) {
 
-			String userName = params.get("user")[0];
 			String fileName = params.get("file")[0];
 
 			DownloadController download = new DownloadController();
-			int fileSize = (int) download.getFileSize(fileName, userName);
+			int fileSize = (int) download.getFileSize(fileName);
 
-			InputStream contents = download.getFileContents(fileName, userName);
+			InputStream contents = download.getFileContents(fileName);
 			OutputStream out = resp.getOutputStream();
 
 			resp.setContentType(TYPEZIP);
@@ -101,7 +102,8 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		if (!this.authenticate(req, resp))
+		User user = this.authenticate(req, resp);
+		if (user == null)
 			return;
 
 		resp.setContentType(TYPEXML);
@@ -110,11 +112,11 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 		InputStream isRequestXML = req.getInputStream();
 
 		try {
-			String userName = req.getParameter("user");
-			logger.debug("UserName to download: " + userName);
+			logger.debug("UserName to download: " + user.getId());
 
 			DownloadController download = new DownloadController();
-			String fileName = download.askgn2download(isRequestXML, userName);
+			download.setUser(user);
+			String fileName = download.askgn2download(isRequestXML);
 			String id = download.getId();
 			logger.debug("FILE to download: " + fileName);
 			writer2Client.println("<download>");
@@ -140,23 +142,28 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 		}
 	}
 
-	protected boolean authenticate(HttpServletRequest req,
-			HttpServletResponse resp) throws IOException {
-		String login = req.getParameter("user");
-		String password = req.getParameter("password");
-		boolean userIsActive = false;
-		try {
-			userIsActive = new User(login, password).isActive();
-			if (!userIsActive) {
+	/**
+	 * Test if user is logged
+	 * 
+	 * @param req
+	 * @param resp
+	 * @throws IOException
+	 */
+	private User authenticate(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException {
+		HttpSession session = req.getSession();
+		User user = (User) session.getAttribute(USERACCESS);
+		if (user == null)
+			try {
 				resp.sendError(HttpServletResponse.SC_UNAUTHORIZED,
 						"Access denied.");
-			}
-		} catch (Exception e) {
-			DataPortalError error = new DataPortalError();
-			error.setCode(ERRORLOGIN);
-			error.setMessage("Error authenticating user");
-			resp.getWriter().print(error.getErrorMessage());
-		}
-		return userIsActive;
+				return null;
+			} catch (Exception e) {
+				DataPortalError error = new DataPortalError();
+				error.setCode(ERRORLOGIN);
+				error.setMessage("Error authenticating user");
+				resp.getWriter().print(error.getErrorMessage());
+			}	
+		return user;
 	}
 }

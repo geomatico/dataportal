@@ -64,7 +64,6 @@ public class DownloadControllerTest extends TestCase {
 		controlador.setUser(user);
 		String filename = controlador.askgn2download(isRequestXML);
 		File file = FileUtils.getFile(tempDir + "/" + filename);
-		System.out.println(tempDir + "/" + filename);
 		assertNotNull(file);		
 		FileUtils.deleteDirectory(new File(tempDir + "/" + user.getId()));
 	}

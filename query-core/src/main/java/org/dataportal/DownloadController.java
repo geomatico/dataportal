@@ -36,9 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.dataportal.controllers.JPADownloadController;
 import org.dataportal.controllers.JPAUserController;
-import org.dataportal.csw.Catalog;
 import org.dataportal.csw.GetRecordById;
-import org.dataportal.csw.DataPortalNS;
 import org.dataportal.model.Download;
 import org.dataportal.model.DownloadItem;
 import org.dataportal.model.User;
@@ -116,7 +114,7 @@ public class DownloadController extends DataPortalController {
 	 * @return
 	 * @throws Exception
 	 */
-	public String askgn2download(InputStream isRequestXML, String userName)
+	public String askgn2download(InputStream isRequestXML)
 			throws Exception {
 
 		StringBuffer response = new StringBuffer();
@@ -174,7 +172,7 @@ public class DownloadController extends DataPortalController {
 
 			// TODO Enviar volumen descarga al usuario y actuar en función
 
-			String resultDownload = downloadDatasets(items, userName);
+			String resultDownload = downloadDatasets(items, user.getId());
 			response.append(resultDownload);
 		}
 
@@ -364,9 +362,9 @@ public class DownloadController extends DataPortalController {
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	public InputStream getFileContents(String fileName, String userName)
+	public InputStream getFileContents(String fileName)
 			throws FileNotFoundException {
-		File file = new File(this.tempDir + SLASH + userName + SLASH + fileName);
+		File file = new File(this.tempDir + SLASH + user.getId() + SLASH + fileName);
 		return new FileInputStream(file);
 	}
 
@@ -380,9 +378,9 @@ public class DownloadController extends DataPortalController {
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	public long getFileSize(String fileName, String userName)
+	public long getFileSize(String fileName)
 			throws FileNotFoundException {
-		File file = new File(this.tempDir + SLASH + userName + SLASH + fileName);
+		File file = new File(this.tempDir + SLASH + user.getId() + SLASH + fileName);
 		if (file.exists() && file.isFile())
 			return file.length();
 		else
