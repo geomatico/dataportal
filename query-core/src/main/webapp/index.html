@@ -39,6 +39,9 @@
             Ext.Ajax.request({
                 url: String.format("js/ext3/locale/ext-lang-{0}.js", GeoExt.Lang.locale),
                 success: function(response, opts) {
+                    Ext.Ajax.request({
+                        url: "locale?lang="+GeoExt.Lang.locale
+                    })
                     eval(response.responseText); // Eval Ext3 locale file.
                     app = new App();
                 },
