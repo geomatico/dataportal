@@ -68,7 +68,7 @@ GeoExt.Lang.add("ca", {
     "result.Grid.prototype": {
         errorTitle: "Error de Cerca",
         genericErrorMessage: "Error de Cerca no especificat",
-        summaryHeader: "Resume",
+        summaryHeader: "Resum",
         extentHeader: "Extensió espacial",
         variablesHeader: "Variables",
         idHeader: "Id",

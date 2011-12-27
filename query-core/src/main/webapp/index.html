@@ -3,17 +3,19 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<title>ICOS Carbon Data Portal</title>
+
 		<link rel="shortcut icon" href="img/icos.ico" />
 		<link rel="stylesheet" type="text/css" href="js/ext3/resources/css/ext-all-notheme.css" />
 		<link rel="stylesheet" type="text/css" href="js/ext3/resources/css/xtheme-gray.css" />
 		<link rel="stylesheet" type="text/css" href="css/dataportal.css" />
+
 		<script type="text/javascript" src="js/openlayers/OpenLayers.js"></script>
 		<script type="text/javascript" src="js/ext3/adapter/ext/ext-base-debug.js"></script>
 		<script type="text/javascript" src="js/ext3/ext-all-debug-w-comments.js"></script>
 		<script type="text/javascript" src="js/ext3/ux/RowExpander.js"></script>
 		<script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script>
         <script type="text/javascript" src="js/md5-min.js"></script>
-        		
+
         <script type="text/javascript" src="js/OpenLayers.Format.BBOXes.js"></script>
         <script type="text/javascript" src="js/OpenLayers.Control.DeleteFeature.js"></script>
         <script type="text/javascript" src="js/OpenLayers.Strategy.DrawTinyFeaturesAsPoints.js"></script>
@@ -29,15 +31,24 @@
         <script type="text/javascript" src="js/locale/App-en.js"></script>
         <script type="text/javascript" src="js/locale/App-es.js"></script>
         <script type="text/javascript" src="js/locale/App-ca.js"></script>
-        
+
 		<script type="text/javascript">
-        if (GeoExt.Lang) {
-            GeoExt.Lang.set(OpenLayers.Util.getParameters()["lang"] || GeoExt.Lang.locale || "en");
-        }
 		var app;
 		Ext.onReady(function(){
-	        app = new App();
-	    });	    
+            GeoExt.Lang.set(OpenLayers.Util.getParameters()["lang"] || GeoExt.Lang.locale);
+            Ext.Ajax.request({
+                url: String.format("js/ext3/locale/ext-lang-{0}.js", GeoExt.Lang.locale),
+                success: function(response, opts) {
+                    eval(response.responseText); // Eval Ext3 locale file.
+                    app = new App();
+                },
+                failure: function() {
+                    // No locale file found. Defaults to English.
+                    GeoExt.Lang.set("en");
+                    app = new App();
+                }
+            })
+	    });
 		</script>
 	</head>
 	<body>
