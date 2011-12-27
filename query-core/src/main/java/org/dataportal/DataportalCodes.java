@@ -59,5 +59,6 @@ public interface DataportalCodes {
 	 */
 	static final String USERACCESS = "org.dataportal.LoginServlet.user";
 
+	static final String LANG = "org.dataportal.lang";
 
 }
