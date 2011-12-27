@@ -32,9 +32,12 @@ public class JPASearchControllerTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		user = new User("un.correo@un.dominio.com", "unapassword");
-		user.setState(JPAUserController.ACTIVE);
-		controladorUsuario.insert(user);
+		user = controladorUsuario.existsInto(new User("user.test"));
+		if ( user == null) {
+			user = new User("user.test", "password.test");
+			user.setState(JPAUserController.ACTIVE);
+			controladorUsuario.insert(user);
+		}
 	}
 
 	/**

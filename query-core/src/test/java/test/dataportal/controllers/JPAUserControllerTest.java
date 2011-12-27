@@ -35,7 +35,7 @@ public class JPAUserControllerTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		controladorUsuario = new JPAUserController();
-		user = new User("un.correo@un.dominio.com", "unapassword");
+		user = new User("user.test", "password.test");
 	}
 
 	/**

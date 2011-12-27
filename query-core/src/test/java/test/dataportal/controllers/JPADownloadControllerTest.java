@@ -28,7 +28,8 @@ public class JPADownloadControllerTest extends TestCase {
 
 	private void createUser() throws Exception {
 		user.setState(JPAUserController.ACTIVE);
-		controladorUsuario.insert(user);
+		if (controladorUsuario.existsInto(user) == null)
+			controladorUsuario.insert(user);
 	}
 
 	/**
@@ -91,7 +92,7 @@ public class JPADownloadControllerTest extends TestCase {
 		assertTrue(insertado);
 
 		Download insertada = controladorDescarga.exists(download);
-		assertNotSame(insertada, null);
+		assertNotNull(insertada);
 
 	}
 	
@@ -123,7 +124,7 @@ public class JPADownloadControllerTest extends TestCase {
 		downloadToRemove = controladorDescarga.exists(download);
 
 		assertTrue(borrada);
-		assertEquals(downloadToRemove, null);
+		assertNull(downloadToRemove);
 		
 		if (controladorUsuario.existsInto(user) != null)
 			controladorUsuario.delete(user);
