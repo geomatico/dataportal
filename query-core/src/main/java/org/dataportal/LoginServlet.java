@@ -57,7 +57,7 @@ public class LoginServlet extends HttpServlet implements DataportalCodes{
                 User u = new User(user, password);
                 org.dataportal.model.User dtUser = new org.dataportal.model.User(user);
                 if(u.isActive()) {
-                    out.print("{success:true,message:\""+dtUser+"\"}");
+                    out.print("{success:true,message:\""+user+"\"}");
                     HttpSession session = req.getSession(true);
                     session.setAttribute(USERACCESS, dtUser);
                 } else {
