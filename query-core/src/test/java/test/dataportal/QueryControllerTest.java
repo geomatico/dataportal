@@ -14,9 +14,12 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.dataportal.QueryController;
+import org.dataportal.controllers.JPADownloadController;
 import org.dataportal.csw.DataPortalNS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
+import test.dataportal.controllers.JPADownloadControllerTest;
 
 import junit.framework.TestCase;
 
@@ -71,11 +74,16 @@ public class QueryControllerTest extends TestCase {
 	 */
 	public void testAsk2gnWithId() throws Exception {
 
-		String[] id = { "98428023-edc0-4091-a0ea-54b39803a70d" };
+		String[] id = { "306689ec-a58a-4e47-9dc9-78c5dc5f72f5" };
 		params.put("id", id);
+		
+		JPADownloadControllerTest testDescarga = new JPADownloadControllerTest();
+		testDescarga.testInsert();
+		testDescarga.testInsertItems();
 
 		controlador.ask2gn(params);
-
+		
+		testDescarga.testDelete();
 	}
 	
 	/**

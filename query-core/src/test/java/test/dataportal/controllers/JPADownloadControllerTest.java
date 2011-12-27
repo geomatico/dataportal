@@ -23,13 +23,16 @@ public class JPADownloadControllerTest extends TestCase {
 
 	private JPADownloadController controladorDescarga = new JPADownloadController();
 	private JPAUserController controladorUsuario = new JPAUserController();
-	private User user = new User("user.test", "password.test");
+	private User user = null;
 	static final String IDDOWNLOADTEST = "306689ec-a58a-4e47-9dc9-78c5dc5f72f5";
 
 	private void createUser() throws Exception {
-		user.setState(JPAUserController.ACTIVE);
-		if (controladorUsuario.existsInto(user) == null)
+		user = controladorUsuario.existsInto(new User("user.test"));
+		if ( user == null) {
+			user = new User("user.test", "password.test");
+			user.setState(JPAUserController.ACTIVE);
 			controladorUsuario.insert(user);
+		}
 	}
 
 	/**
@@ -126,6 +129,7 @@ public class JPADownloadControllerTest extends TestCase {
 		assertTrue(borrada);
 		assertNull(downloadToRemove);
 		
+		user = new User("user.test");
 		if (controladorUsuario.existsInto(user) != null)
 			controladorUsuario.delete(user);
 	}
