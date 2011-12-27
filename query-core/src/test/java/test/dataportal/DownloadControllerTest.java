@@ -3,11 +3,14 @@
  */
 package test.dataportal;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
+import org.dataportal.Config;
 import org.dataportal.DownloadController;
 import org.dataportal.controllers.JPADownloadController;
 import org.dataportal.controllers.JPAGenericController;
@@ -28,7 +31,8 @@ public class DownloadControllerTest extends TestCase {
 	private JPAGenericController controladorGenerico = new JPAGenericController(
 			"dataportal");
 
-	User user = null;
+	private User user = null;
+	private String tempDir;
 
 	/*
 	 * (non-Javadoc)
@@ -43,6 +47,7 @@ public class DownloadControllerTest extends TestCase {
 			user.setState(JPAUserController.ACTIVE);
 			controladorUsuario.insert(user);
 		}
+		tempDir = Config.get("temp.dir");
 	}
 
 	/**
@@ -56,7 +61,12 @@ public class DownloadControllerTest extends TestCase {
 				"/testResponse2Client.xml");
 
 		DownloadController controlador = new DownloadController();
-		controlador.askgn2download(isRequestXML, user.getId());
+		controlador.setUser(user);
+		String filename = controlador.askgn2download(isRequestXML);
+		File file = FileUtils.getFile(tempDir + "/" + filename);
+		System.out.println(tempDir + "/" + filename);
+		assertNotNull(file);		
+		FileUtils.deleteDirectory(new File(tempDir + "/" + user.getId()));
 	}
 
 	/*
