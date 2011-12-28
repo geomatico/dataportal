@@ -1,0 +1,10 @@
+restindex
+	crumb: home
+	format:rest
+	page-title: Home
+	encoding: utf-8
+	output-encoding: None
+	target: index.html
+/restindex
+
+Description of the ICOS project

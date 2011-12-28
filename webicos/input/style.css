@@ -1,0 +1,276 @@
+/*
+(Noir : R=0, V=0, B=0)
+Rouge : R=217, V=0, B=0
+#D90000
+Rouge orange (of the middle of the banner)
+#E83F1D
+Orange : R=254, V=159, B=52
+#FE9F34
+Gris-bleu : R=21, V=72, B=84
+#154854
+Bleu : R=39, V=134, B=157
+#27869D
+Vert : R=101, V=187, B=181 
+#65BBB5
+*/
+/*margin: top right bottom left 
+			top&bottom right&left*/
+/***************************/
+/* specific: */
+/***************************/
+.whitebackground{ background-color:#FFFFFF;}/**/
+.whitebackgroundnoscrollbar {
+	background-color:#FFFFFF;
+	height:500px;
+}
+caption, i { 
+	font-size:11px;
+	 font-family: Verdana, Arial, Helvetica, sans-serif;
+	 color: #000000;
+	 font-style:italic;
+}
+object { background:white;}
+html {	margin: 0;overflow:auto;border: none;}
+body { background-color: #f6f6f6; margin: 0; padding: 0; }/*body background*/
+/*body { background-color: #f6f6f6; margin: 0; padding: 0; }body background*/
+a:link { color: #154854; text-decoration: none; }
+a:visited { color: #154854; text-decoration: none; }
+a:hover { color: #D90000; text-decoration: underline; }
+a:active { color: #D90000; text-decoration: underline; }
+.footer a:link { color: #eee; text-decoration: none; }
+.footer a:visited { color: #eee; text-decoration: none; }
+.footer a:hover { color: #eee; text-decoration: underline; }
+.footer a:active { color: #eee; text-decoration: underline; }
+
+.pagecontainer { 
+	background-color: white; 
+	border: solid 1px #FE9F34;
+	width: 780px; 
+}/*boder color*/
+	
+#logo { vertical-align: middle; padding: 0px; }
+#topmenu { font-size: 11px; 
+	font-family: Arial, Helvetica, sans-serif; 
+	background-color: #D90000; 
+	color: #eee; 
+	text-decoration: none; 
+	padding: 5px; 
+}
+
+
+#navcontainer { font-weight: bold; width: 100%; padding-top: 5px; }
+#navcontainer ul {
+	font-size: 12px;
+	margin-left: 0;
+	padding-left: 0; 
+	list-style-type: none; 
+	font-family: Arial, Helvetica, sans-serif; 
+	vertical-align: middle;
+}
+#navcontainer li { margin: 0 0 1px 0; }
+#navcontainer a { display: block; padding: 5px; width: 150px; background-color: #E83F1D; }
+#navcontainer a:hover { background-color: #154854; color: #fff; }
+#navcontainer a#current { background-color: #154854; color: #fff; }
+#navcontainer a:link, #navlist a:visited { color: #eee; text-decoration: none; font-weight: bold; }
+#navcontainer ul ul li { background-color: #27869D; margin: 0 0 1px 0;  }
+							/*subnavmargin blue*/
+#navcontainer ul ul a:link, #navcontainer ul ul a:visited {  color: #003947; background-color: #52BAC5; font-size: 11px; display: block; padding: 3px 3px 3px 7px; width: 143px;text-decoration: none; font-weight: normal; margin-left: 7px; }
+																				/*subnav skyblue*/
+#navcontainer ul ul a:hover { color: black; background-color: white; text-decoration: none; }
+#navcontainer ul ul a#subcurrent { color: black; background-color: white; text-decoration: none; }
+
+#navcontainer ul ul li .subnavlistmargin {
+	padding-left: 6px;
+}
+
+a.currentmenu#menu1 { background-color: #154854; color: #fff; }
+a.currentmenu#menu2 { background-color: #154854; color: #fff; }
+a.currentmenu#menu3 { background-color: #154854; color: #fff; }
+a.currentmenu#menu4 { background-color: #154854; color: #fff; }
+a.currentmenu#menu5 { background-color: #154854; color: #fff; }
+a.currentmenu#menu6 { background-color: #154854; color: #fff; }
+a.currentmenu#menu7 { background-color: #154854; color: #fff; }
+a.currentmenu#menu8 { background-color: #154854; color: #fff; }
+a.currentmenu#menu9 { background-color: #154854; color: #fff; }
+a.currentmenu#menu10 { background-color: #154854; color: #fff; }
+a.currentmenu#menu11 { background-color: #154854; color: #fff; }
+
+span.submenu a.currentsubmenu#sub5aa { color: black; background-color: white; text-decoration: none; }
+span.submenu a.currentsubmenu#sub5bb { color: black; background-color: white; text-decoration: none; }
+span.submenu a.currentsubmenu#sub7aa { color: black; background-color: white; text-decoration: none; }
+span.submenu a.currentsubmenu#sub7bb { color: black; background-color: white; text-decoration: none; }
+span.submenu a.currentsubmenu#sub7cc { color: black; background-color: white; text-decoration: none; }
+
+#contentcontainer { width: 630px; padding-top: 0px; padding-left: 20px; padding-right: 5px; padding-bottom: 12px; border-left: 1px solid black; border-bottom: 1px solid black; vertical-align:top; }
+/*#content { padding-left: 10px; font-size: 11px; font-family: Verdana, Arial, Helvetica, sans-serif; overflow: auto; padding-right: 18px; padding-bottom: 5px; }
+#content { padding-left: 10px; font-size: 11px; font-family: Verdana, Arial, Helvetica, sans-serif; overflow: auto; height: 400px; padding-right: 10px; padding-bottom: 5px; }*/
+/* #content { text-align:left;overflow: auto; height:476px;} */
+/* #content { text-align:left; height:550px; overflow: auto; padding-top: 0px;margin-top:0px;top:0px;} */
+.footer { font-size: 11px; font-family: Arial, Helvetica, sans-serif; background-color:#E83F1D; color: #eee; text-decoration: none; padding: 5px;  }
+.spacer { height: 10px; }
+.title { font-size: 16px; font-family: Arial, Helvetica, Geneva, sans-serif; font-weight: bold; color: black; padding-top: 5px; padding-bottom: 5px; padding-left: 20px; border-top: 1px solid black; border-left: 1px solid black;  }
+.title1 { font-size: 12px; font-family: Arial, Helvetica, Geneva, sans-serif; font-weight: bold; color: black; padding-top: 10px; padding-bottom: 10px; padding-left: 20px;}
+.title2 { font-size: 12px; font-family: Arial, Helvetica, Geneva, sans-serif; font-weight: bold; color: black; padding-top: 10px; padding-bottom: 10px;}
+.subtitle{ display:none;font-size: 14px; font-family: Arial, Helvetica, Geneva, sans-serif; font-weight: normal;  }
+
+.country_flag{ width:18px; height:10px; margin:0px;margin-right:5px;border-style:solid; border-width:1px}
+.institution_logo{max-width:80px; max-height:80px; margin:0px;margin-right:5px;border-style:none; border-width:1px}
+.list_sans_puce {
+	list-style-image:url("../img/puce_vide.png");	/*On change l'apparence des puces*/
+	padding:0px;									/*Tout les cï¿½tï¿½s ont une marge intï¿½rieur de 0 pixels*/
+	padding-left:30px;							/*...mais on modifie ensuite la marge de gauche, donc celle-lï¿½ fera finalement 20pixels*/
+	margin:0px;										/*Idem pour margin, ï¿½a nous ï¿½vite d'avoir ï¿½ en ï¿½crire 4(margin-left, margin-right...)*/
+	margin-bottom:5px;							/*Mï¿½me chose que tout ï¿½ l'heure, on modifie ensuite juste margin-bottom, mais
+														tous les autres sont ï¿½ 0 px*/
+}
+#partners{ line-height:20px;font-size:12px}
+#annonce {
+	width:150px;
+	font-size:12px;
+	color:#00BFFF;
+	margin:5px;
+	text-align:justify;
+	font-weight:bold; 
+	font-style:italic
+}
+/***************************/
+/* General element styles: */
+/***************************/
+
+H1, H2, H3, H4, H5, P, TD, UL, OL, BLOCKQUOTE, INPUT, TEXTAREA, SELECT { font-family: Verdana, Arial, Helvetica, sans-serif; color: #000000; }
+PRE { font-family: monospace; }
+/*/A { color: #000066; text-decoration: underline; }
+/A:hover { color: #660000; }*/
+FORM { margin: 0px 0px 0px 0px;}
+P, PRE { margin: 0px 0px 0px 0px;  }
+P, TD, UL, OL { font-size: 11px; }
+INPUT, TEXTAREA, SELECT { padding-left: 5px; font-size: 11px; }
+UL{ margin-left:5px; padding-left:20px;}
+
+
+				
+/******************/
+/* Headers, plain */
+/******************/
+H1 { font-size: 12px; color: #D90000;  }
+H2 { font-size: 18px; color: #186900; }
+H3 { font-size: 16px; color: #10007B; }
+H4 { font-size: 14px; color: #8A0020; }
+H1, H2, H3, H4, H5, H6 { margin: 0px 0px 0px 0px; margin-top: 10px; margin-bottom: 2px; }
+H1.csc-firstHeader, H2.csc-firstHeader, H3.csc-firstHeader, H4.csc-firstHeader, H5.csc-firstHeader, H6.csc-firstHeader { margin-top: 0px; }
+
+/* Headers, with link */
+H1 A, H2 A, H3 A, H4 A, H5 A { color: #000000; text-decoration: none; }
+H2 A { color: #186900; }
+H3 A { color: #10007B; }
+H4 A { color: #8A0020; }
+H1 A:hover, H2 A:hover, H3 A:hover, H4 A:hover, H5 A:hover { text-decoration: underline; }
+
+/* Header date */
+p.csc-header-date { font-size: 10px; color: #186900; }
+
+/* Subheader, general */
+p.csc-subheader { font-style: italic; font-size: 12px; background-color: #EDEBF1; }
+
+/* Subheader, specific */
+p.csc-subheader-0 { font-style: normal; }
+p.csc-subheader-1 { color: #186900; }
+p.csc-subheader-2 { color: #10007B; }
+p.csc-subheader-3 { color: #8A0020; }
+
+
+
+/*******************/
+/* RTE / Bodytext: */
+/*******************/
+p.bodytext { font-size: 12px;
+	color: #000000;
+	background-color:#FFFFFF;
+	margin:0px 10px;
+	line-height:18px;
+	text-align:justify;
+}
+P.bodytext A { font-weight: bold;  background-color:#FFFFFF}
+
+/* RTE / Bulletlists */
+ul { margin-top: 0px;  }
+ul ul li { font-size: 10px; }
+ol { margin-top: 0px; }
+/*LI { margin-top: 0px; margin-bottom: 0px; padding-top: 2px; }*/
+
+/* RTE / Table styling */
+TABLE.contenttable { 
+	border: 1px #333333 solid; 
+	margin: 10px 0px 10px 0px; 
+	width: 100%; 
+}
+TABLE.contenttable TR TD { padding: 0px 3px 0px 3px; }
+TABLE.contenttable TR TD P.bodytext { font-size: 10px; }
+TABLE.contenttable TR { background-color: #EDEBF1; }
+
+/* MODIF_ZP_20081201: tableau de compte-rendu utilise dans worksop ramces */
+.crTable{
+	text-align:center;
+	font-size:11px;
+	border-style: solid;
+	border-color: black;
+	border-width:2px;
+	empty-cells: show;
+	border-collapse: collapse;
+}
+.crTable td{
+  padding-left: 5px;
+  padding-right: 5px;
+	border-style:solid;
+border-width:1px;
+}
+.crTable td.title{
+	font-family: Arial, sans-serif,Helvetica;
+	font-weight:bold;
+	text-align:center;
+/* 	width:20.0em; */
+	}
+.crTable td.centeredvalue{
+	font-family: Arial, sans-serif,Helvetica;
+	font-weight:bold;
+	text-align:center;
+}
+.crTable td.justifiedvalue{
+	font-family: Arial, sans-serif,Helvetica;
+	font-weight:bold;
+	text-align:justify;
+}
+/***************/
+/* Bulletlists */
+/***************/
+
+/* Bulletlists, general */
+UL.csc-bulletlist LI { font-size: 11px; }
+
+/* Bulletlists, specifically */
+UL.csc-bulletlist-0 { }
+UL.csc-bulletlist-1 {
+	color: #186900; 
+	list-style-type : decimal;
+}
+UL.csc-bulletlist-2 { 
+	color: #10007B; 
+	list-style-position : inside; 
+}
+UL.csc-bulletlist-3 { 
+	color: #8A0020; 
+	list-style-image: url(img/red_arrow_bullet.gif);
+}
+
+UL.csc-bulletlist-4 LI { 
+	font-size: 11px; 
+	padding-top:4px
+}
+
+/* Registration div: activate during registration */
+.registration_class{
+//	display:block;
+	display:none;
+	 padding:5px;
+	 color:blue
+}

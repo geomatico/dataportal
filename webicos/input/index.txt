@@ -1,0 +1,15 @@
+restindex
+	crumb: home
+	format:rest
+	page-title: ICOS Spain
+	encoding: utf-8
+	output-encoding: None
+	section-pages: ,home,partners
+	file: style.css
+	file: images/cabecera.jpg
+	file: images/geomatico.png
+	file: images/lsce.gif
+	file: images/logo_UE_fp7.jpeg
+	file: images/icos_bottom_banner.png
+	build: no
+/restindex

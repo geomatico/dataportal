@@ -1,0 +1,4 @@
+To build the web page:
+
+sudo apt-get install rest2web
+r2w webicos.ini -w

@@ -1,0 +1,16 @@
+restindex
+	crumb: partners
+	format:rest
+	page-title: Partners
+	encoding: utf-8
+	output-encoding: None
+/restindex
+
+CEAM
+
+AEMET
+
+UTM
+
+IC3
+

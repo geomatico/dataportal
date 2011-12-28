@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<title>ICOS - Integrated Carbon Observation System</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1" />
+		<meta name="keywords" content="infrastructure,ICOS,carbon,network,co2,icos,europe,fp7,preparatory phase" />
+		<meta name="language" content="Fr" />
+
+	<!-- Original:  FranÃ§ois Souty (francois.souty@lsce.ipsl.fr) intern during summer 2007
+		Under the supervision of LÃ©onard Rivier (leonard.rivier@lsce.ipsl.fr)
+		with help from : http://www.toutjavascript.com/savoir/savoir06_2.php3 ,
+		http://fr.selfhtml.org/index.htm , http://www.w3.org/TR/html401/struct/global.html ,
+		http://www.developpez.com/ 
+		In this website an object tag insert the content, the data of this object is modified by the function : changecontent()
+ 	-->
+		<link rel='stylesheet' type='text/css' href='style.css' />
+
+		<script type="text/javascript" src="js/javascript.js"></script>
+		
+		<script type="text/javascript" src="highslide/highslide.js"></script>
+		<script type="text/javascript">    
+			hs.graphicsDir = 'highslide/graphics/';
+			hs.outlineType = 'rounded-white';
+			window.onload = function() {
+			hs.preloadImages();
+		}
+		</script>
+		
+		<script type="text/javascript">
+			function resizePopUp(monImage, monTitre){
+				w = window.open('','chargement','scrollbars=yes, resizable=yes, fullscreen=yes');
+				w.document.write( "<html><head><title>"+monTitre+"</title>\n" );
+				w.document.write( "<script language='JavaScript'>\n");
+				w.document.write( "IE5=NN4=NN6=false;\n");
+				w.document.write( "if(document.all)IE5=true;\n");
+				w.document.write( "else if(document.getElementById)NN6=true;\n");
+				w.document.write( "else if(document.layers)NN4=true;\n");
+				w.document.write( "function autoSize() {\n");
+				w.document.write( "if(IE5) self.resizeTo(document.images[0].width+20,document.images[0].height+31);\n");
+				w.document.write( "else if(NN6) self.sizeToContent();\n");
+				w.document.write( "else window.resizeTo(document.images[0].width,document.images[0].height+20);\n");
+				w.document.write( "self.focus();\n");
+				w.document.write( "}\n</scri");
+				w.document.write( "pt>\n");
+				w.document.write( "</head><body leftmargin=0 topmargin=0 marginwidth=0 marginheight=0 onLoad='javascript:autoSize();'>" );
+				w.document.write( "<a href='javascript:window.close();'><img src='"+monImage+"' border=0 alt='"+monTitre+"'></a>" );
+				w.document.write( "</body></html>" );
+				w.document.close();
+			}
+			
+			function makeLink(path){
+ 				var rootpath = "";
+// 				var rootpath = "http://www.icos-infrastructure.eu/";
+				return rootpath + path;
+			}
+			function show(elem){
+				id=document.getElementById(elem);
+				id.style.display = 'block';
+			}
+			function hide(elem){
+				id=document.getElementById(elem);
+				id.style.display = 'none';
+			}
+			/* To create blinking text
+			 SCRIPTfrom JAVASCRIPT editor: http://www.editeurjavascript.com */
+			go_visibility = new Array;
+// 			window.onload = goblink();
+ 			 var timer=setInterval("blinkElement()", 1000);
+		
+		</script>	
+		<style type="text/css">
+			.submenu{
+				margin-bottom: 0.5em;
+				display:none;
+			}
+			.country_flag{ width:18px; height:10px; margin:0px;margin-right:5px;border-style:solid; border-width:1px}
+			.institution_logo{max-width:80px; max-height:80px; margin:0px;margin-right:5px;border-style:none; border-width:1px}
+		</style>
+			
+		<style type="text/css">#con {background-color: #154854; color: #fff; } </style>	</head>
+
+	<body style="margin:10px 0px">
+
+		<table class="pagecontainer" align="center" border="0" cellpadding="0" cellspacing="0">
+			<tbody>
+				<tr>
+					<td colspan="2" id="logo" height="75">
+						<img src="cabecera.jpg" alt="Integrated Carbon Observation System" border="0" width="790" height="117">
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+					</td>
+					<td class="title"><% title %></td>
+				</tr> 
+				<tr height="510">
+					<td height="510" valign="top" style="background-image:url(logo_UE_fp7.jpeg); background-repeat:no-repeat; background-position:bottom" rowspan="2">
+<!-- 						<div id="masterdiv"> -->
+							<div id="navcontainer">
+								<ul id="navlist">
+    <#
+        print_details(default_section, item_wrapper = '%s', page_title = '')
+    #>
+								</ul> <!-- fin navlist (menu)-->
+
+<!--								<div  style="padding:5px;color:blue">
+									<blink> ICOS Annual Meeting and Stakeholders Conference, Helsinki 31 May to 3 June 2010</blink>
+									<blink> Registration form under Meetings</blink>
+								</div>-->
+							</div> 	<!-- fin navcont (menu)-->
+<!-- 						</div> --><!-- fin masterdiv--> 
+						<div style=""></div>
+					</td>
+					<td height="550" id="contentcontainer" valign='top'> 
+						<div id="content" style="text-align:left; height:550px; overflow: auto; padding-top: 0px;margin-top:0px;top:0px;">
+
+	<p class="bodytext">&nbsp; </p>   
+	<p class="bodytext"><% body %></p>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td><img src="icos_bottom_banner.png"></td>
+				</tr>
+
+				<tr>
+					<td class="spacer" colspan="2"></td>
+				</tr>
+				<tr>
+					<td class="footer" height="25">&#64; ICOS | <a href="mailto:arnaud@ceam.es?subject=[ICOS]">Contact</a></td>
+					<td class="footer" align="right" height="25">Website created at <a href="http://www.lsce.ipsl.fr/"><img src="lsce.gif" style="vertical-align:middle" > </a> and adapted by <a href="http://geomati.co/"><img src="geomatico.png" style="vertical-align:middle" > </a>
+
+						<br />
+						<div style='width:220px;text-align:left;'>Last Update: <% modtime %></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="spacer" colspan="2"></td>
+				</tr>
+			</tbody>
+
+		</table>
+	</body>
+</html>
+
