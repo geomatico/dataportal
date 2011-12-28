@@ -275,6 +275,44 @@ Para la obtención de las coordenadas de una variable se sigue la convención CF
 datos puntuales y mallas (ver resumen de CF más abajo), aunque en principio se intuye que sólo va a
 haber datos puntuales y trayectorias. 
 
+Las variables que sean calculadas como una media, incluirán un atributo 
+*mean_desc* y *mean* que contendrán respectivamente una descripción de
+la media y los nombres, separados por un espacio, de las dos variables
+que contienen el número de elementos que se usaron para calcular la
+media (*nd*) y la desviación típica (*sd*).
+
+Estas variables tendrán la misma forma (*shape*) y por tanto, el mismo número de
+valores, que la variable media. Esto es así porque cada valor de la variable media
+se corresponde con el valor en la misma posición de cada una de las variables
+auxiliares.
+
+Además, con el fin de poder identificar las variables *nd* y *std* sin 
+tener que buscar atributos *mean* en todas las variables, estas incorporarán un atributo
+*mean_role* con valor "nd" o "std". Por ejemplo::
+
+	dimensions:
+	 station = 10 ; // measurement locations
+	 time = UNLIMITED ;
+	variables:
+	 float co2(time,station) ;
+	  co2:long_name = "carbon dioxide" ;
+	  co2:coordinates = "lat lon" ;
+	  co2:mean = "nd sd"
+	  co2:mean_desc = "Hourly data means of 10 minutes means"
+	 int nd(time,station) ;
+	  nd:mean_role = "nd"
+	 int sd(time,station) ;
+	  sd:mean_role = "sd"
+	 double time(time) ;
+	  time:long_name = "time of measurement" ;
+	  time:units = "days since 1970-01-01 00:00:00" ;
+	 float lon(station) ;
+	  lon:long_name = "station longitude";
+	  lon:units = "degrees_east";
+	 float lat(station) ;
+	  lat:long_name = "station latitude" ;
+	  lat:units = "degrees_north" ;
+
 Se considera la utilización de un único sistema de referencia, por simplicidad. El sistema común 
 será el WGS84 y no se incluirá información sobre el CRS dentro del fichero.
 

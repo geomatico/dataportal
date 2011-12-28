@@ -8,7 +8,6 @@ import co.geomati.netcdf.IcosDomain;
 import co.geomati.netcdf.Institution;
 import co.geomati.netcdf.TimeUnit;
 import co.geomati.netcdf.dataset.Dataset;
-import co.geomati.netcdf.dataset.DatasetDoubleVariable;
 import co.geomati.netcdf.dataset.DatasetVariable;
 import co.geomati.netcdf.dataset.GeoreferencedStation;
 import co.geomati.netcdf.dataset.TimeSerie;
@@ -19,20 +18,28 @@ public class AEMETDataset implements Dataset, GeoreferencedStation, TimeSerie {
 	private String variableUnits;
 	private String variableLongName;
 	private String variableName;
+	private String meanDescription;
 	private List<Double> values;
+	private List<Integer> ndValues;
+	private List<Double> sdValues;
 	private List<Integer> timeStamps;
 	private Date referenceDate;
 	private TimeUnit timeUnits;
 
 	public AEMETDataset(List<Point2D> stationPosition, String variableUnits,
-			String variableLongName, String variableName, List<Double> values,
+			String variableLongName, String variableName,
+			String meanDescription, List<Double> values,
+			List<Integer> ndValues, List<Double> sdValues,
 			List<Integer> timeStamps, Date referenceDate, TimeUnit timeUnits) {
 		super();
 		this.stationPosition = stationPosition;
 		this.variableUnits = variableUnits;
 		this.variableLongName = variableLongName;
 		this.variableName = variableName;
+		this.meanDescription = meanDescription;
 		this.values = values;
+		this.ndValues = ndValues;
+		this.sdValues = sdValues;
 		this.timeStamps = timeStamps;
 		this.referenceDate = referenceDate;
 		this.timeUnits = timeUnits;
@@ -65,7 +72,7 @@ public class AEMETDataset implements Dataset, GeoreferencedStation, TimeSerie {
 
 	@Override
 	public DatasetVariable getMainVariable() {
-		return new DatasetDoubleVariable() {
+		return new DatasetDoubleMeanVariable() {
 
 			@Override
 			public String getUnits() {
@@ -95,6 +102,31 @@ public class AEMETDataset implements Dataset, GeoreferencedStation, TimeSerie {
 			@Override
 			public List<Double> getData() {
 				return values;
+			}
+
+			@Override
+			public String getMeanDescription() {
+				return meanDescription;
+			}
+
+			@Override
+			public Number getNDFillValue() {
+				return 0;
+			}
+
+			@Override
+			public Number getSDFillValue() {
+				return -999.99;
+			}
+
+			@Override
+			public List<Double> getSDData() {
+				return sdValues;
+			}
+
+			@Override
+			public List<Integer> getNDData() {
+				return ndValues;
 			}
 		};
 	}

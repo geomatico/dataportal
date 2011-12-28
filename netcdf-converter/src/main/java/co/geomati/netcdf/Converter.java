@@ -28,6 +28,7 @@ import co.geomati.netcdf.dataset.Dataset;
 import co.geomati.netcdf.dataset.DatasetDoubleVariable;
 import co.geomati.netcdf.dataset.DatasetIntVariable;
 import co.geomati.netcdf.dataset.GeoreferencedStation;
+import co.geomati.netcdf.dataset.IsMean;
 import co.geomati.netcdf.dataset.Station;
 import co.geomati.netcdf.dataset.TimeSerie;
 import co.geomati.netcdf.dataset.Trajectory;
@@ -56,8 +57,13 @@ public class Converter {
 				r.addRecord();
 				Dataset dataset = conversion.getDataset(i);
 				r.setDatasetName(dataset.getMainVariable().getStandardName());
-				File tempFile = new File(System.getProperty("java.io.tmpdir")
-						+ "/" + conversion.getOutputFileName(dataset) + ".nc");
+				String fileName = conversion.getOutputFileName(dataset);
+				int index = 0;
+				File tempFile;
+				while ((tempFile = new File(
+						System.getProperty("java.io.tmpdir") + "/" + fileName
+								+ "_" + index++ + ".nc")).exists()) {
+				}
 				convert(dataset, tempFile);
 			} catch (RuntimeException e) {
 				r.datasetError(e);
@@ -165,6 +171,19 @@ public class Converter {
 			mainVar.addAttribute(new Attribute("_FillValue", fillValue));
 		}
 
+		if (mainVariable instanceof IsMean) {
+			mainVar.addAttribute(new Attribute("mean", "nd sd"));
+			mainVar.addAttribute(new Attribute("mean_desc",
+					((IsMean) mainVariable).getMeanDescription()));
+
+			addMeanAuxiliaryVariable(nc, mainVarDimensions,
+					((IsMean) mainVariable).getNDFillValue(), "nd",
+					DataType.INT);
+			addMeanAuxiliaryVariable(nc, mainVarDimensions,
+					((IsMean) mainVariable).getSDFillValue(), "sd",
+					DataType.DOUBLE);
+		}
+
 		try {
 			nc.create();
 
@@ -230,6 +249,27 @@ public class Converter {
 				throw new ConverterException("Too many data on main variable",
 						e);
 			}
+
+			if (mainVariable instanceof IsMean) {
+				List<Integer> ndData = ((IsMean) mainVariable).getNDData();
+				checkSize(requiredSize, ndData);
+				a = intToArray(ndData, getShape(dataset));
+				try {
+					nc.write("nd", a);
+				} catch (InvalidRangeException e) {
+					throw new ConverterException(
+							"Too many data on main variable", e);
+				}
+				List<Double> sdData = ((IsMean) mainVariable).getSDData();
+				checkSize(requiredSize, sdData);
+				a = doubleToArray(sdData, getShape(dataset));
+				try {
+					nc.write("sd", a);
+				} catch (InvalidRangeException e) {
+					throw new ConverterException(
+							"Too many data on main variable", e);
+				}
+			}
 		} catch (IOException e) {
 			throw new ConverterException("Cannot create netcdf file", e);
 		}
@@ -238,6 +278,17 @@ public class Converter {
 			nc.close();
 		} catch (IOException e) {
 			throw new ConverterException("Cannot close created nc file", e);
+		}
+	}
+
+	private static void addMeanAuxiliaryVariable(NetcdfFileWriteable nc,
+			ArrayList<Dimension> mainVarDimensions, Number fillValue,
+			String varName, DataType dataType) {
+		Variable nd = nc.addVariable(varName, dataType,
+				mainVarDimensions.toArray(new Dimension[0]));
+		nd.addAttribute(new Attribute("mean_role", varName));
+		if (fillValue != null) {
+			nd.addAttribute(new Attribute("_FillValue", fillValue));
 		}
 	}
 

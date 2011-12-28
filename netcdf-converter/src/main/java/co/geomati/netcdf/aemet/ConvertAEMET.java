@@ -44,10 +44,11 @@ public class ConvertAEMET {
 	public static void main(String[] args) throws ConverterException {
 		String[] files = new String[] { "izoco2hour_10_newformat",
 				"izoco2daily_night_newformat", "izoco2monthly_night_newformat" };
-		String[] co2suffix = new String[] { "hourly", "daily_night", "monthly" };
-		for (int i = 0; i < co2suffix.length; i++) {
+		String[] meanDescriptions = new String[] { "hourly means",
+				"daily night means (20:00-08:00)", "monthly means" };
+		for (int i = 0; i < meanDescriptions.length; i++) {
 			final String fileName = files[i];
-			String suffix = co2suffix[i];
+			final String meanDescription = meanDescriptions[i];
 			ByteArrayOutputStream os;
 			try {
 				BufferedInputStream is = new BufferedInputStream(
@@ -69,7 +70,7 @@ public class ConvertAEMET {
 			final Point2D pos = getPosition(lat, lon);
 
 			final String variableName = getVariableName(
-					getMatch(content, "PARAMETER: (.*)"), suffix);
+					getMatch(content, "PARAMETER: (.*)"), meanDescription);
 			final String variableUnit = getMatch(content, "UNIT: (.*)");
 
 			final Date referenceDate = new Date(0);
@@ -92,7 +93,7 @@ public class ConvertAEMET {
 
 			// Add the prefix
 			for (int j = 0; j < fields.length; j++) {
-				fields[j] = getVariableName(fields[j], suffix);
+				fields[j] = getVariableName(fields[j], meanDescription);
 			}
 
 			// Get the data section
@@ -118,28 +119,43 @@ public class ConvertAEMET {
 				for (int j = 2; j < fieldValues.length; j++) {
 					String fieldValue = fieldValues[j];
 					String fieldName = fields[j];
-					if (fieldName.equals("date") || fieldName.equals("time")) {
-						// strange repeated value
-						continue;
-					} else {
-						ArrayList<?> array = data[j];
-						if (fieldName.startsWith("nd_")) {
-							@SuppressWarnings("unchecked")
-							ArrayList<Integer> intArray = (ArrayList<Integer>) array;
-							if (intArray == null) {
-								intArray = new ArrayList<Integer>();
-								data[j] = intArray;
-							}
-							intArray.add(new Integer(fieldValue));
+
+					// Ignore second date/time
+					if (fieldName.equals("date")) {
+						if (!fieldValue.equals("9999-99-99")) {
+							throw new ConverterException(
+									"Only continuous meassures supported");
 						} else {
-							@SuppressWarnings("unchecked")
-							ArrayList<Double> doubleArray = (ArrayList<Double>) array;
-							if (doubleArray == null) {
-								doubleArray = new ArrayList<Double>();
-								data[j] = doubleArray;
-							}
-							doubleArray.add(new Double(fieldValue));
+							continue;
 						}
+					}
+					if (fieldName.equals("time")) {
+						if (!fieldValue.equals("99:99")) {
+							throw new ConverterException(
+									"Only continuous meassures supported");
+						} else {
+							continue;
+						}
+					}
+
+					// Fill the data
+					ArrayList<?> array = data[j];
+					if (fieldName.startsWith("nd")) {
+						@SuppressWarnings("unchecked")
+						ArrayList<Integer> intArray = (ArrayList<Integer>) array;
+						if (intArray == null) {
+							intArray = new ArrayList<Integer>();
+							data[j] = intArray;
+						}
+						intArray.add(new Integer(fieldValue));
+					} else {
+						@SuppressWarnings("unchecked")
+						ArrayList<Double> doubleArray = (ArrayList<Double>) array;
+						if (doubleArray == null) {
+							doubleArray = new ArrayList<Double>();
+							data[j] = doubleArray;
+						}
+						doubleArray.add(new Double(fieldValue));
 					}
 				}
 			}
@@ -159,10 +175,18 @@ public class ConvertAEMET {
 				@Override
 				public Dataset getDataset(int index) throws ConverterException {
 					try {
+						List<Double> mainVarData = ConvertAEMET
+								.<Double> getVariableData(variableName, fields,
+										data);
+						List<Integer> ndData = ConvertAEMET
+								.<Integer> getVariableData("nd", fields, data);
+						List<Double> sdData = ConvertAEMET
+								.<Double> getVariableData("sd", fields, data);
 						return new AEMETDataset(Collections.singletonList(pos),
 								variableUnit, getLongName(variableName),
-								variableName, getCO2(fields, data), timestamps,
-								referenceDate, timeUnits);
+								variableName, meanDescription, mainVarData,
+								ndData, sdData, timestamps, referenceDate,
+								timeUnits);
 					} catch (IOException e) {
 						throw new ConverterException(
 								"Cannot access aemet vocabulary", e);
@@ -173,19 +197,15 @@ public class ConvertAEMET {
 	}
 
 	private static String getVariableName(String input, String suffix) {
-		String fieldName = input.toLowerCase().trim();
-		if (fieldName.equals("co2") || fieldName.equals("nd")) {
-			fieldName = fieldName + "_" + suffix;
-		}
-		return fieldName;
+		return input.toLowerCase().trim();
 	}
 
-	private static List<Double> getCO2(String[] fields, ArrayList<?>[] data)
-			throws ConverterException {
+	private static <T> List<T> getVariableData(String variableName,
+			String[] fields, ArrayList<?>[] data) throws ConverterException {
 		for (int i = 0; i < fields.length; i++) {
-			if (fields[i].startsWith("co2_")) {
+			if (fields[i].startsWith(variableName)) {
 				@SuppressWarnings("unchecked")
-				List<Double> ret = (List<Double>) data[i];
+				List<T> ret = (List<T>) data[i];
 				return ret;
 			}
 		}
