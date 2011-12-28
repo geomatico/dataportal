@@ -49,6 +49,8 @@ public class QueryController extends DataPortalController {
 
 	private static Logger logger = Logger.getLogger(QueryController.class);
 
+	private static final String OR = "Or";
+	private static final String AND = "And";
 	private static final int FIRST = 0;
 
 	/**
@@ -78,7 +80,7 @@ public class QueryController extends DataPortalController {
 			String ddi = parametros.get("id")[FIRST];
 			response = getItemsDDI(ddi);
 		} else {
-			String aCSWQuery = params2Query(parametros);
+			String aCSWQuery = createCSWQuery(parametros);
 
 			isCswResponse = catalogo.sendCatalogRequest(aCSWQuery);
 			response = transform(isCswResponse);
@@ -160,7 +162,7 @@ public class QueryController extends DataPortalController {
 	 * @return String
 	 * @throws XMLStreamException 
 	 */
-	private String params2Query(Map<String, String[]> parametros) throws Exception {
+	private String createCSWQuery(Map<String, String[]> parametros) throws Exception {
 
 		try {
 
@@ -174,9 +176,9 @@ public class QueryController extends DataPortalController {
 			Search search = new Search();
 			if (getUser() != null)
 				search.setUserBean(user);
-
+			
 			// bboxes
-			Operator orBBox = new Operator("Or");
+			Operator orBBox = new Operator(OR);
 
 			String stringBBoxes = parametros.get("bboxes")[FIRST];
 			ArrayList<BBox> bboxes = Utils.extractToBBoxes(stringBBoxes);
@@ -292,9 +294,18 @@ public class QueryController extends DataPortalController {
 			sortby.setOrder(dir);
 
 			getrecords.setSortby(sortby);
-
+			
 			Filter filtro = new Filter();
-			filtro.setRules(filterRules);
+			
+			if (filterRules.size() > 1) {
+				Operator and = new Operator(AND);
+				and.setRules(filterRules);
+				ArrayList<String> andRules = new ArrayList<String>(1);
+				andRules.add(and.getExpresion());
+				filtro.setRules(andRules);
+			} else {
+				filtro.setRules(filterRules);
+			}			
 
 			getrecords.setFilter(filtro);
 

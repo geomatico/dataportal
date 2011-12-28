@@ -14,7 +14,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.dataportal.QueryController;
-import org.dataportal.controllers.JPADownloadController;
 import org.dataportal.csw.DataPortalNS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
