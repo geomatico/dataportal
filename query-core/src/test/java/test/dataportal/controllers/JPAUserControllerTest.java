@@ -75,7 +75,9 @@ public class JPAUserControllerTest extends TestCase {
 	public void testSave() throws Exception {
 		String hash = null;
 		hash = controladorUsuario.save(user);
+		User userInto = controladorUsuario.existsInto(user);
 		assertNotNull(hash);
+		assertNotNull(userInto);
 	}
 
 	/**
@@ -86,7 +88,7 @@ public class JPAUserControllerTest extends TestCase {
 		String state = null;
 		User userInto = controladorUsuario.existsInto(user);
 		state = controladorUsuario.getState(userInto);
-		assertEquals(state, "NOT_CONFIRMED");
+		assertEquals(state, JPAUserController.NOT_CONFIRMED);
 	}
 
 	/**
@@ -99,7 +101,7 @@ public class JPAUserControllerTest extends TestCase {
 		String id = null;
 		User userInto = controladorUsuario.existsInto(user);
 		id = controladorUsuario.activate(userInto.getHash());
-		assertEquals(user.getId(), id);
+		assertEquals(userInto.getId(), id);
 	}
 	
 	/**
@@ -120,8 +122,11 @@ public class JPAUserControllerTest extends TestCase {
 	 */
 	public void testSetHash() throws Exception {
 		String hash = null;
-		hash = controladorUsuario.setHash(user);
+		hash = controladorUsuario.setHash(user, JPAUserController.ACTIVE);
+		User userInto = controladorUsuario.existsInto(user);
 		assertNotNull(hash);
+		assertEquals(hash, userInto.getHash());
+		assertEquals(JPAUserController.ACTIVE, userInto.getState());		
 	}
 
 	/**
@@ -132,8 +137,11 @@ public class JPAUserControllerTest extends TestCase {
 	 */
 	public void testNewPass() throws Exception {
 		String newPass = null;
-		newPass = controladorUsuario.newPass(user);
+		User userInto = controladorUsuario.existsInto(user);
+		newPass = controladorUsuario.newPass(userInto, userInto.getHash());
 		assertNotNull(newPass);
+		userInto = controladorUsuario.existsInto(user);
+		assertEquals(newPass, userInto.getPassword());
 	}
 
 	/**

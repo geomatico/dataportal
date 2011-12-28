@@ -124,16 +124,18 @@ public class JPAUserController {
 		return sb.toString();
 	}
 
-	public String setHash(User user) throws Exception {
+	public String setHash(User user, String state) throws Exception {
 		String now = Long.toString(new Date().getTime());
 		String hash = hex_md5(user.getId() + now);
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
-		try {
+		try {			
+			User userInto = manager.find(User.class, user.getId());;
 			transaction.begin();
-			User userInto = existsInto(user);
-			if (userInto != null)
+			if (userInto != null) {
 				userInto.setHash(hash);
+				userInto.setState(state);
+			}
 			transaction.commit();
 			return hash;
 		} catch (Exception e) {
@@ -172,16 +174,16 @@ public class JPAUserController {
 			return null;
 	}
 
-	public String newPass(User user) throws Exception {
-		String password = randomString(6);
+	public String newPass(User user, String hash) throws Exception {
+		String password = hex_md5(user.getId() + ":" + randomString(6));
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
 		try {
-			User userInto = manager.find(User.class, user.getId());
+			User userInto = getUserByHash(manager, hash);
 			if (userInto != null) {
 				transaction.begin();
-				userInto.setHash("");
-				userInto.setPassword(hex_md5(userInto.getId() + ":" + password));
+				userInto.setHash("");				
+				userInto.setPassword(password);
 				transaction.commit();
 			} else {
 				password = null;
