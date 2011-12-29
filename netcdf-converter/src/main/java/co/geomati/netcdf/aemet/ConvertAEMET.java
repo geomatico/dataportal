@@ -39,6 +39,10 @@ import co.geomati.netcdf.dataset.Dataset;
  */
 public class ConvertAEMET {
 
+	private static final String RELATIVE_HUMIDITY = "rh";
+	private static final String ATMOSPHERIC_TEMPERATURE = "at";
+	private static final String WIND_SPEED = "ws";
+	private static final String WIND_DIRECTION = "wd";
 	private static Properties vocabulary;
 
 	public static void main(String[] args) throws ConverterException {
@@ -160,6 +164,15 @@ public class ConvertAEMET {
 				}
 			}
 
+			final ArrayList<String> atmosphericMeassures = new ArrayList<String>();
+			for (String field : fields) {
+				if (field.equals(WIND_DIRECTION) || field.equals(WIND_SPEED)
+						|| field.equals(RELATIVE_HUMIDITY)
+						|| field.equals(ATMOSPHERIC_TEMPERATURE)) {
+					atmosphericMeassures.add(field);
+				}
+			}
+
 			Converter.convert(new DatasetConversion() {
 
 				@Override
@@ -169,27 +182,58 @@ public class ConvertAEMET {
 
 				@Override
 				public int getDatasetCount() {
-					return 1;
+					return 1 + atmosphericMeassures.size();
 				}
 
 				@Override
 				public Dataset getDataset(int index) throws ConverterException {
+					String varName;
+					if (index == 0) {
+						varName = variableName;
+					} else {
+						varName = atmosphericMeassures.get(index - 1);
+					}
+					String longName;
 					try {
-						List<Double> mainVarData = ConvertAEMET
-								.<Double> getVariableData(variableName, fields,
-										data);
+						longName = getLongName(varName);
+					} catch (IOException e) {
+						throw new ConverterException(
+								"Cannot access aemet vocabulary", e);
+					}
+
+					List<Double> mainVarData = ConvertAEMET
+							.<Double> getVariableData(varName, fields, data);
+
+					if (index == 0) {
 						List<Integer> ndData = ConvertAEMET
 								.<Integer> getVariableData("nd", fields, data);
 						List<Double> sdData = ConvertAEMET
 								.<Double> getVariableData("sd", fields, data);
 						return new AEMETDataset(Collections.singletonList(pos),
-								variableUnit, getLongName(variableName),
-								variableName, meanDescription, mainVarData,
-								ndData, sdData, timestamps, referenceDate,
+								variableUnit, longName, varName,
+								meanDescription, mainVarData, ndData, sdData,
+								timestamps, referenceDate, timeUnits);
+					} else {
+						return new AEMETDataset(Collections.singletonList(pos),
+								getUnit(varName), longName, varName,
+								mainVarData, timestamps, referenceDate,
 								timeUnits);
-					} catch (IOException e) {
-						throw new ConverterException(
-								"Cannot access aemet vocabulary", e);
+					}
+				}
+
+				private String getUnit(String varName) {
+					if (varName.equals(RELATIVE_HUMIDITY)) {
+						return "%";
+					} else if (varName.equals(WIND_SPEED)) {
+						return "m/s";
+					} else if (varName.equals(ATMOSPHERIC_TEMPERATURE)) {
+						return "ºC";
+					} else if (varName.equals(WIND_DIRECTION)) {
+						return "degree between true north and the wind direction. Increases in a clockwise direction";
+					} else {
+						throw new RuntimeException("Unsupported "
+								+ "meteorological variable "
+								+ "(see Table 9): " + varName);
 					}
 				}
 			});
