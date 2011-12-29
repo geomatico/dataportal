@@ -35,7 +35,7 @@ public class QueryControllerTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 
-		controlador = new QueryController();
+		controlador = new QueryController("en");
 
 		InputStream isTestResponse = getClass().getResourceAsStream(
 				"/testResponse2Client.xml");

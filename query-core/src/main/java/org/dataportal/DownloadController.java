@@ -57,16 +57,16 @@ public class DownloadController extends DataPortalController {
 
 	private static Logger logger = Logger.getLogger(DownloadController.class);
 
-	private static final String IDS = "//id/child::node()";
-	private static final String IDENTIFIERS = "//BriefRecord/identifier/child::node()";
-	private static final String ITEMS = "//item";
-	private static final String UNDERSCORE = "_";
-	private static final String SLASH = "/";
+	private static final String IDS = "//id/child::node()"; //$NON-NLS-1$
+	private static final String IDENTIFIERS = "//BriefRecord/identifier/child::node()"; //$NON-NLS-1$
+	private static final String ITEMS = "//item"; //$NON-NLS-1$
+	private static final String UNDERSCORE = "_"; //$NON-NLS-1$
+	private static final String SLASH = "/"; //$NON-NLS-1$
 	private static final int IDSNODELIST = 0;
 	private static final int ITEMSSNODELIST = 1;
 	private static final int IDENTIFIERSNODELIST = 0;
 
-	private static final String ZIP = ".zip";
+	private static final String ZIP = ".zip"; //$NON-NLS-1$
 
 	private String tempDir;
 	private String id = null;
@@ -75,9 +75,10 @@ public class DownloadController extends DataPortalController {
 	 * Constructor. Reads tempDir from properties file.
 	 * @throws MalformedURLException 
 	 */
-	public DownloadController() throws MalformedURLException {
+	public DownloadController(String lang) throws MalformedURLException {
 		super();
-		this.tempDir = Config.get("temp.dir");
+		Messages.setLang(lang);
+		this.tempDir = Config.get("temp.dir"); //$NON-NLS-1$
 	}
 
 	/**
@@ -126,7 +127,7 @@ public class DownloadController extends DataPortalController {
 		ArrayList<String> requestIdes = Utils.nodeList2ArrayList(nodes
 				.get(IDSNODELIST));
 
-		GetRecordById getRecordById = new GetRecordById("brief");
+		GetRecordById getRecordById = new GetRecordById("brief"); //$NON-NLS-1$
 		String getRecordByIdQuery = getRecordById.createQuery(requestIdes);
 		InputStream isGetRecordByIdResponse = catalogo
 				.sendCatalogRequest(getRecordByIdQuery);
@@ -143,12 +144,12 @@ public class DownloadController extends DataPortalController {
 				responseIdes);
 
 		if (noIdsResponse.size() != 0) {
-			logger.info("ID'S NO ENCONTRADOS: "
-					+ String.valueOf(noIdsResponse.size()) + " -> "
-					+ StringUtils.join(noIdsResponse, " : "));
+			logger.info("ID'S NO ENCONTRADOS: " //$NON-NLS-1$
+					+ String.valueOf(noIdsResponse.size()) + " -> " //$NON-NLS-1$
+					+ StringUtils.join(noIdsResponse, " : ")); //$NON-NLS-1$
 			dtException = new DataPortalException(
-					"The following dataset IDs where not found: "
-							+ StringUtils.join(noIdsResponse, ", "));
+					Messages.getString("downloadcontroller.ids_not_found") //$NON-NLS-1$
+							+ StringUtils.join(noIdsResponse, ", ")); //$NON-NLS-1$
 			dtException.setCode(IDNOTFOUND);
 			throw dtException;
 		} else {
@@ -163,10 +164,10 @@ public class DownloadController extends DataPortalController {
 			for (int i = 0; i < nItems; i++) {
 				DownloadItem item = new DownloadItem();
 				Node itemDom = itemsNodeList.item(i);
-				item.setItemId(xpath.evaluate("id", itemDom));
-				item.setUrl(xpath.evaluate("data_link", itemDom));
-				item.setInstitution(xpath.evaluate("institution", itemDom));
-				item.setIcosDomain(xpath.evaluate("icos_domain", itemDom));
+				item.setItemId(xpath.evaluate("id", itemDom)); //$NON-NLS-1$
+				item.setUrl(xpath.evaluate("data_link", itemDom)); //$NON-NLS-1$
+				item.setInstitution(xpath.evaluate("institution", itemDom)); //$NON-NLS-1$
+				item.setIcosDomain(xpath.evaluate("icos_domain", itemDom)); //$NON-NLS-1$
 				items.add(item);
 			}
 
@@ -176,7 +177,7 @@ public class DownloadController extends DataPortalController {
 			response.append(resultDownload);
 		}
 
-		logger.debug("RESPONSE CONTROLLER: " + response.toString());
+		logger.debug("RESPONSE CONTROLLER: " + response.toString()); //$NON-NLS-1$
 
 		return response.toString();
 	}
@@ -265,7 +266,7 @@ public class DownloadController extends DataPortalController {
 
 		if (user == null) {
 			dtException = new DataPortalException(
-					"The following User where not found: " + userName);
+					Messages.getString("downloadcontroller.user_not_found") + userName); //$NON-NLS-1$
 			dtException.setCode(USERNOTFOUND);
 			throw dtException;
 		}
@@ -275,19 +276,19 @@ public class DownloadController extends DataPortalController {
 		String nameFile = userName + UNDERSCORE + Utils.extractDateSystem();
 
 		if (pathFile == null) {
-			dtException = new DataPortalException("Failed to create directory");
+			dtException = new DataPortalException(Messages.getString("downloadcontroller.failed_create_dir")); //$NON-NLS-1$
 			dtException.setCode(FAILECREATEDIRECTORY);
 			throw dtException;
 		} else {
 			createDownloadThreads(downloadItems, pathFile);
 			String uid = this.generateId();
 			Map<String, String> params = new HashMap<String, String>();
-			params.put("ddi", uid);
+			params.put("ddi", uid); //$NON-NLS-1$
 			createReadmeFile(params, pathFile);
 			compressFiles(pathFile, nameFile);
 			insertDownload(user, uid, nameFile + ZIP, downloadItems);
 
-			logger.debug("FILE to download: " + nameFile + ZIP);
+			logger.debug("FILE to download: " + nameFile + ZIP); //$NON-NLS-1$
 			response.append(nameFile + ZIP);
 		}
 
@@ -304,13 +305,13 @@ public class DownloadController extends DataPortalController {
 	private void createReadmeFile(Map<String, String> vars, String pathFile)
 			throws IOException {
 		InputStream is = DownloadController.class
-				.getResourceAsStream("/README.txt");
-		String readmeString = IOUtils.toString(is, "UTF-8");
+				.getResourceAsStream("/README.txt"); //$NON-NLS-1$
+		String readmeString = IOUtils.toString(is, "UTF-8"); //$NON-NLS-1$
 		for (Map.Entry<String, String> var : vars.entrySet()) {
 			readmeString = readmeString.replaceAll(
-					"\\{" + var.getKey() + "\\}", var.getValue());
+					"\\{" + var.getKey() + "\\}", var.getValue()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		File readmeFile = new File(pathFile + "/README.txt");
+		File readmeFile = new File(pathFile + "/README.txt"); //$NON-NLS-1$
 		FileUtils.writeStringToFile(readmeFile, readmeString);
 	}
 
@@ -348,7 +349,7 @@ public class DownloadController extends DataPortalController {
 
 		for (int i = 0; i < nItems; i++) {
 			String tarea = (String) futures[i].get();
-			logger.info("DOWNLOADING FINISH: " + tarea);
+			logger.info("DOWNLOADING FINISH: " + tarea); //$NON-NLS-1$
 		}
 	}
 
@@ -400,12 +401,12 @@ public class DownloadController extends DataPortalController {
 	private void compressFiles(String pathDir, String nameFile)
 			throws IOException {
 
-		String filePathName = pathDir + SLASH + nameFile + ".zip";
+		String filePathName = pathDir + SLASH + nameFile + ".zip"; //$NON-NLS-1$
 		OutputStream os = new FileOutputStream(filePathName);
 		ZipArchiveOutputStream zipOs = new ZipArchiveOutputStream(os);
 
 		File directory = new File(pathDir);
-		String extensions[] = { "nc", "txt" };
+		String extensions[] = { "nc", "txt" }; //$NON-NLS-1$ //$NON-NLS-2$
 		Iterator<File> itFiles = FileUtils.iterateFiles(directory, extensions,
 				false);
 

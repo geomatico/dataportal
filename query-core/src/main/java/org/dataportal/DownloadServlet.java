@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.persistence.RollbackException;
@@ -34,10 +35,10 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 
 	private static Logger logger = Logger.getLogger(DownloadServlet.class);
 
-	private static final String CONTENTDISPOSITION = "Content-disposition";
-	private static final String TYPEXML = "application/xml";
-	private static final String TYPEZIP = "application/zip";
-	private static final String UTF8 = "UTF-8";
+	private static final String CONTENTDISPOSITION = "Content-disposition"; //$NON-NLS-1$
+	private static final String TYPEXML = "application/xml"; //$NON-NLS-1$
+	private static final String TYPEZIP = "application/zip"; //$NON-NLS-1$
+	private static final String UTF8 = "UTF-8"; //$NON-NLS-1$
 
 	private DataPortalError error;
 
@@ -61,6 +62,10 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		
+		HttpSession session = req.getSession();
+		String lang = (String) session.getAttribute(LANG);
+		Messages.setLang(lang);
 
 		User user = this.authenticate(req, resp);
 		if (user == null)
@@ -69,18 +74,18 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 		@SuppressWarnings("unchecked")
 		Map<String, String[]> params = req.getParameterMap();
 
-		if (params.containsKey("file") && params.containsKey("user")) {
+		if (params.containsKey("file") && params.containsKey("user")) { //$NON-NLS-1$ //$NON-NLS-2$
 
-			String fileName = params.get("file")[0];
+			String fileName = params.get("file")[0]; //$NON-NLS-1$
 
-			DownloadController download = new DownloadController();
+			DownloadController download = new DownloadController(lang);
 			int fileSize = (int) download.getFileSize(fileName);
 
 			InputStream contents = download.getFileContents(fileName);
 			OutputStream out = resp.getOutputStream();
 
 			resp.setContentType(TYPEZIP);
-			resp.setHeader(CONTENTDISPOSITION, "attachment; filename="
+			resp.setHeader(CONTENTDISPOSITION, "attachment; filename=" //$NON-NLS-1$
 					+ fileName);
 			resp.setContentLength(fileSize);
 
@@ -101,6 +106,10 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		
+		HttpSession session = req.getSession();
+		String lang = (String) session.getAttribute(LANG);
+		Messages.setLang(lang);
 
 		User user = this.authenticate(req, resp);
 		if (user == null)
@@ -112,17 +121,17 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 		InputStream isRequestXML = req.getInputStream();
 
 		try {
-			logger.debug("UserName to download: " + user.getId());
+			logger.debug("UserName to download: " + user.getId()); //$NON-NLS-1$
 
-			DownloadController download = new DownloadController();
+			DownloadController download = new DownloadController(lang);
 			download.setUser(user);
 			String fileName = download.askgn2download(isRequestXML);
 			String id = download.getId();
-			logger.debug("FILE to download: " + fileName);
-			writer2Client.println("<download>");
-			writer2Client.println("  <id>" + id + "</id>");
-			writer2Client.println("  <filename>" + fileName + "</filename>");
-			writer2Client.println("</download>");
+			logger.debug("FILE to download: " + fileName); //$NON-NLS-1$
+			writer2Client.println("<download>"); //$NON-NLS-1$
+			writer2Client.println("  <id>" + id + "</id>"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer2Client.println("  <filename>" + fileName + "</filename>"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer2Client.println("</download>"); //$NON-NLS-1$
 		} catch (Exception e) {
 			Class<?> clase = e.getClass();
 			error = new DataPortalError();
@@ -156,12 +165,12 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 		if (user == null)
 			try {
 				resp.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-						"Access denied.");
+						Messages.getString("downloadservlet.access_denied")); //$NON-NLS-1$
 				return null;
 			} catch (Exception e) {
 				DataPortalError error = new DataPortalError();
 				error.setCode(ERRORLOGIN);
-				error.setMessage("Error authenticating user");
+				error.setMessage(Messages.getString("downloadservlet.error_auth_user")); //$NON-NLS-1$
 				resp.getWriter().print(error.getErrorMessage());
 			}	
 		return user;

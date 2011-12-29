@@ -36,11 +36,13 @@ public class QueryServlet extends HttpServlet implements DataportalCodes {
 		
 		HttpSession session = req.getSession();
 		User user = (User) session.getAttribute(USERACCESS);
+		String lang = (String) session.getAttribute(LANG);
+		Messages.setLang(lang);
 				
 		@SuppressWarnings("unchecked")
 		Map<String, String[]> parametros = req.getParameterMap();
 		
-		QueryController controller = new QueryController();
+		QueryController controller = new QueryController(lang);
 		if (user != null)
 			controller.setUser(user);
 		

@@ -49,8 +49,8 @@ public class QueryController extends DataPortalController {
 
 	private static Logger logger = Logger.getLogger(QueryController.class);
 
-	private static final String OR = "Or";
-	private static final String AND = "And";
+	private static final String OR = "Or"; //$NON-NLS-1$
+	private static final String AND = "And"; //$NON-NLS-1$
 	private static final int FIRST = 0;
 
 	/**
@@ -58,8 +58,9 @@ public class QueryController extends DataPortalController {
 	 * 
 	 * @throws MalformedURLException
 	 */
-	public QueryController() throws MalformedURLException {
+	public QueryController(String lang) throws MalformedURLException {
 		super();
+		Messages.setLang(lang);
 	}
 
 	/**
@@ -73,11 +74,11 @@ public class QueryController extends DataPortalController {
 	public String ask2gn(Map<String, String[]> parametros) throws Exception {
 
 		InputStream isCswResponse = null;
-		String response = "";
+		String response = ""; //$NON-NLS-1$
 
 		// id
-		if (parametros.get("id") != null) {
-			String ddi = parametros.get("id")[FIRST];
+		if (parametros.get("id") != null) { //$NON-NLS-1$
+			String ddi = parametros.get("id")[FIRST]; //$NON-NLS-1$
 			response = getItemsDDI(ddi);
 		} else {
 			String aCSWQuery = createCSWQuery(parametros);
@@ -86,7 +87,7 @@ public class QueryController extends DataPortalController {
 			response = transform(isCswResponse);
 			isCswResponse.close();
 
-			logger.debug("RESPONSE2CLIENT: " + response);
+			logger.debug("RESPONSE2CLIENT: " + response); //$NON-NLS-1$
 		}
 
 		return response;
@@ -99,7 +100,7 @@ public class QueryController extends DataPortalController {
 		ArrayList<DownloadItem> items = downloadJPAController
 				.getDownloadItems(download);
 		if (items.size() == 0) {
-			dtException = new DataPortalException("DDI not found or not items");
+			dtException = new DataPortalException(Messages.getString("querycontroller.ddi_not_found")); //$NON-NLS-1$
 			dtException.setCode(DDINOTFOUND);
 			throw dtException;
 		}
@@ -108,15 +109,13 @@ public class QueryController extends DataPortalController {
 			isItems.add(item.getItemId());
 		}
 		GetRecordById getRecordById = new GetRecordById(GetRecordById.BRIEF);
-		getRecordById.setOutputSchema("csw:IsoRecord");
+		getRecordById.setOutputSchema("csw:IsoRecord"); //$NON-NLS-1$
 		String cswQuery = getRecordById.createQuery(isItems);
 		InputStream catalogResponse = catalogo.sendCatalogRequest(cswQuery);
 
-		// TODO crear plantilla para respuesta GetRecordsById - modificar
-		// respuesta server
 		String strCatalogResponse = transform(catalogResponse);
 
-		logger.debug("GetRecordsById RESPONSE: " + strCatalogResponse);
+		logger.debug("GetRecordsById RESPONSE: " + strCatalogResponse); //$NON-NLS-1$
 
 		return strCatalogResponse;
 	}
@@ -135,7 +134,7 @@ public class QueryController extends DataPortalController {
 
 		StringWriter writer2Client = new StringWriter();
 		InputStream isXslt = Catalog.class
-				.getResourceAsStream("/response2client.xsl");
+				.getResourceAsStream("/response2client.xsl"); //$NON-NLS-1$
 
 		Source responseSource = new StreamSource(isCswResponse);
 		Source xsltSource = new StreamSource(isXslt);
@@ -168,9 +167,9 @@ public class QueryController extends DataPortalController {
 
 			ArrayList<String> filterRules = new ArrayList<String>();
 			GetRecords getrecords = new GetRecords();
-			getrecords.setResulType("results");
-			getrecords.setOutputSchema("csw:IsoRecord");
-			getrecords.setTypeNames("gmd:MD_Metadata");
+			getrecords.setResulType("results"); //$NON-NLS-1$
+			getrecords.setOutputSchema("csw:IsoRecord"); //$NON-NLS-1$
+			getrecords.setTypeNames("gmd:MD_Metadata"); //$NON-NLS-1$
 			getrecords.setElementSetName(GetRecords.FULL);
 			
 			Search search = new Search();
@@ -180,7 +179,7 @@ public class QueryController extends DataPortalController {
 			// bboxes
 			Operator orBBox = new Operator(OR);
 
-			String stringBBoxes = parametros.get("bboxes")[FIRST];
+			String stringBBoxes = parametros.get("bboxes")[FIRST]; //$NON-NLS-1$
 			ArrayList<BBox> bboxes = Utils.extractToBBoxes(stringBBoxes);
 			if (bboxes != null) {
 				if (bboxes.size() > 1) {
@@ -199,27 +198,27 @@ public class QueryController extends DataPortalController {
 			// temporal range
 			Property fromDate = null, toDate = null;
 
-	        String start_date = parametros.get("start_date")[FIRST];
-			if (start_date != "") {
-			    fromDate = new Property("PropertyIsGreaterThanOrEqualTo");
-			    fromDate.setPropertyName("TempExtent_end");
+	        String start_date = parametros.get("start_date")[FIRST]; //$NON-NLS-1$
+			if (start_date != "") { //$NON-NLS-1$
+			    fromDate = new Property("PropertyIsGreaterThanOrEqualTo"); //$NON-NLS-1$
+			    fromDate.setPropertyName("TempExtent_end"); //$NON-NLS-1$
 			    // From the beginning of the day ('t' and 'z' must be lowercase)
-			    fromDate.setLiteral(start_date+"t00:00:00.00z");
+			    fromDate.setLiteral(start_date+"t00:00:00.00z"); //$NON-NLS-1$
 			}
 
-            String end_date = parametros.get("end_date")[FIRST];
-			if (end_date != "") {
-				toDate = new Property("PropertyIsLessThanOrEqualTo");
-				toDate.setPropertyName("TempExtent_begin");
+            String end_date = parametros.get("end_date")[FIRST]; //$NON-NLS-1$
+			if (end_date != "") { //$NON-NLS-1$
+				toDate = new Property("PropertyIsLessThanOrEqualTo"); //$NON-NLS-1$
+				toDate.setPropertyName("TempExtent_begin"); //$NON-NLS-1$
 				 // To the end of the day ('t' and 'z' must be lowercase)
-				toDate.setLiteral(end_date+"t23:59:59.99z");
+				toDate.setLiteral(end_date+"t23:59:59.99z"); //$NON-NLS-1$
 			}
 			
 			if (fromDate != null && toDate != null) {
                 ArrayList<String> dates = new ArrayList<String>(2);
                 dates.add(fromDate.getExpresion());
                 dates.add(toDate.getExpresion());
-                Operator withinDates = new Operator("And");
+                Operator withinDates = new Operator("And"); //$NON-NLS-1$
                 withinDates.setRules(dates);
                 filterRules.add(withinDates.getExpresion());
                 search.setStartDate(Utils.convertToDate(start_date));
@@ -233,24 +232,24 @@ public class QueryController extends DataPortalController {
 			}
 			
 			// variables
-			String variables = parametros.get("variables")[FIRST];
-			if (variables != "") {
-				String queryVariables[] = variables.split(",");
+			String variables = parametros.get("variables")[FIRST]; //$NON-NLS-1$
+			if (variables != "") { //$NON-NLS-1$
+				String queryVariables[] = variables.split(","); //$NON-NLS-1$
 
 				if (queryVariables.length > 1) {
-					Operator orVariables = new Operator("Or");
+					Operator orVariables = new Operator("Or"); //$NON-NLS-1$
 					ArrayList<String> arrayVariables = new ArrayList<String>();
 					for (String aVariable : queryVariables) {
-						Property propVariable = new Property("PropertyIsLike");
-						propVariable.setPropertyName("ContentInfo");
+						Property propVariable = new Property("PropertyIsLike"); //$NON-NLS-1$
+						propVariable.setPropertyName("ContentInfo"); //$NON-NLS-1$
 						propVariable.setLiteral(aVariable);
 						arrayVariables.add(propVariable.getExpresion());
 					}
 					orVariables.setRules(arrayVariables);
 					filterRules.add(orVariables.getExpresion());
 				} else {
-					Property propVariable = new Property("PropertyIsLike");
-					propVariable.setPropertyName("ContentInfo");
+					Property propVariable = new Property("PropertyIsLike"); //$NON-NLS-1$
+					propVariable.setPropertyName("ContentInfo"); //$NON-NLS-1$
 					propVariable.setLiteral(queryVariables[FIRST]);
 					filterRules.add(propVariable.getExpresion());
 				}
@@ -258,36 +257,36 @@ public class QueryController extends DataPortalController {
 			}
 
 			// free text
-			String freeText = parametros.get("text")[FIRST];
-			if (freeText != "") {
-				Property propFreeText = new Property("PropertyIsLike");
-				propFreeText.setPropertyName("AnyText");
+			String freeText = parametros.get("text")[FIRST]; //$NON-NLS-1$
+			if (freeText != "") { //$NON-NLS-1$
+				Property propFreeText = new Property("PropertyIsLike"); //$NON-NLS-1$
+				propFreeText.setPropertyName("AnyText"); //$NON-NLS-1$
 				propFreeText.setLiteral(freeText);
 				filterRules.add(propFreeText.getExpresion());
 				search.setText(freeText);
 			}
 
 			// Default pagination & ordering values
-			String startPosition = "1";
-			String maxRecords = "25";
-			String sort = "title";
-			String dir = "asc";
+			String startPosition = "1"; //$NON-NLS-1$
+			String maxRecords = "25"; //$NON-NLS-1$
+			String sort = "title"; //$NON-NLS-1$
+			String dir = "asc"; //$NON-NLS-1$
 
 			startPosition = String.valueOf(Integer.valueOf(parametros
-					.get("start")[FIRST]) + 1);
+					.get("start")[FIRST]) + 1); //$NON-NLS-1$
 			getrecords.setStartPosition(startPosition);
 
-			maxRecords = parametros.get("limit")[FIRST];
+			maxRecords = parametros.get("limit")[FIRST]; //$NON-NLS-1$
 			getrecords.setMaxRecords(maxRecords);
 
-			sort = parametros.get("sort")[FIRST];
-			dir = parametros.get("dir")[FIRST];
+			sort = parametros.get("sort")[FIRST]; //$NON-NLS-1$
+			dir = parametros.get("dir")[FIRST]; //$NON-NLS-1$
 
 			Map<String, String> sortPropertyDict = new HashMap<String, String>();
-			sortPropertyDict.put("id", "Identifier");
-			sortPropertyDict.put("title", "Title");
-			sortPropertyDict.put("start_time", "TempExtent_begin");
-			sortPropertyDict.put("end_time", "TempExtent_end");
+			sortPropertyDict.put("id", "Identifier"); //$NON-NLS-1$ //$NON-NLS-2$
+			sortPropertyDict.put("title", "Title"); //$NON-NLS-1$ //$NON-NLS-2$
+			sortPropertyDict.put("start_time", "TempExtent_begin"); //$NON-NLS-1$ //$NON-NLS-2$
+			sortPropertyDict.put("end_time", "TempExtent_end"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			SortBy sortby = new SortBy();
 			sortby.setPropertyName(sortPropertyDict.get(sort));

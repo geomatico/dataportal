@@ -60,7 +60,7 @@ public class DownloadControllerTest extends TestCase {
 		InputStream isRequestXML = getClass().getResourceAsStream(
 				"/testResponse2Client.xml");
 
-		DownloadController controlador = new DownloadController();
+		DownloadController controlador = new DownloadController("es");
 		controlador.setUser(user);
 		String filename = controlador.askgn2download(isRequestXML);
 		File file = FileUtils.getFile(tempDir + "/" + filename);

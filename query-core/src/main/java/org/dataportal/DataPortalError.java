@@ -22,10 +22,10 @@ public class DataPortalError {
 	
 	private static Logger logger = Logger.getLogger(DataPortalError.class);
 
-	private static final String XMLENCODING = "UTF-8";
-	private static final String XMLVERSION = "1.0";
+	private static final String XMLENCODING = "UTF-8"; //$NON-NLS-1$
+	private static final String XMLVERSION = "1.0"; //$NON-NLS-1$
 
-	private static final String LF = "\n";
+	private static final String LF = "\n"; //$NON-NLS-1$
 
 	private String message;
 	private String code;
@@ -75,16 +75,16 @@ public class DataPortalError {
 					.createXMLStreamWriter(strWriter);
 			xmlWriter.writeStartDocument(XMLENCODING, XMLVERSION);
 			xmlWriter.writeDTD(LF);
-			xmlWriter.writeStartElement("response");
-			xmlWriter.writeAttribute("success", "false");
+			xmlWriter.writeStartElement("response"); //$NON-NLS-1$
+			xmlWriter.writeAttribute("success", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			xmlWriter.writeDTD(LF);
-			xmlWriter.writeStartElement("error");
+			xmlWriter.writeStartElement("error"); //$NON-NLS-1$
 			xmlWriter.writeDTD(LF);
-			xmlWriter.writeStartElement("code");
+			xmlWriter.writeStartElement("code"); //$NON-NLS-1$
 			xmlWriter.writeCharacters(code);
 			xmlWriter.writeEndElement();
 			xmlWriter.writeDTD(LF);
-			xmlWriter.writeStartElement("message");
+			xmlWriter.writeStartElement("message"); //$NON-NLS-1$
 			xmlWriter.writeCharacters(message);
 			xmlWriter.writeEndElement();
 			xmlWriter.writeDTD(LF);

@@ -37,9 +37,9 @@ public class DataPortalController implements DataportalCodes {
 		
 		userJPAController = new JPAUserController();
 
-		String url = Config.get("csw.url");
+		String url = Config.get("csw.url"); //$NON-NLS-1$
 		catalogo = new Catalog(url);
-		logger.debug("Catalog created with URL: " + url);
+		logger.debug("Catalog created with URL: " + url); //$NON-NLS-1$
 	}
 
 	/**
@@ -54,7 +54,5 @@ public class DataPortalController implements DataportalCodes {
 	 */
 	public void setUser(User user) {
 		this.user = userJPAController.existsInto(user);
-	}
-	
-	
+	}	
 }

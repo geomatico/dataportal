@@ -19,9 +19,9 @@ public class LocaleServlet extends HttpServlet implements DataportalCodes {
     public LocaleServlet() {
         super();
         this.availableLanguages = new ArrayList<String>(3);
-        this.availableLanguages.add("en");
-        this.availableLanguages.add("es");
-        this.availableLanguages.add("ca");
+        this.availableLanguages.add("en"); //$NON-NLS-1$
+        this.availableLanguages.add("es"); //$NON-NLS-1$
+        this.availableLanguages.add("ca"); //$NON-NLS-1$
         //this.availableLanguages.add("gl");
         //this.availableLanguages.add("fr");
     }
@@ -33,20 +33,21 @@ public class LocaleServlet extends HttpServlet implements DataportalCodes {
 		Map<String, String[]> params = req.getParameterMap();
 
 		HttpSession session = req.getSession(true);
-        session.setAttribute(LANG, "en"); // Defaults to English
+        session.setAttribute(LANG, "en"); // Defaults to English //$NON-NLS-1$
 		
-		if (params.containsKey("lang")) {
-		    String lang = params.get("lang")[0];
+		if (params.containsKey("lang")) { //$NON-NLS-1$
+		    String lang = params.get("lang")[0]; //$NON-NLS-1$
+		    Messages.setLang(lang);
 		    if (this.availableLanguages.contains(lang)) {
 		        session.setAttribute(LANG, lang);
-		        resp.getWriter().print("OK, lang set to '"+lang+"'");
+		        resp.getWriter().print(Messages.getString("localeservlet.lang_set_to")+lang+"'"); //$NON-NLS-1$ //$NON-NLS-2$
 		    } else {
 		        resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-		            "Requested lang is not available. Lang set to default (English).");
+		            Messages.getString("localeservlet.lang_not_available")); //$NON-NLS-1$
 		    }
 		} else {
 		    resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-		        "Must provide a 'lang' parameter. Available langs are: "
+		        Messages.getString("localeservlet.not_lang_parameter") //$NON-NLS-1$
 		        + this.availableLanguages.toString());
 		}
 	}

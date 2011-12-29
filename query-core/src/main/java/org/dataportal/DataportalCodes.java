@@ -9,7 +9,8 @@ package org.dataportal;
  */
 public interface DataportalCodes {
 	
-	/*
+	// error messages
+	/**
 	 * 
 	 */
 	static final String IDNOTFOUND = "error.id.not.found";
@@ -54,11 +55,14 @@ public interface DataportalCodes {
 	 */
 	static final String ERRORLOGIN = "error.login";
 	
+	// dataportal constants
 	/**
 	 * 
 	 */
 	static final String USERACCESS = "org.dataportal.LoginServlet.user";
 
-	static final String LANG = "org.dataportal.lang";
-
+	/**
+	 * 
+	 */
+	static final String LANG = "org.dataportal.LocaleServlet.lang";
 }
