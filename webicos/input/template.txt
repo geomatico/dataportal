@@ -129,7 +129,7 @@
 					<td class="spacer" colspan="2"></td>
 				</tr>
 				<tr>
-					<td class="footer" height="25">&#64; ICOS | <a href="mailto:arnaud@ceam.es?subject=[ICOS]">Contact</a></td>
+					<td class="footer" height="25">&#64; ICOS | <a href="mailto:prueba@prueba.es?subject=[ICOS]">Contact</a></td>
 					<td class="footer" align="right" height="25">Website created at <a href="http://www.lsce.ipsl.fr/"><img src="lsce.gif" style="vertical-align:middle" > </a> and adapted by <a href="http://geomati.co/"><img src="geomatico.png" style="vertical-align:middle" > </a>
 
 						<br />
