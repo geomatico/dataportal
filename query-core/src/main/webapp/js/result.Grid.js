@@ -1,6 +1,5 @@
-Ext.namespace('result');
-
-result.Grid =  Ext.extend(Ext.grid.GridPanel, {
+Ext.define('result.Grid', {
+    extend: 'Ext.grid.Panel',
     
     /* i18n */
     errorTitle: "Search Error",
@@ -23,42 +22,85 @@ result.Grid =  Ext.extend(Ext.grid.GridPanel, {
     recordType: null,
     downloadHandler: null,
     handlerScope: null,
+
+    border: false,
     
     initComponent: function() {
         
-        ds = new Ext.data.Store({
-            autoLoad: false,
-            url: 'search',
-            storeId: 'searchResponse',
-            reader: new Ext.data.XmlReader({
-                root: 'response',
-                record: 'item',
-                id: 'id',
-                totalProperty: '@totalcount',
-                successProperty: '@success',
-                messageProperty: 'error/message'
-            }, this.recordType ),
-            remoteSort: true,
-            sortInfo: {
-                field: 'title',
-                direction: 'ASC'
-            },
-            listeners: {
-                exception: function(proxy, type, action, options, response) {
-                    if (type=="remote" && response && response.success == false) {
-                        Ext.Msg.show({
-                            title: this.errorTitle,
-                            msg: response.message || this.genericErrorMessage,
-                            width: 300,
-                            buttons: Ext.MessageBox.OK,
-                            icon: Ext.MessageBox.ERROR
-                         });
-                    }
-                },
-                scope: this
+        this.columns = [
+            //expander,
+            {
+                header: this.idHeader,
+                width: 150,
+                sortable: true,
+                dataIndex: 'id'
+            },{
+                header: this.titleHeader,
+                flex: 1,
+                sortable: true,
+                dataIndex: 'title'
+            },{
+                header: this.fromDateHeader,
+                width: 90,
+                sortable: true,
+                dataIndex: 'start_time',
+                renderer: Ext.util.Format.dateRenderer(this.dateDisplayFormat)
+            },{
+                header: this.toDateHeader,
+                width: 90,
+                sortable: true,
+                dataIndex: 'end_time',
+                renderer: Ext.util.Format.dateRenderer(this.dateDisplayFormat)
+            },{
+                xtype: "actioncolumn",
+                width: 30,
+                iconCls: "icon-download",
+                tooltip: this.downloadActionTooltip,
+                align: "center",
+                handler: this.downloadHandler,
+                scope: this.handlerScope
             }
-        });
+        ];
         
+        this.store = Ext.create('Ext.data.Store', {
+            model: this.model,
+            proxy: {
+                type: 'ajax',
+                url: 'search',
+                reader: {
+                    type: 'xml',
+                    root: 'response',
+                    record: 'item',
+                    idProperty: 'id',
+                    totalProperty: '@totalcount',
+                    successProperty: '@success',
+                    messageProperty: 'error/message'
+                },
+                simpleSortMode: true
+            },
+            pageSize: this.pageSize,
+            sorters: ['title'],
+            remoteSort: true
+        });
+            
+        /*
+        listeners: {
+            exception: function(proxy, type, action, options, response) {
+                if (type=="remote" && response && response.success == false) {
+                    Ext.Msg.show({
+                        title: this.errorTitle,
+                        msg: response.message || this.genericErrorMessage,
+                        width: 300,
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.ERROR
+                     });
+                }
+            },
+            scope: this
+        }
+        */
+        
+        /*
         var expander = new Ext.ux.grid.RowExpander();
         
         expander.on('expand', function(expander, record, body, rowindex) {
@@ -100,53 +142,24 @@ result.Grid =  Ext.extend(Ext.grid.GridPanel, {
                 });
             }
         }, this);
+        */
+
+        this.dockedItems = [{
+            xtype: 'pagingtoolbar',
+            store: this.store,
+            dock: 'bottom',
+            displayInfo: true,
+            displayMsg: this.pagingDisplayMessage,
+            emptyMsg: this.pagingEmptyMessage
+        }];
+        //this.plugins = expander;
         
-        var config = {
-            autoHeight: true,
-            autoScroll: true,
-            autoExpandColumn: "title",
-            ds: ds,
-            cm: new Ext.grid.ColumnModel([
-                expander,
-                {header: this.idHeader, width: 150, sortable: true, dataIndex: 'id'},
-                {id: "title", header: this.titleHeader, width: 'auto', sortable: true, dataIndex: 'title'},
-                {header: this.fromDateHeader, width: 90, sortable: true, dataIndex: 'start_time', renderer: Ext.util.Format.dateRenderer(this.dateDisplayFormat)},
-                {header: this.toDateHeader, width: 90, sortable: true, dataIndex: 'end_time', renderer: Ext.util.Format.dateRenderer(this.dateDisplayFormat)},
-                {
-                    xtype: "actioncolumn",
-                    width: 30,
-                    iconCls: "icon-download",
-                    tooltip: this.downloadActionTooltip,
-                    align: "center",
-                    handler: this.downloadHandler,
-                    scope: this.handlerScope
-                }
-            ]),
-            bbar: new Ext.PagingToolbar({
-                pageSize: this.pageSize,
-                store: ds,
-                displayInfo: true,
-                displayMsg: this.pagingDisplayMessage,
-                emptyMsg: this.pagingEmptyMessage
-            }),
-            plugins: expander
-        };
-        
-        Ext.apply(this, Ext.apply(this.initialConfig, config));
-        result.Grid.superclass.initComponent.apply(this, arguments);
+        this.callParent(arguments);
     },
     
     load: function(params, options) {
-        this.getStore().baseParams = params;
-        var loadStoreOptions = options || {
-            params: {
-                start: 0,
-                limit: this.pageSize
-            }
-        };
-        this.getStore().load(loadStoreOptions);
+        this.getStore().getProxy().extraParams = params;
+        this.getStore().load();
     }
 
 });
-
-Ext.reg('i_resultgrid', result.Grid);

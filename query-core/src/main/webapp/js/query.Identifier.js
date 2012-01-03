@@ -1,36 +1,29 @@
-Ext.namespace('query');
-
-query.Identifier =  Ext.extend(Ext.form.FormPanel, {
+Ext.define('query.Identifier', {
+    extend: 'Ext.form.Panel',
 
     /* i18n */
     idFieldLabel: "Dataset Identifier:",
-    showButtonText: "Show Dataset >>",
     /* ~i18n */
+    
+    padding: 4,
+    height: 95,
     
     initComponent: function() {
                       
-        var config = {
-            padding: 4,
-            height: 95,
+        this.items = [{
+            border: false,
             items: [{
-                border: false,
-                items: [{
-                    text: this.idFieldLabel,
-                    xtype: 'label'
-                },{
-                    name: 'id',
-                    value: '',
-                    width: '95%',
-                    xtype: 'textfield'
-                }]
-            }],
-            buttons: [{
-                text: this.showButtonText
+                text: this.idFieldLabel,
+                xtype: 'label'
+            },{
+                name: 'id',
+                value: '',
+                width: '95%',
+                xtype: 'textfield'
             }]
-        };
-        Ext.apply(this, Ext.apply(this.initialConfig, config));
+        }];
         
-        query.Form.superclass.initComponent.apply(this, arguments);
+        this.callParent(arguments);
     },
     
     getParams: function() {
@@ -40,5 +33,3 @@ query.Identifier =  Ext.extend(Ext.form.FormPanel, {
     }
     
 });
-
-Ext.reg('i_queryidentifier', query.Identifier);

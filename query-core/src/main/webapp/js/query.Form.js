@@ -1,77 +1,73 @@
-Ext.namespace('query');
-
-query.Form =  Ext.extend(Ext.form.FormPanel, {
+Ext.define('query.Form', {
+    extend: 'Ext.form.Panel',
 
     /* i18n */
     textFieldLabel: "Text:",
     startDateFieldLabel: "From:",
     endDateFieldLabel: "To:",
-    searchButtonText: "Search >>",
     variablesFieldTitle: "Variables",
     dateDisplayFormat: "M j, Y",
     /* ~i18n */
+
+    fieldDefaults: {
+        labelAlign: 'top'
+    },
+    autoScroll: true,
+    border: true,
+    padding: 4,
+    flex: 1,
     
     map: null,
     vocabulary: null,
         
     initComponent: function() {
         
-        this.map = new query.Map();
-               
-        var config = {
-            labelAlign: 'top',
-            autoScroll: true,
-            border: true,
-            padding: 4,
-            flex: 1,
+        //this.map = new query.Map(); // TODO: Restore GeoExt
+
+        this.items = [{
+            border: false,
             items: [{
-                border: false,
-                items: [{
-                    text: this.textFieldLabel,
-                    xtype: 'label'
-                },{
-                    name: 'text',
-                    value: '',
-                    xtype: 'textfield',
-                    style: 'margin: 4px;width:200px' // Guarradas a domicilio
-                }]
-            },
-            this.map,
-            {
-                layout: 'column',
-                padding: 5,
-                border: false,
-                items: [{
-                    columnWidth: 0.5,                                
-                    border: false,
-                    items: [{
-                        text: this.startDateFieldLabel,
-                        xtype: 'label'
-                    }, {
-                        name: 'start_date',
-                        xtype: 'datefield',
-                        format: this.dateDisplayFormat
-                    }]
-                }, {
-                    columnWidth: 0.5,
-                    border: false,
-                    items: [{
-                        text: this.endDateFieldLabel,
-                        xtype: 'label'
-                    }, {
-                        name: 'end_date',
-                        xtype: 'datefield',
-                        format: this.dateDisplayFormat
-                    }]
-                }]
-            }],
-            buttons: [{
-                text: this.searchButtonText
+                text: this.textFieldLabel,
+                xtype: 'label'
+            },{
+                name: 'text',
+                value: '',
+                xtype: 'textfield',
+                width: 200
             }]
-        };
-        Ext.apply(this, Ext.apply(this.initialConfig, config));
-        
-        query.Form.superclass.initComponent.apply(this, arguments);
+        },
+        //this.map, // TODO Restore GeoExt
+        {
+            layout: 'column',
+            border: false,
+            items: [{
+                columnWidth: 0.5,                                
+                border: false,
+                items: [{
+                    text: this.startDateFieldLabel,
+                    xtype: 'label'
+                }, {
+                    name: 'start_date',
+                    xtype: 'datefield',
+                    width: 100,
+                    format: this.dateDisplayFormat
+                }]
+            }, {
+                columnWidth: 0.5,
+                border: false,
+                items: [{
+                    text: this.endDateFieldLabel,
+                    xtype: 'label'
+                }, {
+                    name: 'end_date',
+                    xtype: 'datefield',
+                    width: 100,
+                    format: this.dateDisplayFormat
+                }]
+            }]
+        }];
+
+        this.callParent(arguments);
 
         if(this.vocabulary) {
             this.vocabulary.on('load', this.addVariableFieldset, this);
@@ -84,24 +80,26 @@ query.Form =  Ext.extend(Ext.form.FormPanel, {
             checkboxitems.push({
                 boxLabel: (record.data.nc_long_term || record.data.en_long_term),
                 name: record.data.nc_term || record.data.en_term,
-                submitValue: false
+                submitValue: false,
+                isFormField: false
             });
         });
 
-        var checkboxgroup = new Ext.form.CheckboxGroup({
+        var checkboxgroup = {
+            xtype: 'checkboxgroup',
             name: 'variables',
             cls: 'variables',
             columns: 1,
-            items: checkboxitems
-        });
-       
+            items: checkboxitems,
+            isFormField: true
+        };
+        
         this.add({ 
             title: this.variablesFieldTitle,
             xtype: 'fieldset',
             fieldLabel: "&nbsp;", // Ah, si, si, creetelo!
             hideLabel: true,
             collapsible: true,
-            autoHeight: true,
             items: checkboxgroup
         });
         
@@ -110,23 +108,19 @@ query.Form =  Ext.extend(Ext.form.FormPanel, {
     
     getParams: function() {
         
-        var params = this.form.getFieldValues();
+        var params = this.getForm().getFieldValues();
         
-        // Transform checked boxes to name array
-        var varArray = [];
-        Ext.each(params.variables, function(item){
-            if(item.getValue()){
-                varArray.push(item.getName());
-            };
-        });
-        params.variables = varArray.join(",");
+        // Transform checked variables to a comma-separated list of variable names
+        var vars = this.getForm().getFields().findBy(function(o){return o.name=="variables";}).getValue();
+        params.variables = Ext.Object.getKeys(vars).join(",");
         
         // Format start and end dates
-        if (params.start_date!="") params.start_date = params.start_date.format("Y-m-d");
-        if (params.end_date!="") params.end_date = params.end_date.format("Y-m-d");
+        if (params.start_date) params.start_date = Ext.Date.format(params.start_date, "Y-m-d");
+        if (params.end_date) params.end_date = Ext.Date.format(params.end_date, "Y-m-d");
 
         // Get bboxes
-        params.bboxes = this.map.getBBOXes();
+        //params.bboxes = this.map.getBBOXes(); // TODO restore map
+        params.bboxes = "[]";
         
         // Add static params
         params.response_format = "text/xml";
@@ -135,5 +129,3 @@ query.Form =  Ext.extend(Ext.form.FormPanel, {
     }
     
 });
-
-Ext.reg('i_queryform', query.Form);

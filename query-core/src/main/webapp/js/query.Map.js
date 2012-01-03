@@ -1,6 +1,5 @@
-Ext.namespace('query');
-
-query.Map =  Ext.extend(GeoExt.MapPanel, {
+Ext.define('query.Map', {
+    extend: 'GeoExt.MapPanel',
     
     /* i18n */
     titleText: "Location:",
@@ -98,13 +97,10 @@ query.Map =  Ext.extend(GeoExt.MapPanel, {
             ]
         };
         
-        Ext.apply(this, Ext.apply(this.initialConfig, config));
-        query.Map.superclass.initComponent.apply(this, arguments);
+        this.callParent(arguments);
     },
 
     getBBOXes: function() {
         return this.bboxWriter.write(this.bboxLayer.features);
     }
 });
-
-Ext.reg('i_querymap', query.Map);

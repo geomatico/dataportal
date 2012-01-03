@@ -1,6 +1,5 @@
-Ext.namespace('result');
-
-result.Map =  Ext.extend(GeoExt.MapPanel, {
+Ext.define('result.Map', {
+    extend: 'GeoExt.MapPanel',
 
     map: null,
     fullExtent: null,
@@ -64,9 +63,6 @@ result.Map =  Ext.extend(GeoExt.MapPanel, {
             height: 258
         };
         
-        Ext.apply(this, Ext.apply(this.initialConfig, config));
-        result.Map.superclass.initComponent.apply(this, arguments);
+        this.callParent(arguments);
     }
 });
-
-Ext.reg('i_resultmap', result.Map);
