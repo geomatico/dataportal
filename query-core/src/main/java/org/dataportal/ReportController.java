@@ -1,10 +1,16 @@
 package org.dataportal;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.dataportal.model.report.*;
-import org.dataportal.utils.DataPortalException;
 import org.dataportal.controllers.JPAGenericController;
+import org.dataportal.model.report.DateDownloads;
+import org.dataportal.model.report.DomainDownloads;
+import org.dataportal.model.report.InstitutionDownloads;
+import org.dataportal.utils.DataPortalException;
+
+import test.dataportal.controllers.PersistenceUnitSingleton;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ReportController {
@@ -12,7 +18,8 @@ public class ReportController {
     private JPAGenericController database;
     
     public ReportController() {
-        this.database = new JPAGenericController("dataportal");
+		this.database = new JPAGenericController(
+				PersistenceUnitSingleton.getPersistenceUnit());
     }
     
     public List get(String request, int year, int month) throws DataPortalException {

@@ -19,4 +19,20 @@
 			<property name="datanucleus.identifier.case" value="LowerCase" />
 		</properties>
 	</persistence-unit>
+	<persistence-unit name="functional-tests">
+		<class>org.dataportal.model.Download</class>
+		<class>org.dataportal.model.DownloadItem</class>
+		<class>org.dataportal.model.Search</class>
+		<class>org.dataportal.model.User</class>
+		<properties>
+			<property name="datanucleus.ConnectionDriverName" value="org.h2.Driver" />
+			<property name="datanucleus.ConnectionURL" value="jdbc:h2:file:target/test" />
+			<property name="datanucleus.ConnectionUserName" value="sa" />
+			<property name="datanucleus.ConnectionPassword" value="" />
+			<property name="datanucleus.autoCreateSchema" value="true" />
+			<property name="datanucleus.validateTables" value="false" />
+			<property name="datanucleus.validateConstraints" value="false" />
+			<property name="datanucleus.identifier.case" value="LowerCase" />
+		</properties>
+	</persistence-unit>
 </persistence>
