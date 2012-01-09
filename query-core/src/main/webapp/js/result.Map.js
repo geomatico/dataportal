@@ -9,6 +9,8 @@ Ext.define('result.Map', {
     mapProj: null,
     outProj: null,
     
+    height: 258,
+
     initComponent: function() {
 
         this.mapProj = new OpenLayers.Projection("EPSG:900913");
@@ -49,19 +51,14 @@ Ext.define('result.Map', {
             ]
         });
 
-        var extent = this.fullExtent;
+        this.extent = this.fullExtent;
         
         if(this.resultExtent && (ext = this.extentReader.read(this.resultExtent))) {
             this.extentLayer.addFeatures([ext]);
-            extent = ext.geometry.getBounds();
+            this.extent = ext.geometry.getBounds();
         }
         
-        var config = {
-            xtype: 'gx_mappanel',
-            map: this.map,
-            extent: extent,
-            height: 258
-        };
+        this.map.zoomToExtent(this.extent);
         
         this.callParent(arguments);
     }

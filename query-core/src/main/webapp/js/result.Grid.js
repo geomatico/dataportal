@@ -25,10 +25,52 @@ Ext.define('result.Grid', {
 
     border: false,
     
+    plugins: [{
+        ptype: 'rowexpander',
+        rowBodyTpl: [],
+        onExpandBody: function(rowNode, record, dom) {
+            var body = dom.firstChild.firstChild;
+            if(!body.innerHTML) {
+                var data = record.data;
+                var resultgrid = this.getCmp();
+
+                var variables = data.variables.split(",");
+                var varnames = [];
+                for (var i=0; i < variables.length; i++) {
+                    variable = variables[i];
+                    term = resultgrid.vocabulary.data.getByKey(variable);
+                    name = term ? (term.data.nc_long_term || term.data.en_long_term) : variable;
+                    varnames.push(name);
+                }
+
+                new Ext.Panel({
+                    layout: 'hbox',
+                    padding: 3,
+                    defaults: {
+                        height: 285
+                    },
+                    items: [{
+                        title: resultgrid.summaryHeader,
+                        html: data.summary,
+                        flex: 2
+                    },{
+                        title: resultgrid.extentHeader,
+                        items: [new result.Map({resultExtent: data.geo_extent, border: false})],
+                        width: 260
+                    },{
+                        title: resultgrid.variablesHeader,
+                        html: varnames.join("<br>"),
+                        flex: 1
+                    }],
+                    renderTo: body
+                });
+            }
+        }
+    }],
+
     initComponent: function() {
         
         this.columns = [
-            //expander,
             {
                 header: this.idHeader,
                 width: 150,
@@ -99,50 +141,6 @@ Ext.define('result.Grid', {
             scope: this
         }
         */
-        
-        /*
-        var expander = new Ext.ux.grid.RowExpander();
-        
-        expander.on('expand', function(expander, record, body, rowindex) {
-            var variables = record.get("variables").split(",");
-            var varnames = [];
-            for (var i=0; i < variables.length; i++) {
-                variable = variables[i];
-                term = this.vocabulary.getById(variable);
-                name = term ? (term.get("nc_long_term") || term.get("en_long_term")) : variable;
-                varnames.push(name);
-            }
-            
-            if(!body.innerHTML) {
-                new Ext.Panel({
-                    layout:'column',
-                    padding: 5,
-                    layoutConfig: {
-                        align : 'stretch'
-                    },
-                    defaults: {
-                        height: 285,
-                        padding: 5
-                    },
-                    items: [{
-                        title: this.summaryHeader,
-                        html: record.get("summary"),
-                        columnWidth: .70
-                    },{
-                        title: this.extentHeader,
-                        items: [new result.Map({resultExtent: record.get("geo_extent"), border: false})],
-                        padding: 0,
-                        width: 260
-                    },{
-                        title: this.variablesHeader,
-                        html: varnames.join("<br>"),
-                        columnWidth: .30 
-                    }],
-                    renderTo: body
-                });
-            }
-        }, this);
-        */
 
         this.dockedItems = [{
             xtype: 'pagingtoolbar',
@@ -152,7 +150,6 @@ Ext.define('result.Grid', {
             displayMsg: this.pagingDisplayMessage,
             emptyMsg: this.pagingEmptyMessage
         }];
-        //this.plugins = expander;
         
         this.callParent(arguments);
     },
