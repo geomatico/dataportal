@@ -68,16 +68,49 @@ public class LoginTest extends TestCase {
 
 	public void testRegister() throws Exception {
 		String userName = "foo@foo.foo";
+		register(userName);
+		activate(userName);
+	}
+
+	public void testRegisterTwice() throws Exception {
+		// Register foo
+		String userName = "foo@foo.foo";
+		register(userName);
+
+		// Register foo again
+		registerFail(userName);
+
+		// Activate
+		activate(userName);
+
+		// Register foo again after foo is activated
+		registerFail(userName);
+	}
+
+	private void registerFail(String userName) throws IOException,
+			HttpException {
+		Pair<String, Integer> response = callServiceNoCheck(new String[] {
+				"request", "user", "password" }, new String[] { "register",
+				userName, "testpass" });
+		assertTrue(response.getRight() == 200);
+		JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON(response);
+		assertFalse(jsonObject.getBoolean("success"));
+	}
+
+	private void activate(String userName) throws IOException, HttpException,
+			Exception {
+		int code = callServiceNoCheck(new String[] { "request", "hash" },
+				new String[] { "register", getUserHash(userName) }).getRight();
+
+		assertTrue(code == 302);// Redirect
+	}
+
+	private void register(String userName) throws IOException, HttpException {
 		String response = callService(new String[] { "request", "user",
 				"password" }, new String[] { "register", userName, "testpass" });
 
 		JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON(response);
 		assertTrue(jsonObject.getBoolean("success"));
-
-		int code = callServiceNoCheck(new String[] { "request", "hash" },
-				new String[] { "register", getUserHash(userName) }).getRight();
-
-		assertTrue(code == 302);// Redirect
 	}
 
 	private String getUserHash(String userName) throws Exception {
