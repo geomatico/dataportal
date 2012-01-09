@@ -10,6 +10,8 @@ import javax.persistence.Persistence;
 
 import org.dataportal.model.Search;
 
+import test.dataportal.controllers.PersistenceUnitSingleton;
+
 /**
  * @author Micho Garcia
  * 
@@ -17,7 +19,8 @@ import org.dataportal.model.Search;
 public class JPASearchController {
 
 	EntityManagerFactory entityFactory = Persistence
-			.createEntityManagerFactory("dataportal");
+			.createEntityManagerFactory(PersistenceUnitSingleton
+					.getPersistenceUnit());
 
 	/**
 	 * 
