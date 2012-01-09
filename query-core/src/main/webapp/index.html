@@ -5,21 +5,14 @@
 		<title>ICOS Spain Carbon Data Portal</title>
 
 		<link rel="shortcut icon" href="img/icos.ico" />
-		<!-- link rel="stylesheet" type="text/css" href="js/ext3/resources/css/ext-all-notheme.css" />
-		<link rel="stylesheet" type="text/css" href="js/ext3/resources/css/xtheme-gray.css" /-->
 		<link rel="stylesheet" type="text/css" href="js/ext4/resources/css/ext-all-gray.css" />
 		<link rel="stylesheet" type="text/css" href="css/dataportal.css" />
 
-		<script type="text/javascript" src="js/openlayers/OpenLayers.js"></script>
-		<!-- script type="text/javascript" src="js/ext3/adapter/ext/ext-base-debug.js"></script>
-		<script type="text/javascript" src="js/ext3/ext-all-debug-w-comments.js"></script>
-		<script type="text/javascript" src="js/ext3/ux/RowExpander.js"></script-->
-        <!-- TODO: Use bootstrap.js when completely migrated to Extjs 4 -->
+		<script type="text/javascript" src="js/openlayers/lib/OpenLayers.js"></script>
         <script type="text/javascript" src="js/ext4/ext-all-debug-w-comments.js"></script>
         <script type="text/javascript" src="js/ext4/compatibility/ext3-core-compat.js"></script>
         <script type="text/javascript" src="js/ext4/compatibility/ext3-compat.js"></script>
-		
-		<!-- script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script-->
+		<script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script>	
         <script type="text/javascript" src="js/md5-min.js"></script>
 
         <script type="text/javascript" src="js/OpenLayers.Format.BBOXes.js"></script>
@@ -29,9 +22,9 @@
         <script type="text/javascript" src="js/Authentication.js"></script>
         <script type="text/javascript" src="js/query.Identifier.js"></script>
 		<script type="text/javascript" src="js/query.Form.js"></script>
-        <!-- script type="text/javascript" src="js/query.Map.js"></script-->
+        <script type="text/javascript" src="js/query.Map.js"></script>
 		<script type="text/javascript" src="js/result.Grid.js"></script>
-		<!-- script type="text/javascript" src="js/result.Map.js"></script-->
+		<script type="text/javascript" src="js/result.Map.js"></script>
 		<script type="text/javascript" src="js/download.Panel.js"></script>
 
         <!-- script type="text/javascript" src="js/locale/App-en.js"></script>
@@ -43,9 +36,8 @@
 
 		/*
 		TODO LIST:
-            * query.Map / result.Map => Make them work (GeoEXT!)
-            * query.Form::getParams (set bboxes)
-            * result.Grid -> expander
+            * result.Grid expander
+            * result.Map
 
             * Download.Panel::send (Post something...)
             * App::doLoadDataset (propagate items to Download Panel)
@@ -54,6 +46,7 @@
             * i18n
             * Finally... styles
 		*/
+		//Ext.Compat.showErrors = true;
 		
 		Ext.onReady(function(){
 		    /*

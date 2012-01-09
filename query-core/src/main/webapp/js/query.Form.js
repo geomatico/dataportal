@@ -22,7 +22,7 @@ Ext.define('query.Form', {
         
     initComponent: function() {
         
-        //this.map = new query.Map(); // TODO: Restore GeoExt
+        this.map = new query.Map();
 
         this.items = [{
             border: false,
@@ -36,7 +36,7 @@ Ext.define('query.Form', {
                 width: 200
             }]
         },
-        //this.map, // TODO Restore GeoExt
+        this.map,
         {
             layout: 'column',
             border: false,
@@ -119,8 +119,7 @@ Ext.define('query.Form', {
         if (params.end_date) params.end_date = Ext.Date.format(params.end_date, "Y-m-d");
 
         // Get bboxes
-        //params.bboxes = this.map.getBBOXes(); // TODO restore map
-        params.bboxes = "[]";
+        params.bboxes = this.map.getBBOXes();
         
         // Add static params
         params.response_format = "text/xml";

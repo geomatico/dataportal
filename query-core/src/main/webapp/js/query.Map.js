@@ -53,50 +53,45 @@ Ext.define('query.Map', {
             ]
         });
 
-        var config = {
-            xtype: 'gx_mappanel',
-            map: this.map,
-            zoom: 0,
-            height: 283,
-            tbar: [
-                {
-                    xtype: 'tbtext',
-                    text: this.titleText
-                }, "->",
-                new GeoExt.Action({
-                    control: new OpenLayers.Control.Navigation(),
-                    map: this.map,
-                    toggleGroup: "draw",
-                    allowDepress: false,
-                    pressed: true,
-                    tooltip: this.navigationButtonTooltip,
-                    iconCls: 'mapNav',
-                    group: "draw",
-                    checked: true
-                }),
-                new GeoExt.Action({
-                    control: new OpenLayers.Control.DrawFeature(
-                        this.bboxLayer, OpenLayers.Handler.RegularPolygon, {handlerOptions: {irregular: true}}
-                    ),
-                    map: this.map,
-                    toggleGroup: "draw",
-                    allowDepress: false,
-                    tooltip: this.addBoxButtonTooltip,
-                    iconCls: 'bboxAdd',
-                    group: "draw"
-                }),
-                new GeoExt.Action({
-                    control: new OpenLayers.Control.DeleteFeature(this.bboxLayer),
-                    map: this.map,
-                    toggleGroup: "draw",
-                    allowDepress: false,
-                    tooltip: this.removeBoxButtonTooltip,
-                    iconCls: 'bboxDel',
-                    group: "draw"
-                })                
-            ]
-        };
-        
+        this.zoom = 0;
+        this.height = 283;
+        this.tbar = [
+            {
+                xtype: 'tbtext',
+                text: this.titleText
+            }, "->",
+            new GeoExt.Action({
+                control: new OpenLayers.Control.Navigation(),
+                map: this.map,
+                toggleGroup: "draw",
+                allowDepress: false,
+                pressed: true,
+                tooltip: this.navigationButtonTooltip,
+                iconCls: 'mapNav',
+                group: "draw",
+                checked: true
+            }),
+            new GeoExt.Action({
+                control: new OpenLayers.Control.DrawFeature(
+                    this.bboxLayer, OpenLayers.Handler.RegularPolygon, {handlerOptions: {irregular: true}}
+                ),
+                map: this.map,
+                toggleGroup: "draw",
+                allowDepress: false,
+                tooltip: this.addBoxButtonTooltip,
+                iconCls: 'bboxAdd',
+                group: "draw"
+            }),
+            new GeoExt.Action({
+                control: new OpenLayers.Control.DeleteFeature(this.bboxLayer),
+                map: this.map,
+                toggleGroup: "draw",
+                allowDepress: false,
+                tooltip: this.removeBoxButtonTooltip,
+                iconCls: 'bboxDel',
+                group: "draw"
+            })
+        ];
         this.callParent(arguments);
     },
 
