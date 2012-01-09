@@ -93,7 +93,8 @@ public class LoginTest extends TestCase {
 				"request", "user", "password" }, new String[] { "register",
 				userName, "testpass" });
 		assertTrue(response.getRight() == 200);
-		JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON(response);
+		JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON(response
+				.getLeft());
 		assertFalse(jsonObject.getBoolean("success"));
 	}
 
