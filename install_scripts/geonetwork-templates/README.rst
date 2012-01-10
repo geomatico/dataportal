@@ -30,7 +30,7 @@ $TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/convert/ThreddsToFragments/
 Parameter                                                  Value
 ========================================================== =======================================================
 Name                                                       Icos Data Portal
-Catalog URL                                                http://ciclope.cmima.csic.es:8080/thredds/catalog.xml
+Catalog URL                                                http://{dataportal_base_url}/thredds/catalog.xml
 ISO topic                                                  environment
 Create metadata for Atomic Datasets                        checked
 Extract Unidata dataset discovery metadata using fragments checked
