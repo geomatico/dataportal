@@ -118,6 +118,20 @@ Ext.define('result.Grid', {
                     successProperty: '@success',
                     messageProperty: 'error/message'
                 },
+                listeners: {
+                    exception: function (proxy, response, operation, options) {
+                        if (response && response.success == false) {
+                            Ext.Msg.show({
+                                title: this.errorTitle,
+                                msg: response.message || this.genericErrorMessage,
+                                width: 300,
+                                buttons: Ext.MessageBox.OK,
+                                icon: Ext.MessageBox.ERROR
+                             });
+                        }
+                    },
+                    scope: this
+                },
                 simpleSortMode: true
             },
             pageSize: this.pageSize,
@@ -126,20 +140,7 @@ Ext.define('result.Grid', {
         });
             
         /*
-        listeners: {
-            exception: function(proxy, type, action, options, response) {
-                if (type=="remote" && response && response.success == false) {
-                    Ext.Msg.show({
-                        title: this.errorTitle,
-                        msg: response.message || this.genericErrorMessage,
-                        width: 300,
-                        buttons: Ext.MessageBox.OK,
-                        icon: Ext.MessageBox.ERROR
-                     });
-                }
-            },
-            scope: this
-        }
+
         */
 
         this.dockedItems = [{
@@ -156,7 +157,7 @@ Ext.define('result.Grid', {
     
     load: function(params, options) {
         this.getStore().getProxy().extraParams = params;
-        this.getStore().load();
+        this.getStore().load(options);
     }
 
 });

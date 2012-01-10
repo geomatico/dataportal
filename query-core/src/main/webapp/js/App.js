@@ -154,7 +154,6 @@ Ext.define('App', {
     },
 
     doLoadDataset: function() {
-        // TODO: Probably needs refactoring to extjs4
         this.resultGrid.store.removeAll();
         this.downloadPanel.store.removeAll();
         this.resultGrid.load(this.queryById.getParams(), {

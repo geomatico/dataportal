@@ -42,9 +42,8 @@ Ext.define('download.Panel', {
                 writer: {
                     type: 'xml',
                     documentRoot: 'response',
-                    writeAllFields: true//,
-                    //xmlEncoding: "UTF-8",
-                    //forceDocumentRoot: true                    
+                    record: 'item',
+                    writeAllFields: true
                 }
             },
             pageSize: this.pageSize,
@@ -106,10 +105,14 @@ Ext.define('download.Panel', {
         if (!this.store.getProxy().getWriter()) {
             throw new Ext.data.Store.Error('writer-undefined');
         }
-        
-        var request = {
-            url: this.store.getProxy().url,
-            success: function(response) {
+
+        this.store.getProxy().create(
+            Ext.create('Ext.data.Operation', {
+                action: 'create',
+                records: this.store.data.items
+            }),
+            function(operation) {
+                var response = operation.response;
                 var id = Ext.DomQuery.selectValue("//download/id", response.responseXML);
                 var fileName = Ext.DomQuery.selectValue("//download/filename", response.responseXML);
                 var success = Ext.DomQuery.selectValue('/response/@success', response.responseXML);
@@ -138,20 +141,8 @@ Ext.define('download.Panel', {
                      });
                 }
             },
-            failure: function(response) {
-                alert(response.status + " " + response.statusText);
-            },
-            params: {
-                user: this.user.user,
-                password: this.user.password
-            },
-            method: "POST",
-            operation: 'create',
-            scope: this
-        };
-        
-        var r = this.store.getProxy().getWriter().write(request);
-        Ext.Ajax.request(r);
+            this
+        );
     },
     
     notLoggedIn: function() {
