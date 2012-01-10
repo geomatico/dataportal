@@ -24,8 +24,25 @@ $TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/convert/ThreddsToFragments/
 
 3. Go to "Administration" => "Metadata & Template". Select "iso19139" and "Add templates".
 
-4. Go to "Administration" => "Harvesting Management" and add a "Thredds Catalog" harvesting task. Select the above templates to configure the "Create metadata for Atomic Datasets" section.
+4. Go to "Administration" => "Harvesting Management" and add a "Thredds Catalog" harvesting task. The following table specifies the
+different inputs used in an ICOS configuration:
 
+========================================================== =======================================================
+Parameter                                                  Value
+========================================================== =======================================================
+Name                                                       Icos Data Portal
+Catalog URL                                                http://ciclope.cmima.csic.es:8080/thredds/catalog.xml
+ISO topic                                                  environment
+Create metadata for Atomic Datasets                        checked
+Extract Unidata dataset discovery metadata using fragments checked
+Select schema for output metadata records                  iso19139
+Stylesheet to create metadata fragments                    netcdf-attributes-geomatico
+Create subtemplates for fragments...                       HARVESTING TEMPLATE - geomatico
+Create thumbnails for any datasets delivered by WMS        checked
+Privileges                                                 Add all permissions to "All" group
+Category for service                                       Interactive resources
+Category for datasets                                      Datasets
+========================================================== =======================================================
 
 Further details on how Thredds Harvesting works and how to customize it:
 http://{dataportal_base_url}/doc/install.html#creacion-y-configuracion-del-proceso-de-harvesting
@@ -49,3 +66,17 @@ $TOMCAT_HOME/webapps/geonetwork/WEB-INF/config-csw.xml
 
 Further details on how Lucene Indexation works and how to customize it:
 http://{dataportal_base_url}/doc/search-service.html#configuracion-de-gn-para-busqueda-por-variables
+
+H2 Connection
+------------------------------------------
+
+In case of using H2 connection with Geonetwork it is recommended to add the MVCC option to the database URL, in order to avoid some
+database locking related problems.
+
+In order to do so, just edit the $TOMCAT_HOME/webapps/geonetwork/WEB-INF/config.xml file and replace the following line::
+
+    <url>jdbc:h2:geonetwork</url>
+
+with this one:
+
+    <url>jdbc:h2:geonetwork;MVCC=TRUE</url>
