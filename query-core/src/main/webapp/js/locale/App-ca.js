@@ -4,11 +4,12 @@
 
 GeoExt.Lang.add("ca", {
     "App.prototype": {
-        queriesTitle: "1. Consultes",
-        resultsTitle: "2. Resultats",
-        downloadsTitle: "3. Descàrregues",
+        getByIdTitle: "Obtenir descàrrega per ID",
+        searchTitle: "Cerca de dades",
+        resultsTitle: "Resultats",
+        downloadsTitle: "Paquet de descàrrega",
         fileDownloadMessage: "Aquest registre ja s'ha afegit a la llista de descàrregues",
-        homeTitle: "Portal de Dades del Carboni d'ICOS Espanya",
+        homeTitle: "Portal de Dades ICOS-Espanya",
         homeLogin: "Identifica",
         homeCreateUser: "Nou usuari",
         homeLogout: "Surt",
@@ -25,7 +26,7 @@ GeoExt.Lang.add("ca", {
         loginButtonText: "Accedeix",
         loginWaitMessage: "Comprovant la seva identitat",
         loginFailureMessage: "S'ha esdevingut un error al servidor, amb codi d'estat ",
-        loginWindowTitle: "Benvinguts al Portal de Dades del Carboni d'ICOS Espanya",
+        loginWindowTitle: "Benvinguts al Portal de Dades ICOS-Espanya",
         newUserTitle: "Nou usuari",
         newUserButtonText: "Registreu-vos",
         oldPasswordFieldLabel: "Paraula de pas anterior",
@@ -41,7 +42,7 @@ GeoExt.Lang.add("ca", {
     },
     "download.Panel.prototype": {
         downloadReadyTitle: "Descàrrega preparada",
-        downloadReadyMessage: "La seva petició de dades amb UUID<br/><b>{0}</b><br/>està enllestida.<br/><br/>Cliqueu OK per descarregar-la.",
+        downloadReadyMessage: "La seva petició de dades amb UUID<br/><b>{0}</b><br/>està enllestida.<br/><br/>Cliqueu OK per descarregar-vos-la.",
         downloadErrorTitle: "Error a la descàrrega",
         downloadButtonText: "Descarrega",
         idColumnHeader: "Id",
@@ -50,14 +51,14 @@ GeoExt.Lang.add("ca", {
         loginRequiredMessage: "Disculpeu, heu d'identificar-vos abans de descarregar les dades"
     },
     "query.Form.prototype": {
-        textFieldLabel: "Text:",
+        textFieldLabel: "Text",
         startDateFieldLabel: "Des del:",
         endDateFieldLabel: "Fins el:",
         variablesFieldTitle: "Variables",
         dateDisplayFormat: "j M Y"
     },
     "query.Identifier.prototype": {
-        idFieldLabel: "Identificador de Descàrrega:"
+        idFieldLabel: "ID de Descàrrega"
     },
     "query.Map.prototype": {
         titleText: "Lloc:",
@@ -75,7 +76,7 @@ GeoExt.Lang.add("ca", {
         titleHeader: "Títol",
         fromDateHeader: "Des del",
         toDateHeader: "Fins el",
-        downloadActionTooltip: "Afegir com a Desàrrega",
+        downloadActionTooltip: "Afegir com a Descàrrega",
         dateDisplayFormat: "j M Y",
         pagingDisplayMessage: "Mostrant registres del {0} al {1} d'un total de {2}",
         pagingEmptyMessage: "No hi ha dades per mostrar"        

@@ -2,25 +2,24 @@ Ext.define('query.Identifier', {
     extend: 'Ext.form.Panel',
 
     /* i18n */
-    idFieldLabel: "Dataset Identifier:",
+    idFieldLabel: "Download ID",
     /* ~i18n */
     
-    padding: 4,
-    height: 95,
+    height: 100,
+    border: false,
+    frame: true,
     
     initComponent: function() {
                       
         this.items = [{
             border: false,
-            items: [{
-                text: this.idFieldLabel,
-                xtype: 'label'
-            },{
-                name: 'id',
-                value: '',
-                width: '95%',
-                xtype: 'textfield'
-            }]
+            labelAlign: 'left',
+            fieldLabel: this.idFieldLabel,
+            name: 'id',
+            value: '',
+            xtype: 'textfield',
+            padding: 0,
+            style: 'margin:5px;width:260px'
         }];
         
         this.callParent(arguments);

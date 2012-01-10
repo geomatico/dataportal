@@ -14,6 +14,9 @@ Ext.define('query.Map', {
     mapProj: null,
     outProj: null,
     
+    width: 258,
+    height: 285,
+    
     initComponent: function() {
 
         this.mapProj = new OpenLayers.Projection("EPSG:900913");
@@ -54,7 +57,6 @@ Ext.define('query.Map', {
         });
 
         this.zoom = 0;
-        this.height = 283;
         this.tbar = [
             {
                 xtype: 'tbtext',

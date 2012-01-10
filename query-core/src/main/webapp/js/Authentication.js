@@ -51,11 +51,10 @@ Ext.define('Authentication', {
     showLogin: function() {
         this.loginForm = new Ext.form.FormPanel({
             frame: true,
-            width: 260,
-            labelWidth: 60,
             defaults: {
-                width: 165
+                margin: 5
             },
+            labelWidth: 60,
             items: [
                 new Ext.form.TextField({
                     name: "user",
@@ -92,6 +91,7 @@ Ext.define('Authentication', {
                     }
                 }),
                 new Ext.form.DisplayField({
+                    width: 200,
                     html: '<a href="#">'+this.forgotPasswordMessage+'</a>',
                     listeners: {
                         render: function(c) {
@@ -148,8 +148,6 @@ Ext.define('Authentication', {
         this.loginWindow = new Ext.Window({
             title: this.loginWindowTitle,
             layout: 'fit',
-            height: 165,
-            width: 260,
             closable: true,
             draggable: true,
             modal: true,
@@ -162,11 +160,10 @@ Ext.define('Authentication', {
     showSignup: function() {
         var form = new Ext.form.FormPanel({
             frame: true,
-            width: 260,
-            labelWidth: 60,
             defaults: {
-                width: 165
+                margin: 5
             },
+            labelWidth: 60,
             items: [
                 new Ext.form.TextField({
                     name: "user",
@@ -210,8 +207,6 @@ Ext.define('Authentication', {
         var win = new Ext.Window({
             title: this.newUserTitle,
             layout: 'fit',
-            height: 165,
-            width: 260,
             closable: true,
             draggable: true,
             modal: true,
@@ -224,11 +219,10 @@ Ext.define('Authentication', {
     showProperties: function() {
         var form = new Ext.form.FormPanel({
             frame: true,
-            width: 260,
-            labelWidth: 60,
             defaults: {
-                width: 165
+                margin: 5
             },
+            labelWidth: 60,
             items: [
                 new Ext.form.TextField({
                     name: "user",
@@ -282,8 +276,6 @@ Ext.define('Authentication', {
         var win = new Ext.Window({
             title: this.changePasswordTitle,
             layout: 'fit',
-            height: 190,
-            width: 260,
             closable: true,
             draggable: true,
             modal: true,
@@ -296,11 +288,10 @@ Ext.define('Authentication', {
     showPasswordReminder: function() {
         var form = new Ext.form.FormPanel({
             frame: true,
-            width: 260,
-            labelWidth: 60,
             defaults: {
-                width: 165
+                margin: 5
             },
+            labelWidth: 60,
             items: [
                 new Ext.form.TextField({
                     name: "user",
@@ -313,36 +304,34 @@ Ext.define('Authentication', {
                 new Ext.form.DisplayField({
                     value: this.passwordChangeMessage
                 })
-            ]
+            ],
+            buttons: [{
+                text: this.passwordReminderButton,
+                handler: function() {
+                    this.form.getForm().submit({
+                        url: 'login',
+                        params: { request: "generatePass" },
+                        success: function(form, action) {
+                            this.win.close();
+                            this.auth.fireEvent("password_reminder_requested");
+                            this.auth.showActionResult(form, action);
+                        },
+                        failure: this.auth.showActionResult,
+                        scope: this
+                    });
+                },
+                scope: {auth: this, form: form, win: win}                
+            }]
         });
 
         var win = new Ext.Window({
             title: this.passwordReminderTitle,
+            width: 290,
             layout: 'fit',
-            height: 165,
-            width: 260,
             closable: true,
             draggable: true,
             modal: true,
             items: [form]
-        });
-        
-        form.addButton({
-            text: this.passwordReminderButton,
-            handler: function() {
-                this.form.getForm().submit({
-                    url: 'login',
-                    params: { request: "generatePass" },
-                    success: function(form, action) {
-                        this.win.close();
-                        this.auth.fireEvent("password_reminder_requested");
-                        this.auth.showActionResult(form, action);
-                    },
-                    failure: this.auth.showActionResult,
-                    scope: this
-                });
-            },
-            scope: {auth: this, form: form, win: win}
         });
         
         win.show();

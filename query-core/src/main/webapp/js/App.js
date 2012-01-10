@@ -2,9 +2,10 @@ Ext.define('App', {
     extend: 'Ext.container.Viewport',
 
     /* i18n */
-    queriesTitle: "1. Queries",
-    resultsTitle: "2. Results",
-    downloadsTitle: "3. Downloads",
+    getByIdTitle: "Get download by ID",
+    searchTitle: "Search data",
+    resultsTitle: "Results",
+    downloadsTitle: "Download bundle",
     fileDownloadMessage: "This file is already set for download",
     homeTitle: "ICOS Spain Carbon Data Portal",
     homeLogin: "Login",
@@ -23,6 +24,8 @@ Ext.define('App', {
     user: null,
     
     layout: 'border',
+    padding: 0,
+    
     
     initComponent: function() {
         Ext.QuickTips.init();
@@ -75,6 +78,9 @@ Ext.define('App', {
         });
         
         this.queryById = Ext.create('query.Identifier', {
+            title: this.getByIdTitle,
+            collapsible: true,
+            animCollapse: false,
             buttons: [{
                 text: this.showButtonText,
                 handler: this.doLoadDataset,
@@ -83,6 +89,7 @@ Ext.define('App', {
         });
 
         this.queryForm = Ext.create('query.Form', {
+            title: this.searchTitle,
             vocabulary: this.vocabulary,
             buttons: [{
                 text: this.searchButtonText,
@@ -112,17 +119,16 @@ Ext.define('App', {
             contentEl: 'header',
             region: 'north',
             xtype: 'box',
-            height: 64
+            height: 32
         }, {
-            title: this.queriesTitle,
             region: 'west',
             split: false,
-            width: 287,
+            margins: '0 4 0 0',
+            width: 290,
             collapsible: true,
             layout: {
                 type: 'vbox',
-                align:'stretch',
-                animate: true
+                align:'stretch'
             },
             items: [
                 this.queryById,
@@ -139,8 +145,10 @@ Ext.define('App', {
             title: this.downloadsTitle,
             region: 'east',
             layout: 'fit',
-            split: false,
-            width: 287,
+            split: true,
+            width: 300,
+            maxWidth: 600,
+            minWidth: 150,
             items: [
                 this.downloadPanel
             ]

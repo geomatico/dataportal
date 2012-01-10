@@ -2,7 +2,7 @@ Ext.define('query.Form', {
     extend: 'Ext.form.Panel',
 
     /* i18n */
-    textFieldLabel: "Text:",
+    textFieldLabel: "Text",
     startDateFieldLabel: "From:",
     endDateFieldLabel: "To:",
     variablesFieldTitle: "Variables",
@@ -14,7 +14,7 @@ Ext.define('query.Form', {
     },
     autoScroll: true,
     border: true,
-    padding: 4,
+    frame: true,
     flex: 1,
     
     map: null,
@@ -23,26 +23,28 @@ Ext.define('query.Form', {
     initComponent: function() {
         
         this.map = new query.Map();
+        
+        this.defaults = {
+            border: false
+        };
 
         this.items = [{
-            border: false,
-            items: [{
-                text: this.textFieldLabel,
-                xtype: 'label'
-            },{
-                name: 'text',
-                value: '',
-                xtype: 'textfield',
-                width: 200
-            }]
+            labelAlign: 'left',
+            fieldLabel: this.textFieldLabel,
+            labelWidth: 40,
+            name: 'text',
+            value: '',
+            xtype: 'textfield',
+            padding: 0,
+            style: 'margin:5px;width:265px'
         },
         this.map,
         {
             layout: 'column',
-            border: false,
             items: [{
                 columnWidth: 0.5,                                
                 border: false,
+                bodyCls: 'x-panel-body-default-framed',
                 items: [{
                     text: this.startDateFieldLabel,
                     xtype: 'label'
@@ -55,6 +57,7 @@ Ext.define('query.Form', {
             }, {
                 columnWidth: 0.5,
                 border: false,
+                bodyCls: 'x-panel-body-default-framed',
                 items: [{
                     text: this.endDateFieldLabel,
                     xtype: 'label'
@@ -100,6 +103,8 @@ Ext.define('query.Form', {
             fieldLabel: "&nbsp;", // Ah, si, si, creetelo!
             hideLabel: true,
             collapsible: true,
+            padding: 3,
+            margin: 2,
             items: checkboxgroup
         });
         
