@@ -24,8 +24,7 @@ $TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/convert/ThreddsToFragments/
 
 3. Go to "Administration" => "Metadata & Template". Select "iso19139" and "Add templates".
 
-4. Go to "Administration" => "Harvesting Management" and add a "Thredds Catalog" harvesting task. The following table specifies the
-different inputs used in an ICOS configuration:
+4. Go to "Administration" => "Harvesting Management" and add a "Thredds Catalog" harvesting task. The following table specifies the different inputs used in an ICOS configuration:
 
 ========================================================== =======================================================
 Parameter                                                  Value
