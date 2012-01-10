@@ -27,7 +27,7 @@ Ext.define('App', {
     initComponent: function() {
         Ext.QuickTips.init();
         
-        //this.setHomeLocale();
+        this.setHomeLocale();
         
         this.user = Ext.create('Authentication');
         

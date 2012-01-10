@@ -12,7 +12,9 @@ GeoExt.Lang.add("en", {
         homeLogin: "Login",
         homeCreateUser: "Sign Up",
         homeLogout: "Logout",
-        homeUpdateUser: "Change Password"
+        homeUpdateUser: "Change Password",
+        searchButtonText: "Search >>",
+        showButtonText: "Show Dataset >>"
     },
     "Authentication.prototype": {
         userFieldLabel: "Email address",
@@ -51,13 +53,11 @@ GeoExt.Lang.add("en", {
         textFieldLabel: "Text:",
         startDateFieldLabel: "From:",
         endDateFieldLabel: "To:",
-        searchButtonText: "Search >>",
         variablesFieldTitle: "Variables",
         dateDisplayFormat: "M j, Y"
     },
     "query.Identifier.prototype": {
-        idFieldLabel: "Dataset Identifier:",
-        showButtonText: "Show Dataset >>"
+        idFieldLabel: "Dataset Identifier:"
     },
     "query.Map.prototype": {
         titleText: "Location:",

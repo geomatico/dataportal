@@ -12,7 +12,9 @@ GeoExt.Lang.add("ca", {
         homeLogin: "Identifica",
         homeCreateUser: "Nou usuari",
         homeLogout: "Surt",
-        homeUpdateUser: "Canvia la paraula de pas"
+        homeUpdateUser: "Canvia la paraula de pas",
+        searchButtonText: "Cerca >>",
+        showButtonText: "Mostra dades >>"
     },
     "Authentication.prototype": {
         userFieldLabel: "E-mail",
@@ -51,13 +53,11 @@ GeoExt.Lang.add("ca", {
         textFieldLabel: "Text:",
         startDateFieldLabel: "Des del:",
         endDateFieldLabel: "Fins el:",
-        searchButtonText: "Cerca >>",
         variablesFieldTitle: "Variables",
         dateDisplayFormat: "j M Y"
     },
     "query.Identifier.prototype": {
-        idFieldLabel: "Identificador de Descàrrega:",
-        showButtonText: "Mostra dades >>"
+        idFieldLabel: "Identificador de Descàrrega:"
     },
     "query.Map.prototype": {
         titleText: "Lloc:",
@@ -81,6 +81,6 @@ GeoExt.Lang.add("ca", {
         pagingEmptyMessage: "No hi ha dades per mostrar"        
     },
     "OpenLayers.Control.DeleteFeature.prototype": {
-        confirmText: "Esteu segurs de voler elimilar l'element sel·leccionat?"
+        confirmText: "Esteu segurs de voler eliminar l'element sel·leccionat?"
     }
 });

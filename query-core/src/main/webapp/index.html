@@ -11,9 +11,9 @@
 		<script type="text/javascript" src="js/openlayers/lib/OpenLayers.js"></script>
         <script type="text/javascript" src="js/ext4/ext-all-debug-w-comments.js"></script>
         <script type="text/javascript" src="js/ext4/ux/RowExpander.js"></script>
-        <script type="text/javascript" src="js/ext4/compatibility/ext3-core-compat.js"></script>
-        <script type="text/javascript" src="js/ext4/compatibility/ext3-compat.js"></script>
-		<script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script>	
+        <!-- script type="text/javascript" src="js/ext4/compatibility/ext3-core-compat.js"></script>
+        <script type="text/javascript" src="js/ext4/compatibility/ext3-compat.js"></script-->
+        <script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script>	
         <script type="text/javascript" src="js/md5-min.js"></script>
 
         <script type="text/javascript" src="js/OpenLayers.Format.BBOXes.js"></script>
@@ -28,40 +28,30 @@
 		<script type="text/javascript" src="js/result.Map.js"></script>
 		<script type="text/javascript" src="js/download.Panel.js"></script>
 
-        <!-- script type="text/javascript" src="js/locale/App-en.js"></script>
+        <script type="text/javascript" src="js/locale/App-en.js"></script>
         <script type="text/javascript" src="js/locale/App-es.js"></script>
-        <script type="text/javascript" src="js/locale/App-ca.js"></script-->
+        <script type="text/javascript" src="js/locale/App-ca.js"></script>
 
 		<script type="text/javascript">
 		var app;
 
-		/*
-		TODO LIST:
-            * i18n
-            * Finally... styles
-		*/
-		//Ext.Compat.showErrors = true;
-		
 		Ext.onReady(function(){
-		    /*
             GeoExt.Lang.set(OpenLayers.Util.getParameters()["lang"] || GeoExt.Lang.locale);
             Ext.Ajax.request({
-                url: Ext.String.format("js/ext3/locale/ext-lang-{0}.js", GeoExt.Lang.locale),
+                url: Ext.String.format("js/ext4/locale/ext-lang-{0}.js", GeoExt.Lang.locale),
                 success: function(response, opts) {
                     Ext.Ajax.request({
                         url: "locale?lang="+GeoExt.Lang.locale
                     })
-                    eval(response.responseText); // Eval Ext3 locale file.
+                    eval(response.responseText); // Eval Ext4 locale file.
                     app = new App();
                 },
                 failure: function() {
-                    // No locale file found. Defaults to English.
+                    // No locale file found. Default to English.
                     GeoExt.Lang.set("en");
                     app = new App();
                 }
             })
-            */
-            app = new App();
 	    });
 		</script>
 	</head>
