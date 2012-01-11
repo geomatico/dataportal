@@ -1,0 +1,21 @@
+<response totalcount="11" success="true">
+	<item>
+		<id>eb1edb6c-201e-11e1-872f-001e90a15253</id>
+		<title>/datos/Metadatos/Hesperides/generated/29HE20101130/data/29HE20101130_posicion.csv
+		</title>
+		<summary>NetCDF dataset</summary>
+		<institution>Unidad de Tecnología Marina (UTM), CSIC</institution>
+		<creator_url>http://www.utm.csic.es/</creator_url>
+		<data_type>Trajectory</data_type>
+		<icos_domain>oceans</icos_domain>
+		<geo_extent>POLYGON((-1.20083 37.599827,-0.982013 37.599827,-0.982013
+			37.24705,-1.20083 37.24705,-1.20083 37.599827))
+		</geo_extent>
+		<start_time>2010-11-30T13:01:52Z</start_time>
+		<end_time>2010-12-02T12:57:49Z</end_time>
+		<variables>heading,speed,cog,sog,date,longitude,latitude,depth
+		</variables>
+		<data_link>http://ciclope.cmima.csic.es:8080/thredds/fileServer/dataportal/hesperides/29HE20101130_posicion.nc
+		</data_link>
+	</item>
+</response>
