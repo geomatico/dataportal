@@ -1,4 +1,4 @@
-package test.dataportal.controllers;
+package org.dataportal.controllers;
 
 public class PersistenceUnitSingleton {
 

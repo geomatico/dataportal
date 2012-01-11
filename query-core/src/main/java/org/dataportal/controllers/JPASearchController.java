@@ -10,8 +10,6 @@ import javax.persistence.Persistence;
 
 import org.dataportal.model.Search;
 
-import test.dataportal.controllers.PersistenceUnitSingleton;
-
 /**
  * @author Micho Garcia
  * 

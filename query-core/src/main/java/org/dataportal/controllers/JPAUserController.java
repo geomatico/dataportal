@@ -16,8 +16,6 @@ import javax.persistence.TypedQuery;
 
 import org.dataportal.model.User;
 
-import test.dataportal.controllers.PersistenceUnitSingleton;
-
 /**
  * @author Micho Garcia
  * 

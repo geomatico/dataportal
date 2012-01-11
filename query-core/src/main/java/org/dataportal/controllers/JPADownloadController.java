@@ -13,8 +13,6 @@ import javax.persistence.Persistence;
 import org.dataportal.model.Download;
 import org.dataportal.model.DownloadItem;
 
-import test.dataportal.controllers.PersistenceUnitSingleton;
-
 /**
  * 
  * Controller class to Downloads

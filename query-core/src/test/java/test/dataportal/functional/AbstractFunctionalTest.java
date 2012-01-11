@@ -10,10 +10,9 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.dataportal.controllers.PersistenceUnitSingleton;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
-
-import test.dataportal.controllers.PersistenceUnitSingleton;
 
 public abstract class AbstractFunctionalTest extends TestCase {
 

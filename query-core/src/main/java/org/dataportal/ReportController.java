@@ -5,12 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.dataportal.controllers.JPAGenericController;
+import org.dataportal.controllers.PersistenceUnitSingleton;
 import org.dataportal.model.report.DateDownloads;
 import org.dataportal.model.report.DomainDownloads;
 import org.dataportal.model.report.InstitutionDownloads;
 import org.dataportal.utils.DataPortalException;
-
-import test.dataportal.controllers.PersistenceUnitSingleton;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ReportController {
