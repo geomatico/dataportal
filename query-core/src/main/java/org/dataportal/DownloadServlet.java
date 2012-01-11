@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.persistence.RollbackException;
@@ -74,11 +73,12 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 		@SuppressWarnings("unchecked")
 		Map<String, String[]> params = req.getParameterMap();
 
-		if (params.containsKey("file") && params.containsKey("user")) { //$NON-NLS-1$ //$NON-NLS-2$
+        if (params.containsKey("file")) { //$NON-NLS-1$ //$NON-NLS-2$
 
 			String fileName = params.get("file")[0]; //$NON-NLS-1$
 
 			DownloadController download = new DownloadController(lang);
+            download.setUser(user);
 			int fileSize = (int) download.getFileSize(fileName);
 
 			InputStream contents = download.getFileContents(fileName);

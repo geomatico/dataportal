@@ -128,7 +128,7 @@ Ext.define('download.Panel', {
                         width: 350,
                         buttons: Ext.MessageBox.OK,
                         fn: function(id, text, opt) {
-                            window.location = "download?file="+fileName+"&user="+this.user.user+"&password="+this.user.password; 
+                            window.location = "download?file="+fileName;
                         },
                         icon: Ext.MessageBox.INFO,
                         scope: this

@@ -117,12 +117,7 @@ Ext.define('Authentication', {
                     }
                 },
                 scope: this
-            }],
-            listeners: {
-                afterlayout: function(form) {
-                    this.getForm().findField("user").focus(false, 50);
-                }
-            }
+            }]
         });
 
         this.loginWindow = new Ext.Window({
