@@ -61,34 +61,14 @@ Ext.define('Authentication', {
                     fieldLabel: this.userFieldLabel,
                     vtype: "email",
                     allowBlank: false,
-                    blankText: this.userBlankText,
-                    enableKeyEvents: true,
-                    listeners: {
-                        'keyup': function(field, e){
-                            if(e.getCharCode()==e.ENTER){
-                                this.loginForm.getForm().findField("password").focus(false, 50);
-                            }
-                        },
-                        scope: this
-                    }
+                    blankText: this.userBlankText
                 }),
                 new Ext.form.TextField({
                     name: "password",
                     fieldLabel: this.passwordFieldLabel,
                     inputType: 'password',
                     allowBlank: false,
-                    blankText: this.passwordBlankText,
-                    enableKeyEvents: true,
-                    listeners: {
-                        'keyup': function(field, e){
-                            if(e.getCharCode()==e.ENTER){
-                                this.loginForm.getForm().findField("user").focus(false, 50);
-                                var b = this.loginForm.buttons[0];
-                                b.handler.call(b.scope, b, Ext.EventObject);
-                            }
-                        },
-                        scope: this
-                    }
+                    blankText: this.passwordBlankText
                 }),
                 new Ext.form.DisplayField({
                     width: 200,
@@ -142,7 +122,7 @@ Ext.define('Authentication', {
                 afterlayout: function(form) {
                     this.getForm().findField("user").focus(false, 50);
                 }
-            }            
+            }
         });
 
         this.loginWindow = new Ext.Window({
