@@ -1,27 +1,22 @@
-html, body {
-    font-family: helvetica;
-    font-size: 12px;
-    margin:0;
-    padding:0;
-    border:0 none;
-    overflow:hidden;
-    height:100%;
+#header {
+    background: #972a27 url(../img/header-bg.gif) repeat-x center;
 }
 
 #header img{
 	float: left;
-	padding: 3px;
+	padding-top: 1px;
 	padding-left: 15px;
+	height: 30px;
 }
 
 #title {
-	height: 64px;
-	font-size: 40px;
-	font-weight: bold;
-	font-style: italic;
-	padding-left: 320px;
-	padding-top: 12px;
-	color: #d14d0c;
+	font-family:'lucida grande',tahoma,arial,sans-serif;
+	height: 32px;
+	font-size: 18px;
+	padding-left: 90px;
+	padding-top: 5px;
+	color: #cccccc;
+    font-weight: normal;
 }
 
 #log {
@@ -34,8 +29,12 @@ p {
 
 #notLoggedLinks, #loggedLinks {
     position: absolute;
-    top: 35px;
+    top: 15px;
     right: 12px;
+}
+
+#notLoggedLinks a, #loggedLinks a {
+    color: #b5cfe5;
 }
 
 .bboxAdd {
@@ -54,40 +53,6 @@ p {
   background-image: url(../img/silk/wand.png) !important;
 }
 
-.variables {
-    padding-left: 5px;
-}
-
-.variables .x-form-item, .variables .x-form-element {
-    padding: 0;
-    margin: 0;	
-}
-
-.x-form-check-wrap {
-    line-height: 18px;
-}
-
-.x-grid-panel .x-panel-body {
-    overflow: auto !important;
-}
-
-.x-grid3-row td,
-.x-grid3-summary-row td,
-.x-grid3-cell-text,
-.x-grid3-hd-text,
-.x-grid3-hd,
-.x-grid3-row {
-    -moz-user-select:inherit;
-    -khtml-user-select:text;
-}
-
-#results {
-	width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 24px;
-}
-
 img.icon-download {
     width: 16px;
     height: 16px;
@@ -98,4 +63,8 @@ img.icon-delete {
     width: 16px;
     height: 16px;
     background: url(../img/silk/cross.png) no-repeat;
+}
+
+.x-form-item {
+    margin-bottom: 0;
 }

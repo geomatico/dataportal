@@ -1,6 +1,5 @@
-Ext.namespace('query');
-
-query.Map =  Ext.extend(GeoExt.MapPanel, {
+Ext.define('query.Map', {
+    extend: 'GeoExt.MapPanel',
     
     /* i18n */
     titleText: "Location:",
@@ -14,6 +13,9 @@ query.Map =  Ext.extend(GeoExt.MapPanel, {
     bboxWriter: null,
     mapProj: null,
     outProj: null,
+    
+    width: 258,
+    height: 285,
     
     initComponent: function() {
 
@@ -54,57 +56,48 @@ query.Map =  Ext.extend(GeoExt.MapPanel, {
             ]
         });
 
-        var config = {
-            xtype: 'gx_mappanel',
-            map: this.map,
-            zoom: 0,
-            height: 283,
-            tbar: [
-                {
-                    xtype: 'tbtext',
-                    text: this.titleText
-                }, "->",
-                new GeoExt.Action({
-                    control: new OpenLayers.Control.Navigation(),
-                    map: this.map,
-                    toggleGroup: "draw",
-                    allowDepress: false,
-                    pressed: true,
-                    tooltip: this.navigationButtonTooltip,
-                    iconCls: 'mapNav',
-                    group: "draw",
-                    checked: true
-                }),
-                new GeoExt.Action({
-                    control: new OpenLayers.Control.DrawFeature(
-                        this.bboxLayer, OpenLayers.Handler.RegularPolygon, {handlerOptions: {irregular: true}}
-                    ),
-                    map: this.map,
-                    toggleGroup: "draw",
-                    allowDepress: false,
-                    tooltip: this.addBoxButtonTooltip,
-                    iconCls: 'bboxAdd',
-                    group: "draw"
-                }),
-                new GeoExt.Action({
-                    control: new OpenLayers.Control.DeleteFeature(this.bboxLayer),
-                    map: this.map,
-                    toggleGroup: "draw",
-                    allowDepress: false,
-                    tooltip: this.removeBoxButtonTooltip,
-                    iconCls: 'bboxDel',
-                    group: "draw"
-                })                
-            ]
-        };
-        
-        Ext.apply(this, Ext.apply(this.initialConfig, config));
-        query.Map.superclass.initComponent.apply(this, arguments);
+        this.zoom = 0;
+        this.tbar = [
+            {
+                xtype: 'tbtext',
+                text: this.titleText
+            }, "->",
+            new GeoExt.Action({
+                control: new OpenLayers.Control.Navigation(),
+                map: this.map,
+                toggleGroup: "draw",
+                allowDepress: false,
+                pressed: true,
+                tooltip: this.navigationButtonTooltip,
+                iconCls: 'mapNav',
+                group: "draw",
+                checked: true
+            }),
+            new GeoExt.Action({
+                control: new OpenLayers.Control.DrawFeature(
+                    this.bboxLayer, OpenLayers.Handler.RegularPolygon, {handlerOptions: {irregular: true}}
+                ),
+                map: this.map,
+                toggleGroup: "draw",
+                allowDepress: false,
+                tooltip: this.addBoxButtonTooltip,
+                iconCls: 'bboxAdd',
+                group: "draw"
+            }),
+            new GeoExt.Action({
+                control: new OpenLayers.Control.DeleteFeature(this.bboxLayer),
+                map: this.map,
+                toggleGroup: "draw",
+                allowDepress: false,
+                tooltip: this.removeBoxButtonTooltip,
+                iconCls: 'bboxDel',
+                group: "draw"
+            })
+        ];
+        this.callParent(arguments);
     },
 
     getBBOXes: function() {
         return this.bboxWriter.write(this.bboxLayer.features);
     }
 });
-
-Ext.reg('i_querymap', query.Map);

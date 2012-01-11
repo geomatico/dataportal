@@ -1,15 +1,19 @@
-App =  Ext.extend(Ext.Viewport, {
+Ext.define('App', {
+    extend: 'Ext.container.Viewport',
 
     /* i18n */
-    queriesTitle: "1. Queries",
-    resultsTitle: "2. Results",
-    downloadsTitle: "3. Downloads",
+    getByIdTitle: "Get download by ID",
+    searchTitle: "Search data",
+    resultsTitle: "Results",
+    downloadsTitle: "Download bundle",
     fileDownloadMessage: "This file is already set for download",
     homeTitle: "ICOS Spain Carbon Data Portal",
     homeLogin: "Login",
     homeCreateUser: "Sign Up",
     homeLogout: "Logout",
     homeUpdateUser: "Change Password",
+    showButtonText: "Show Dataset >>",
+    searchButtonText: "Search >>",
     /* ~i18n */
     
     vocabulary: null,
@@ -19,140 +23,138 @@ App =  Ext.extend(Ext.Viewport, {
     downloadPanel: null,
     user: null,
     
+    layout: 'border',
+    padding: 0,
+    
+    
     initComponent: function() {
-        // TODO: Manage state & session
-        //Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
-        
         Ext.QuickTips.init();
         
         this.setHomeLocale();
         
-        this.user = new Authentication(/*{
-            listeners: {
-                logged_in: function(username) {
-                    alert("Welcome, " + username + "!");
-                },
-                logged_out: function() {
-                    alert("See you!");
-                }
-            }
-        }*/);
+        this.user = Ext.create('Authentication');
         
-        this.vocabulary = new Ext.data.XmlStore({
-            url: 'xml/vocabulario.xml',
-            record: 'term',
-            idPath: 'nc_term',
+        Ext.define('Term', {
+            extend: 'Ext.data.Model',
             fields: [
-                 'sado_term', 'nc_term', 'nc_long_term', 'en_term', 'en_long_term',
-                 'nc_units', 'nc_data_type', 'nc_coordinate_axis_type'
-            ],
-            sortInfo: {
-                field: 'nc_long_term',
-                direction: 'ASC'
-            }
+                 'sado_term', 'nc_term', 'nc_long_term',
+                 'en_term', 'en_long_term',
+                 'nc_units', 'nc_data_type',
+                 'nc_coordinate_axis_type'
+            ]
         });
         
-        this.dataRecordType = Ext.data.Record.create ([
-            'id',
-            'title',
-            'summary',
-            'institution',
-            'creator_url',
-            'data_type',
-            'icos_domain',
-            'geo_extent',
-            {name: 'start_time', type: 'date'},
-            {name: 'end_time', type: 'date'},
-            'variables',
-            'data_link'
-        ]);
-
-        this.queryById = new query.Identifier({
-            listeners: {
-                scope: this,
-                render: function(form) {
-                    form.buttons[0].on({
-                        scope: this,
-                        click: this.doLoadDataset
-                    });
+        this.vocabulary = Ext.create('Ext.data.Store', {
+            model: 'Term',
+            proxy: {
+                type: 'ajax',
+                url: 'xml/vocabulario.xml',
+                reader: {
+                    type: 'xml',
+                    record: 'term',
+                    idProperty: 'nc_term',
                 }
-            }
+            },
+            sorters: ['nc_long_term'],
+            remoteSort: false
         });
 
-        this.queryForm = new query.Form({
+        Ext.define('Result', {
+            extend: 'Ext.data.Model',
+            fields: [
+                'id',
+                'title',
+                'summary',
+                'institution',
+                'creator_url',
+                'data_type',
+                'icos_domain',
+                'geo_extent',
+                {name: 'start_time', type: 'date'},
+                {name: 'end_time', type: 'date'},
+                'variables',
+                'data_link'
+            ]
+        });
+        
+        this.queryById = Ext.create('query.Identifier', {
+            title: this.getByIdTitle,
+            collapsible: true,
+            animCollapse: false,
+            buttons: [{
+                text: this.showButtonText,
+                handler: this.doLoadDataset,
+                scope: this
+            }]
+        });
+
+        this.queryForm = Ext.create('query.Form', {
+            title: this.searchTitle,
             vocabulary: this.vocabulary,
-            listeners: {
-                scope: this,
-                render: function(form) {
-                    form.buttons[0].on({
-                        scope: this,
-                        click: this.doQuery
-                    });
-                }
-            }
+            buttons: [{
+                text: this.searchButtonText,
+                handler: this.doQuery,
+                scope: this
+            }]
         });
         
         this.vocabulary.load();
         
-        this.resultGrid = new result.Grid({
+        this.resultGrid = Ext.create('result.Grid', {
             vocabulary: this.vocabulary,
-            recordType: this.dataRecordType,
+            model: 'Result',
             downloadHandler: function(grid, rowIndex, colIndex) {
                 var id = grid.store.getAt(rowIndex).get("id");
                 this.addRecordToDownload(grid.store.getAt(rowIndex));
             },
             handlerScope: this
         });
-        
-        this.downloadPanel = new download.Panel({
-            recordType: this.dataRecordType,
+
+        this.downloadPanel = Ext.create('download.Panel', {
+            model: 'Result',
             user: this.user
         });
         
-        var config = {
-            layout: 'border',
-            items: [{
-                contentEl: 'header',
-                region: 'north',
-                xtype: 'box',
-                height: 64
-            }, {
-                title: this.queriesTitle,
-                region: 'west',
-                split: false,
-                width: 287,
-                collapsible: true,
-                layout: {
-                    type: 'vbox',
-                    align:'stretch',
-                    animate: true
-                },
-                items: [
-                    this.queryById,
-                    this.queryForm
-                ]
-            }, {
-                title: this.resultsTitle,
-                region: 'center',
-                layout: 'fit',
-                items: [
-                    this.resultGrid
-                ],
-                autoScroll: true
-            }, {
-                title: this.downloadsTitle,
-                region: 'east',
-                layout: 'fit',
-                split: false,
-                width: 287,
-                items: [
-                    this.downloadPanel
-                ]
-            }]
-        };
+        this.items = [{
+            contentEl: 'header',
+            region: 'north',
+            xtype: 'box',
+            height: 32
+        }, {
+            region: 'west',
+            split: false,
+            margins: '0 4 0 0',
+            width: 290,
+            collapsible: true,
+            layout: {
+                type: 'vbox',
+                align:'stretch'
+            },
+            items: [
+                this.queryById,
+                this.queryForm
+            ]
+        }, {
+            title: this.resultsTitle,
+            region: 'center',
+            layout: 'fit',
+            items: [
+                this.resultGrid
+            ]
+        }, {
+            title: this.downloadsTitle,
+            region: 'east',
+            layout: 'fit',
+            split: true,
+            width: 300,
+            maxWidth: 600,
+            minWidth: 150,
+            items: [
+                this.downloadPanel
+            ]
+        }];
         
-        Ext.apply(this, Ext.apply(this.initialConfig, config));
-        App.superclass.initComponent.apply(this, arguments);
+        this.callParent(arguments);
     },
 
     doQuery: function() {
@@ -175,7 +177,7 @@ App =  Ext.extend(Ext.Viewport, {
     
     addRecordToDownload: function(record, silent) {
         var clonedRecord = record.copy();
-        if(this.downloadPanel.store.getById(clonedRecord.id)) {
+        if(this.downloadPanel.store.getById(clonedRecord.data.id)) {
             alert(this.fileDownloadMessage);
         } else {
             this.downloadPanel.store.add(clonedRecord);
@@ -191,5 +193,3 @@ App =  Ext.extend(Ext.Viewport, {
     }
     
 });
-
-Ext.reg('i_app', App);

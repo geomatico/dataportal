@@ -1,6 +1,5 @@
-Ext.namespace('result');
-
-result.Map =  Ext.extend(GeoExt.MapPanel, {
+Ext.define('result.Map', {
+    extend: 'GeoExt.MapPanel',
 
     map: null,
     fullExtent: null,
@@ -10,6 +9,8 @@ result.Map =  Ext.extend(GeoExt.MapPanel, {
     mapProj: null,
     outProj: null,
     
+    height: 258,
+
     initComponent: function() {
 
         this.mapProj = new OpenLayers.Projection("EPSG:900913");
@@ -50,23 +51,15 @@ result.Map =  Ext.extend(GeoExt.MapPanel, {
             ]
         });
 
-        var extent = this.fullExtent;
+        this.extent = this.fullExtent;
         
         if(this.resultExtent && (ext = this.extentReader.read(this.resultExtent))) {
             this.extentLayer.addFeatures([ext]);
-            extent = ext.geometry.getBounds();
+            this.extent = ext.geometry.getBounds();
         }
         
-        var config = {
-            xtype: 'gx_mappanel',
-            map: this.map,
-            extent: extent,
-            height: 258
-        };
+        this.map.zoomToExtent(this.extent);
         
-        Ext.apply(this, Ext.apply(this.initialConfig, config));
-        result.Map.superclass.initComponent.apply(this, arguments);
+        this.callParent(arguments);
     }
 });
-
-Ext.reg('i_resultmap', result.Map);

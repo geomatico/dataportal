@@ -4,15 +4,18 @@
 
 GeoExt.Lang.add("es", {
     "App.prototype": {
-        queriesTitle: "1. Consultas",
-        resultsTitle: "2. Resultados",
-        downloadsTitle: "3. Descargas",
+        getByIdTitle: "Obtener descarga por ID",
+        searchTitle: "Buscar datos",
+        resultsTitle: "Resultados",
+        downloadsTitle: "Paquete de descarga",
         fileDownloadMessage: "Este registro ya está añadido a la lista de descargas",
-        homeTitle: "Portal de Datos del Carbono de ICOS España",
+        homeTitle: "Portal de Datos ICOS-España",
         homeLogin: "Identificarse",
         homeCreateUser: "Nuevo usuario",
         homeLogout: "Salir",
-        homeUpdateUser: "Cambiar contraseña"
+        homeUpdateUser: "Cambiar contraseña",
+        searchButtonText: "Buscar >>",
+        showButtonText: "Mostrar datos >>"
     },
     "Authentication.prototype": {
         userFieldLabel: "E-mail",
@@ -23,7 +26,7 @@ GeoExt.Lang.add("es", {
         loginButtonText: "Entrar",
         loginWaitMessage: "Comprobando su identidad",
         loginFailureMessage: "Ocurrió un fallo del servidor con código de estado ",
-        loginWindowTitle: "Bienvenido al Portal de Datos del Carbono de ICOS España",
+        loginWindowTitle: "Bienvenido al Portal de Datos ICOS-España",
         newUserTitle: "Nuevo usuario",
         newUserButtonText: "Regístrese",
         oldPasswordFieldLabel: "Contraseña anterior",
@@ -39,7 +42,7 @@ GeoExt.Lang.add("es", {
     },
     "download.Panel.prototype": {
         downloadReadyTitle: "Descarga preparada",
-        downloadReadyMessage: "Su petición de datos con UUID<br/><b>{0}</b><br/>está lista.<br/><br/>Clique OK para descargárrsela.",
+        downloadReadyMessage: "Su petición de datos con UUID<br/><b>{0}</b><br/>está lista.<br/><br/>Clique OK para descargársela.",
         downloadErrorTitle: "Error de descarga",
         downloadButtonText: "Descargar",
         idColumnHeader: "Id",
@@ -48,16 +51,14 @@ GeoExt.Lang.add("es", {
         loginRequiredMessage: "Disculpe, debe identificarse antes de descargar datos"
     },
     "query.Form.prototype": {
-        textFieldLabel: "Texto:",
+        textFieldLabel: "Texto",
         startDateFieldLabel: "Desde:",
         endDateFieldLabel: "Hasta:",
-        searchButtonText: "Buscar >>",
         variablesFieldTitle: "Variables",
         dateDisplayFormat: "j M Y"
     },
     "query.Identifier.prototype": {
-        idFieldLabel: "Identificador de Descarga:",
-        showButtonText: "Mostrar datos >>"
+        idFieldLabel: "ID de Descarga"
     },
     "query.Map.prototype": {
         titleText: "Lugar:",

@@ -4,15 +4,18 @@
 
 GeoExt.Lang.add("en", {
     "App.prototype": {
-        queriesTitle: "1. Queries",
-        resultsTitle: "2. Results",
-        downloadsTitle: "3. Downloads",
+        getByIdTitle: "Get download by ID",
+        searchTitle: "Search data",
+        resultsTitle: "Results",
+        downloadsTitle: "Download bundle",
         fileDownloadMessage: "This file is already set for download",
-        homeTitle: "ICOS Spain Carbon Data Portal",
+        homeTitle: "ICOS-Spain Data Portal",
         homeLogin: "Login",
         homeCreateUser: "Sign Up",
         homeLogout: "Logout",
-        homeUpdateUser: "Change Password"
+        homeUpdateUser: "Change Password",
+        searchButtonText: "Search >>",
+        showButtonText: "Show Dataset >>"
     },
     "Authentication.prototype": {
         userFieldLabel: "Email address",
@@ -23,7 +26,7 @@ GeoExt.Lang.add("en", {
         loginButtonText: "Login",
         loginWaitMessage: "Checking identity",
         loginFailureMessage: "Server-side failure with status code ",
-        loginWindowTitle: "Welcome to the ICOS Spain Carbon Data Portal",
+        loginWindowTitle: "Welcome to ICOS-Spain Data Portal",
         newUserTitle: "New User",
         newUserButtonText: "Sign Up",
         oldPasswordFieldLabel: "Old Password",
@@ -48,16 +51,14 @@ GeoExt.Lang.add("en", {
         loginRequiredMessage: "Sorry, you must Login to download data"
     },
     "query.Form.prototype": {
-        textFieldLabel: "Text:",
+        textFieldLabel: "Text",
         startDateFieldLabel: "From:",
         endDateFieldLabel: "To:",
-        searchButtonText: "Search >>",
         variablesFieldTitle: "Variables",
         dateDisplayFormat: "M j, Y"
     },
     "query.Identifier.prototype": {
-        idFieldLabel: "Dataset Identifier:",
-        showButtonText: "Show Dataset >>"
+        idFieldLabel: "Download ID"
     },
     "query.Map.prototype": {
         titleText: "Location:",

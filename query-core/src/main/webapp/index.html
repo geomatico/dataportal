@@ -2,18 +2,18 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>ICOS Carbon Data Portal</title>
+		<title>ICOS-Spain Data Portal</title>
 
 		<link rel="shortcut icon" href="img/icos.ico" />
-		<link rel="stylesheet" type="text/css" href="js/ext3/resources/css/ext-all-notheme.css" />
-		<link rel="stylesheet" type="text/css" href="js/ext3/resources/css/xtheme-gray.css" />
+		<link rel="stylesheet" type="text/css" href="js/ext4/resources/css/ext-all-gray.css" />
 		<link rel="stylesheet" type="text/css" href="css/dataportal.css" />
 
-		<script type="text/javascript" src="js/openlayers/OpenLayers.js"></script>
-		<script type="text/javascript" src="js/ext3/adapter/ext/ext-base-debug.js"></script>
-		<script type="text/javascript" src="js/ext3/ext-all-debug-w-comments.js"></script>
-		<script type="text/javascript" src="js/ext3/ux/RowExpander.js"></script>
-		<script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script>
+		<script type="text/javascript" src="js/openlayers/lib/OpenLayers.js"></script>
+        <script type="text/javascript" src="js/ext4/ext-all-debug-w-comments.js"></script>
+        <script type="text/javascript" src="js/ext4/ux/RowExpander.js"></script>
+        <!-- script type="text/javascript" src="js/ext4/compatibility/ext3-core-compat.js"></script>
+        <script type="text/javascript" src="js/ext4/compatibility/ext3-compat.js"></script-->
+        <script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script>	
         <script type="text/javascript" src="js/md5-min.js"></script>
 
         <script type="text/javascript" src="js/OpenLayers.Format.BBOXes.js"></script>
@@ -34,19 +34,20 @@
 
 		<script type="text/javascript">
 		var app;
+
 		Ext.onReady(function(){
             GeoExt.Lang.set(OpenLayers.Util.getParameters()["lang"] || GeoExt.Lang.locale);
             Ext.Ajax.request({
-                url: String.format("js/ext3/locale/ext-lang-{0}.js", GeoExt.Lang.locale),
+                url: Ext.String.format("js/ext4/locale/ext-lang-{0}.js", GeoExt.Lang.locale),
                 success: function(response, opts) {
                     Ext.Ajax.request({
                         url: "locale?lang="+GeoExt.Lang.locale
                     })
-                    eval(response.responseText); // Eval Ext3 locale file.
+                    eval(response.responseText); // Eval Ext4 locale file.
                     app = new App();
                 },
                 failure: function() {
-                    // No locale file found. Defaults to English.
+                    // No locale file found. Default to English.
                     GeoExt.Lang.set("en");
                     app = new App();
                 }
@@ -57,7 +58,7 @@
 	<body>
 		<div id="header">
 			 <img src="img/icos-logo.png"/>
-			 <div id="title">ICOS Spain Carbon Data Portal</div>
+			 <div id="title">ICOS-Spain Data Portal</div>
 			 <div id="notLoggedLinks">
 			     <a href="javascript:void(0);" id="login">Login</a> / <a href="javascript:void(0);" id="createUser">Sign up</a>
 			 </div>
