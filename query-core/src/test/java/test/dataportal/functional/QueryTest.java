@@ -1,19 +1,12 @@
 package test.dataportal.functional;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.httpclient.HttpException;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public class QueryTest extends AbstractFunctionalTest {
@@ -65,15 +58,8 @@ public class QueryTest extends AbstractFunctionalTest {
 	private Number getItemCount(String ret)
 			throws ParserConfigurationException, SAXException, IOException,
 			XPathExpressionException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true);
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		Document doc = builder.parse(new ByteArrayInputStream(ret.getBytes()));
-		XPathFactory pathFactory = XPathFactory.newInstance();
-		XPath xpath = pathFactory.newXPath();
-		XPathExpression expr = xpath.compile("count(//response/item)");
-		Number count = (Number) expr.evaluate(doc, XPathConstants.NUMBER);
-		return count;
+		return (Number) evaluateXPath(ret, "count(//response/item)",
+				XPathConstants.NUMBER);
 	}
 
 	private String queryBboxes(String bboxes) throws IOException, HttpException {

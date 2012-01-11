@@ -1,10 +1,11 @@
 package test.dataportal.functional;
 
+import javax.xml.xpath.XPathConstants;
+
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class DownloadTest extends AbstractFunctionalTest {
 
@@ -21,10 +22,14 @@ public class DownloadTest extends AbstractFunctionalTest {
 
 		String xml = new String(IOUtils.toByteArray(this.getClass()
 				.getResourceAsStream("download-post.xml")));
-		Pair<String, Integer> ret = callServiceNoCheck(new String[0],
-				new String[0], xml);
-		assertTrue(ret.getRight() == 200);
-		assertTrue(ret.getLeft().contains("<id>"));
+		String ret = callService(new String[0], new String[0], xml);
+		String fileName = (String) evaluateXPath(ret, "/download/filename",
+				XPathConstants.STRING);
+		assertTrue(fileName != null && fileName.length() > 0);
+
+		byte[] bytes = callGetService(new String[] { "file" },
+				new String[] { fileName }, null);
+		assertTrue(bytes.length > 0);
 	}
 
 	private void login(String user, String password) throws Exception {
