@@ -677,7 +677,7 @@ Cambiar los valores para:
 
 
 Referencias
-===========
+------------
 
 .. [1] http://www.keopx.net/blog/cambiar-las-preferencias-de-java-alternatives-en-debianubuntu
 .. [2] http://www.guia-ubuntu.org/index.php?title=Java

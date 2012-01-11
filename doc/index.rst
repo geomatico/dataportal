@@ -16,3 +16,5 @@ Contents:
    data
    search-service
    converter
+   performance-tests
+   service-performance
