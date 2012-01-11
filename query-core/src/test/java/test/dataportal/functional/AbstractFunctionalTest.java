@@ -14,7 +14,6 @@ import junit.framework.TestCase;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
-import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
@@ -120,10 +119,6 @@ public abstract class AbstractFunctionalTest extends TestCase {
 		String ret = post.getResponseBodyAsString();
 		if (code != 200) {
 			System.err.println(ret);
-		}
-		Cookie[] cookies = client.getState().getCookies();
-		for (Cookie cookie : cookies) {
-			System.out.println(cookie);
 		}
 		post.releaseConnection();
 		Pair<String, Integer> response = new ImmutablePair<String, Integer>(

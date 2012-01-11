@@ -24,7 +24,7 @@ public class DownloadTest extends AbstractFunctionalTest {
 		Pair<String, Integer> ret = callServiceNoCheck(new String[0],
 				new String[0], xml);
 		assertTrue(ret.getRight() == 200);
-		System.out.println(ret.getLeft());
+		assertTrue(ret.getLeft().contains("<id>"));
 	}
 
 	private void login(String user, String password) throws Exception {
