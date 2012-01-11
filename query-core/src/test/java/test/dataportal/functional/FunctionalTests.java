@@ -11,6 +11,7 @@ public class FunctionalTests {
 		suite.addTestSuite(LoginTest.class);
 		suite.addTestSuite(LocaleTest.class);
 		suite.addTestSuite(QueryTest.class);
+		suite.addTestSuite(DownloadTest.class);
 
 		return suite;
 	}

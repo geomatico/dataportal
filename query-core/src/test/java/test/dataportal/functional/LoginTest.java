@@ -1,10 +1,6 @@
 package test.dataportal.functional;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
@@ -65,41 +61,5 @@ public class LoginTest extends AbstractFunctionalTest {
 		JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON(response
 				.getLeft());
 		assertFalse(jsonObject.getBoolean("success"));
-	}
-
-	private void activate(String userName) throws IOException, HttpException,
-			Exception {
-		int code = callServiceNoCheck(new String[] { "request", "hash" },
-				new String[] { "register", getUserHash(userName) }).getRight();
-
-		assertTrue(code == 302);// Redirect
-	}
-
-	private void register(String userName) throws IOException, HttpException {
-		String response = callService(new String[] { "request", "user",
-				"password" }, new String[] { "register", userName, "testpass" });
-
-		JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON(response);
-		assertTrue(response, jsonObject.getBoolean("success"));
-	}
-
-	private String getUserHash(String userName) throws Exception {
-		Class.forName("org.h2.Driver");
-		Connection conn = DriverManager.getConnection("jdbc:h2:" + DB_PATH,
-				"sa", "");
-
-		Statement st = conn.createStatement();
-		ResultSet resultSet = st
-				.executeQuery("select * from \"users\" where \"id\"='"
-						+ userName + "'");
-		assertTrue(resultSet.first());
-
-		String hash = resultSet.getString("hash");
-
-		resultSet.close();
-		st.close();
-		conn.close();
-
-		return hash;
 	}
 }
