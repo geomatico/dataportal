@@ -4,17 +4,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
-import javax.mail.*;
-import javax.mail.internet.*;
-import org.apache.log4j.Logger;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.dataportal.Config;
 
 public class Mail {
     
     private static Logger logger = Logger.getLogger(Mail.class);
 	
-	private static void send(String from, String to, String subject, String content) throws MessagingException {
+	private void send(String from, String to, String subject, String content)
+			throws MessagingException {
 		Properties props = new Properties();
         //props.put("mail.debug", "true");
         props.put("mail.smtp.auth", "true");
@@ -64,14 +72,15 @@ public class Mail {
      * @throws IOException Problems reading template.
 	 * @throws MessagingException Problems sending mail.
 	 */
-	public static void send(String to, String subject, String template, Map<String, String> vars) throws MessagingException, IOException {
+	public void send(String to, String subject, String template,
+			Map<String, String> vars) throws MessagingException, IOException {
 		String from = Config.get("mail.address");
 		InputStream is = Mail.class.getResourceAsStream("/"+template+".txt");
 		String content = IOUtils.toString(is, "UTF-8");
 		for(Map.Entry<String, String> var : vars.entrySet()) {
 			content = content.replaceAll("\\{"+var.getKey()+"\\}", var.getValue());
 		}
-		Mail.send(from, to, subject, content);
+		send(from, to, subject, content);
 	}
 
 }

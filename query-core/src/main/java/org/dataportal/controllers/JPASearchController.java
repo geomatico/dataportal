@@ -8,6 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
+import org.dataportal.SystemSingleton;
 import org.dataportal.model.Search;
 
 /**
@@ -17,7 +18,7 @@ import org.dataportal.model.Search;
 public class JPASearchController {
 
 	EntityManagerFactory entityFactory = Persistence
-			.createEntityManagerFactory(PersistenceUnitSingleton
+			.createEntityManagerFactory(SystemSingleton
 					.getPersistenceUnit());
 
 	/**

@@ -12,9 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.dataportal.controllers.JPAUserController;
-import org.dataportal.datasources.Mail;
 import org.dataportal.model.User;
-import org.dataportal.Config;
 
 public class LoginServlet extends HttpServlet implements DataportalCodes {
 	private static final long serialVersionUID = 1L;
@@ -105,7 +103,9 @@ public class LoginServlet extends HttpServlet implements DataportalCodes {
 										.append("?request=" + GENERATE_PASS //$NON-NLS-1$
 												+ "&hash=" + hash).toString()); //$NON-NLS-1$
 						params.put("contact", CONTACT_MAIL); //$NON-NLS-1$
-						Mail.send(
+						SystemSingleton
+								.getMail()
+								.send(
 								username,
 								Messages.getString("loginservlet.pass_change_confirm"), //$NON-NLS-1$
 								"newPassAskConfirmation", params); //$NON-NLS-1$
@@ -123,7 +123,9 @@ public class LoginServlet extends HttpServlet implements DataportalCodes {
 						Map<String, String> params = new HashMap<String, String>();
 						params.put("pass", newPass); //$NON-NLS-1$
 						params.put("contact", CONTACT_MAIL); //$NON-NLS-1$
-						Mail.send(user.getId(),
+						SystemSingleton
+								.getMail()
+								.send(user.getId(),
 								Messages.getString("loginservlet.your_new_pass"), //$NON-NLS-1$
 								"newPassCreated", params); //$NON-NLS-1$
 
@@ -150,7 +152,9 @@ public class LoginServlet extends HttpServlet implements DataportalCodes {
 													+ "&hash=" + hash) //$NON-NLS-1$
 											.toString());
 							params.put("contact", CONTACT_MAIL); //$NON-NLS-1$
-							Mail.send(username,
+							SystemSingleton
+									.getMail()
+									.send(username,
 									Messages.getString("loginservlet.new_user_confirm"), //$NON-NLS-1$
 									"newUserAskConfirmation", params); //$NON-NLS-1$
 
@@ -166,7 +170,9 @@ public class LoginServlet extends HttpServlet implements DataportalCodes {
 					} else {
 						Map<String, String> params = new HashMap<String, String>();
 						params.put("contact", CONTACT_MAIL); //$NON-NLS-1$
-						Mail.send(
+						SystemSingleton
+								.getMail()
+								.send(
 								username,
 								Messages.getString("loginservlet.welcome_to_icos"), //$NON-NLS-1$
 								"newUserCreated", params); //$NON-NLS-1$

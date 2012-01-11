@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.dataportal.controllers.JPAGenericController;
-import org.dataportal.controllers.PersistenceUnitSingleton;
 import org.dataportal.model.report.DateDownloads;
 import org.dataportal.model.report.DomainDownloads;
 import org.dataportal.model.report.InstitutionDownloads;
@@ -18,7 +17,7 @@ public class ReportController {
     
     public ReportController() {
 		this.database = new JPAGenericController(
-				PersistenceUnitSingleton.getPersistenceUnit());
+				SystemSingleton.getPersistenceUnit());
     }
     
     public List get(String request, int year, int month) throws DataPortalException {

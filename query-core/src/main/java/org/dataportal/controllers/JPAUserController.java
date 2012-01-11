@@ -14,6 +14,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
+import org.dataportal.SystemSingleton;
 import org.dataportal.model.User;
 
 /**
@@ -33,7 +34,7 @@ public class JPAUserController {
 			"0123456789abcdefghijklmnopqrstuvwxyz").toCharArray();
 
 	EntityManagerFactory entityFactory = Persistence
-			.createEntityManagerFactory(PersistenceUnitSingleton
+			.createEntityManagerFactory(SystemSingleton
 					.getPersistenceUnit());
 
 	/**

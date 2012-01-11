@@ -10,6 +10,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
+import org.dataportal.SystemSingleton;
 import org.dataportal.model.Download;
 import org.dataportal.model.DownloadItem;
 
@@ -23,7 +24,7 @@ import org.dataportal.model.DownloadItem;
 public class JPADownloadController {
 
 	EntityManagerFactory entityFactory = Persistence
-			.createEntityManagerFactory(PersistenceUnitSingleton
+			.createEntityManagerFactory(SystemSingleton
 					.getPersistenceUnit());
 
 	/**

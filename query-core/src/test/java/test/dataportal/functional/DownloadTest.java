@@ -14,13 +14,13 @@ public class DownloadTest extends AbstractFunctionalTest {
 	}
 
 	public void testDownload() throws Exception {
-		String xml = new String(IOUtils.toByteArray(this.getClass()
-				.getResourceAsStream("download-post.xml")));
 		String userName = "fergonco@doesnot.exist";
-		register(userName);
-		activate(userName);
+		register("login", userName);
+		activate("login", userName);
 		login(userName, "testpass");
 
+		String xml = new String(IOUtils.toByteArray(this.getClass()
+				.getResourceAsStream("download-post.xml")));
 		Pair<String, Integer> ret = callServiceNoCheck(new String[0],
 				new String[0], xml);
 		assertTrue(ret.getRight() == 200);
@@ -28,11 +28,11 @@ public class DownloadTest extends AbstractFunctionalTest {
 	}
 
 	private void login(String user, String password) throws Exception {
-		String response = callService(new String[] { "request", "user",
-				"password" }, new String[] { "access", user, password });
+		String response = callService("login", new String[] { "request",
+				"user", "password" }, new String[] { "access", user, password });
 
 		JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON(response);
-		assertFalse(jsonObject.getBoolean("success"));
+		assertTrue(jsonObject.getBoolean("success"));
 	}
 
 }
