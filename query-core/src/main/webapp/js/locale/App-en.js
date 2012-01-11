@@ -48,7 +48,8 @@ GeoExt.Lang.add("en", {
         idColumnHeader: "Id",
         titleColumnHeader: "Title",
         removeColumnTooltip: "Remove from Downloads",
-        loginRequiredMessage: "Sorry, you must Login to download data"
+        loginRequiredMessage: "Sorry, you must Login to download data",
+        waitMessage: "Packing data for download..."
     },
     "query.Form.prototype": {
         textFieldLabel: "Text",

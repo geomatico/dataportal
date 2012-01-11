@@ -48,7 +48,8 @@ GeoExt.Lang.add("es", {
         idColumnHeader: "Id",
         titleColumnHeader: "Título",
         removeColumnTooltip: "Quitar de las descargas",
-        loginRequiredMessage: "Disculpe, debe identificarse antes de descargar datos"
+        loginRequiredMessage: "Disculpe, debe identificarse antes de descargar datos",
+        waitMessage: "Preparando descarga..."
     },
     "query.Form.prototype": {
         textFieldLabel: "Texto",

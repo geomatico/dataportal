@@ -10,6 +10,7 @@ Ext.define('download.Panel', {
     titleColumnHeader: "Title",
     removeColumnTooltip: "Remove from Downloads",
     loginRequiredMessage: "Sorry, you must Login to download data",
+    waitMessage: "Packing data for download...",
     /* ~i18n */
     
     user: null,
@@ -105,6 +106,9 @@ Ext.define('download.Panel', {
         if (!this.store.getProxy().getWriter()) {
             throw new Ext.data.Store.Error('writer-undefined');
         }
+        
+        this.setLoading(this.waitMessage);
+        
 
         this.store.getProxy().create(
             Ext.create('Ext.data.Operation', {
@@ -112,6 +116,7 @@ Ext.define('download.Panel', {
                 records: this.store.data.items
             }),
             function(operation) {
+                this.setLoading(false);
                 var response = operation.response;
                 var id = Ext.DomQuery.selectValue("//download/id", response.responseXML);
                 var fileName = Ext.DomQuery.selectValue("//download/filename", response.responseXML);

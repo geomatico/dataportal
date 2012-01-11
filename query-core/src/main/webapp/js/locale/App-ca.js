@@ -48,7 +48,8 @@ GeoExt.Lang.add("ca", {
         idColumnHeader: "Id",
         titleColumnHeader: "Títol",
         removeColumnTooltip: "Treure de les descàrregues",
-        loginRequiredMessage: "Disculpeu, heu d'identificar-vos abans de descarregar les dades"
+        loginRequiredMessage: "Disculpeu, heu d'identificar-vos abans de descarregar les dades",
+        waitMessage: "Preparant descàrrega..."
     },
     "query.Form.prototype": {
         textFieldLabel: "Text",
