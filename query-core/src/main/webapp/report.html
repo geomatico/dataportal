@@ -4,104 +4,270 @@
        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
        <title>ICOS Carbon Data Portal - Usage Reports</title>
        <link rel="shortcut icon" href="img/icos.ico" />
-       <link rel="stylesheet" type="text/css" href="js/ext3/resources/css/ext-all-notheme.css" />
-       <link rel="stylesheet" type="text/css" href="js/ext3/resources/css/xtheme-gray.css" />
+       <link rel="stylesheet" type="text/css" href="js/ext4/resources/css/ext-all-gray.css" />
        <link rel="stylesheet" type="text/css" href="css/dataportal.css" />
-       <script type="text/javascript" src="js/ext3/adapter/ext/ext-base-debug.js"></script>
-       <script type="text/javascript" src="js/ext3/ext-all-debug-w-comments.js"></script>
+       <script type="text/javascript" src="js/ext4/ext-all-debug-w-comments.js"></script>
 <script>
 
 Ext.onReady(function(){
+    Ext.chart.theme.White = Ext.extend(Ext.chart.theme.Base, {
+        constructor: function() {
+           Ext.chart.theme.White.superclass.constructor.call(this, {
+               axis: {
+                   stroke: 'rgb(8,69,148)',
+                   'stroke-width': 1
+               },
+               axisLabel: {
+                   fill: 'rgb(8,69,148)',
+                   font: '12px Arial',
+                   'font-family': '"Arial',
+                   spacing: 2,
+                   padding: 5,
+                   renderer: function(v) { return v; }
+               },
+               axisTitle: {
+                  font: 'bold 18px Arial'
+               }
+           });
+        }
+    });
     
-    /* Downloads by Institution */
-    var downloadsByInstitutionStore = new Ext.data.JsonStore({
+    Ext.define('DownloadsByInstitution', {
+        extend: 'Ext.data.Model',
         fields: ["institution", "downloads"]
     });
-   
-    var piePanel = new Ext.Panel({
-        title: "Downloads by Institution",
-        items: [new Ext.chart.PieChart({
-            store: downloadsByInstitutionStore,
-            categoryField: "institution",
-            dataField: "downloads",
-            tipRenderer: function(chart, record, index, series) {
-                return record.data.institution + ": " + record.data.downloads + " downloads.";
-            },
-            extraStyle: {
-                legend:{
-                    display: 'right',
-                    padding: 10,
-                    border: {
-                        color: '#CBCBCB',
-                        size: 1
-                    }
-                }
-            }
-        })]
-    });
     
-    /* Downloads by Domain */
-    var downloadsByDomainStore = new Ext.data.JsonStore({
+    Ext.define('DownloadsByDomain', {
+        extend: 'Ext.data.Model',
         fields: ["domain", "downloads"]
     });
-
-    var columnPanel = new Ext.Panel({
-        title: "Downloads by Domain",
-        items: [new Ext.chart.ColumnChart({
-            store: downloadsByDomainStore,
-            xField: "domain",
-            yField: "downloads",
-            tipRenderer: function(chart, record, index, series) {
-                return record.data.domain + ": " + record.data.downloads + " downloads.";
-            },
-            xAxis: new Ext.chart.CategoryAxis({
-                title: "Domain"
-            }),
-            yAxis: new Ext.chart.NumericAxis({
-                title: "Downloads"
-            })
-        })]
-    });
     
-    /* Downloads By Date */
-    var downloadsByDateStore = new Ext.data.JsonStore({
+    Ext.define('DownloadsByDate', {
+        extend: 'Ext.data.Model',
         fields: [
             {name: "date", type: "date", convert: conv},
             "downloads"
         ]
     });
-	
-    function conv(v, record) {
-        return new Date(2011, 11, record.date);
+
+    function conv(value, record) {
+        var form = Ext.ComponentQuery.query('.form')[0];
+        if (form) {
+	        var period = form.getForm().getFieldValues();
+	        if (period.month == 0) {
+	            return new Date(period.year, value-1, 1);
+	        } else {
+	            return new Date(period.year, period.month-1, value);
+	        }
+        }
     }
     
-    var lineChart = new Ext.chart.LineChart({
-        store: downloadsByDateStore,
-        xField: "date",
-        yField: "downloads",
-        yAxis: new Ext.chart.NumericAxis({
-            title: 'Downloads'
-        })
+    var downloadsByInstitutionStore = Ext.create('Ext.data.Store', {
+        model: 'DownloadsByInstitution',
+        proxy: {
+            type: 'memory',
+            reader: {
+                type: 'json'
+            }
+        }
     });
     
-	var linePanel = new Ext.Panel({
+    var downloadsByDomainStore = Ext.create('Ext.data.Store', {
+        model: 'DownloadsByDomain',
+        proxy: {
+            type: 'memory',
+            reader: {
+                type: 'json'
+            }
+        }
+    });
+    
+    var downloadsByDateStore = Ext.create('Ext.data.Store', {
+        model: 'DownloadsByDate',
+        proxy: {
+            type: 'memory',
+            reader: {
+                type: 'json'
+            }
+        }
+    });
+        
+    var piePanel = {
+        title: "Downloads by Institution",
+        type: 'panel',
+        layout: 'fit',
+        items: [{
+	        xtype: 'chart',
+	        animate: true,
+	        store: downloadsByInstitutionStore,
+	        shadow: true,
+	        legend: {
+	            position: 'right'
+	        },
+	        theme: 'White',
+	        series: [{
+	            type: 'pie',
+	            field: 'downloads',
+	            showInLegend: true,
+	            donut: 25,
+	            tips: {
+					trackMouse: true,
+					width: 250,
+					renderer: function(storeItem, item) {
+					    this.setTitle(storeItem.get('institution') + ": " + storeItem.get('downloads') + " downloads.");
+					}
+	            },
+	            label: {
+	                field: 'institution',
+	                display: 'rotate',
+	                font: '8px Arial',
+	                contrast: true
+	            }
+	        }]
+        }]
+    };
+       
+    var columnPanel = {
+        title: "Downloads by Domain",
+        type: 'panel',
+        layout: 'fit',
+        items: [{
+            xtype: 'chart',
+            animate: true,
+            shadow: true,
+            store: downloadsByDomainStore,
+            axes: [{
+                type: 'Numeric',
+                position: 'bottom',
+                fields: ['downloads'],
+                label: {
+                    renderer: Ext.util.Format.numberRenderer('0,0')
+                },
+                title: 'Downloads',
+                grid: true,
+                minimum: 0
+            }, {
+                type: 'Category',
+                position: 'left',
+                fields: ['domain'],
+                title: 'Domain',
+                label: {
+                    renderer: function(a) {return a;}
+                }
+            }],
+            theme: 'White',
+            background: {
+                gradient: {
+                    id: 'backgroundGradient',
+                    angle: 45,
+                    stops: {
+                        0: {
+                            color: '#ffffff'
+                        },
+                        100: {
+                            color: '#eaf1f8'
+                        }
+                    }
+                }
+            },
+            series: [{
+                type: 'bar',
+                axis: 'bottom',
+                highlight: true,
+                tips: {
+                    trackMouse: true,
+                    width: 250,
+                    renderer: function(storeItem, item) {
+                        this.setTitle(storeItem.get('domain') + ': ' + storeItem.get('downloads') + ' downloads.');
+                    }
+                },
+                label: {
+                    display: 'insideEnd',
+                    field: 'downloads',
+                    renderer: Ext.util.Format.numberRenderer('0'),
+                    orientation: 'horizontal',
+                    color: '#333',
+                    'text-anchor': 'middle'
+                },
+                xField: 'domain',
+                yField: ['downloads']
+            }]
+        }]
+    };
+      
+    var lineChart = Ext.create('Ext.chart.Chart', {
+	    animate: true,
+	    itemId: 'lineChart',
+	    store: downloadsByDateStore,
+	    shadow: true,
+	    theme: 'White',
+	    legend: {
+	        position: 'right'
+	    },
+	    axes: [{
+	        type: 'Numeric',
+	        minimum: 0,
+	        position: 'left',
+	        fields: ['downloads'],
+	        title: 'Downloads',
+	        grid: {
+	            odd: {
+	                opacity: 1,
+	                fill: '#ddd',
+	                stroke: '#bbb',
+	                'stroke-width': 0.5
+	            }
+	        }
+	    }, {
+	        type: 'Category', //'Time',
+	        position: 'bottom',
+	        fields: 'date',
+	        title: 'Date',
+	        constrain: false,
+	        dateFormat: 'M d, Y'
+	    }],
+	    series: [{
+	        type: 'line',
+	        highlight: {
+	            size: 7,
+	            radius: 7
+	        },
+	        axis: 'left',
+	        smooth: true,
+	        xField: 'date',
+	        yField: 'downloads',
+	        markerConfig: {
+	            type: 'circle',
+	            size: 4,
+	            radius: 4,
+	            'stroke-width': 0
+	        }
+	    }]      
+    });
+    
+	var linePanel = {
 	    title: 'Downloads by Date',
+        type: 'panel',
+        layout: 'fit',
 	    items: [lineChart]
-	});
+	};
 
 	/* Combo Values */
 	// Year ranges from current year back to 2011.
 	var years = [];
-	for (v = new Date().format('Y'); v >= 2011; years.push(v--));
+	for (v = Ext.Date.format(new Date(), 'Y'); v >= 2011; years.push(v--));
 	
 	// Month names from 1 to 12, plus "all year round" = 0 value.
 	var months = [[0, "-All- (Yearly Report)"]];
-	Ext.each(Date.monthNames, function(month, index) {
+	Ext.each(Ext.Date.monthNames, function(month, index) {
 	    months[index+1] = [index+1, month];
 	});
 
-	var form = new Ext.form.FormPanel({
-        labelAlign: 'top',
+	var form = {
+	    xtype: 'form',
+	    fieldDefaults: {
+	        labelAlign: 'top'
+	    },
         autoScroll: true,
         height: 155,
         border: true,
@@ -111,25 +277,23 @@ Ext.onReady(function(){
             triggerAction: 'all',
             mode: 'local'            
         },
-        items: [
-            new Ext.form.ComboBox({
-                fieldLabel: 'Year',
-                id: 'year',
-                hiddenName: 'year',
-                value: new Date().format('Y'),
-                store: years
-            }),
-            new Ext.form.ComboBox({
-                fieldLabel: 'Month',
-                id: 'month',
-                hiddenName: 'month',
-                value: new Date().format('n'),
-                store: months
-            })
-        ],
+        items: [{
+            xtype: 'combo',
+            fieldLabel: 'Year',
+            name: 'year',
+            value: Ext.Date.format(new Date(),'Y'),
+            store: years
+        },{
+            xtype: 'combo',
+            fieldLabel: 'Month',
+            name: 'month',
+            value: Ext.Date.format(new Date(),'n'),
+            store: months
+        }],
         buttons: [{
             text: 'Generate report >>',
             handler: function(button, event) {
+                var form = button.findParentByType('form');
                 
                 // Get data; 3 requests to "report" service:    
                 form.getForm().submit({
@@ -138,12 +302,10 @@ Ext.onReady(function(){
                     success: function(form, action) {
                         downloadsByDateStore.loadData(action.result.data);
                     },
-                    failure: function(form, action) {
-                        alert(action.result.message);
-                    }
+                    failure: failure
                 });
 
-                form.getForm().submit({
+               form.getForm().submit({
                     url: 'report',
                     params: { request: "GetDownloadsByDomain" },
                     success: function(form, action) {
@@ -162,55 +324,51 @@ Ext.onReady(function(){
                 });
                 
                 // Change report title and "Downloads by Date" horizontal range                
-                var year = Ext.getCmp("year").getValue();
-                var month = Ext.getCmp("month").getValue();
+                var year = form.getForm().findField("year").getValue();
+                var month = form.getForm().findField("month").getValue();
                 var period;
+                
+                var dateaxis = Ext.ComponentQuery.query('#lineChart')[0].axes.getByKey("bottom");
                 
                 if (month > 0) {
                     // Monthly report
-                    period = Ext.getCmp("month").getRawValue() + " " + year;
-                    lineChart.setTipRenderer(function(chart, record, index, series) {
-                        return record.data.date.format("M j, Y") + ": " + record.data.downloads + " downloads.";
-                    });
-                    lineChart.setXAxis(new Ext.chart.TimeAxis({
-                        title: new Date(year, month-1, 1).format("F Y"),
-                        minimum: new Date(year, month-1, 1),
-                        maximum: new Date(year, month, 0),
-                        labelRenderer: function(date) { return date.format("j"); } // Days in a month
-                    }));
+                    period = form.getForm().findField("month").getRawValue() + " " + year;
+                    dateaxis.title = Ext.Date.format(new Date(year, month-1, 1), "F Y");
+                    dateaxis.minimum = new Date(year, month-1, 1);
+                    dateaxis.maximum = new Date(year, month, 0);
+                    dateaxis.label.renderer = function(d) {
+                        if (d) return Ext.Date.format(new Date(d), 'j');
+                    }
                 } else {
                     // Yearly report
                     period = "Year " + year;
-                    lineChart.setTipRenderer(function(chart, record, index, series) {
-                        return record.data.date.format("M Y") + ": " + record.data.downloads + " downloads.";
-                    });
-                    lineChart.setXAxis(new Ext.chart.TimeAxis({
-                        title: new Date(year, 0, 1).format("Y"),
-                        minimum: new Date(year, 0, 1),
-                        maximum: new Date(year, 11, 31),
-                        labelRenderer: function(date) { return date.format("M"); } // Months in a yeaar
-                    }));
+                    dateaxis.title = Ext.Date.format(new Date(year, 0, 1), "Y");
+                    dateaxis.minimum = new Date(year, 0, 1);
+                    dateaxis.maximum = new Date(year, 11, 31);
+                    dateaxis.majorTickSteps = 12;
+                    dateaxis.label.renderer = function(d) {
+                        if (d) return Ext.Date.format(new Date(d), 'M');
+                    }
                 }
                 Ext.get("period").update(period);
             }
         }]
-    })
+    }
 	
-   var failure = function(form, action) {
+    var failure = function(form, action) {
         Ext.Msg.alert('Failure', action.result.message);
     };
 
-	new Ext.Viewport({
+    Ext.create('Ext.Viewport', {
 	    layout: 'border',
 	    items:[{
 	        region: 'north',
-	        html: '<div id="header"><img src="img/icos-logo.png"/><div id="title"><span id="period"></span> Usage Report</div></div>'
+	        html: '<div id="header"><img src="img/icos-logo.png"/><div id="title"><span id="period"></span> Usage Report</div></div>',
+	        border: false
 	    },{
 		    region: 'center',
-		    autoScroll: true,
+		    layout: 'accordion',
 		    defaults: {
-		        height:250,
-		        width:600,
 		        collapsible: true,
 		        border: true,
 		        titleCollapse: true
