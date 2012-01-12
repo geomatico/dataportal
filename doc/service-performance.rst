@@ -120,4 +120,27 @@ testear entornos con varios clientes simultáneos, cosa que no se conseguía rea
 una petición por segundo.
 
 .. figure:: img/jmeter_search_var.png
-   
+
+Servicio de descarga
+-----------------------
+
+Los tests para el servicio de descarga se han realizado solicitando la descarga de
+3 ficheros que suman 450Kb.
+
+El tiempo de respuesta de una petición aislada está entre 1.5s y 2s.
+
+Se han realizado 1000 peticiones en 1000 segundos. Es decir una petición por segundo,
+lo que ha ocasionado 2 peticiones simultáneas constantemente. Se han obtenido tiempos
+de respuesta iguales a los obtenidos por peticiones individuales.
+
+Se han realizado test más agresivos (50 peticiones en 5 segundos) obteniendo tiempos
+de respuesta más altos pero la misma productividad (por encima incluso que en el
+caso anterior).
+
+Esto se debe a que una gran parte del tiempo del servicio se emplea en la transmisión 
+de los datos por la red y que no se ha alcanzado el límite de capacidad de la conexión.
+
+También existe un pool de threads que permite maximizar el uso de dicha conexión. 
+
+.. figure:: img/jmeter_download.png
+
