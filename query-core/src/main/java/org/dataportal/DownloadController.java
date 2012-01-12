@@ -67,6 +67,9 @@ public class DownloadController extends DataPortalController {
 
 	private static final String ZIP = ".zip"; //$NON-NLS-1$
 
+	private static final ExecutorService threadsPool = Executors
+			.newCachedThreadPool();
+
 	private String tempDir;
 	private String id = null;
 
@@ -337,8 +340,6 @@ public class DownloadController extends DataPortalController {
 
 		int nItems = downloadItems.size();
 
-		// TODO should it be a field?
-		ExecutorService threadsPool = Executors.newCachedThreadPool();
 		@SuppressWarnings("unchecked")
 		Future<String> futures[] = new Future[nItems];
 
@@ -349,9 +350,6 @@ public class DownloadController extends DataPortalController {
 			DownloadCallable hiloDescarga = new DownloadCallable(url, name,
 					pathFile);
 			futures[i] = threadsPool.submit(hiloDescarga);
-
-			// TODO why?
-			Thread.sleep(2000);
 		}
 
 		String[] files = new String[futures.length];
