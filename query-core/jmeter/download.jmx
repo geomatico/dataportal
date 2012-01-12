@@ -45,12 +45,64 @@
           <boolProp name="CookieManager.clearEachIteration">false</boolProp>
         </CookieManager>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="search service query" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="login query" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="request" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">access</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">request</stringProp>
+              </elementProp>
+              <elementProp name="user" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">fergonco@doesnot.exist</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">user</stringProp>
+              </elementProp>
+              <elementProp name="password" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">testpass</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">password</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/dataportal/login</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Check login" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="-686222683">success:true</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="download service query" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
             <collectionProp name="Arguments.arguments">
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value"></stringProp>
+                <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt; &lt;response totalcount=&quot;33&quot; success=&quot;true&quot;&gt; 	&lt;item&gt; 		&lt;id&gt;eac6f8a2-201e-11e1-ba2c-001e90a15253&lt;/id&gt; 		&lt;title&gt;/datos/Metadatos/Hesperides/generated/29HE20101129/data/29HE20101129_posicion.csv 		&lt;/title&gt; 		&lt;summary&gt;NetCDF dataset&lt;/summary&gt; 		&lt;institution&gt;Unidad de Tecnologï¿½a Marina (UTM), CSIC&lt;/institution&gt; 		&lt;creator_url&gt;http://www.utm.csic.es/&lt;/creator_url&gt; 		&lt;data_type&gt;Trajectory&lt;/data_type&gt; 		&lt;icos_domain&gt;oceans&lt;/icos_domain&gt; 		&lt;geo_extent&gt;POLYGON((-1.216139 37.599827,-0.971184 37.599827,-0.971184 			37.24705,-1.216139 37.24705,-1.216139 37.599827))&lt;/geo_extent&gt; 		&lt;start_time&gt;2010-11-29T13:01:41Z&lt;/start_time&gt; 		&lt;end_time&gt;2010-12-02T12:47:06Z&lt;/end_time&gt; 		&lt;variables&gt;heading,speed,cog,sog,date,longitude,latitude,depth 		&lt;/variables&gt; 		&lt;data_link&gt;http://ciclope.cmima.csic.es:8080/thredds/fileServer/dataportal/hesperides/29HE20101129_posicion.nc&lt;/data_link&gt; 	&lt;/item&gt; 	&lt;item&gt; 		&lt;id&gt;eae4c3b4-201e-11e1-8a86-001e90a15253&lt;/id&gt; 		&lt;title&gt;/datos/Metadatos/Hesperides/generated/29HE20101129/data/29HE20101129_termosal.csv 		&lt;/title&gt; 		&lt;summary&gt;NetCDF dataset&lt;/summary&gt; 		&lt;institution&gt;Unidad de Tecnologï¿½a Marina (UTM), CSIC&lt;/institution&gt; 		&lt;creator_url&gt;http://www.utm.csic.es/&lt;/creator_url&gt; 		&lt;data_type&gt;Trajectory&lt;/data_type&gt; 		&lt;icos_domain&gt;oceans&lt;/icos_domain&gt; 		&lt;geo_extent&gt;POLYGON((-1.20083 37.599827,-0.982013 37.599827,-0.982013 			37.24705,-1.20083 37.24705,-1.20083 37.599827))&lt;/geo_extent&gt; 		&lt;start_time&gt;2010-11-30T15:06:57Z&lt;/start_time&gt; 		&lt;end_time&gt;2010-12-02T12:45:39Z&lt;/end_time&gt; 		&lt;variables&gt;sea_water_salinity,sea_water_temperature,fluorescence,sea_water_electrical_conductivity,sea_water_sigmat,date,longitude,latitude,acquisition_instrument_date 		&lt;/variables&gt; 		&lt;data_link&gt;http://ciclope.cmima.csic.es:8080/thredds/fileServer/dataportal/hesperides/29HE20101129_termosal.nc&lt;/data_link&gt; 	&lt;/item&gt; 	&lt;item&gt; 		&lt;id&gt;eb022e9a-201e-11e1-b067-001e90a15253&lt;/id&gt; 		&lt;title&gt;/datos/Metadatos/Hesperides/generated/29HE20101130/data/29HE20101130_meteo.csv 		&lt;/title&gt; 		&lt;summary&gt;NetCDF dataset&lt;/summary&gt; 		&lt;institution&gt;Unidad de Tecnologï¿½a Marina (UTM), CSIC&lt;/institution&gt; 		&lt;creator_url&gt;http://www.utm.csic.es/&lt;/creator_url&gt; 		&lt;data_type&gt;Trajectory&lt;/data_type&gt; 		&lt;icos_domain&gt;oceans&lt;/icos_domain&gt; 		&lt;geo_extent&gt;POLYGON((-1.200799 37.599827,-0.982287 37.599827,-0.982287 			37.24705,-1.200799 37.24705,-1.200799 37.599827))&lt;/geo_extent&gt; 		&lt;start_time&gt;2010-11-30T13:00:50Z&lt;/start_time&gt; 		&lt;end_time&gt;2010-12-01T14:51:47Z&lt;/end_time&gt; 		&lt;variables&gt;wind_speed_mean_value,wind_speed,wind_from_direction,air_temperature,relative_humidity,solar_radiation,air_pressure,sea_water_temperature,date,longitude,latitude,acquisition_instrument_date 		&lt;/variables&gt; 		&lt;data_link&gt;http://ciclope.cmima.csic.es:8080/thredds/fileServer/dataportal/hesperides/29HE20101130_meteo.nc&lt;/data_link&gt; 	&lt;/item&gt; &lt;/response&gt;</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
                 <boolProp name="HTTPArgument.use_equals">true</boolProp>
               </elementProp>
@@ -62,7 +114,7 @@
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/dataportal/search</stringProp>
+          <stringProp name="HTTPSampler.path">/dataportal/download</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -71,72 +123,82 @@
           <boolProp name="HTTPSampler.monitor">false</boolProp>
           <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
         </HTTPSamplerProxy>
-        <hashTree/>
-        <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Graph Results" enabled="true">
-          <boolProp name="ResultCollector.error_logging">false</boolProp>
-          <objProp>
-            <name>saveConfig</name>
-            <value class="SampleSaveConfiguration">
-              <time>true</time>
-              <latency>true</latency>
-              <timestamp>true</timestamp>
-              <success>true</success>
-              <label>true</label>
-              <code>true</code>
-              <message>true</message>
-              <threadName>true</threadName>
-              <dataType>true</dataType>
-              <encoding>false</encoding>
-              <assertions>true</assertions>
-              <subresults>true</subresults>
-              <responseData>false</responseData>
-              <samplerData>false</samplerData>
-              <xml>true</xml>
-              <fieldNames>false</fieldNames>
-              <responseHeaders>false</responseHeaders>
-              <requestHeaders>false</requestHeaders>
-              <responseDataOnError>false</responseDataOnError>
-              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
-              <assertionsResultsToSave>0</assertionsResultsToSave>
-              <bytes>true</bytes>
-            </value>
-          </objProp>
-          <stringProp name="filename"></stringProp>
-          <boolProp name="ResultCollector.success_only_logging">true</boolProp>
-        </ResultCollector>
-        <hashTree/>
-        <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="View Results in Table" enabled="true">
-          <boolProp name="ResultCollector.error_logging">false</boolProp>
-          <objProp>
-            <name>saveConfig</name>
-            <value class="SampleSaveConfiguration">
-              <time>true</time>
-              <latency>true</latency>
-              <timestamp>true</timestamp>
-              <success>true</success>
-              <label>true</label>
-              <code>true</code>
-              <message>true</message>
-              <threadName>true</threadName>
-              <dataType>true</dataType>
-              <encoding>false</encoding>
-              <assertions>true</assertions>
-              <subresults>true</subresults>
-              <responseData>false</responseData>
-              <samplerData>false</samplerData>
-              <xml>true</xml>
-              <fieldNames>false</fieldNames>
-              <responseHeaders>false</responseHeaders>
-              <requestHeaders>false</requestHeaders>
-              <responseDataOnError>false</responseDataOnError>
-              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
-              <assertionsResultsToSave>0</assertionsResultsToSave>
-              <bytes>true</bytes>
-            </value>
-          </objProp>
-          <stringProp name="filename"></stringProp>
-        </ResultCollector>
-        <hashTree/>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Check download file" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="-208899493">&lt;filename&gt;</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Graph Results" enabled="true">
+            <boolProp name="ResultCollector.error_logging">false</boolProp>
+            <objProp>
+              <name>saveConfig</name>
+              <value class="SampleSaveConfiguration">
+                <time>true</time>
+                <latency>true</latency>
+                <timestamp>true</timestamp>
+                <success>true</success>
+                <label>true</label>
+                <code>true</code>
+                <message>true</message>
+                <threadName>true</threadName>
+                <dataType>true</dataType>
+                <encoding>false</encoding>
+                <assertions>true</assertions>
+                <subresults>true</subresults>
+                <responseData>false</responseData>
+                <samplerData>false</samplerData>
+                <xml>true</xml>
+                <fieldNames>false</fieldNames>
+                <responseHeaders>false</responseHeaders>
+                <requestHeaders>false</requestHeaders>
+                <responseDataOnError>false</responseDataOnError>
+                <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+                <assertionsResultsToSave>0</assertionsResultsToSave>
+                <bytes>true</bytes>
+              </value>
+            </objProp>
+            <stringProp name="filename"></stringProp>
+            <boolProp name="ResultCollector.success_only_logging">true</boolProp>
+          </ResultCollector>
+          <hashTree/>
+          <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="View Results in Table" enabled="true">
+            <boolProp name="ResultCollector.error_logging">false</boolProp>
+            <objProp>
+              <name>saveConfig</name>
+              <value class="SampleSaveConfiguration">
+                <time>true</time>
+                <latency>true</latency>
+                <timestamp>true</timestamp>
+                <success>true</success>
+                <label>true</label>
+                <code>true</code>
+                <message>true</message>
+                <threadName>true</threadName>
+                <dataType>true</dataType>
+                <encoding>false</encoding>
+                <assertions>true</assertions>
+                <subresults>true</subresults>
+                <responseData>false</responseData>
+                <samplerData>false</samplerData>
+                <xml>true</xml>
+                <fieldNames>false</fieldNames>
+                <responseHeaders>false</responseHeaders>
+                <requestHeaders>false</requestHeaders>
+                <responseDataOnError>false</responseDataOnError>
+                <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+                <assertionsResultsToSave>0</assertionsResultsToSave>
+                <bytes>true</bytes>
+              </value>
+            </objProp>
+            <stringProp name="filename"></stringProp>
+          </ResultCollector>
+          <hashTree/>
+        </hashTree>
         <ResultSaver guiclass="ResultSaverGui" testclass="ResultSaver" testname="Save Responses to a file" enabled="true">
           <stringProp name="FileSaver.filename">/tmp/response</stringProp>
           <boolProp name="FileSaver.errorsonly">true</boolProp>
@@ -144,15 +206,6 @@
           <boolProp name="FileSaver.skipsuffix">false</boolProp>
           <boolProp name="FileSaver.successonly">false</boolProp>
         </ResultSaver>
-        <hashTree/>
-        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
-          <collectionProp name="Asserion.test_strings">
-            <stringProp name="-2013305204">success=&quot;true&quot;</stringProp>
-          </collectionProp>
-          <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
-          <boolProp name="Assertion.assume_success">false</boolProp>
-          <intProp name="Assertion.test_type">2</intProp>
-        </ResponseAssertion>
         <hashTree/>
       </hashTree>
     </hashTree>
