@@ -45,7 +45,7 @@ public class DownloadCallable implements Callable<String> {
 			throws MalformedURLException {
 		this.url = new URL(url);
 		this.pathFile = pathFile;
-		this.name = name;
+		this.name = name + "_" + System.currentTimeMillis();
 	}
 
 	/* (non-Javadoc)
@@ -72,7 +72,7 @@ public class DownloadCallable implements Callable<String> {
 		} finally {
 			logger.info("Finaliza descarga: " + name);
 		}
-		return name;
+		return downFile.getAbsolutePath();
 	}
 
 }

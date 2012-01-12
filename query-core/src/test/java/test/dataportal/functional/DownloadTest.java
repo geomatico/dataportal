@@ -30,7 +30,7 @@ public class DownloadTest extends AbstractFunctionalTest {
 		DownloadRunnable t1 = new DownloadRunnable(userName, password,
 				"download-post.xml", "29HE20101129_posicion.nc");
 		DownloadRunnable t2 = new DownloadRunnable(userName, password,
-				"download-post2.xml", "29HE20101129_posicion.nc");
+				"download-post2.xml", "ws_0.nc");
 		t1.start();
 		t2.start();
 

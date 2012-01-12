@@ -27,7 +27,7 @@ public class Utils {
 
 	private static Logger logger = Logger.getLogger(Utils.class);
 
-	public static final String DATE_FORMAT_NOW = "yyyyMMddHHmmss";
+	public static final String DATE_FORMAT_NOW = "yyyyMMddHHmmss_SSS";
 	public static final String DATEFORMAT = "yyyy-MM-dd";
 
 	public static String convertStreamToString(InputStream is) throws Exception {

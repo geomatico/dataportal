@@ -14,7 +14,6 @@ import java.net.MalformedURLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -280,12 +279,12 @@ public class DownloadController extends DataPortalController {
 			dtException.setCode(FAILECREATEDIRECTORY);
 			throw dtException;
 		} else {
-			createDownloadThreads(downloadItems, pathFile);
+			String[] files = createDownloadThreads(downloadItems, pathFile);
 			String uid = this.generateId();
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("ddi", uid); //$NON-NLS-1$
-			createReadmeFile(params, pathFile);
-			compressFiles(pathFile, nameFile);
+			File readmeFile = createReadmeFile(params, pathFile);
+			compressFiles(pathFile, readmeFile, files, nameFile);
 			insertDownload(user, uid, nameFile + ZIP, downloadItems);
 
 			logger.debug("FILE to download: " + nameFile + ZIP); //$NON-NLS-1$
@@ -300,9 +299,10 @@ public class DownloadController extends DataPortalController {
 	 * 
 	 * @param vars
 	 * @param pathFile
+	 * @return Returns the readme file ready to compress
 	 * @throws IOException
 	 */
-	private void createReadmeFile(Map<String, String> vars, String pathFile)
+	private File createReadmeFile(Map<String, String> vars, String pathFile)
 			throws IOException {
 		InputStream is = DownloadController.class
 				.getResourceAsStream("/README.txt"); //$NON-NLS-1$
@@ -311,8 +311,11 @@ public class DownloadController extends DataPortalController {
 			readmeString = readmeString.replaceAll(
 					"\\{" + var.getKey() + "\\}", var.getValue()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		File readmeFile = new File(pathFile + "/README.txt"); //$NON-NLS-1$
+		File readmeFile = new File(pathFile
+				+ "/README.txt" + "_" + System.currentTimeMillis()); //$NON-NLS-1$
 		FileUtils.writeStringToFile(readmeFile, readmeString);
+
+		return readmeFile;
 	}
 
 	/**
@@ -327,14 +330,17 @@ public class DownloadController extends DataPortalController {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	private void createDownloadThreads(ArrayList<DownloadItem> downloadItems,
+	private String[] createDownloadThreads(
+			ArrayList<DownloadItem> downloadItems,
 			String pathFile) throws MalformedURLException,
 			InterruptedException, ExecutionException {
 
 		int nItems = downloadItems.size();
 
+		// TODO should it be a field?
 		ExecutorService threadsPool = Executors.newCachedThreadPool();
-		Future futures[] = new Future[nItems];
+		@SuppressWarnings("unchecked")
+		Future<String> futures[] = new Future[nItems];
 
 		for (int i = 0; i < nItems; i++) {
 			String url = downloadItems.get(i).getUrl();
@@ -344,13 +350,18 @@ public class DownloadController extends DataPortalController {
 					pathFile);
 			futures[i] = threadsPool.submit(hiloDescarga);
 
+			// TODO why?
 			Thread.sleep(2000);
 		}
 
+		String[] files = new String[futures.length];
 		for (int i = 0; i < nItems; i++) {
-			String tarea = (String) futures[i].get();
+			String tarea = futures[i].get();
+			files[i] = tarea;
 			logger.info("DOWNLOADING FINISH: " + tarea); //$NON-NLS-1$
 		}
+
+		return files;
 	}
 
 	/**
@@ -394,37 +405,49 @@ public class DownloadController extends DataPortalController {
 	 * 
 	 * @param pathDir
 	 *            directory path (String)
+	 * @param readmeFile
+	 *            The file containing the instructions
+	 * @param files
+	 *            The files in pathDir to add to the zip file
 	 * @param nameFile
 	 *            archive name (String)
 	 * @throws IOException
 	 */
-	private void compressFiles(String pathDir, String nameFile)
+	private void compressFiles(String pathDir, File readmeFile, String[] files,
+			String nameFile)
 			throws IOException {
 
 		String filePathName = pathDir + SLASH + nameFile + ".zip"; //$NON-NLS-1$
 		OutputStream os = new FileOutputStream(filePathName);
 		ZipArchiveOutputStream zipOs = new ZipArchiveOutputStream(os);
 
-		File directory = new File(pathDir);
-		String extensions[] = { "nc", "txt" }; //$NON-NLS-1$ //$NON-NLS-2$
-		Iterator<File> itFiles = FileUtils.iterateFiles(directory, extensions,
-				false);
+		addToZip(zipOs, readmeFile);
 
-		while (itFiles.hasNext()) {
-			File fl = itFiles.next();
-			ArchiveEntry archFl = zipOs.createArchiveEntry(fl, fl.getName());
-			zipOs.putArchiveEntry(archFl);
-			zipOs.write(FileUtils.readFileToByteArray(fl));
-			zipOs.flush();
-			zipOs.closeArchiveEntry();
-
-			FileUtils.forceDelete(fl);
+		for (String filePath : files) {
+			File fl = new File(filePath);
+			addToZip(zipOs, fl);
 		}
 
 		zipOs.finish();
 		zipOs.close();
 
 		os.close();
+	}
+
+	private void addToZip(ZipArchiveOutputStream zipOs, File fl)
+			throws IOException {
+		ArchiveEntry archFl = zipOs.createArchiveEntry(fl, getName(fl));
+		zipOs.putArchiveEntry(archFl);
+		zipOs.write(FileUtils.readFileToByteArray(fl));
+		zipOs.flush();
+		zipOs.closeArchiveEntry();
+
+		FileUtils.forceDelete(fl);
+	}
+
+	private String getName(File fl) {
+		String name = fl.getName();
+		return name.substring(0, name.lastIndexOf('_'));
 	}
 
 }
