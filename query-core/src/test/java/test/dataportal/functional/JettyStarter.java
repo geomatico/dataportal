@@ -8,15 +8,11 @@ package test.dataportal.functional;
  */
 public class JettyStarter extends AbstractFunctionalTest {
 
-	@Override
-	protected String getService() {
-		return "login";
-	}
-
 	public void testRunJetty() throws Exception {
 		String userName = "fergonco@doesnot.exist";
-		register(userName);
-		activate(userName);
+		Services services = new Services();
+		services.register(userName, "testpass");
+		services.activate(userName);
 		System.in.read();
 	}
 

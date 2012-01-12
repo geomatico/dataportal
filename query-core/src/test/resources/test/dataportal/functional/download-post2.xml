@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response totalcount="60" success="true">
+    <item>
+        <id>eac6f8a2-201e-11e1-ba2c-001e90a15253</id>
+        <title>/datos/Metadatos/Hesperides/generated/29HE20101129/data/29HE20101129_posicion.csv
+        </title>
+        <summary>NetCDF dataset</summary>
+        <institution>Unidad de Tecnologï¿½a Marina (UTM), CSIC</institution>
+        <creator_url>http://www.utm.csic.es/</creator_url>
+        <data_type>Trajectory</data_type>
+        <icos_domain>oceans</icos_domain>
+        <geo_extent>POLYGON((-1.216139 37.599827,-0.971184 37.599827,-0.971184
+            37.24705,-1.216139 37.24705,-1.216139 37.599827))</geo_extent>
+        <start_time>2010-11-29T13:01:41Z</start_time>
+        <end_time>2010-12-02T12:47:06Z</end_time>
+        <variables>heading,speed,cog,sog,date,longitude,latitude,depth
+        </variables>
+        <data_link>http://ciclope.cmima.csic.es:8080/thredds/fileServer/dataportal/hesperides/29HE20101129_posicion.nc</data_link>
+    </item>
+	<item>
+		<id>85ba8388-3de2-46b6-8333-3982c29cd0c7</id>
+		<title>wd_0.nc</title>
+		<summary>NetCDF dataset</summary>
+		<institution>Centro de Investigación Atmosférica de Izaña, AEMET
+		</institution>
+		<creator_url>http://www.izana.org/</creator_url>
+		<data_type>station</data_type>
+		<icos_domain>atmosphere</icos_domain>
+		<geo_extent>POLYGON((28.3 16.5,28.3 16.5,28.3 16.5,28.3 16.5,28.3
+			16.5))</geo_extent>
+		<start_time>2009-12-31T23:00:00Z</start_time>
+		<end_time>2010-12-31T22:00:00Z</end_time>
+		<variables>wd,time,latitude,longitude</variables>
+		<data_link>http://ciclope.cmima.csic.es:8080/thredds/fileServer/dataportal/ceam-aemet/wd_0.nc</data_link>
+	</item>
+	<item>
+		<id>fb1ab84b-0557-42f1-91b6-b5167b6a7f7b</id>
+		<title>ws_0.nc</title>
+		<summary>NetCDF dataset</summary>
+		<institution>Centro de Investigación Atmosférica de Izaña, AEMET
+		</institution>
+		<creator_url>http://www.izana.org/</creator_url>
+		<data_type>station</data_type>
+		<icos_domain>atmosphere</icos_domain>
+		<geo_extent>POLYGON((28.3 16.5,28.3 16.5,28.3 16.5,28.3 16.5,28.3
+			16.5))</geo_extent>
+		<start_time>2009-12-31T23:00:00Z</start_time>
+		<end_time>2010-12-31T22:00:00Z</end_time>
+		<variables>ws,time,latitude,longitude</variables>
+		<data_link>http://ciclope.cmima.csic.es:8080/thredds/fileServer/dataportal/ceam-aemet/ws_0.nc</data_link>
+	</item>
+</response>

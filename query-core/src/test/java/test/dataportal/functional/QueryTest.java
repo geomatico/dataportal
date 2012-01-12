@@ -6,43 +6,56 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.commons.httpclient.HttpException;
 import org.xml.sax.SAXException;
 
 public class QueryTest extends AbstractFunctionalTest {
 
+	private static final String LIMIT = "9999";
+	private static final String START = "1";
+	private static final String ORDER_FIELD = "title";
+	private static final String ORDER_DIRECTION = "ASC";
+	private static final String LANG = "es";
+	private Services services;
+
 	@Override
-	protected String getService() {
-		return "search";
+	protected void setUp() throws Exception {
+		super.setUp();
+		services = new Services();
 	}
 
 	public void testQuery() throws Exception {
-		String ret = callService(new String[] { "lang", "bboxes", "start_date",
-				"end_date", "variables", "text", "start", "limit", "sort",
-				"dir" }, new String[] { "es", "", "", "", "", "", "1", "2",
-				"title", "ASC" });
+		String ret = services.query(LANG, "", "", "", "", "", START, "2",
+				ORDER_FIELD, ORDER_DIRECTION);
 		assertTrue(ret.indexOf("<item>") != -1);
 	}
 
 	public void testFilterBBox() throws Exception {
-		String ret = queryBboxes("[[-180, -90, 180, 90]]");
+		String ret = services.query(LANG, "[[-180, -90, 180, 90]]", "", "", "",
+				"", START, LIMIT,
+				ORDER_FIELD, ORDER_DIRECTION);
+		System.err.println(ret);
 		int totalCount = getItemCount(ret).intValue();
 		assertTrue(totalCount > 0);
 
-		ret = queryBboxes("[[-180, -90, 0, 90]]");
+		ret = services.query(LANG, "[[-180, -90, 0, 90]]", "", "", "", "",
+				START, LIMIT, ORDER_FIELD, ORDER_DIRECTION);
 		int halfCount1 = getItemCount(ret).intValue();
-		ret = queryBboxes("[[0, -90, 180, 90]]");
+		ret = services.query(LANG, "[[0, -90, 180, 90]]", "", "", "", "",
+				START, LIMIT, ORDER_FIELD, ORDER_DIRECTION);
 		int halfCount2 = getItemCount(ret).intValue();
 		assertTrue(halfCount1 + halfCount2 >= totalCount);
 	}
 
 	public void testFilterDate() throws Exception {
-		String ret = queryDates("2010-1-1", "2020-1-1");
+		String ret = services.query(LANG, "", "2010-1-1", "2020-1-1", "", "",
+				START, LIMIT, ORDER_FIELD, ORDER_DIRECTION);
 		int total = getItemCount(ret).intValue();
 
-		ret = queryDates("2010-1-1", "2010-6-1");
+		ret = services.query(LANG, "", "2010-1-1", "2010-6-1", "", "", START,
+				LIMIT, ORDER_FIELD, ORDER_DIRECTION);
 		int half1 = getItemCount(ret).intValue();
-		ret = queryDates("2010-6-1", "2020-1-1");
+		ret = services.query(LANG, "", "2010-6-1", "2020-1-1", "", "", START,
+				LIMIT, ORDER_FIELD, ORDER_DIRECTION);
 		int half2 = getItemCount(ret).intValue();
 		assertTrue(half1 > 0);
 		assertTrue(half2 > 0);
@@ -50,7 +63,8 @@ public class QueryTest extends AbstractFunctionalTest {
 	}
 
 	public void testFilterVariable() throws Exception {
-		String ret = queryVariable("depth");
+		String ret = services.query(LANG, "", "", "", "depth", "", START,
+				LIMIT, ORDER_FIELD, ORDER_DIRECTION);
 		int count = getItemCount(ret).intValue();
 		assertTrue(count > 0);
 	}
@@ -62,25 +76,4 @@ public class QueryTest extends AbstractFunctionalTest {
 				XPathConstants.NUMBER);
 	}
 
-	private String queryBboxes(String bboxes) throws IOException, HttpException {
-		return query(bboxes, "", "", "");
-	}
-
-	private String query(String bboxes, String start_date, String end_date,
-			String variable) throws IOException, HttpException {
-		return callService(new String[] { "lang", "bboxes", "start_date",
-				"end_date", "variables", "text", "start", "limit", "sort",
-				"dir" }, new String[] { "es", bboxes, start_date, end_date,
-				variable, "", "1", "9999999", "title", "ASC" });
-	}
-
-	private String queryDates(String startDate, String endDate)
-			throws IOException, HttpException {
-		return query("", startDate, endDate, "");
-	}
-
-	private String queryVariable(String variable) throws IOException,
-			HttpException {
-		return query("", "", "", variable);
-	}
 }
