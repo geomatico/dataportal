@@ -10,10 +10,13 @@ public class JettyStarter extends AbstractFunctionalTest {
 
 	@Override
 	protected String getService() {
-		return null;
+		return "login";
 	}
 
 	public void testRunJetty() throws Exception {
+		String userName = "fergonco@doesnot.exist";
+		register(userName);
+		activate(userName);
 		System.in.read();
 	}
 
