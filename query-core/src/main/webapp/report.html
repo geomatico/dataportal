@@ -210,21 +210,15 @@ Ext.onReady(function(){
 	        position: 'left',
 	        fields: ['downloads'],
 	        title: 'Downloads',
-	        grid: {
-	            odd: {
-	                opacity: 1,
-	                fill: '#ddd',
-	                stroke: '#bbb',
-	                'stroke-width': 0.5
-	            }
-	        }
+	        grid: true
 	    }, {
-	        type: 'Category', //'Time',
+	        type: 'Time', //'Time',
 	        position: 'bottom',
 	        fields: 'date',
 	        title: 'Date',
-	        constrain: false,
-	        dateFormat: 'M d, Y'
+	        dateFormat: 'j',
+	        constrain: true,
+	        grid: true
 	    }],
 	    series: [{
 	        type: 'line',
@@ -232,7 +226,7 @@ Ext.onReady(function(){
 	            size: 7,
 	            radius: 7
 	        },
-	        axis: 'left',
+	        axis: ['left','bottom'],
 	        smooth: true,
 	        xField: 'date',
 	        yField: 'downloads',
@@ -241,7 +235,14 @@ Ext.onReady(function(){
 	            size: 4,
 	            radius: 4,
 	            'stroke-width': 0
-	        }
+	        },
+            tips: {
+                trackMouse: true,
+                width: 140,
+                renderer: function(storeItem, item) {
+                    this.setTitle(Ext.Date.format(storeItem.get('date'),'j M Y') + '<br/>' + storeItem.get('downloads') + ' downloads');
+                }
+            }
 	    }]      
     });
     
@@ -334,8 +335,11 @@ Ext.onReady(function(){
                     // Monthly report
                     period = form.getForm().findField("month").getRawValue() + " " + year;
                     dateaxis.title = Ext.Date.format(new Date(year, month-1, 1), "F Y");
-                    dateaxis.minimum = new Date(year, month-1, 1);
-                    dateaxis.maximum = new Date(year, month, 0);
+                    dateaxis.fromDate = new Date(year, month-1, 1);
+                    dateaxis.toDate = new Date(year, month, 0);
+                    dateaxis.step = [Ext.Date.DAY, 1];
+                    dateaxis.dateFormat = 'j';
+                    dateaxis.groupBy = 'day';
                     dateaxis.label.renderer = function(d) {
                         if (d) return Ext.Date.format(new Date(d), 'j');
                     }
@@ -343,11 +347,12 @@ Ext.onReady(function(){
                     // Yearly report
                     period = "Year " + year;
                     dateaxis.title = Ext.Date.format(new Date(year, 0, 1), "Y");
-                    dateaxis.minimum = new Date(year, 0, 1);
-                    dateaxis.maximum = new Date(year, 11, 31);
-                    dateaxis.majorTickSteps = 12;
+                    dateaxis.fromDate = new Date(year, 0, 1);
+                    dateaxis.toDate = new Date(year, 11, 31);
+                    dateaxis.step = [Ext.Date.DAY, 15];
+                    dateaxis.dateFormat = 'M d';
                     dateaxis.label.renderer = function(d) {
-                        if (d) return Ext.Date.format(new Date(d), 'M');
+                        if (d) return Ext.Date.format(new Date(d), 'M d');
                     }
                 }
                 Ext.get("period").update(period);
