@@ -8,7 +8,9 @@
 		<link rel="stylesheet" type="text/css" href="js/ext4/resources/css/ext-all-gray.css" />
 		<link rel="stylesheet" type="text/css" href="css/dataportal.css" />
 
+        <script type="text/javascript" src="js/openlayers/lib/OpenLayers.js"></script>
         <script type="text/javascript" src="js/ext4/ext-all-debug-w-comments.js"></script>
+        <script type="text/javascript" src="js/GeoExt/lib/GeoExt.js"></script>
 		<script type="text/javascript" src="js/opendap.Panel.js"></script>
 		<script type="text/javascript" src="js/timeseries.Chart.js"></script>
 
@@ -20,25 +22,23 @@
 		        layout: 'border',
 		        items:[{
 		            region: 'north',
-		            html: '<div id="header"><img src="img/icos-logo.png"/><div id="title"><span id="period"></span> Usage Report</div></div>',
+		            html: '<div id="header"><img src="img/icos-logo.png"/><div id="title">NetCDF Data Plot</div></div>',
 		            border: false
 		        },{
 		            xtype: 'opendap',
 		            region: 'center',
 		            layout: 'accordion',
 		            //url: 'json/co2_0_brief.nc.json',
-		            url: 'json/co2_0_full.nc.json',
+		            //url: 'json/co2_0_full.nc.json',
 		            //url: 'json/H2O_brief.nc.json',
 		            //url: 'json/H2O_full.nc.json',
+		            //url: 'json/utm_meteo_flat.nc.json',
+		            url: 'json/utm_meteo_new.nc.json',
 		            defaults: {
 		                collapsible: true,
 		                border: true,
 		                titleCollapse: true
 		            }
-		        },{
-		            region: 'west',
-		            width: 200,
-		            items: []
 		        }]
 		    });
 	    });

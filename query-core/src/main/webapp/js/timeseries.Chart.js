@@ -4,8 +4,8 @@ Ext.define('timeseries.Chart', {
     
     // Default config (chart)
     layout: 'fit',
-    animate: false, //true,
-    shadow: false, //true,
+    animate: false,
+    shadow: false,
     theme: 'Base',
 
     // Default config (timeseries)
@@ -13,7 +13,7 @@ Ext.define('timeseries.Chart', {
     varUnits: '',
     data: [],
     dateFormat: 'Y M d',
-    step: [Ext.Date.MONTH, 1],
+    numSteps: 12,
     
     initComponent: function() {
                 
@@ -36,14 +36,12 @@ Ext.define('timeseries.Chart', {
         });
         
         this.store.loadData(this.data);
-
-        // TODO: Calculate dateFormat
-        this.dateFormat = 'Y M d';
         
         // TODO: Calculate step
-        this.step = [Ext.Date.MONTH, 1]; 
-        
-        // TODO: See how to subsample data
+        var range = this.store.max("time")-this.store.min("time");
+        this.step = [Ext.Date.MILLI, range/this.numSteps];
+
+        this.calcDateFormat(range);
         
         var axisTitle = this.varName;
         if(this.varUnits && this.varUnits.length > 0) {
@@ -165,6 +163,37 @@ Ext.define('timeseries.Chart', {
         this.callParent(arguments);
     },
 
+    calcDateFormat: function (millis) {
+        var units = [];
+        units.push(millis);  // i = 0
+        var secs = millis / 1000;
+        units.push(secs);    // i = 1
+        var mins = secs / 60;
+        units.push(mins);    // i = 2
+        var hours = mins / 60;
+        units.push(hours);   // i = 3
+        var days = hours / 24;
+        units.push(days);    // i = 4
+        var months = days / 30;
+        units.push(months);  // i = 5
+        var years = months / 12;
+        units.push(years);   // i = 6
+        
+        var i = 0;
+        for (i=0; i<units.length && units[i]>0; i++);
+        
+        if (i>4) { // Several months or years
+            this.dateFormat = 'M d, Y';
+        } else if (i>2) { // Several days or hours
+            this.dateFormat = 'M d H:i';
+        } else if (i>1) { // Several minutes
+            this.dateFormat = 'H:i:s';
+        } else { // Several seconds or millisecs
+            this.dateFormat = 's.u';
+        }
+        
+    },
+    
     shrink: function (xValues, yValues, size) {
         // Start at the 2nd point...
         var len = xValues.length,
