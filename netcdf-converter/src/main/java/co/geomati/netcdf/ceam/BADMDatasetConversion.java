@@ -20,11 +20,6 @@ final class BADMDatasetConversion implements DatasetConversion {
 	}
 
 	@Override
-	public String getOutputFileName(Dataset dataset) {
-		return fileName + "_" + dataset.getMainVariable().getName();
-	}
-
-	@Override
 	public int getDatasetCount() {
 		return groups.size();
 	}
@@ -36,10 +31,10 @@ final class BADMDatasetConversion implements DatasetConversion {
 		Variable timeVariable = getTimeVariable(variableGroup);
 		if (timeVariable != null) {
 			if (position == null) {
-				return new BADMTimeSerieDataset(main, timeVariable);
+				return new BADMTimeSerieDataset(fileName, main, timeVariable);
 			} else {
-				return new BADMTimeSerieStationDataset(main, timeVariable,
-						position);
+				return new BADMTimeSerieStationDataset(fileName, main,
+						timeVariable, position);
 			}
 		} else {
 			throw new RuntimeException();

@@ -16,12 +16,19 @@ public class UTMTrajectoryDataset implements Dataset, Trajectory {
 	private MainUTMVariable variable;
 	private UTMTimeVariable timeVariable;
 	private List<Point2D> trajectoryPoints;
+	private String name;
 
-	public UTMTrajectoryDataset(MainUTMVariable variable,
+	public UTMTrajectoryDataset(String name, MainUTMVariable variable,
 			UTMTimeVariable timeVariable, List<Point2D> trajectoryPoints) {
+		this.name = name;
 		this.variable = variable;
 		this.timeVariable = timeVariable;
 		this.trajectoryPoints = trajectoryPoints;
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 	@Override
@@ -35,8 +42,8 @@ public class UTMTrajectoryDataset implements Dataset, Trajectory {
 	}
 
 	@Override
-	public DatasetVariable getMainVariable() {
-		return variable;
+	public DatasetVariable[] getMainVariables() {
+		return new DatasetVariable[] { variable };
 	}
 
 	@Override

@@ -14,8 +14,8 @@ import co.geomati.netcdf.dataset.TimeSerie;
 public class SampleDataset implements Dataset, GeoreferencedStation, TimeSerie {
 
 	@Override
-	public DatasetVariable getMainVariable() {
-		return new DatasetDoubleVariable() {
+	public DatasetVariable[] getMainVariables() {
+		return new DatasetVariable[] { new DatasetDoubleVariable() {
 
 			@Override
 			public String getUnits() {
@@ -53,7 +53,12 @@ public class SampleDataset implements Dataset, GeoreferencedStation, TimeSerie {
 
 				return ret;
 			}
-		};
+		} };
+	}
+
+	@Override
+	public String getName() {
+		return "test_dataset";
 	}
 
 	@Override

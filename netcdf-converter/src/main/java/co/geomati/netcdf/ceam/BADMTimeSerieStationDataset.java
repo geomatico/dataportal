@@ -12,9 +12,10 @@ public class BADMTimeSerieStationDataset extends BADMTimeSerieDataset implements
 
 	private Point2D position;
 
-	public BADMTimeSerieStationDataset(Variable main, Variable timeVariable,
+	public BADMTimeSerieStationDataset(String baseName, Variable main,
+			Variable timeVariable,
 			Point2D position) throws ConverterException {
-		super(main, timeVariable);
+		super(baseName, main, timeVariable);
 		this.position = position;
 	}
 

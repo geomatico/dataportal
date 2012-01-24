@@ -77,18 +77,13 @@ public class ConvertUTM {
 		Converter.convert(new DatasetConversion() {
 
 			@Override
-			public String getOutputFileName(Dataset dataset) {
-				return base + dataset.getMainVariable().getStandardName();
-			}
-
-			@Override
 			public int getDatasetCount() {
 				return mainVariables.size();
 			}
 
 			@Override
 			public Dataset getDataset(int index) throws ConverterException {
-				return new UTMTrajectoryDataset(mainVariables.get(index),
+				return new UTMTrajectoryDataset(base, mainVariables.get(index),
 						timeVariable, positions.getTrajectoryPoints());
 			}
 		});

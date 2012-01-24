@@ -176,11 +176,6 @@ public class ConvertAEMET {
 			Converter.convert(new DatasetConversion() {
 
 				@Override
-				public String getOutputFileName(Dataset dataset) {
-					return dataset.getMainVariable().getName();
-				}
-
-				@Override
 				public int getDatasetCount() {
 					return 1 + atmosphericMeassures.size();
 				}

@@ -51,6 +51,11 @@ public class AEMETDataset implements Dataset, GeoreferencedStation, TimeSerie {
 	}
 
 	@Override
+	public String getName() {
+		return variable.getName();
+	}
+
+	@Override
 	public TimeUnit getTimeUnits() {
 		return timeUnits;
 	}
@@ -76,8 +81,8 @@ public class AEMETDataset implements Dataset, GeoreferencedStation, TimeSerie {
 	}
 
 	@Override
-	public DatasetVariable getMainVariable() {
-		return variable;
+	public DatasetVariable[] getMainVariables() {
+		return new DatasetVariable[] { variable };
 	}
 
 	@Override

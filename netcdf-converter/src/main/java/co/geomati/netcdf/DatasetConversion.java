@@ -24,12 +24,4 @@ public interface DatasetConversion {
 	 * @throws ConverterException
 	 */
 	Dataset getDataset(int index) throws ConverterException;
-
-	/**
-	 * Get the file name of the generated NetCDF for the specified Dataset
-	 * 
-	 * @param dataset
-	 * @return
-	 */
-	String getOutputFileName(Dataset dataset);
 }
