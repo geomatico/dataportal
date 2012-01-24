@@ -78,6 +78,7 @@ GeoExt.Lang.add("ca", {
         fromDateHeader: "Des del",
         toDateHeader: "Fins el",
         downloadActionTooltip: "Afegir com a Descàrrega",
+        dataplotActionTooltip: "Examina les dades",
         dateDisplayFormat: "j M Y",
         pagingDisplayMessage: "Mostrant registres del {0} al {1} d'un total de {2}",
         pagingEmptyMessage: "No hi ha dades per mostrar"        

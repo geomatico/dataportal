@@ -12,6 +12,7 @@ Ext.define('result.Grid', {
     fromDateHeader: "From date",
     toDateHeader: "To date",
     downloadActionTooltip: "Add to Downloads",
+    dataplotActionTooltip: "Data Preview",
     dateDisplayFormat: "M j, Y",
     pagingDisplayMessage: "Displaying data records {0} - {1} of {2}",
     pagingEmptyMessage: "No data records to display",
@@ -96,6 +97,14 @@ Ext.define('result.Grid', {
             },{
                 xtype: "actioncolumn",
                 width: 30,
+                iconCls: "icon-dataplot",
+                tooltip: this.dataplotActionTooltip,
+                align: "center",
+                handler: this.dataplotHandler,
+                scope: this
+            },{
+                xtype: "actioncolumn",
+                width: 30,
                 iconCls: "icon-download",
                 tooltip: this.downloadActionTooltip,
                 align: "center",
@@ -138,10 +147,6 @@ Ext.define('result.Grid', {
             sorters: ['title'],
             remoteSort: true
         });
-            
-        /*
-
-        */
 
         this.dockedItems = [{
             xtype: 'pagingtoolbar',
@@ -158,6 +163,23 @@ Ext.define('result.Grid', {
     load: function(params, options) {
         this.getStore().getProxy().extraParams = params;
         this.getStore().load(options);
+    },
+    
+    dataplotHandler: function(grid, rowIndex, colIndex) {
+        var itemData = grid.store.getAt(rowIndex).data;
+        Ext.create('Ext.window.Window', {
+            title: this.dataplotActionTooltip + " - " + itemData.title,
+            maximizable: true,
+            minimizable: true,
+            constrain: true,
+            width: 800,
+            height: 600,
+            layout: 'fit',
+            items: {
+                xtype: 'dataplot',
+                url: 'json/utm_meteo_new.nc.json'
+            }
+        }).show();
     }
 
 });

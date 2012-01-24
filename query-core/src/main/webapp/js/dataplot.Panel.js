@@ -1,8 +1,6 @@
-Ext.define('opendap.Panel', {
+Ext.define('dataplot.Panel', {
     extend: 'Ext.tab.Panel',
-    alias: 'widget.opendap',
-        
-    layout: 'accordion',
+    alias: 'widget.dataplot',
     
     dataset: null,
     

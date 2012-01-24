@@ -53,6 +53,12 @@ p {
   background-image: url(../img/silk/wand.png) !important;
 }
 
+img.icon-dataplot {
+    width: 16px;
+    height: 16px;
+    background: url(../img/silk/chart_bar.png) no-repeat;
+}
+
 img.icon-download {
     width: 16px;
     height: 16px;
