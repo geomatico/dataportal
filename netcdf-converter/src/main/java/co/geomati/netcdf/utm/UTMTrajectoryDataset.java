@@ -13,15 +13,15 @@ import co.geomati.netcdf.dataset.Trajectory;
 
 public class UTMTrajectoryDataset implements Dataset, Trajectory {
 
-	private MainUTMVariable variable;
+	private List<MainUTMVariable> variables;
 	private UTMTimeVariable timeVariable;
 	private List<Point2D> trajectoryPoints;
 	private String name;
 
-	public UTMTrajectoryDataset(String name, MainUTMVariable variable,
+	public UTMTrajectoryDataset(String name, List<MainUTMVariable> variables,
 			UTMTimeVariable timeVariable, List<Point2D> trajectoryPoints) {
 		this.name = name;
-		this.variable = variable;
+		this.variables = variables;
 		this.timeVariable = timeVariable;
 		this.trajectoryPoints = trajectoryPoints;
 	}
@@ -43,7 +43,7 @@ public class UTMTrajectoryDataset implements Dataset, Trajectory {
 
 	@Override
 	public DatasetVariable[] getMainVariables() {
-		return new DatasetVariable[] { variable };
+		return variables.toArray(new DatasetVariable[0]);
 	}
 
 	@Override

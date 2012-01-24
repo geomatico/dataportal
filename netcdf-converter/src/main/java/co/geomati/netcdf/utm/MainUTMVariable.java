@@ -92,7 +92,7 @@ public class MainUTMVariable implements DatasetDoubleVariable, UTMVariable {
 
 	@Override
 	public Number getFillValue() {
-		return null;
+		return 0;
 	}
 
 	@Override

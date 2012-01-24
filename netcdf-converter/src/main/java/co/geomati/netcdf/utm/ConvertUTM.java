@@ -26,66 +26,70 @@ public class ConvertUTM {
 	public static void main(String[] args) throws IOException,
 			ConverterException {
 
-		final String base = "29SG20110906_meteo";
-		File file = new File("../../data/utm/" + base + ".csv");
+		String[] files = new String[] { "29SG20110906_meteo",
+				"29SG20110906_termosal" };
+		for (final String base : files) {
 
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		String separator = "\\Q,\\E";
-		final String[] fields = reader.readLine().split(separator);
+			File file = new File("../../data/utm/" + base + ".csv");
 
-		final ArrayList<MainUTMVariable> mainVariables = new ArrayList<MainUTMVariable>();
-		final List<UTMVariable> allVariables = new ArrayList<UTMVariable>();
-		UTMTimeVariable tempTimeVariable = null;
-		final Positions positions = new Positions();
-		UTMVariable latitudeVariable = null;
-		UTMVariable longitudeVariable = null;
-		for (int i1 = 0; i1 < fields.length; i1++) {
-			String field = fields[i1];
-			if (field.equals("fecha")) {
-				tempTimeVariable = new UTMTimeVariable(TimeUnit.SECOND,
-						new Date(0));
-				allVariables.add(tempTimeVariable);
-			} else if (field.equals("latitud")) {
-				latitudeVariable = positions.new Latitude();
-				allVariables.add(latitudeVariable);
-			} else if (field.equals("longitud")) {
-				longitudeVariable = positions.new Longitude();
-				allVariables.add(longitudeVariable);
-			} else if (!field.startsWith("fecha_")) {
-				MainUTMVariable mainVariable = new MainUTMVariable(field);
-				mainVariables.add(mainVariable);
-				allVariables.add(mainVariable);
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			String separator = "\\Q,\\E";
+			final String[] fields = reader.readLine().split(separator);
+
+			final ArrayList<MainUTMVariable> mainVariables = new ArrayList<MainUTMVariable>();
+			final List<UTMVariable> allVariables = new ArrayList<UTMVariable>();
+			UTMTimeVariable tempTimeVariable = null;
+			final Positions positions = new Positions();
+			UTMVariable latitudeVariable = null;
+			UTMVariable longitudeVariable = null;
+			for (int i1 = 0; i1 < fields.length; i1++) {
+				String field = fields[i1];
+				if (field.equals("fecha")) {
+					tempTimeVariable = new UTMTimeVariable(TimeUnit.SECOND,
+							new Date(0));
+					allVariables.add(tempTimeVariable);
+				} else if (field.equals("latitud")) {
+					latitudeVariable = positions.new Latitude();
+					allVariables.add(latitudeVariable);
+				} else if (field.equals("longitud")) {
+					longitudeVariable = positions.new Longitude();
+					allVariables.add(longitudeVariable);
+				} else if (!field.startsWith("fecha_")) {
+					MainUTMVariable mainVariable = new MainUTMVariable(field);
+					mainVariables.add(mainVariable);
+					allVariables.add(mainVariable);
+				}
 			}
+
+			if (tempTimeVariable == null) {
+				throw new RuntimeException("No time variable found");
+			} else if (latitudeVariable == null || longitudeVariable == null) {
+				throw new RuntimeException("No position variables found");
+			}
+			final UTMTimeVariable timeVariable = tempTimeVariable;
+
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] values = line.split(separator);
+				for (int i = 0; i < allVariables.size(); i++) {
+					UTMVariable variable = allVariables.get(i);
+					variable.addSample(values[i]);
+				}
+			}
+
+			Converter.convert(new DatasetConversion() {
+
+				@Override
+				public int getDatasetCount() {
+					return 1;
+				}
+
+				@Override
+				public Dataset getDataset(int index) throws ConverterException {
+					return new UTMTrajectoryDataset(base, mainVariables,
+							timeVariable, positions.getTrajectoryPoints());
+				}
+			});
 		}
-
-		if (tempTimeVariable == null) {
-			throw new RuntimeException("No time variable found");
-		} else if (latitudeVariable == null || longitudeVariable == null) {
-			throw new RuntimeException("No position variables found");
-		}
-		final UTMTimeVariable timeVariable = tempTimeVariable;
-
-		String line;
-		while ((line = reader.readLine()) != null) {
-			String[] values = line.split(separator);
-			for (int i = 0; i < allVariables.size(); i++) {
-				UTMVariable variable = allVariables.get(i);
-				variable.addSample(values[i]);
-			}
-		}
-
-		Converter.convert(new DatasetConversion() {
-
-			@Override
-			public int getDatasetCount() {
-				return mainVariables.size();
-			}
-
-			@Override
-			public Dataset getDataset(int index) throws ConverterException {
-				return new UTMTrajectoryDataset(base, mainVariables.get(index),
-						timeVariable, positions.getTrajectoryPoints());
-			}
-		});
 	}
 }
