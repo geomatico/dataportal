@@ -37,7 +37,6 @@ Ext.define('timeseries.Chart', {
         
         this.store.loadData(this.data);
         
-        // TODO: Calculate step
         var range = this.store.max("time")-this.store.min("time");
         this.step = [Ext.Date.MILLI, range/this.numSteps];
 

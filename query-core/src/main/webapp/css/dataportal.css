@@ -68,3 +68,26 @@ img.icon-delete {
 .x-form-item {
     margin-bottom: 0;
 }
+
+.info {
+    position: absolute;
+	bottom: 0;
+    right: 0;
+    margin: 5px;
+    z-index: 1000;
+}
+
+.info .content .attribute {
+    border-bottom: 1px solid #888888;
+    color: #555555;
+}
+
+.info .content .attribute .name {
+    font-weight: bold;
+    background-color: #eeeeee;
+    padding: 3px;
+}
+
+.info .content .attribute .value {
+    padding: 3px;
+}
