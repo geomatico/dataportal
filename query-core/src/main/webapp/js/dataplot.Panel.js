@@ -3,6 +3,7 @@ Ext.define('dataplot.Panel', {
     alias: 'widget.dataplot',
     
     dataset: null,
+    max_samples: 512,
     
     initComponent: function() {
         
@@ -31,6 +32,10 @@ Ext.define('dataplot.Panel', {
         
         if (this.dataset.variables[timeVarName]) {
             
+            if(this.dataset.variables[timeVarName].data.length > this.max_samples) {
+                this.shrink();
+            }
+            
             var lonVarName, latVarName;
             Ext.Object.each(this.dataset.variables, function(varName, variable) {
                 if (variable.attributes.standard_name == "longitude")
@@ -45,6 +50,37 @@ Ext.define('dataplot.Panel', {
             
             this.addTimeseries(timeVarName);
         }
+    },
+    
+    shrink: function() {
+        var len = this.dataset.variables["time"].data.length,
+            ratio = Math.ceil(len / this.max_samples);
+        
+        Ext.Object.each(this.dataset.variables, function(varName, variable) {
+            var timeDim = Ext.Array.indexOf(variable.dimensions, "time");
+            if(timeDim==0) {
+                var sum = 0,
+                    arr = variable.data,
+                    res = [arr[0]],
+                    samples = 0,
+                    fillValue = parseFloat(variable.attributes._FillValue) || null;
+                for (i = 1; i < len; i++) {
+                    if (arr[i] != fillValue) {
+                        sum += +arr[i] || 0;
+                        samples++;
+                    }
+                    if (i % ratio == 0) {
+                        if(samples>0)
+                            res.push(sum/samples);
+                        else
+                            res.push(fillValue);
+                        sum = 0;
+                        samples = 0;
+                    }
+                }
+                variable.data = res;
+            }
+        });
     },
     
     addTimeseries: function(timeVarName) {
@@ -84,6 +120,8 @@ Ext.define('dataplot.Panel', {
     },
     
     addMaps: function(lonVarName, latVarName, timeVarName) {
+        
+        var datatype = this.dataset.global_attributes.cdm_data_type.toUpperCase();
 
         // Detect Trajectory Variables
         var trajectoryVars = [];
@@ -113,26 +151,30 @@ Ext.define('dataplot.Panel', {
                     },
                     "properties": {}
                 };
-                for(p=0; p<trajectoryVars.length; p++) {
-                    var key = trajectoryVars[p];
-                    var variable = this.dataset.variables[key];
-                    var att = variable.attributes;
-                    var name = (att.long_name && Ext.String.capitalize(att.long_name)) || att.standard_name || key;
-                    if(att.units) {
-                        name += " ("+att.units+")";
+                if(datatype=="STATION") {
+                    feature.properties["station"] = i+1;
+                } else {
+                    for(p=0; p<trajectoryVars.length; p++) {
+                        var key = trajectoryVars[p];
+                        var variable = this.dataset.variables[key];
+                        var att = variable.attributes;
+                        var name = (att.long_name && Ext.String.capitalize(att.long_name)) || att.standard_name || key;
+                        if(att.units) {
+                            name += "<br/>("+att.units+")";
+                        }
+                        var value = variable.data[i];
+                        feature.properties[name] = value;
                     }
-                    var value = variable.data[i];
-                    feature.properties[name] = value;
                 }
                 features.push(feature);
             }
 
             this.add({
-                title: "Trajectory Map",
+                title: "Map",
                 xtype: 'panel',
                 layout: 'fit',
                 items: [{
-                    xtype: 'trajectorymap',
+                    xtype: 'dataplotmap',
                     featureCollection: {
                         "type": "FeatureCollection",
                         "features": features

@@ -30,10 +30,10 @@ Ext.define('result.Grid', {
         ptype: 'rowexpander',
         rowBodyTpl: [],
         onExpandBody: function(rowNode, record, dom) {
+            var resultgrid = this.getCmp();
             var body = dom.firstChild.firstChild;
             if(!body.innerHTML) {
                 var data = record.data;
-                var resultgrid = this.getCmp();
 
                 var variables = data.variables.split(",");
                 var varnames = [];
@@ -63,9 +63,17 @@ Ext.define('result.Grid', {
                         html: varnames.join("<br>"),
                         flex: 1
                     }],
+                    listeners: {
+                        afterlayout: function() {
+                            this.getCmp().doComponentLayout();
+                        },
+                        scope: this
+                    },
                     renderTo: body
                 });
             }
+            //resultgrid.invalidateScroller();
+            //resultgrid.forceComponentLayout();
         }
     }],
 
@@ -167,10 +175,15 @@ Ext.define('result.Grid', {
     
     dataplotHandler: function(grid, rowIndex, colIndex) {
         var itemData = grid.store.getAt(rowIndex).data;
-        itemData.opendap = "/thredds/dodsC/testAll/29SG20110906_meteo_0.nc.html";
+        
+        // Construct JSON URL
         var json_url = itemData.opendap.split(".");
         json_url.pop();
         json_url = json_url.join(".") + ".json";
+        if(location.href.split("/")[2] != json_url.split("/")[2])
+            json_url = "proxy?url=" + json_url; // cross-domain
+        
+        // Create dataplot window
         Ext.create('Ext.window.Window', {
             title: this.dataplotActionTooltip + " - " + itemData.title,
             maximizable: true,
@@ -181,7 +194,6 @@ Ext.define('result.Grid', {
             layout: 'fit',
             items: {
                 xtype: 'dataplot',
-                //url: 'json/utm_meteo_new.nc.json'
                 url: json_url
             }
         }).show();

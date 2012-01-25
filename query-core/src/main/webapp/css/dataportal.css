@@ -81,6 +81,7 @@ img.icon-delete {
     right: 0;
     margin: 5px;
     z-index: 1000;
+    overflow: auto;
 }
 
 .info .content .attribute {
@@ -89,11 +90,13 @@ img.icon-delete {
 }
 
 .info .content .attribute .name {
+	font-size: 10px;
     font-weight: bold;
     background-color: #eeeeee;
     padding: 3px;
 }
 
 .info .content .attribute .value {
+	font-size: 10px;
     padding: 3px;
 }

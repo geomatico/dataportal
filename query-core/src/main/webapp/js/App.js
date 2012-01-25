@@ -73,7 +73,8 @@ Ext.define('App', {
                 {name: 'start_time', type: 'date'},
                 {name: 'end_time', type: 'date'},
                 'variables',
-                'data_link'
+                'data_link',
+                'opendap'
             ]
         });
         
