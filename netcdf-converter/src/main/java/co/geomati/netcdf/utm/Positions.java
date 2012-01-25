@@ -24,8 +24,8 @@ public class Positions {
 
 	}
 
-	private double lat;
-	private double lon;
+	private double lat = Double.NaN;
+	private double lon = Double.NaN;
 	private ArrayList<Point2D> positions = new ArrayList<Point2D>();
 
 	public void setLatitude(double lat) {

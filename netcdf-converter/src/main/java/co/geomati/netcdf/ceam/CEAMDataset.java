@@ -67,7 +67,7 @@ public class CEAMDataset implements Dataset, TimeSerie, Station {
 
 			@Override
 			public Number getFillValue() {
-				return null;
+				return -9999;
 			}
 
 			@Override

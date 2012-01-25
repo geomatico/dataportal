@@ -77,7 +77,7 @@ public class ConvertCEAM {
 					String time = row.getCell(1).getStringCellValue();
 					try {
 						SimpleDateFormat timeFormat = new SimpleDateFormat(
-								"hh:mm");
+								"HH:mm");
 						timeFormat.setTimeZone(TimeZone.getTimeZone("GMT0"));
 						seconds += (int) (timeFormat.parse(time).getTime() / 1000);
 					} catch (ParseException e) {

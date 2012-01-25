@@ -59,11 +59,11 @@ public class Converter {
 				Dataset dataset = conversion.getDataset(i);
 				r.setDatasetName(dataset.getName());
 				String fileName = dataset.getName();
-				int index = 0;
-				File tempFile;
-				while ((tempFile = new File(
-						System.getProperty("java.io.tmpdir") + "/" + fileName
-								+ "_" + index++ + ".nc")).exists()) {
+				File tempFile = new File(System.getProperty("java.io.tmpdir")
+						+ "/" + fileName + ".nc");
+				if (tempFile.exists()) {
+					throw new ConverterException("The file already exists: "
+							+ tempFile.getAbsolutePath());
 				}
 				convert(dataset, tempFile);
 			} catch (RuntimeException e) {

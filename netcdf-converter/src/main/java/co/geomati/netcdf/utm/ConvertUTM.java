@@ -54,8 +54,9 @@ public class ConvertUTM {
 				} else if (field.equals("longitud")) {
 					longitudeVariable = positions.new Longitude();
 					allVariables.add(longitudeVariable);
-				} else if (!field.startsWith("fecha_")) {
-					MainUTMVariable mainVariable = new MainUTMVariable(field);
+				} else {
+					MainUTMVariable mainVariable = MainUTMVariable
+							.create(field);
 					mainVariables.add(mainVariable);
 					allVariables.add(mainVariable);
 				}

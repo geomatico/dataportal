@@ -4,8 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -22,18 +21,29 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import co.geomati.netcdf.ConverterException;
-import co.geomati.netcdf.dataset.DatasetDoubleVariable;
 
-public class MainUTMVariable implements DatasetDoubleVariable, UTMVariable {
+public abstract class MainUTMVariable implements
+		UTMVariable {
 
 	private String standardName;
 	private String name;
 	private String longName;
 	private String units;
-	private ArrayList<Double> data = new ArrayList<Double>();
 
-	public MainUTMVariable(String name) throws IOException, ConverterException {
+	public MainUTMVariable(String name, String standardName, String longName,
+			String units) {
 		this.name = name;
+		this.standardName = standardName;
+		this.longName = longName;
+		this.units = units;
+	}
+
+	public static MainUTMVariable create(String name) throws IOException,
+			ConverterException {
+		name = name.toLowerCase();
+		String standardName;
+		String longName;
+		String units;
 		URL vocabularyURL = new URL(
 				"http://ciclope.cmima.csic.es:8080/dataportal/xml/vocabulario.xml");
 		InputStream vocStream = vocabularyURL.openStream();
@@ -45,9 +55,19 @@ public class MainUTMVariable implements DatasetDoubleVariable, UTMVariable {
 		} catch (Exception e) {
 			throw new ConverterException("Cannot query vocabulary", e);
 		}
+
+		if (units.equals("seconds since 1970-01-01 00:00:00")) {
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+			return new MainIntUTMVariable(name, standardName, longName, units,
+					sf);
+		} else {
+			return new MainDoubleUTMVariable(name, standardName, longName,
+					units);
+		}
 	}
 
-	private String queryVocabulary(String name, String vocabularyContent,
+	private static String queryVocabulary(String name,
+			String vocabularyContent,
 			String child) throws ParserConfigurationException, SAXException,
 			IOException, XPathExpressionException {
 		return (String) evaluateXPath(vocabularyContent,
@@ -55,7 +75,8 @@ public class MainUTMVariable implements DatasetDoubleVariable, UTMVariable {
 				XPathConstants.STRING);
 	}
 
-	protected Object evaluateXPath(String content, String xpathExpression,
+	protected static Object evaluateXPath(String content,
+			String xpathExpression,
 			QName nodeType) throws ParserConfigurationException, SAXException,
 			IOException, XPathExpressionException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -70,38 +91,24 @@ public class MainUTMVariable implements DatasetDoubleVariable, UTMVariable {
 		return result;
 	}
 
-	@Override
 	public String getLongName() {
 		return longName;
 	}
 
-	@Override
 	public String getStandardName() {
 		return standardName;
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}
 
-	@Override
 	public String getUnits() {
 		return units;
 	}
 
-	@Override
 	public Number getFillValue() {
 		return 0;
-	}
-
-	@Override
-	public List<Double> getData() {
-		return data;
-	}
-
-	public void addSample(String value) {
-		data.add(Double.parseDouble(value));
 	}
 
 }

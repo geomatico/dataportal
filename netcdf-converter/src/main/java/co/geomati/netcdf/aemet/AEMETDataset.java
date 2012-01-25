@@ -2,6 +2,7 @@ package co.geomati.netcdf.aemet;
 
 import java.awt.geom.Point2D;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import co.geomati.netcdf.IcosDomain;
@@ -15,11 +16,14 @@ import co.geomati.netcdf.dataset.TimeSerie;
 
 public class AEMETDataset implements Dataset, GeoreferencedStation, TimeSerie {
 
+	private static HashMap<String, Integer> nameIndex = new HashMap<String, Integer>();
+
 	private List<Point2D> stationPosition;
 	private List<Integer> timeStamps;
 	private Date referenceDate;
 	private TimeUnit timeUnits;
 	private DatasetVariable variable;
+	private String name;
 
 	public AEMETDataset(List<Point2D> stationPosition, String variableUnits,
 			String variableLongName, String variableName, List<Double> values,
@@ -36,6 +40,15 @@ public class AEMETDataset implements Dataset, GeoreferencedStation, TimeSerie {
 		this.timeStamps = timeStamps;
 		this.referenceDate = referenceDate;
 		this.timeUnits = timeUnits;
+
+		String name = variable.getName();
+		Integer index = nameIndex.get(name);
+		if (index == null) {
+			index = -1;
+		}
+		index++;
+		nameIndex.put(name, index);
+		this.name = name + "_" + index;
 	}
 
 	public AEMETDataset(List<Point2D> stationPosition, String variableUnits,
@@ -47,12 +60,11 @@ public class AEMETDataset implements Dataset, GeoreferencedStation, TimeSerie {
 				values, timeStamps, referenceDate, timeUnits);
 		MeanVariable var = new MeanVariable(variableUnits, variableLongName,
 				variableName, meanDescription, values, ndValues, sdValues);
-		init(stationPosition, timeStamps, referenceDate, timeUnits, var);
 	}
 
 	@Override
 	public String getName() {
-		return variable.getName();
+		return name;
 	}
 
 	@Override

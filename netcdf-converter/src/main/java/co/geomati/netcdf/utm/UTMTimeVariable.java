@@ -10,7 +10,7 @@ import co.geomati.netcdf.TimeUnit;
 public class UTMTimeVariable implements UTMVariable {
 
 	private static SimpleDateFormat df = new SimpleDateFormat(
-			"yyyy-MM-dd hh:mm:ss.S");
+			"yyyy-MM-dd HH:mm:ss.S");
 
 	private TimeUnit units;
 	private Date referenceDate;
