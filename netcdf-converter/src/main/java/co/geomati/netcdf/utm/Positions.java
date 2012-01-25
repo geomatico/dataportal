@@ -40,7 +40,7 @@ public class Positions {
 
 	private void addPosition() {
 		if (!Double.isNaN(lat) && !Double.isNaN(lon)) {
-			positions.add(new Point2D.Double(lat, lon));
+			positions.add(new Point2D.Double(lon, lat));
 			lat = Double.NaN;
 			lon = Double.NaN;
 		}
