@@ -78,6 +78,7 @@ GeoExt.Lang.add("es", {
         fromDateHeader: "Desde el",
         toDateHeader: "Hasta el",
         downloadActionTooltip: "Añadir como Descarga",
+        dataplotActionTooltip: "Inspeccionar Datos",
         dateDisplayFormat: "j M Y",
         pagingDisplayMessage: "Mostrando registros del {0} al {1} de un total de {2}",
         pagingEmptyMessage: "No hay datos que mostrar"        

@@ -27,6 +27,7 @@ import ucar.nc2.Variable;
 import co.geomati.netcdf.dataset.Dataset;
 import co.geomati.netcdf.dataset.DatasetDoubleVariable;
 import co.geomati.netcdf.dataset.DatasetIntVariable;
+import co.geomati.netcdf.dataset.DatasetVariable;
 import co.geomati.netcdf.dataset.GeoreferencedStation;
 import co.geomati.netcdf.dataset.IsMean;
 import co.geomati.netcdf.dataset.Station;
@@ -56,13 +57,13 @@ public class Converter {
 			try {
 				r.addRecord();
 				Dataset dataset = conversion.getDataset(i);
-				r.setDatasetName(dataset.getMainVariable().getStandardName());
-				String fileName = conversion.getOutputFileName(dataset);
-				int index = 0;
-				File tempFile;
-				while ((tempFile = new File(
-						System.getProperty("java.io.tmpdir") + "/" + fileName
-								+ "_" + index++ + ".nc")).exists()) {
+				r.setDatasetName(dataset.getName());
+				String fileName = dataset.getName();
+				File tempFile = new File(System.getProperty("java.io.tmpdir")
+						+ "/" + fileName + ".nc");
+				if (tempFile.exists()) {
+					throw new ConverterException("The file already exists: "
+							+ tempFile.getAbsolutePath());
 				}
 				convert(dataset, tempFile);
 			} catch (RuntimeException e) {
@@ -151,37 +152,38 @@ public class Converter {
 				lon.addAttribute(new Attribute("units", "degrees_east"));
 			}
 		}
-		co.geomati.netcdf.dataset.DatasetVariable mainVariable = dataset
-				.getMainVariable();
-		String variableName = mainVariable.getName();
-		Variable mainVar = nc.addVariable(variableName,
-				getVariableType(mainVariable),
-				mainVarDimensions.toArray(new Dimension[0]));
-		mainVar.addAttribute(new Attribute("coordinates", LAT_VARIABLE_NAME
-				+ " " + LON_VARIABLE_NAME));
-		mainVar.addAttribute(new Attribute("long_name", mainVariable
-				.getLongName()));
-		mainVar.addAttribute(new Attribute("standard_name", mainVariable
-				.getStandardName()));
-		mainVar.addAttribute(new Attribute("units", mainVariable.getUnits()
-				.trim()));
+		DatasetVariable[] mainVariables = dataset.getMainVariables();
+		for (int i = 0; i < mainVariables.length; i++) {
+			DatasetVariable mainVariable = mainVariables[i];
+			Variable mainVar = nc.addVariable(mainVariable.getName(),
+					getVariableType(mainVariable),
+					mainVarDimensions.toArray(new Dimension[0]));
+			mainVar.addAttribute(new Attribute("coordinates", LAT_VARIABLE_NAME
+					+ " " + LON_VARIABLE_NAME));
+			mainVar.addAttribute(new Attribute("long_name", mainVariable
+					.getLongName()));
+			mainVar.addAttribute(new Attribute("standard_name", mainVariable
+					.getStandardName()));
+			mainVar.addAttribute(new Attribute("units", mainVariable.getUnits()
+					.trim()));
 
-		Number fillValue = mainVariable.getFillValue();
-		if (fillValue != null) {
-			mainVar.addAttribute(new Attribute("_FillValue", fillValue));
-		}
+			Number fillValue = mainVariable.getFillValue();
+			if (fillValue != null) {
+				mainVar.addAttribute(new Attribute("_FillValue", fillValue));
+			}
 
-		if (mainVariable instanceof IsMean) {
-			mainVar.addAttribute(new Attribute("mean", "nd sd"));
-			mainVar.addAttribute(new Attribute("mean_desc",
-					((IsMean) mainVariable).getMeanDescription()));
+			if (mainVariable instanceof IsMean) {
+				mainVar.addAttribute(new Attribute("mean", "nd sd"));
+				mainVar.addAttribute(new Attribute("mean_desc",
+						((IsMean) mainVariable).getMeanDescription()));
 
-			addMeanAuxiliaryVariable(nc, mainVarDimensions,
-					((IsMean) mainVariable).getNDFillValue(), "nd",
-					DataType.INT);
-			addMeanAuxiliaryVariable(nc, mainVarDimensions,
-					((IsMean) mainVariable).getSDFillValue(), "sd",
-					DataType.DOUBLE);
+				addMeanAuxiliaryVariable(nc, mainVarDimensions,
+						((IsMean) mainVariable).getNDFillValue(), "nd",
+						DataType.INT);
+				addMeanAuxiliaryVariable(nc, mainVarDimensions,
+						((IsMean) mainVariable).getSDFillValue(), "sd",
+						DataType.DOUBLE);
+			}
 		}
 
 		try {
@@ -229,45 +231,48 @@ public class Converter {
 			/*
 			 * write main variable
 			 */
-			Array a;
-			if (mainVariable instanceof DatasetIntVariable) {
-				List<Integer> data = ((DatasetIntVariable) mainVariable)
-						.getData();
-				checkSize(requiredSize, data);
-				a = intToArray(data, getShape(dataset));
-			} else if (mainVariable instanceof DatasetDoubleVariable) {
-				List<Double> data = ((DatasetDoubleVariable) mainVariable)
-						.getData();
-				checkSize(requiredSize, data);
-				a = doubleToArray(data, getShape(dataset));
-			} else {
-				throw WRONG_VARIABLE_IMPLEMENTATION;
-			}
-			try {
-				nc.write(mainVar.getName(), a);
-			} catch (InvalidRangeException e) {
-				throw new ConverterException("Too many data on main variable",
-						e);
-			}
-
-			if (mainVariable instanceof IsMean) {
-				List<Integer> ndData = ((IsMean) mainVariable).getNDData();
-				checkSize(requiredSize, ndData);
-				a = intToArray(ndData, getShape(dataset));
+			for (int i = 0; i < mainVariables.length; i++) {
+				DatasetVariable mainVariable = mainVariables[i];
+				Array a;
+				if (mainVariable instanceof DatasetIntVariable) {
+					List<Integer> data = ((DatasetIntVariable) mainVariable)
+							.getData();
+					checkSize(requiredSize, data);
+					a = intToArray(data, getShape(dataset));
+				} else if (mainVariable instanceof DatasetDoubleVariable) {
+					List<Double> data = ((DatasetDoubleVariable) mainVariable)
+							.getData();
+					checkSize(requiredSize, data);
+					a = doubleToArray(data, getShape(dataset));
+				} else {
+					throw WRONG_VARIABLE_IMPLEMENTATION;
+				}
 				try {
-					nc.write("nd", a);
+					nc.write(mainVariable.getName(), a);
 				} catch (InvalidRangeException e) {
 					throw new ConverterException(
 							"Too many data on main variable", e);
 				}
-				List<Double> sdData = ((IsMean) mainVariable).getSDData();
-				checkSize(requiredSize, sdData);
-				a = doubleToArray(sdData, getShape(dataset));
-				try {
-					nc.write("sd", a);
-				} catch (InvalidRangeException e) {
-					throw new ConverterException(
-							"Too many data on main variable", e);
+
+				if (mainVariable instanceof IsMean) {
+					List<Integer> ndData = ((IsMean) mainVariable).getNDData();
+					checkSize(requiredSize, ndData);
+					a = intToArray(ndData, getShape(dataset));
+					try {
+						nc.write("nd", a);
+					} catch (InvalidRangeException e) {
+						throw new ConverterException(
+								"Too many data on main variable", e);
+					}
+					List<Double> sdData = ((IsMean) mainVariable).getSDData();
+					checkSize(requiredSize, sdData);
+					a = doubleToArray(sdData, getShape(dataset));
+					try {
+						nc.write("sd", a);
+					} catch (InvalidRangeException e) {
+						throw new ConverterException(
+								"Too many data on main variable", e);
+					}
 				}
 			}
 		} catch (IOException e) {
@@ -398,8 +403,7 @@ public class Converter {
 
 	}
 
-	private static DataType getVariableType(
-			co.geomati.netcdf.dataset.DatasetVariable mainVariable)
+	private static DataType getVariableType(DatasetVariable mainVariable)
 			throws ConverterException {
 		if (mainVariable instanceof DatasetIntVariable) {
 			return DataType.INT;

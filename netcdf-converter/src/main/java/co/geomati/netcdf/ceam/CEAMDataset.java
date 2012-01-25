@@ -9,6 +9,7 @@ import co.geomati.netcdf.Institution;
 import co.geomati.netcdf.TimeUnit;
 import co.geomati.netcdf.dataset.Dataset;
 import co.geomati.netcdf.dataset.DatasetDoubleVariable;
+import co.geomati.netcdf.dataset.DatasetVariable;
 import co.geomati.netcdf.dataset.Station;
 import co.geomati.netcdf.dataset.TimeSerie;
 
@@ -16,10 +17,18 @@ public class CEAMDataset implements Dataset, TimeSerie, Station {
 
 	private Variable variable;
 	private ArrayList<Integer> timestamps;
+	private String name;
 
-	public CEAMDataset(Variable variable, ArrayList<Integer> seconds) {
+	public CEAMDataset(String baseName, Variable variable,
+			ArrayList<Integer> seconds) {
 		this.variable = variable;
 		this.timestamps = seconds;
+		this.name = baseName + "_" + variable.getName();
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 	@Override
@@ -33,8 +42,8 @@ public class CEAMDataset implements Dataset, TimeSerie, Station {
 	}
 
 	@Override
-	public co.geomati.netcdf.dataset.DatasetVariable getMainVariable() {
-		return new DatasetDoubleVariable() {
+	public co.geomati.netcdf.dataset.DatasetVariable[] getMainVariables() {
+		return new DatasetVariable[] { new DatasetDoubleVariable() {
 
 			@Override
 			public String getUnits() {
@@ -58,7 +67,7 @@ public class CEAMDataset implements Dataset, TimeSerie, Station {
 
 			@Override
 			public Number getFillValue() {
-				return null;
+				return -9999;
 			}
 
 			@Override
@@ -70,7 +79,7 @@ public class CEAMDataset implements Dataset, TimeSerie, Station {
 				}
 				return ret;
 			}
-		};
+		} };
 	}
 
 	@Override

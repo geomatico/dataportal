@@ -77,7 +77,7 @@ public class ConvertCEAM {
 					String time = row.getCell(1).getStringCellValue();
 					try {
 						SimpleDateFormat timeFormat = new SimpleDateFormat(
-								"hh:mm");
+								"HH:mm");
 						timeFormat.setTimeZone(TimeZone.getTimeZone("GMT0"));
 						seconds += (int) (timeFormat.parse(time).getTime() / 1000);
 					} catch (ParseException e) {
@@ -104,19 +104,14 @@ public class ConvertCEAM {
 			Converter.convert(new DatasetConversion() {
 
 				@Override
-				public String getOutputFileName(Dataset dataset) {
-					return fileName + "_"
-							+ dataset.getMainVariable().getStandardName();
-				}
-
-				@Override
 				public int getDatasetCount() {
 					return variables.size();
 				}
 
 				@Override
 				public Dataset getDataset(int index) throws ConverterException {
-					return new CEAMDataset(variables.get(index), timestamps);
+					return new CEAMDataset(fileName, variables.get(index),
+							timestamps);
 				}
 			});
 		}

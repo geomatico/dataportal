@@ -21,11 +21,18 @@ public class BADMTimeSerieDataset implements Dataset, TimeSerie {
 	private TimeUnit timeUnits;
 	private Date referenceDate;
 	private List<Integer> timeStamps;
+	private String name;
 
-	public BADMTimeSerieDataset(Variable main, Variable timeVariable)
-			throws ConverterException {
+	public BADMTimeSerieDataset(String baseName, Variable main,
+			Variable timeVariable) throws ConverterException {
 		this.variable = main;
 		setTimeInfo(timeVariable);
+		this.name = baseName + "_" + variable.getName();
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 	@Override
@@ -88,8 +95,8 @@ public class BADMTimeSerieDataset implements Dataset, TimeSerie {
 	}
 
 	@Override
-	public DatasetVariable getMainVariable() {
-		return new DatasetDoubleVariable() {
+	public DatasetVariable[] getMainVariables() {
+		return new DatasetVariable[] { new DatasetDoubleVariable() {
 
 			@Override
 			public String getUnits() {
@@ -125,7 +132,7 @@ public class BADMTimeSerieDataset implements Dataset, TimeSerie {
 
 				return ret;
 			}
-		};
+		} };
 	}
 
 	@Override
