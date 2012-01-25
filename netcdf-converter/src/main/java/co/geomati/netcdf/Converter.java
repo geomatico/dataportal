@@ -494,10 +494,10 @@ public class Converter {
 	}
 
 	private static Rectangle2D getBBox(List<Point2D> points) {
-		double minX = Double.MAX_VALUE;
-		double maxX = Double.MIN_VALUE;
-		double minY = Double.MAX_VALUE;
-		double maxY = Double.MIN_VALUE;
+		double minX = Double.POSITIVE_INFINITY;
+		double maxX = Double.NEGATIVE_INFINITY;
+		double minY = Double.POSITIVE_INFINITY;
+		double maxY = Double.NEGATIVE_INFINITY;
 		for (Point2D p : points) {
 			double x = p.getX();
 			double y = p.getY();

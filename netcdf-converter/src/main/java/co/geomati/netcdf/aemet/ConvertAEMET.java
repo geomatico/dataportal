@@ -267,27 +267,27 @@ public class ConvertAEMET {
 		double latitude = degreesToDouble(lat);
 		double longitude = degreesToDouble(lon);
 
-		return new Point2D.Double(latitude, longitude);
+		return new Point2D.Double(longitude, latitude);
 	}
 
 	private static double degreesToDouble(String latlon)
 			throws ConverterException {
 		latlon = latlon.trim();
 		char northingWesting = latlon.charAt(latlon.length() - 1);
-		if (northingWesting == 'N' || northingWesting == 'W') {
-			String[] matches = getMatches(
-					latlon.substring(0, latlon.length() - 1),
-					"(\\d*)\\s*(\\d*)'");
-			try {
-				return Integer.parseInt(matches[0])
-						+ Integer.parseInt(matches[1]) / 60.0;
-			} catch (NumberFormatException e) {
-				throw new ConverterException("Cannot parse "
-						+ "latitude/longitude: " + latlon);
-			}
-		} else {
-			throw new ConverterException(
-					"Latitude must be N and longitude must be W");
+		int northingWestingCorrector = 1;
+		if (northingWesting == 'S' || northingWesting == 'W') {
+			northingWestingCorrector = -1;
+		}
+		String[] matches = getMatches(latlon.substring(0, latlon.length() - 1),
+				"(\\d*)\\s*(\\d*)'");
+		try {
+			double ret = northingWestingCorrector
+					* (Integer.parseInt(matches[0]) + Integer
+							.parseInt(matches[1]) / 60.0);
+			return ret;
+		} catch (NumberFormatException e) {
+			throw new ConverterException("Cannot parse "
+					+ "latitude/longitude: " + latlon);
 		}
 	}
 

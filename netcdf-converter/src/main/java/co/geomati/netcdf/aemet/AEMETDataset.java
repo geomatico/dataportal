@@ -56,10 +56,9 @@ public class AEMETDataset implements Dataset, GeoreferencedStation, TimeSerie {
 			String meanDescription, List<Double> values,
 			List<Integer> ndValues, List<Double> sdValues,
 			List<Integer> timeStamps, Date referenceDate, TimeUnit timeUnits) {
-		this(stationPosition, variableUnits, variableLongName, variableName,
-				values, timeStamps, referenceDate, timeUnits);
 		MeanVariable var = new MeanVariable(variableUnits, variableLongName,
 				variableName, meanDescription, values, ndValues, sdValues);
+		init(stationPosition, timeStamps, referenceDate, timeUnits, var);
 	}
 
 	@Override
@@ -113,6 +112,7 @@ public class AEMETDataset implements Dataset, GeoreferencedStation, TimeSerie {
 		protected String variableLongName;
 		protected String variableName;
 		protected List<Double> values;
+		private Double fillValue;
 
 		public AbstractVariable(String variableUnits, String variableLongName,
 				String variableName, List<Double> values) {
@@ -121,6 +121,12 @@ public class AEMETDataset implements Dataset, GeoreferencedStation, TimeSerie {
 			this.variableLongName = variableLongName;
 			this.variableName = variableName;
 			this.values = values;
+			for (Double value : values) {
+				if (value.toString().matches("-9+(\\.9+)?")) {
+					fillValue = value;
+					break;
+				}
+			}
 		}
 
 		@Override
@@ -145,7 +151,7 @@ public class AEMETDataset implements Dataset, GeoreferencedStation, TimeSerie {
 
 		@Override
 		public Number getFillValue() {
-			return -99999.99;
+			return fillValue;
 		}
 
 		@Override
