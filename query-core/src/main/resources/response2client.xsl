@@ -65,6 +65,11 @@
 
 	<xsl:template match="gmd:transferOptions">
 		<xsl:for-each select=".//gmd:URL">
+		    <xsl:if test="contains(.,'dodsC')">
+                <xsl:element name="opendap">
+                    <xsl:value-of select="(.)" />
+                </xsl:element>
+            </xsl:if>
 			<xsl:if test="contains(.,'fileServer')">
 				<xsl:element name="data_link">
 					<xsl:value-of select="(.)" />
