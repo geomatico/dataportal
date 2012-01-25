@@ -167,6 +167,10 @@ Ext.define('result.Grid', {
     
     dataplotHandler: function(grid, rowIndex, colIndex) {
         var itemData = grid.store.getAt(rowIndex).data;
+        itemData.opendap = "/thredds/dodsC/testAll/29SG20110906_meteo_0.nc.html";
+        var json_url = itemData.opendap.split(".");
+        json_url.pop();
+        json_url = json_url.join(".") + ".json";
         Ext.create('Ext.window.Window', {
             title: this.dataplotActionTooltip + " - " + itemData.title,
             maximizable: true,
@@ -177,7 +181,8 @@ Ext.define('result.Grid', {
             layout: 'fit',
             items: {
                 xtype: 'dataplot',
-                url: 'json/utm_meteo_new.nc.json'
+                //url: 'json/utm_meteo_new.nc.json'
+                url: json_url
             }
         }).show();
     }

@@ -17,6 +17,7 @@ Ext.define('dataplot.Panel', {
     read: function(callback) {
         Ext.Ajax.request({
             url: this.url,
+            disableCaching: false,
             success: callback,
             failure: function(result, request) {
                 Ext.Msg.alert('Failed', result.responseText);
