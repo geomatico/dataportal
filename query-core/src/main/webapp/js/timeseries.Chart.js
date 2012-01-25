@@ -178,14 +178,13 @@ Ext.define('timeseries.Chart', {
         var years = months / 12;
         units.push(years);   // i = 6
         
-        var i = 0;
-        for (i=0; i<units.length && units[i]>0; i++);
+        for (var i=0; i<units.length && units[i]>1; i++);
         
-        if (i>4) { // Several months or years
+        if (i>5) { // Several months or years
             this.dateFormat = 'M d, Y';
-        } else if (i>2) { // Several days or hours
+        } else if (i>3) { // Several days or hours
             this.dateFormat = 'M d H:i';
-        } else if (i>1) { // Several minutes
+        } else if (i>2) { // Several minutes
             this.dateFormat = 'H:i:s';
         } else { // Several seconds or millisecs
             this.dateFormat = 's.u';
