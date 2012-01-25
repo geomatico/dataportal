@@ -239,7 +239,7 @@ public class JPAUserController {
 	public boolean exists(User user) {
 		User userInto = existsInto(user);
 		if (userInto != null)
-			return !userInto.getState().equals(NONEXISTENT);
+			return true;
 		else
 			return false;
 	}

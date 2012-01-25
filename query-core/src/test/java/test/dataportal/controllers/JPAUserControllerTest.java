@@ -149,9 +149,9 @@ public class JPAUserControllerTest extends TestCase {
 	 * {@link org.dataportal.controllers.JPAUserController#exists()}.
 	 */
 	public void testExists() {
-		boolean exists = true;
+		boolean exists = false;
 		exists = controladorUsuario.exists(user);
-		assertFalse(exists);
+		assertTrue(exists);
 	}
 
 	/**
