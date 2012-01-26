@@ -31,7 +31,7 @@ QUIMA-ULPGC			http://www.gi.ulpgc.es/quima/
 IIM-CSIC			http://www.iim.csic.es/ 
 ICMAN-CSIC			http://www.icman.csic.es/ 
 CIAI-AEMET			http://www.izana.org/ 
-CMIMA-CSIC			http://www.cmima.csic.es/ 
+UTM-CSIC			http://www.utm.csic.es/ 
 ========================= ==========================================
 
 ==================== ===================================================================================================================
@@ -43,7 +43,7 @@ CMIMA-CSIC			http://www.cmima.csic.es/
 
 			Instituto de Investigaciones Marinas (INM), CSIC 
 
-			Centro Mediterráneo de Investigaciones Marinas y Ambientales - Unidad de Tecnología Marina (CMIMA-UTM), CSIC
+			Unidad de Tecnología Marina (UTM), CSIC
 
 |logo_aemet|		Centro de Investigación Atmosférica de Izaña (CIAI), AEMET
 
