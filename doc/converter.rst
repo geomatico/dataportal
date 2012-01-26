@@ -51,8 +51,8 @@ dependen de la dimensión tiempo.
 
 En caso de |t|, esta extiende a |ts| por lo que no es necesario implementarla explícitamente.
 
-Las implementaciones de |ds| deben devolver una variable principal que será una implementación
-de |div| o de |ddv|, dependiendo de si la variable contiene valores enteros o decimales.
+Las implementaciones de |ds| deben devolver una o más variables principales que serán una implementación
+de |div| o de |ddv|, dependiendo de si la variable en cuestión contiene valores enteros o decimales.
 
 Conversión
 ------------
@@ -69,5 +69,3 @@ Limitaciones
 Coordenadas verticales no están soportadas.
 
 Las variables no pueden tener más dimensión que tiempo y posición.
-
-No se soportan variables auxiliares (no más de una variable por posición espaciotemporal).
