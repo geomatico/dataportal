@@ -4,6 +4,7 @@ restindex
 	page-title: Project Overview
 	encoding: utf-8
 	output-encoding: None
+	target: index.html
 /restindex
 
 Objectives
