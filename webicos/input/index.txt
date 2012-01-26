@@ -3,13 +3,21 @@ restindex
 	format:rest
 	page-title: ICOS Spain
 	encoding: utf-8
-	output-encoding: None
-	section-pages: ,home,partners
+	output-encoding: utf-8
+	section-pages: ,home,overview,organization,infrastructure,outreach,links,contacts
 	file: style.css
 	file: images/cabecera.jpg
 	file: images/geomatico.png
 	file: images/lsce.gif
 	file: images/logo_UE_fp7.jpeg
 	file: images/icos_bottom_banner.png
+	file: images/logo_aemet.png
+	file: images/logo_ceam.png
+	file: images/logo_csic.png
+	file: images/logo_ic3.png
+	file: images/logo_uclm.png
+	file: images/logo_ugr.png
+	file: images/logo_u_las_palmas.png
+
 	build: no
 /restindex

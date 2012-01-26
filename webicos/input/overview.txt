@@ -1,0 +1,64 @@
+restindex
+	crumb: partners
+	format:rest
+	page-title: Project Overview
+	encoding: utf-8
+	output-encoding: None
+/restindex
+
+Objectives
+==========
+
+To provide the long-term observations required to understand the present state and predict future behaviour of the global carbon cycle and greenhouse gas emissions.
+To monitor and assess the effectiveness of carbon sequestration and/or greenhouse gases emission reduction activities on global atmospheric composition levels, including attribution of sources and sinks by region and sector. 
+
+The ICOS's main objective is to establish a network of long-term observations, designed around central facilities, made up of high-precision monitoring stations for the measurement of GHG fluxes in terrestrial ecosystems and their concentration in the atmosphere, as well as CO2 exchange between the atmosphere and oceans. The data obtained will allow researchers to gain a fuller understanding of GHG exchange throughout Europe, as well as its causes.
+
+ICOS will enable Europe to hold a key position in the global process of onsite GHG observation, both in terms of data processing and the production of flux products (estimations of emissions and sinks) and it will also assist in accessing data for the calibration and validation of remote sensing or modelling products, scientific assessments and information assimilation.
+
+Applications
+============
+
+The most relevant target application is the regional accounting of GHG flux with a daily mapping at a resolution of 10 km. This accounting will be possible thanks to the combination of observations (atmospheric, oceanic and total ecosystem flux), using high-resolution transport models and satellite observation. This application will enable the supervision, assessment and orientation of mitigation strategies at a terrestrial ecosystem level. 
+
+Moreover, the observations provided by ICOS will have many potential scientific applications, such as: calibration, validation and development of several types of models (biogeochemical SVAT (Soil Vegetation Atmosphere Transfer), atmospheric transport, atmospheric chemistry, atmospheric oceanic exchange, etc.), study of the interaction and feedback between biogeochemical cycles and climate change, research on atmospheric, ecosystem and ocean processes, as well as calibration and validation of remote sensing products. ICOS will obtain robust information on the carbon sequestration capacity of terrestrial ecosystems and how it may be affected by climate anomalies.
+
+With regards the marine environment, the scientific application of ICOS becomes particularly important when considering the essential role played by the oceans in climate regulation and, therefore, in global change. On one hand, the extraordinary heat absorbing capacity of the oceans largely contributes to mitigating the global temperature increase. On the other, the oceans greatly limit the increase in CO2 atmospheric levels. 
+However, CO2 absorption by the ocean surface is not beneficial for the oceanic system itself. One of the most important effects derived from this absorption is the phenomenon of oceanic acidification which affects practically every single chemical balance, with dramatic consequences for marine life and for biogeochemical cycles on a global scale.
+
+
+Infrastructure
+==============
+
+The main challenge faced by the ICOS is the technological design of the networks which requires several specialised developments to achieve the technical features needed for a suitable design of both the central facilities and the measuring stations.
+
+Measuring stations
+==================
+
+The ICOS measuring stations share a number of essential features: high standardisation of the measuring methods and equipment, modularity, automated operation, local and remote control, dynamic technological updating and reduced costs, among others. The different types of station are:
+	
+- Atmospheric stations (ICOS-AS): these will be dedicated to systematically measuring CO2, CH4, N2O, CO, C, 222Rn, O2/N2 and SF6 concentrations, measuring the structure of the atmospheric boundary layer and basic weather conditions.
+
+- Ecosystem stations (ICOS-ES): these will systematically measure fluxes of heat, H2O, CO2, CH4, N2O, and environmental conditions. They will also carry out measurements of the ecosystems' variables.
+
+- Marine stations (ICOS-MS): these will carry out continuous measurements of ocean CO2 partial pressure, salinity, sea surface temperature, pH, etc. 
+
+There will be two types of stations: fixed stations (instrumented buoys), which will provide series of measurements from one fixed location, and VOS-line (Voluntary Observatory Ships) stations which will provide space-time series to adequately cover the ocean surface.
+
+Central facilities
+==================
+
+They will be divided into several parts:
+
+- The Coordination Office: this office will be in charge of organising the data collection programme and generation of routine flow products by the research institutions involved, the dissemination and disclosure of the ICOS products throughout the Carbon Portal, a server that will provide free access to its data and products.
+
+- The Atmospheric Thematic Centre (ICOS-ATC): this will carry out the technical support and on line data collection from the atmospheric stations, data processing and quality control, database management, development and assessment of new sensors.
+
+- The Ecosystems Thematic Centre (ICOS-ETC): this will be devoted to technical support and online data collection from the ecosystem stations, data processing and quality control, database management, standardisation of information and ecosystems' complementary parameters, development and evaluation of instruments and new measuring methods.
+
+- The Ocean Sciences Thematic Centre (ICOS-OTC): technical support and on line data collection from the marine stations, data processing and quality control, database management, development and testing new instruments and measuring methods. 
+
+- The Central Analytical Laboratories: these are the Central Air Sampling Laboratory (ICOS-CFL), the Central Calibration and Standards Laboratory (ICOSCAL) and the Central Radiocarbon Laboratory (ICOS-CRL).
+
+Please, select "ICOS-EU" in the left-side menu for detailed description of ICOS project. 
+

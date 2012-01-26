@@ -1,0 +1,9 @@
+restindex
+	crumb: partners
+	format:rest
+	page-title: Outreach
+	encoding: utf-8
+	output-encoding: None
+/restindex
+
+A definir

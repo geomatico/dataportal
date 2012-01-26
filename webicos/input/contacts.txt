@@ -1,0 +1,36 @@
+restindex
+	crumb: partners
+	format:rest
+	page-title: Contacts
+	encoding: utf-8
+	output-encoding: None
+/restindex
+
+ICOS Spanish National Focal Point: 
+================================================
+
+Dr. Maria José Sanz Sanchez 
+
+Directora Científica
+
+Instituto de Investigación sobre el Cambio Climático de Zaragoza (I2C2)
+
+Plaza Ntra. Sra. el Pilar, s/n. 50003 Zaragoza
+
+Phone:+34 976 999529
+
+Mail: maria.sanz@micinn.es 
+
+
+National contact for ICOS-Preparatory phase:
+================================================
+
+Dr. Arnaud Carrara
+
+Fundación Centro de Estudios Ambientales del Mediterráneo (CEAM)
+
+Charles R Darwin, 14. 46980 Paterna (Valencia)
+
+Phone: +34 96 131 82 27 
+
+Mail: arnaud@ceam.es
