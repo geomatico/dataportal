@@ -3,7 +3,7 @@
   
 <response totalcount="1" success="true">
     <item>
-        <id>icos-sample-1</id>
+        <id>fedc023f-c50b-4ac1-a04b-a19c34ca289d</id>
             <title>Global Wind-Wave Forecast Model and Ocean Wave model</title>
             <summary>This is a sample global ocean file that comes with default Thredds installation. Its global attributes have been modified to conform with Dataset Discovery convention</summary>
             <institution>unidata</institution>
@@ -14,6 +14,6 @@
             <start_time>2011-07-10T12:00:00Z</start_time>
             <end_time>2011-07-15T12:00:00Z</end_time>
             <variables>reftime,datetime,forecasttime,model_id,nav_model,grid_type_code,grid_type,grid_name,grid_center,grid_number,i_dim,j_dim,Ni,Nj,La1,Lo1,La2,Lo2,Di,Dj,ResCompFlag,eastward_wind,northward_wind,significant_height_of_wind_and_swell_waves,wind_wave_period,direction_of_wind_wave_velocity,valtime,valtime_offset,lat,lon</variables>
-            <data_link>http://ciclope.cmima.csic.es:8080/thredds/fileServer/dataportal/ocean-metadata-sample.nc</data_link>
+            <data_link>http://ciclope.cmima.csic.es:8080/thredds/fileServer/dataportal/utm/29SG20110906_termosal.nc</data_link>
     </item>
 </response>

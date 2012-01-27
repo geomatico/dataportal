@@ -62,6 +62,7 @@ public class DownloadControllerTest extends TestCase {
 
 		DownloadController controlador = new DownloadController("es");
 		controlador.setUser(user);
+		controlador.setUrl("http://foo.com");
 		String filename = controlador.askgn2download(isRequestXML);
 		File file = FileUtils.getFile(tempDir + "/" + filename);
 		assertNotNull(file);		

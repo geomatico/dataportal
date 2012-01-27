@@ -76,9 +76,11 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
         if (params.containsKey("file")) { //$NON-NLS-1$ //$NON-NLS-2$
 
 			String fileName = params.get("file")[0]; //$NON-NLS-1$
+			String url = req.getRequestURL().toString();
 
 			DownloadController download = new DownloadController(lang);
             download.setUser(user);
+            download.setUrl(url);
 			int fileSize = (int) download.getFileSize(fileName);
 
 			InputStream contents = download.getFileContents(fileName);

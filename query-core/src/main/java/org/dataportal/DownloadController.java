@@ -72,6 +72,14 @@ public class DownloadController extends DataPortalController {
 
 	private String tempDir;
 	private String id = null;
+	private String url;
+
+	/**
+	 * @param url the url to set
+	 */
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
 	/**
 	 * Constructor. Reads tempDir from properties file.
@@ -286,6 +294,7 @@ public class DownloadController extends DataPortalController {
 			String uid = this.generateId();
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("ddi", uid); //$NON-NLS-1$
+			params.put("self_url", url);
 			File readmeFile = createReadmeFile(params, pathFile);
 			compressFiles(pathFile, readmeFile, files, nameFile);
 			insertDownload(user, uid, nameFile + ZIP, downloadItems);
