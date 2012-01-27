@@ -19,7 +19,7 @@ Ext.define('result.Grid', {
     /* ~i18n */
     
     pageSize: 25,
-    vocabulary: null,
+    variables: null,
     recordType: null,
     downloadHandler: null,
     handlerScope: null,
@@ -35,14 +35,7 @@ Ext.define('result.Grid', {
             if(!body.innerHTML) {
                 var data = record.data;
 
-                var variables = data.variables.split(",");
-                var varnames = [];
-                for (var i=0; i < variables.length; i++) {
-                    variable = variables[i];
-                    term = resultgrid.vocabulary.data.getByKey(variable);
-                    name = term ? (term.data.nc_long_term || term.data.en_long_term) : variable;
-                    varnames.push(name);
-                }
+                var varnames = resultgrid.variables.getTexts(data.variables.split(","));
 
                 new Ext.Panel({
                     layout: 'hbox',

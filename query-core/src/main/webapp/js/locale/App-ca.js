@@ -51,11 +51,13 @@ GeoExt.Lang.add("ca", {
         loginRequiredMessage: "Disculpeu, heu d'identificar-vos abans de descarregar les dades",
         waitMessage: "Preparant descàrrega..."
     },
+    "variables.Panel.prototype": {
+        title: "Variables"
+    },
     "query.Form.prototype": {
         textFieldLabel: "Text",
         startDateFieldLabel: "Des del:",
         endDateFieldLabel: "Fins el:",
-        variablesFieldTitle: "Variables",
         dateDisplayFormat: "j M Y"
     },
     "query.Identifier.prototype": {

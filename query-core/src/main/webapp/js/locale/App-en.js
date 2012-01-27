@@ -51,11 +51,13 @@ GeoExt.Lang.add("en", {
         loginRequiredMessage: "Sorry, you must Login to download data",
         waitMessage: "Packing data for download..."
     },
+    "variables.Panel.prototype": {
+        title: "Variables"
+    },
     "query.Form.prototype": {
         textFieldLabel: "Text",
         startDateFieldLabel: "From:",
         endDateFieldLabel: "To:",
-        variablesFieldTitle: "Variables",
         dateDisplayFormat: "M j, Y"
     },
     "query.Identifier.prototype": {

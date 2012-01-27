@@ -51,11 +51,13 @@ GeoExt.Lang.add("es", {
         loginRequiredMessage: "Disculpe, debe identificarse antes de descargar datos",
         waitMessage: "Preparando descarga..."
     },
+    "variables.Panel.prototype": {
+        title: "Variables"
+    },
     "query.Form.prototype": {
         textFieldLabel: "Texto",
         startDateFieldLabel: "Desde:",
         endDateFieldLabel: "Hasta:",
-        variablesFieldTitle: "Variables",
         dateDisplayFormat: "j M Y"
     },
     "query.Identifier.prototype": {

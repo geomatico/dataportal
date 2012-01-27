@@ -34,31 +34,6 @@ Ext.define('App', {
         
         this.user = Ext.create('Authentication');
         
-        Ext.define('Term', {
-            extend: 'Ext.data.Model',
-            fields: [
-                 'sado_term', 'nc_term', 'nc_long_term',
-                 'en_term', 'en_long_term',
-                 'nc_units', 'nc_data_type',
-                 'nc_coordinate_axis_type'
-            ]
-        });
-        
-        this.vocabulary = Ext.create('Ext.data.Store', {
-            model: 'Term',
-            proxy: {
-                type: 'ajax',
-                url: 'xml/vocabulario.xml',
-                reader: {
-                    type: 'xml',
-                    record: 'term',
-                    idProperty: 'nc_term',
-                }
-            },
-            sorters: ['nc_long_term'],
-            remoteSort: false
-        });
-
         Ext.define('Result', {
             extend: 'Ext.data.Model',
             fields: [
@@ -88,10 +63,17 @@ Ext.define('App', {
                 scope: this
             }]
         });
+        
+        this.variables = Ext.create('variables.Panel', {
+            height: 258,
+            width: 258,
+            collapsible: true,
+            border: true
+        });
 
         this.queryForm = Ext.create('query.Form', {
             title: this.searchTitle,
-            vocabulary: this.vocabulary,
+            variables: this.variables,
             buttons: [{
                 text: this.searchButtonText,
                 handler: this.doQuery,
@@ -99,10 +81,8 @@ Ext.define('App', {
             }]
         });
         
-        this.vocabulary.load();
-        
         this.resultGrid = Ext.create('result.Grid', {
-            vocabulary: this.vocabulary,
+            variables: this.variables,
             model: 'Result',
             downloadHandler: function(grid, rowIndex, colIndex) {
                 var id = grid.store.getAt(rowIndex).get("id");
@@ -124,8 +104,7 @@ Ext.define('App', {
         }, {
             region: 'west',
             split: false,
-            margins: '0 4 0 0',
-            width: 290,
+            width: 295,
             collapsible: true,
             layout: {
                 type: 'vbox',

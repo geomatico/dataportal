@@ -56,7 +56,7 @@ p {
 img.icon-dataplot {
     width: 16px;
     height: 16px;
-    background: url(../img/silk/chart_bar.png) no-repeat;
+    background: url(../img/silk/map.png) no-repeat;
 }
 
 img.icon-download {
@@ -69,6 +69,14 @@ img.icon-delete {
     width: 16px;
     height: 16px;
     background: url(../img/silk/cross.png) no-repeat;
+}
+
+img.icon-domain {
+    background-image: url(../img/silk/package.png) !important;
+}
+
+img.icon-variable {
+    background-image: url(../img/silk/tag_purple.png) !important;
 }
 
 .x-form-item {

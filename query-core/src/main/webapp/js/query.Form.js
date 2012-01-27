@@ -5,7 +5,6 @@ Ext.define('query.Form', {
     textFieldLabel: "Text",
     startDateFieldLabel: "From:",
     endDateFieldLabel: "To:",
-    variablesFieldTitle: "Variables",
     dateDisplayFormat: "M j, Y",
     /* ~i18n */
 
@@ -17,15 +16,19 @@ Ext.define('query.Form', {
     frame: true,
     flex: 1,
     
+    layout: 'anchor',
+    
     map: null,
-    vocabulary: null,
-        
+    variables: null,
+    
     initComponent: function() {
         
         this.map = new query.Map();
         
         this.defaults = {
-            border: false
+            border: false,
+            margin: 5,
+            layout: 'fit'
         };
 
         this.items = [{
@@ -34,17 +37,18 @@ Ext.define('query.Form', {
             labelWidth: 40,
             name: 'text',
             value: '',
-            xtype: 'textfield',
-            padding: 0,
-            style: 'margin:5px;width:265px'
+            xtype: 'textfield'
         },
         this.map,
         {
             layout: 'column',
-            items: [{
+            width: 258,
+            defaults: {
                 columnWidth: 0.5,                                
                 border: false,
-                bodyCls: 'x-panel-body-default-framed',
+                bodyCls: 'x-panel-body-default-framed'                
+            },
+            items: [{
                 items: [{
                     text: this.startDateFieldLabel,
                     xtype: 'label'
@@ -55,9 +59,6 @@ Ext.define('query.Form', {
                     format: this.dateDisplayFormat
                 }]
             }, {
-                columnWidth: 0.5,
-                border: false,
-                bodyCls: 'x-panel-body-default-framed',
                 items: [{
                     text: this.endDateFieldLabel,
                     xtype: 'label'
@@ -68,56 +69,19 @@ Ext.define('query.Form', {
                     format: this.dateDisplayFormat
                 }]
             }]
-        }];
+        },
+        this.variables
+        ];
 
         this.callParent(arguments);
-
-        if(this.vocabulary) {
-            this.vocabulary.on('load', this.addVariableFieldset, this);
-        }
-    },
-
-    addVariableFieldset: function(store, records, options) {
-        var checkboxitems = [];
-        store.each( function(record) {
-            checkboxitems.push({
-                boxLabel: (record.data.nc_long_term || record.data.en_long_term),
-                name: record.data.nc_term || record.data.en_term,
-                submitValue: false,
-                isFormField: false
-            });
-        });
-
-        var checkboxgroup = {
-            xtype: 'checkboxgroup',
-            name: 'variables',
-            cls: 'variables',
-            columns: 1,
-            items: checkboxitems,
-            isFormField: true
-        };
-        
-        this.add({ 
-            title: this.variablesFieldTitle,
-            xtype: 'fieldset',
-            fieldLabel: "&nbsp;", // Ah, si, si, creetelo!
-            hideLabel: true,
-            collapsible: true,
-            padding: 3,
-            margin: 2,
-            items: checkboxgroup
-        });
-        
-        this.doLayout();
     },
     
     getParams: function() {
         
         var params = this.getForm().getFieldValues();
         
-        // Transform checked variables to a comma-separated list of variable names
-        var vars = this.getForm().getFields().findBy(function(o){return o.name=="variables";}).getValue();
-        params.variables = Ext.Object.getKeys(vars).join(",");
+        // Get selected variables as a comma-separated list of variable names
+        params.variables = this.variables.getSelected().join(",");
         
         // Format start and end dates
         if (params.start_date) params.start_date = Ext.Date.format(params.start_date, "Y-m-d");

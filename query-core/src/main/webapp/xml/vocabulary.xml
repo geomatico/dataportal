@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <vocab>
-    <oceans>
+    <domain name="oceans">
         <term>
             <standard-name>date</standard-name>
             <description>date of acquisition</description>
@@ -167,8 +167,8 @@
             <standard-name>show_level</standard-name>
             <description>shown level</description>
         </term>
-    </oceans>
-    <environment>
+    </domain>
+    <domain name="environment">
         <term>
             <standard-name>spec_red_out</standard-name>
             <description>outgoing radiation (red band)</description>
@@ -712,8 +712,8 @@
             <standard-name>fr_biomass</standard-name>
             <description>Fine root biomass (live)</description>
         </term>
-    </environment>
-    <atmosphere>
+    </domain>
+    <domain name="atmosphere">
         <term>
             <standard-name>2-methylpropene</standard-name>
             <description>2-methylpropene</description>
@@ -1046,5 +1046,5 @@
             <standard-name>cyclohexane</standard-name>
             <description>cyclohexane</description>
         </term>
-    </atmosphere>
+    </domain>
 </vocab>
