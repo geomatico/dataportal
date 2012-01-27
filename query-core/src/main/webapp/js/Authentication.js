@@ -28,6 +28,9 @@ Ext.define('Authentication', {
     user: null,
     password: null,
     loginForm: null,
+    signupForm: null,
+    propertiesForm: null,
+    reminderForm: null,
     loginWindow: null,
     
     constructor: function(config){
@@ -109,9 +112,7 @@ Ext.define('Authentication', {
                                     alert(result.message);
                                 }
                             },
-                            failure: function(response, opts) {
-                                alert(this.loginFailureMessage + response.status);
-                            },
+                            failure: this.showActionResult,
                             scope: this
                         });
                     }
@@ -127,13 +128,11 @@ Ext.define('Authentication', {
             draggable: true,
             modal: true,
             items: [this.loginForm]
-        });
-      
-        this.loginWindow.show();
+        }).show();
     },
     
     showSignup: function() {
-        var form = new Ext.form.FormPanel({
+        this.signupForm = new Ext.form.FormPanel({
             frame: true,
             defaults: {
                 margin: 5
@@ -159,40 +158,40 @@ Ext.define('Authentication', {
             buttons: [{
                 text: this.newUserButtonText,
                 handler: function() {
-                    var fields = this.form.getForm().getFieldValues();
-                    this.form.getForm().submit({
-                        url: 'login',
-                        params: {
-                            request: "register",
-                            password: hex_md5(fields.user+":"+fields.password)
-                        },
-                        success: function(form, action) {
-                            this.win.close();
-                            this.auth.showActionResult(form, action);
-                            this.fireEvent("signed_up", this.form.getForm().getValues().user);
-                        },
-                        failure: this.auth.showActionResult,
-                        scope: this
-                    });
+                    if(this.signupForm.getForm().isValid()){
+                        var fields = this.signupForm.getForm().getValues();
+                        this.signupForm.getForm().submit({
+                            url: 'login',
+                            params: {
+                                request: "register",
+                                password: hex_md5(fields.user+":"+fields.password)
+                            },
+                            success: function(form, action) {
+                                this.signupWindow.close();
+                                this.showActionResult(form, action);
+                                this.fireEvent("signed_up", this.signupForm.getForm().getValues().user);
+                            },
+                            failure: this.showActionResult,
+                            scope: this
+                        });
+                    }
                 },
-                scope: {auth: this, form: form, win: win}                
+                scope: this
             }]
         });
 
-        var win = new Ext.Window({
+        this.signupWindow = new Ext.Window({
             title: this.newUserTitle,
             layout: 'fit',
             closable: true,
             draggable: true,
             modal: true,
-            items: [form]
-        });
-        
-        win.show();
+            items: [this.signupForm]
+        }).show();
     },
 
     showProperties: function() {
-        var form = new Ext.form.FormPanel({
+        this.propertiesForm = new Ext.form.FormPanel({
             frame: true,
             defaults: {
                 margin: 5
@@ -226,42 +225,40 @@ Ext.define('Authentication', {
             buttons: [{
                 text: this.changePasswordButtonText,
                 handler: function() {
-                    var fields = this.form.getForm().getFieldValues();
-                    this.form.getForm().submit({
+                    var fields = this.propertiesForm.getForm().getFieldValues();
+                    this.propertiesForm.getForm().submit({
                         url: 'login',
                         params: {
                             request: "changePass",
-                            password: hex_md5(this.auth.user+":"+fields.password),
-                            newPassword: hex_md5(this.auth.user+":"+fields.newPassword)
+                            password: hex_md5(this.user+":"+fields.password),
+                            newPassword: hex_md5(this.user+":"+fields.newPassword)
                         },
                         success: function(form, action) {
-                            this.win.close();
-                            this.auth.fireEvent("password_changed");
-                            this.auth.doLogout();
-                            this.auth.showActionResult(form, action);
+                            this.propertiesWindow.close();
+                            this.fireEvent("password_changed");
+                            this.doLogout();
+                            this.showActionResult(form, action);
                         },
-                        failure: this.auth.showActionResult,
+                        failure: this.showActionResult,
                         scope: this
                     });
                 },
-                scope: {auth: this, form: form, win: win}
+                scope: this
             }]
         });
 
-        var win = new Ext.Window({
+        this.propertiesWindow = new Ext.Window({
             title: this.changePasswordTitle,
             layout: 'fit',
             closable: true,
             draggable: true,
             modal: true,
-            items: [form]
-        });
-        
-        win.show();
+            items: [this.propertiesForm]
+        }).show();
     },
     
     showPasswordReminder: function() {
-        var form = new Ext.form.FormPanel({
+        this.reminderForm = new Ext.form.FormPanel({
             frame: true,
             defaults: {
                 margin: 5
@@ -283,33 +280,31 @@ Ext.define('Authentication', {
             buttons: [{
                 text: this.passwordReminderButton,
                 handler: function() {
-                    this.form.getForm().submit({
+                    this.reminderForm.getForm().submit({
                         url: 'login',
                         params: { request: "generatePass" },
                         success: function(form, action) {
-                            this.win.close();
-                            this.auth.fireEvent("password_reminder_requested");
-                            this.auth.showActionResult(form, action);
+                            this.reminderWindow.close();
+                            this.fireEvent("password_reminder_requested");
+                            this.showActionResult(form, action);
                         },
-                        failure: this.auth.showActionResult,
+                        failure: this.showActionResult,
                         scope: this
                     });
                 },
-                scope: {auth: this, form: form, win: win}                
+                scope: this                
             }]
         });
 
-        var win = new Ext.Window({
+        this.reminderWindow = new Ext.Window({
             title: this.passwordReminderTitle,
             width: 290,
             layout: 'fit',
             closable: true,
             draggable: true,
             modal: true,
-            items: [form]
-        });
-        
-        win.show();
+            items: [this.reminderForm]
+        }).show();
     },
     
     doLogout: function() {
@@ -334,7 +329,6 @@ Ext.define('Authentication', {
     },
     
     showActionResult: function(form, action) {
-        var message = action.result.message;
-        alert(message);
+        Ext.Msg.alert('Message', action.result.message);
     }
 });
