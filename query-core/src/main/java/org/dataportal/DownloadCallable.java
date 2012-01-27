@@ -52,7 +52,7 @@ public class DownloadCallable implements Callable<String> {
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	@Override
-	public String call() throws Exception {
+	public String call() throws FileNotFoundException, IOException{
 		File downFile = new File(pathFile + "/" + name);
 		logger.debug("FILEPATH: " + pathFile + "/" + name);
 
@@ -66,12 +66,13 @@ public class DownloadCallable implements Callable<String> {
 			isURL.close();
 
 		} catch (FileNotFoundException fnE) {
-			logger.error(fnE.getMessage());
+			logger.error("File not found: " + fnE.getMessage());
+			throw fnE;
 		} catch (IOException ioE) {
-			logger.error(ioE.getMessage());
-		} finally {
-			logger.info("Finaliza descarga: " + name);
-		}
+			logger.error("IOException: " + ioE.getMessage());
+			throw ioE;
+		} 
+		logger.info("Finaliza descarga: " + name);
 		return downFile.getAbsolutePath();
 	}
 
