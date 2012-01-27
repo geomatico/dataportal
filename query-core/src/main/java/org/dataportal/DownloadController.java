@@ -100,7 +100,7 @@ public class DownloadController extends DataPortalController {
 	 */
 	public String createPathFile(String userName) {
 
-		String pathFile = this.tempDir + SLASH + userName;
+		String pathFile = this.tempDir + File.separator + userName;
 		File personalDirectory = new File(pathFile);
 		boolean exists = personalDirectory.exists();
 		if (!exists) {
@@ -383,7 +383,7 @@ public class DownloadController extends DataPortalController {
 	 */
 	public InputStream getFileContents(String fileName)
 			throws FileNotFoundException {
-		File file = new File(this.tempDir + SLASH + user.getId() + SLASH + fileName);
+		File file = new File(this.tempDir + File.separator + user.getId() + File.separator + fileName);
 		return new FileInputStream(file);
 	}
 
@@ -399,7 +399,7 @@ public class DownloadController extends DataPortalController {
 	 */
 	public long getFileSize(String fileName)
 			throws FileNotFoundException {
-		File file = new File(this.tempDir + SLASH + user.getId() + SLASH + fileName);
+		File file = new File(this.tempDir + File.separator + user.getId() + File.separator + fileName);
 		if (file.exists() && file.isFile())
 			return file.length();
 		else
@@ -424,7 +424,7 @@ public class DownloadController extends DataPortalController {
 			String nameFile)
 			throws IOException {
 
-		String filePathName = pathDir + SLASH + nameFile + ".zip"; //$NON-NLS-1$
+		String filePathName = pathDir + File.separator + nameFile + ".zip"; //$NON-NLS-1$
 		OutputStream os = new FileOutputStream(filePathName);
 		ZipArchiveOutputStream zipOs = new ZipArchiveOutputStream(os);
 

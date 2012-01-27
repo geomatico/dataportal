@@ -53,8 +53,8 @@ public class DownloadCallable implements Callable<String> {
 	 */
 	@Override
 	public String call() throws FileNotFoundException, IOException{
-		File downFile = new File(pathFile + "/" + name);
-		logger.debug("FILEPATH: " + pathFile + "/" + name);
+		File downFile = new File(pathFile + File.separator + name);
+		logger.debug("FILEPATH: " + pathFile + File.separator + name);
 
 		try {
 			OutputStream ouFileDown = new FileOutputStream(downFile);
