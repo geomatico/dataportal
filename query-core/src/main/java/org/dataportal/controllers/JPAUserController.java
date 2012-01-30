@@ -6,6 +6,7 @@ package org.dataportal.controllers;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import javax.persistence.EntityManager;
@@ -117,7 +118,7 @@ public class JPAUserController {
 
 	}
 
-	private String randomString(int length) {
+    public String createRandomPass(int length) {
 		Random rnd = new Random(new Date().getTime());
 		StringBuilder sb = new StringBuilder(length);
 		for (int i = 0; i < length; i++) {
@@ -152,45 +153,41 @@ public class JPAUserController {
 	}
 
 	private User getUserByHash(EntityManager manager, String hash) {
-		TypedQuery<User> query = manager
-				.createQuery(
-						"SELECT u FROM org.dataportal.model.User u WHERE u.hash = :hash",
-						User.class);
-		User user = query.setParameter("hash", hash).getSingleResult();
-		if (user != null)
-			return user;
+        String strQuery = "SELECT u FROM User u WHERE u.hash = :hash";
+        TypedQuery<User> query = manager.createQuery(strQuery, User.class);
+        List<User> users = query.setParameter("hash", hash).getResultList();
+        if (users.size() == 1)
+            return users.get(0);
 		else
 			return null;
 	}
 
 	private User getUserByIdAndPassword(EntityManager manager, String id,
 			String password) {
-		String strQuery = "SELECT u FROM org.dataportal.model.User u WHERE u.id = :id AND u.password = :password";
+        String strQuery = "SELECT u FROM User u WHERE u.id = :id AND u.password = :password";
 		TypedQuery<User> query = manager.createQuery(strQuery, User.class);
 		query.setParameter("id", id);
 		query.setParameter("password", password);
-		User user = query.getSingleResult();
-		if (user != null)
-			return user;
+        List<User> users = query.getResultList();
+        if (users.size() == 1)
+            return users.get(0);
 		else
 			return null;
 	}
 
-	public String newPass(User user, String hash) throws Exception {
-		String password = hex_md5(user.getId() + ":" + randomString(6));
+    public User setPass(String hash, String pass) throws Exception {
 		EntityManager manager = getEntityManager();
 		EntityTransaction transaction = manager.getTransaction();
 		try {
-			User userInto = getUserByHash(manager, hash);
-			if (userInto != null) {
+            User user = getUserByHash(manager, hash);
+            if (user != null) {
+                String password = hex_md5(user.getId() + ":" + pass);
 				transaction.begin();
-				userInto.setHash("");				
-				userInto.setPassword(password);
+                user.setHash("");
+                user.setPassword(password);
 				transaction.commit();
-			} else {
-				password = null;
 			}
-			return password;
+            return user;
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -204,11 +201,8 @@ public class JPAUserController {
 	}
 
 	public boolean isActive(User user) {
-		User userInto = existsInto(user);
-		if (userInto != null)
-			return userInto.getState().equals(ACTIVE);
-		else
-			return false;
+        String state = this.getState(user);
+        return state.equals(ACTIVE);
 	}
 
 	public String activate(String hash) throws Exception {
@@ -262,7 +256,7 @@ public class JPAUserController {
 		try {
 			if (userInto != null) {
 				transaction.begin();
-				userInto.setPassword(user.getPassword());
+                userInto.setPassword(newPassword);
 				transaction.commit();
 			} else {
 				return false;

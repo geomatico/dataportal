@@ -114,9 +114,9 @@ public class LoginServlet extends HttpServlet implements DataportalCodes {
 					}
 				} else {
 					String hash = req.getParameter("hash"); //$NON-NLS-1$
-					User user = new User(username);
-					String newPass = usercontroller.newPass(user, hash);
-					if (hash == null) {
+                    String newPass = usercontroller.createRandomPass(6);
+                    User user = usercontroller.setPass(hash, newPass);
+                    if (user == null) {
 						resp.sendError(HttpServletResponse.SC_FORBIDDEN,
 								Messages.getString("loginservlet.link_not_valid")); //$NON-NLS-1$
 					} else {

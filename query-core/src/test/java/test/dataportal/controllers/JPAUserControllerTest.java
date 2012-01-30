@@ -10,10 +10,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import junit.framework.TestCase;
+
 import org.dataportal.controllers.JPAUserController;
 import org.dataportal.model.User;
-
-import junit.framework.TestCase;
 
 /**
  * @author michogar
@@ -129,19 +129,22 @@ public class JPAUserControllerTest extends TestCase {
 		assertEquals(JPAUserController.ACTIVE, userInto.getState());		
 	}
 
-	/**
-	 * Test method for
-	 * {@link org.dataportal.controllers.JPAUserController#newPass(java.lang.String)}
-	 * .
-	 * @throws Exception 
-	 */
-	public void testNewPass() throws Exception {
-		String newPass = null;
+    /**
+     * Test method for
+     * {@link org.dataportal.controllers.JPAUserController#setPass(java.lang.String, java.lang.String)}
+     * .
+     * 
+     * @throws Exception
+     */
+    public void testSetPass() throws Exception {
 		User userInto = controladorUsuario.existsInto(user);
-		newPass = controladorUsuario.newPass(userInto, userInto.getHash());
-		assertNotNull(newPass);
+        String newPass = controladorUsuario.createRandomPass(6);
+        User userChanged = controladorUsuario.setPass(userInto.getHash(),
+                newPass);
+        assertNotNull(userChanged);
 		userInto = controladorUsuario.existsInto(user);
-		assertEquals(newPass, userInto.getPassword());
+        String hashedPass = hex_md5(userInto.getId() + ":" + newPass);
+        assertEquals(hashedPass, userInto.getPassword());
 	}
 
 	/**

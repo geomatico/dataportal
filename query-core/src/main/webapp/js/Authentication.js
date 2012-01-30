@@ -159,7 +159,7 @@ Ext.define('Authentication', {
                 text: this.newUserButtonText,
                 handler: function() {
                     if(this.signupForm.getForm().isValid()){
-                        var fields = this.signupForm.getForm().getValues();
+                        var fields = this.signupForm.getForm().getFieldValues();
                         this.signupForm.getForm().submit({
                             url: 'login',
                             params: {
@@ -169,7 +169,7 @@ Ext.define('Authentication', {
                             success: function(form, action) {
                                 this.signupWindow.close();
                                 this.showActionResult(form, action);
-                                this.fireEvent("signed_up", this.signupForm.getForm().getValues().user);
+                                this.fireEvent("signed_up", this.signupForm.getForm().getFieldValues().user);
                             },
                             failure: this.showActionResult,
                             scope: this
@@ -329,6 +329,6 @@ Ext.define('Authentication', {
     },
     
     showActionResult: function(form, action) {
-        Ext.Msg.alert('Message', action.result.message);
+        Ext.Msg.alert('Message', action.result.message || action.response.responseText);
     }
 });
