@@ -68,7 +68,11 @@ Ext.define('App', {
             height: 258,
             width: 258,
             collapsible: true,
-            border: true
+            border: true,
+            scroll: false,
+            viewConfig: {
+               style: {overflow: 'auto', overflowX: 'hidden'}
+            }
         });
 
         this.queryForm = Ext.create('query.Form', {
@@ -88,7 +92,11 @@ Ext.define('App', {
                 var id = grid.store.getAt(rowIndex).get("id");
                 this.addRecordToDownload(grid.store.getAt(rowIndex));
             },
-            handlerScope: this
+            handlerScope: this,
+            scroll: false,
+            viewConfig: {
+               style: {overflow: 'auto', overflowX: 'hidden'}
+            }
         });
 
         this.downloadPanel = Ext.create('download.Panel', {
