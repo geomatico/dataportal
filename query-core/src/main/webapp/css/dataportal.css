@@ -29,12 +29,18 @@ p {
 
 #notLoggedLinks, #loggedLinks {
     position: absolute;
-    top: 15px;
-    right: 12px;
+    top: 12px;
+    right: 58px;
 }
 
 #notLoggedLinks a, #loggedLinks a {
     color: #b5cfe5;
+}
+
+#headerButtons {
+    position: absolute;
+    top: 10px;
+    right: 8px;
 }
 
 .bboxAdd {
@@ -51,6 +57,40 @@ p {
 
 .mapBig {
   background-image: url(../img/silk/wand.png) !important;
+}
+
+.x-btn-header-small {
+	padding: 1px;
+}
+
+.x-btn-header-small-over {
+}
+
+.x-btn-header-small .x-btn-icon{
+    bottom: 0;
+    height: 16px;
+    left: 0;
+    right: 0;
+    top: 0;
+    width: 16px;
+}
+
+.x-btn-header-small-icon button {
+    height: 16px;
+    padding: 0;
+    width: 16px !important;
+}
+
+.icon-report {
+    width: 16px;
+    height: 16px;
+    background: url(../img/silk/report.png) no-repeat;
+}
+
+.icon-about {
+    width: 16px;
+    height: 16px;
+    background: url(../img/silk/information.png) no-repeat;
 }
 
 img.icon-dataplot {

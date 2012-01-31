@@ -15,7 +15,9 @@ GeoExt.Lang.add("ca", {
         homeLogout: "Surt",
         homeUpdateUser: "Canvia la paraula de pas",
         searchButtonText: "Cerca >>",
-        showButtonText: "Mostra dades >>"
+        showButtonText: "Mostra dades >>",
+        aboutButtonTooltip: "Quant a...",
+        reportButtonTooltip: "Informe d'us"
     },
     "Authentication.prototype": {
         userFieldLabel: "E-mail",

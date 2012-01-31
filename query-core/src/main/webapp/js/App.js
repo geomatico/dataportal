@@ -14,6 +14,8 @@ Ext.define('App', {
     homeUpdateUser: "Change Password",
     showButtonText: "Show Dataset >>",
     searchButtonText: "Search >>",
+    aboutButtonTooltip: "About",
+    reportButtonTooltip: "Usage Report",
     /* ~i18n */
     
     vocabulary: null,
@@ -102,6 +104,43 @@ Ext.define('App', {
         this.downloadPanel = Ext.create('download.Panel', {
             model: 'Result',
             user: this.user
+        });
+        
+        Ext.create('Ext.button.Button', {
+            renderTo: 'report',
+            ui: 'header',
+            iconCls: 'icon-report',
+            scale: 'small',
+            tooltip: this.reportButtonTooltip,
+            handler: function() {
+                window.open("report.html");
+            }
+        });
+        
+        Ext.create('Ext.button.Button', {
+            renderTo: 'about',
+            ui: 'header',
+            iconCls: 'icon-about',
+            scale: 'small',
+            tooltip: this.aboutButtonTooltip,
+            handler: function() {
+                new Ext.Window({
+                    title: this.aboutButtonTooltip,
+                    width: 400,
+                    height: 295,
+                    layout: 'fit',
+                    items: [{
+                        xtype: "component",
+                        autoEl: {
+                            tag: "iframe",
+                            src: "about/"+GeoExt.Lang.locale+".html",
+                            border: 0,
+                            frameborder: 0
+                        }
+                    }]
+               }).show();
+            },
+            scope: this
         });
         
         this.items = [{

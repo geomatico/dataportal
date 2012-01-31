@@ -15,7 +15,9 @@ GeoExt.Lang.add("en", {
         homeLogout: "Logout",
         homeUpdateUser: "Change Password",
         searchButtonText: "Search >>",
-        showButtonText: "Show Dataset >>"
+        showButtonText: "Show Dataset >>",
+        aboutButtonTooltip: "About",
+        reportButtonTooltip: "Usage Report"
     },
     "Authentication.prototype": {
         userFieldLabel: "Email address",

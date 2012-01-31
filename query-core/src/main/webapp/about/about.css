@@ -1,0 +1,39 @@
+body {
+    font-family: tahoma,arial,helvetica,sans-serif;
+    font-size: 10px;
+    background-color: white;
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+div.versioninfo {
+    text-align: center;
+}
+
+div.logo {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    height: 64px;
+    text-align: center;
+    background: url('../img/icos-64.png') center no-repeat;
+}
+
+div.dataportal {
+    border: 1px dotted gray;
+    background-color: #dddddd;
+    padding: 2px;
+}
+
+h3 {
+    font-weight: bold;
+    margin-bottom: 0em;
+    font-size: 12px;
+}
+
+
