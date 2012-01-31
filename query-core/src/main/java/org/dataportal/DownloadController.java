@@ -78,7 +78,7 @@ public class DownloadController extends DataPortalController {
 	 * @param url the url to set
 	 */
 	public void setUrl(String url) {
-		this.url = url;
+		this.url = StringUtils.substringBeforeLast(url, SLASH);
 	}
 
 	/**

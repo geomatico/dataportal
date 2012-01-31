@@ -124,9 +124,12 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 
 		try {
 			logger.debug("UserName to download: " + user.getId()); //$NON-NLS-1$
+			
+			String url = req.getRequestURL().toString();
 
 			DownloadController download = new DownloadController(lang);
 			download.setUser(user);
+			download.setUrl(url);
 			String fileName = download.askgn2download(isRequestXML);
 			String id = download.getId();
 			logger.debug("FILE to download: " + fileName); //$NON-NLS-1$
