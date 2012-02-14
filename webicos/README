@@ -9,8 +9,8 @@ r2w webicos.ini -w
 
 # To package
 
+cd ..
 mkdir web
-mkdir web/en
 mkdir web/es
-cp -R en/output/* web/en
+cp -R en/output/* web/
 cp -R es/output/* web/es
