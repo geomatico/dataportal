@@ -1,0 +1,16 @@
+restindex
+    crumb: partners
+    format:rest
+    page-title: ICOS-Spain: Organización durante la fase preparatoria (2009-2012)
+    encoding: utf-8
+    output-encoding: None
+/restindex
+
+ICOS-Spain consiste en un consorcio cuyo objetivo principal es la implementación de una red básica de estaciones e instituciones que constituirá la base de la participación española en la infraestructura ICOS.
+
+La red básica española incluirá varias estaciones de cada uno de los componentes de la infraestructura de observación sistemática ICOS (Atmosférico, Ecosistemas terrestres y Oceánico). La implementación de las estaciones se realizará mediante la consolidación y la mejora de las infraestructuras existentes en España hasta alcanzar los estándares de las estaciones de observación sistemática ICOS, tanto en cuanto a la lista de variables medidas como a protocolos de medidas (instrumentación, calibración, operación, control de calidad).
+
+El consorcio ICOS-Spain pretende articular los elementos necesarios para la coordinación de los diferentes componentes e instituciones españolas que contribuyen a ICOS, incluyendo la promoción de actividades para la formación de jóvenes científicos y técnicos especializados.
+
+El consorcio ICOS-Spain elaborará una estrategia para la futura ampliación de la red básica de estaciones españolas, considerando tanto los criterios de idoneidad, que sean aprobados por ICOS, como los objetivos específicos de desarrollo de la red ICOS en España.
+

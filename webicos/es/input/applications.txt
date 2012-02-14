@@ -1,0 +1,15 @@
+restindex
+	crumb: partners
+	format:rest
+	page-title: Aplicaciones
+	encoding: utf-8
+	output-encoding: None
+/restindex
+
+La aplicación científica de mayor relevancia consiste en la cuantificación a nivel regional de los flujos de GEIs con un mapa diario de una resolución de 10 km. Esta cuantificación será posible gracias a la combinación de las observaciones (atmosféricas, oceánicas y de ecosistemas) realizadas por la red ICOS, utilizando modelos de transporte de alta resolución y observaciones de satélites. Esta aplicación permitirá supervisar, evaluar y orientar las estrategias de mitigación a nivel de los ecosistemas terrestres.
+
+Además, las observaciones proporcionadas por ICOS representarán un gran potencial de aplicaciones científicas de varios tipos, entre las que cabe destacar: la calibración, validación y desarrollo de varios tipos de modelos (biogeoquímicos SVAT-Soil Vegetation Atmosphere Transfer, de transporte atmosférico, de química de la atmósfera, de intercambios entre océanos y atmósfera, etc.), los estudios de las interacciones feedback entre ciclos biogeoquímicos y cambio climático, las investigaciones sobre los procesos que regulan los ciclos biogeoquímicos en la atmósfera,  los ecosistemas y los océanos, así como, la calibración y validación de productos de teledetección. ICOS permitirá obtener información contrastada sobre la capacidad de secuestro de carbono de los ecosistemas terrestres y de qué manera puede verse ésta perturbada por las anomalías climáticas.
+
+En el ámbito marino, la aplicación científica de ICOS cobra especial relevancia si se considera que los océanos juegan un papel fundamental en la regulación del clima terrestre y, por tanto, en el cambio global. Por una parte, la gran capacidad de absorber calor que posee el océano contribuye significativamente a mitigar el incremento global de temperatura. Por otra, los océanos limitan significativamente el aumento en los niveles atmosféricos de este gas. Sin embargo, la absorción de CO2 por parte de la superficie del océano no resulta benigna para el propio sistema oceánico.
+
+Entre los efectos derivados de esta captación, destaca el fenómeno de la acidificación oceánica, que afecta a la práctica totalidad de los equilibrios químicos con consecuencias drásticas sobre la vida marina y los ciclos biogeoquímicos a escala planetaria.

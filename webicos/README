@@ -1,0 +1,16 @@
+# To build the web page:
+
+sudo apt-get install rest2web
+cd en
+r2w webicos.ini -w
+
+cd ../es
+r2w webicos.ini -w
+
+# To package
+
+mkdir web
+mkdir web/en
+mkdir web/es
+cp -R en/output/* web/en
+cp -R es/output/* web/es

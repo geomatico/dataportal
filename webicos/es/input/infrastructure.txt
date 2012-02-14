@@ -1,0 +1,37 @@
+restindex
+	crumb: partners
+	format:rest
+	page-title: Infraestructura
+	encoding: utf-8
+	output-encoding: None
+/restindex
+
+El principal reto al que se enfrenta ICOS consiste en el diseño tecnológico de la red, lo que requiere diversos avances especializados para conseguir las características técnicas necesarias para un diseño adecuado, tanto de las instalaciones centrales como de las estaciones de medida.
+
+Estaciones de medida
+=====================
+
+Las estaciones de medida de ICOS comparten una serie de características esenciales: una alta estandarización de los métodos y del equipamiento de medida, la modularidad, el funcionamiento automático, el control local y remoto, la actualización tecnológica dinámica y los costes reducidos, entre otros. Los diferentes tipos de estaciones son:
+    
+- Estaciones atmosféricas (ICOS-AS): se dedicarán a la medición sistemática de concentraciones de CO2, CH4, N2O, CO, C, 222Rn, O2/N2, SF6, la estructura de la capa límite atmosférica y las condiciones meteorológicas básicas.
+
+- Estaciones de ecosistemas (ICOS-ES): realizarán medidas sistemáticas en continuo de flujos de calor sensible, H2O, CO2, CH4, N2O, y de condiciones ambientales. Además, llevarán a cabo la medición periódica de las características de los ecosistemas.
+
+- Estaciones marinas (ICOS-MS): llevarán a cabo la monitorización sistemática de la presión parcial de CO2, salinidad, temperatura del agua, pH, etc. Incluirán dos tipos distintos de estaciones: las estaciones fijas (boyas instrumentadas), que proporcionarán series de medidas temporales en un punto, y las estaciones VOS-line, que proporcionarán series espacio-temporales para una cobertura adecuada de la superficie de los océanos.
+
+Instalaciones centrales
+=======================
+
+Constarán de varias partes:
+
+- La oficina de coordinación: se dedicará a la organización del programa de recolección de datos y de la generación de productos de flujos rutinarios por los institutos de investigación participantes, la divulgación y la difusión de los productos de ICOS a través del Carbon Portal, que es un servidor que proporcionará un acceso libre a los datos y sus productos.
+
+- El Centro Temático Atmosférico (ICOS-ATC): desempeñará las siguientes funciones: apoyo técnico y recolección on line de datos de las estaciones atmosféricas, procesamiento y control de calidad de los datos, gestión de la base de datos, desarrollo y evaluación de la nueva instrumentación.
+
+- El Centro Temático de Ecosistemas (ICOS-ETC): se dedicará al apoyo técnico y recolección on line de datos de las estaciones de ecosistemas, procesamiento y control de calidad de los datos, gestión de la base de datos, estandarización de la información y los parámetros complementarios en ecosistemas, desarrollo y evaluación de la instrumentación y de nuevos métodos de medida.
+
+- El Centro Temático Oceánico (ICOS-OTC): apoyo técnico y recolección on line de datos de las estaciones marinas, procesamiento y control de calidad de los datos, gestión de la base de datos, desarrollo y evaluación de nueva instrumentación y nuevos métodos de medida.
+
+- Los laboratorios analíticos centrales: se trata del Laboratorio Central de Muestras de Aire (ICOS-CFL), el Laboratorio Central de Calibración y Estándares (ICOS-CAL) y el Laboratorio Central de Radiocarbono (ICOS-CRL),
+
+Por favor, selecciona “ICOS-EU” del menú lateral izquierdo para una detallada descripción del proyecto ICOS.

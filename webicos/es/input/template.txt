@@ -104,7 +104,7 @@
         print_details(default_section, item_wrapper = '%s', page_title = '')
     #>
 									<li><a href="http://www.icos-infrastructure.eu/" target="_blank">ICOS-EU</a></li>
-									<li><a href="../es/index.html">Español</a></li>
+									<li><a href="../en/index.html">English</a></li>
 								</ul> <!-- fin navlist (menu)-->
 
 <!--								<div  style="padding:5px;color:blue">

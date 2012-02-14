@@ -1,0 +1,79 @@
+restindex
+	crumb: partners
+	format:rest
+	page-title: Participación española
+	encoding: utf-8
+	output-encoding: None
+/restindex
+
+España ha expresado interés por participar en ICOS a través de distintas instituciones nacionales y universidades. 
+
+Dada la naturaleza de la infraestructura, la mayoría de las instituciones participantes tendrán responsabilidades similares, que consistirán en la instalación, la operación y el mantenimiento de las estaciones de la red de las cuales sean responsables.
+
+La Fundación CEAM (Centro de Estudios Ambientales del Mediterráneo) tiene la responsabilidad de la coordinación de la participación española en la fase preparatoria de ICOS, ya que participa como National Focal Point en el proyecto preparatorio ICOS-PP. Por otra parte, el CSIC, a través de distintos institutos, está implicado en la fase de preparación y de diseño del centro temático oceánico (ICOS-OTC).
+
+La participación española en la red de observación ICOS permitirá mejorar de forma muy notable la información disponible, tanto a nivel europeo como a nivel nacional, para el estudio de las interacciones entre el cambio climático y los ciclos biogeoquímicos de los principales GEIs.
+
+Instituciones Participantes
+==================================
+
+========================= ==========================================
+Fundación CEAM                  http://www.ceam.es/     
+UGR			   	http://www.ugr.es/ 
+EEZA-CSIC			http://www.eeza.csic.es/ 
+CIFU				http://www.uclm.es/ 
+IC3				http://www.ic3.cat/ 
+QUIMA-ULPGC			http://www.gi.ulpgc.es/quima/ 
+IIM-CSIC			http://www.iim.csic.es/ 
+ICMAN-CSIC			http://www.icman.csic.es/ 
+CIAI-AEMET			http://www.izana.org/ 
+UTM-CSIC			http://www.utm.csic.es/ 
+========================= ==========================================
+
+==================== ===================================================================================================================
+|logo_ceam| 		Fundación Centro de Estudios Ambientales del Mediterráneo, CEAM 
+
+|logo_csic|		Estación Experimental de Zonas Áridas (EZZA), CSIC
+
+			Instituto de Ciencias Marinas de Andalucía (ICMAN), CSIC
+
+			Instituto de Investigaciones Marinas (INM), CSIC 
+
+			Unidad de Tecnología Marina (UTM), CSIC
+
+|logo_aemet|		Centro de Investigación Atmosférica de Izaña (CIAI), AEMET
+
+|logo_ic3|		Institut Català de Ciències del Clima, IC3 
+
+|logo_uclm|		Universidad de Castilla la Mancha, UCLM
+
+|logo_ugr|		Universidad de Granada, UGR
+
+|logo_u_las_palmas|	Universidad de las Palmas de Gran Canaria, ULPGC
+==================== ===================================================================================================================
+
+
+ICOS-Spain: Organization during the preparatory phase (2009-2012)
+=================================================================
+
+ICOS-Spain is a partnership aiming the implementation of a basic network of stations and institutions that will be the basis for the Spanish participation in the ICOS infrastructure. The Spanish basic network will include several stations of each of the components of the systematic observation ICOS infrastructure (Atmospheric, Ecosystems and Ocean). The implementation of the stations will be aimed by the consolidation and the improvement of existing infrastructures in Spain until reaching the standards of the ICOS systematic observation stations, not only regarding the list of variables measured but also on the measurement protocols (instrumentation, calibration, operation, QA/QC). 
+ICOS-Spain partnership will articulate the necessary elements for the coordination of the different components and Spanish institutions that contribute to ICOS, including the promotion of training activities for scientific and technical young researchers. 
+ICOS-Spain partnership will elaborate a strategy for the future extension of the basic network of Spanish stations, taking into consideration, not only the suitability criteria (approved by ICOS), but also the specific objectives of development of an ICOS network in Spain. 
+
+
+
+.. |logo_ceam| image:: logo_ceam.png
+   :width: 75 px
+.. |logo_csic| image:: logo_csic.png
+   :width: 75 px
+.. |logo_aemet| image:: logo_aemet.png
+   :width: 75 px
+.. |logo_ic3| image:: logo_ic3.png
+   :width: 75 px
+.. |logo_uclm| image:: logo_uclm.png
+   :width: 75 px
+.. |logo_ugr| image:: logo_ugr.png
+   :width: 75 px
+.. |logo_u_las_palmas| image:: logo_u_las_palmas.png
+   :width: 75 px
+

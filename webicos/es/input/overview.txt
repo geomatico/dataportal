@@ -1,0 +1,16 @@
+restindex
+	crumb: partners
+	format:rest
+	page-title: Visión general del proyecto
+	encoding: utf-8
+	output-encoding: None
+	target: index.html
+/restindex
+
+Realizar las observaciones, a largo plazo, necesarias para comprender el estado actual y predecir el comportamiento futuro del ciclo global del carbono y las emisiones de gases de efecto invernadero.
+
+Observar y evaluar la efectividad de la fijación de carbono y/o las actividades de reducción de las emisiones de gases de efecto invernadero en los niveles de composición global atmosférica, incluyendo la atribución de fuentes y sumideros por región y por sector.
+
+El objetivo fundamental de ICOS es el establecimiento de una red de observación sistemática a largo plazo, diseñada alrededor de unas instalaciones centrales, constituida por estaciones de medidas de alta precisión dedicadas a la monitorización de los flujos de los GEIs de los ecosistemas terrestres y su concentración en la atmósfera, así como de los intercambios de CO2 entre la atmósfera y los océanos. Las observaciones proporcionadas permitirán a los investigadores conseguir una plena comprensión de los intercambios de los GEIs sobre el continente europeo y de sus causas.
+
+ICOS permitirá a Europa jugar un papel clave en el proceso global de las observaciones in situ de los GEIs, tanto en el procesamiento de datos y la producción de productos de flujos (estimaciones de emisiones y sumideros), como en el acceso a los datos para la calibración y la validación de productos de teledetección o de modelización, evaluaciones científicas y asimilación de información.

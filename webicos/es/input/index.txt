@@ -4,8 +4,8 @@ restindex
 	page-title: ICOS Spain
 	encoding: utf-8
 	output-encoding: utf-8
-	section-pages: ,overview,organization,infrastructure,outreach,links,contacts
-    file:  ../../resources/style.css
+	section-pages: ,overview,applications,infrastructure,participation,organization
+	file:  ../../resources/style.css
     file: ../../resources/cabecera.jpg
     file: ../../resources/geomatico.png
     file: ../../resources/lsce.gif
