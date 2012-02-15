@@ -1,6 +1,8 @@
-query-core/target
-query-core/.project
-query-core/.classpath
-query-core/.settings
-query-core/datanucleus.log
+target/
+.project
+.classpath
+.settings
+.metadata/
+.externalToolBuilders/
+datanucleus.log
 doc/_*
