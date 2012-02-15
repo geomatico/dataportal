@@ -101,14 +101,14 @@ span.submenu a.currentsubmenu#sub7aa { color: black; background-color: white; te
 span.submenu a.currentsubmenu#sub7bb { color: black; background-color: white; text-decoration: none; }
 span.submenu a.currentsubmenu#sub7cc { color: black; background-color: white; text-decoration: none; }
 
-#contentcontainer { width: 630px; padding-top: 0px; padding-left: 20px; padding-right: 5px; padding-bottom: 12px; border-left: 1px solid black; border-bottom: 1px solid black; vertical-align:top; }
+#contentcontainer { width: 630px; padding-top: 0px; padding-left: 20px; padding-right: 5px; padding-bottom: 12px; border-left: 1px solid #555555; border-bottom: 1px solid #555555; vertical-align:top; }
 /*#content { padding-left: 10px; font-size: 11px; font-family: Verdana, Arial, Helvetica, sans-serif; overflow: auto; padding-right: 18px; padding-bottom: 5px; }
 #content { padding-left: 10px; font-size: 11px; font-family: Verdana, Arial, Helvetica, sans-serif; overflow: auto; height: 400px; padding-right: 10px; padding-bottom: 5px; }*/
 /* #content { text-align:left;overflow: auto; height:476px;} */
 /* #content { text-align:left; height:550px; overflow: auto; padding-top: 0px;margin-top:0px;top:0px;} */
 .footer { font-size: 11px; font-family: Arial, Helvetica, sans-serif; background-color:#E83F1D; color: #eee; text-decoration: none; padding: 5px;  }
 .spacer { height: 10px; }
-.title { font-size: 16px; font-family: Arial, Helvetica, Geneva, sans-serif; font-weight: bold; color: black; padding-top: 5px; padding-bottom: 5px; padding-left: 20px; border-top: 1px solid black; border-left: 1px solid black;  }
+.title { font-size: 16px; font-family: Arial, Helvetica, Geneva, sans-serif; font-weight: bold; color: black; padding-top: 10px; padding-bottom: 5px; padding-left: 10px; border-top: 1px solid #555555; border-left: 1px solid #555555;  }
 .title1 { font-size: 12px; font-family: Arial, Helvetica, Geneva, sans-serif; font-weight: bold; color: black; padding-top: 10px; padding-bottom: 10px; padding-left: 20px;}
 .title2 { font-size: 12px; font-family: Arial, Helvetica, Geneva, sans-serif; font-weight: bold; color: black; padding-top: 10px; padding-bottom: 10px;}
 .subtitle{ display:none;font-size: 14px; font-family: Arial, Helvetica, Geneva, sans-serif; font-weight: normal;  }
@@ -143,16 +143,22 @@ PRE { font-family: monospace; }
 /A:hover { color: #660000; }*/
 FORM { margin: 0px 0px 0px 0px;}
 P, PRE { margin: 0px 0px 0px 0px;  }
+P, ul.simple li {
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    text-align: justify;
+}
 P, TD, UL, OL { font-size: 11px; }
 INPUT, TEXTAREA, SELECT { padding-left: 5px; font-size: 11px; }
 UL{ margin-left:5px; padding-left:20px;}
 
 
-				
+
 /******************/
 /* Headers, plain */
 /******************/
-H1 { font-size: 12px; color: #D90000;  }
+H1 { font-size: 18px; color: #D90000;  }
 H2 { font-size: 18px; color: #186900; }
 H3 { font-size: 16px; color: #10007B; }
 H4 { font-size: 14px; color: #8A0020; }
@@ -199,14 +205,15 @@ ol { margin-top: 0px; }
 /*LI { margin-top: 0px; margin-bottom: 0px; padding-top: 2px; }*/
 
 /* RTE / Table styling */
-TABLE.contenttable { 
-	border: 1px #333333 solid; 
+TABLE.contenttable, table.docutils { 
+	border: 1px solid white;
+	border-collapse: collapse;
 	margin: 10px 0px 10px 0px; 
 	width: 100%; 
 }
-TABLE.contenttable TR TD { padding: 0px 3px 0px 3px; }
-TABLE.contenttable TR TD P.bodytext { font-size: 10px; }
-TABLE.contenttable TR { background-color: #EDEBF1; }
+TABLE.contenttable TR TD, table.docutils tr td { padding: 0px 3px 0px 3px; border: 2px solid white; }
+TABLE.contenttable TR TD P.bodytext, table.docutils tr td p.bodytext { font-size: 10px; }
+TABLE.contenttable TR, table.docutils tr { background-color: #EDEBF1; }
 
 /* MODIF_ZP_20081201: tableau de compte-rendu utilise dans worksop ramces */
 .crTable{

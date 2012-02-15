@@ -6,7 +6,7 @@ restindex
 	output-encoding: utf-8
 	section-pages: ,overview,applications,infrastructure,participation,organization
 	file:  ../../resources/style.css
-    file: ../../resources/cabecera.jpg
+    file: ../../resources/cabecera2.jpg
     file: ../../resources/geomatico.png
     file: ../../resources/lsce.gif
     file: ../../resources/logo_UE_fp7.jpeg

@@ -1,64 +1,11 @@
 restindex
 	crumb: partners
 	format:rest
-	page-title: ICOS-Spain Organization
+	page-title: ICOS-Spain: Organization during the preparatory phase (2009-2012)
 	encoding: utf-8
 	output-encoding: None
 /restindex
 
-Spanish participation
-=====================
-
-Spain has shown interest in taking part in ICOS through several national institutions and universities.
-
-Given the nature of this infrastructure, the participating institutions will have similar responsibilities involving installation, operation and maintenance of the measurement station(s) they are responsible for.
-
-Foundation CEAM is in charge of coordinating Spain's participation during the ICOS preparatory phase as Spanish National Focal Point in the ICOS-PP preparatory project, while the CSIC, via several different institutes, is involved in the design and preparation of the ICOS Ocean Thematic Centre (ICOS-OTC).
-
-Spain's participation in the ICOS observation network will improve notably the available information, both at European and national level, for the study of interactions between climate change and the main GHG biogeochemical cycles.
-
-
-National Partners
-=================
-
-========================= ==========================================
-Fundación CEAM                  http://www.ceam.es/     
-UGR				http://www.ugr.es/ 
-EEZA-CSIC			http://www.eeza.csic.es/ 
-CIFU				http://www.uclm.es/ 
-IC3				http://www.ic3.cat/ 
-QUIMA-ULPGC			http://www.gi.ulpgc.es/quima/ 
-IIM-CSIC			http://www.iim.csic.es/ 
-ICMAN-CSIC			http://www.icman.csic.es/ 
-CIAI-AEMET			http://www.izana.org/ 
-UTM-CSIC			http://www.utm.csic.es/ 
-========================= ==========================================
-
-==================== ===================================================================================================================
-|logo_ceam| 		Fundación Centro de Estudios Ambientales del Mediterráneo, CEAM 
-
-|logo_csic|		Estación Experimental de Zonas Áridas (EZZA), CSIC
-
-			Instituto de Ciencias Marinas de Andalucía (ICMAN), CSIC
-
-			Instituto de Investigaciones Marinas (INM), CSIC 
-
-			Unidad de Tecnología Marina (UTM), CSIC
-
-|logo_aemet|		Centro de Investigación Atmosférica de Izaña (CIAI), AEMET
-
-|logo_ic3|		Institut Català de Ciències del Clima, IC3 
-
-|logo_uclm|		Universidad de Castilla la Mancha, UCLM
-
-|logo_ugr|		Universidad de Granada, UGR
-
-|logo_u_las_palmas|	Universidad de las Palmas de Gran Canaria, ULPGC
-==================== ===================================================================================================================
-
-
-ICOS-Spain: Organization during the preparatory phase (2009-2012)
-=================================================================
 
 ICOS-Spain is a partnership aiming the implementation of a basic network of stations and institutions that will be the basis for the Spanish participation in the ICOS infrastructure. The Spanish basic network will include several stations of each of the components of the systematic observation ICOS infrastructure (Atmospheric, Ecosystems and Ocean). The implementation of the stations will be aimed by the consolidation and the improvement of existing infrastructures in Spain until reaching the standards of the ICOS systematic observation stations, not only regarding the list of variables measured but also on the measurement protocols (instrumentation, calibration, operation, QA/QC). 
 ICOS-Spain partnership will articulate the necessary elements for the coordination of the different components and Spanish institutions that contribute to ICOS, including the promotion of training activities for scientific and technical young researchers. 

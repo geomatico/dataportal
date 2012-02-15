@@ -66,7 +66,7 @@
 			 SCRIPTfrom JAVASCRIPT editor: http://www.editeurjavascript.com */
 			go_visibility = new Array;
 // 			window.onload = goblink();
- 			 var timer=setInterval("blinkElement()", 1000);
+// 			 var timer=setInterval("blinkElement()", 1000);
 		
 		</script>	
 		<style type="text/css">
@@ -86,7 +86,7 @@
 			<tbody>
 				<tr>
 					<td colspan="2" id="logo" height="75">
-						<img src="cabecera.jpg" alt="Integrated Carbon Observation System" border="0" width="790" height="117">
+						<img src="cabecera2.jpg" alt="Integrated Carbon Observation System" border="0" width="790" height="117">
 					</td>
 				</tr>
 
@@ -116,9 +116,8 @@
 						<div style=""></div>
 					</td>
 					<td height="550" id="contentcontainer" valign='top'> 
-						<div id="content" style="text-align:left; height:550px; overflow: auto; padding-top: 0px;margin-top:0px;top:0px;">
+						<div id="content" style="text-align:left; overflow: auto; padding-top: 0px;margin-top:0px;top:0px;">
 
-	<p class="bodytext">&nbsp; </p>   
 	<p class="bodytext"><% body %></p>
 						</div>
 					</td>

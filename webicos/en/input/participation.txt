@@ -1,25 +1,30 @@
 restindex
 	crumb: partners
 	format:rest
-	page-title: Participación española
+	page-title: Spanish participation
 	encoding: utf-8
 	output-encoding: None
 /restindex
 
-España ha expresado interés por participar en ICOS a través de distintas instituciones nacionales y universidades. 
+Spanish participation
+=====================
 
-Dada la naturaleza de la infraestructura, la mayoría de las instituciones participantes tendrán responsabilidades similares, que consistirán en la instalación, la operación y el mantenimiento de las estaciones de la red de las cuales sean responsables.
+Spain has shown interest in taking part in ICOS through several national institutions and universities.
 
-La Fundación CEAM (Centro de Estudios Ambientales del Mediterráneo) tiene la responsabilidad de la coordinación de la participación española en la fase preparatoria de ICOS, ya que participa como National Focal Point en el proyecto preparatorio ICOS-PP. Por otra parte, el CSIC, a través de distintos institutos, está implicado en la fase de preparación y de diseño del centro temático oceánico (ICOS-OTC).
+Given the nature of this infrastructure, the participating institutions will have similar responsibilities involving installation, operation and maintenance of the measurement station(s) they are responsible for.
 
-La participación española en la red de observación ICOS permitirá mejorar de forma muy notable la información disponible, tanto a nivel europeo como a nivel nacional, para el estudio de las interacciones entre el cambio climático y los ciclos biogeoquímicos de los principales GEIs.
+Foundation CEAM is in charge of coordinating Spain's participation during the ICOS preparatory phase as Spanish National Focal Point in the ICOS-PP preparatory project, while the CSIC, via several different institutes, is involved in the design and preparation of the ICOS Ocean Thematic Centre (ICOS-OTC).
 
-Instituciones Participantes
-==================================
+Spain's participation in the ICOS observation network will improve notably the available information, both at European and national level, for the study of interactions between climate change and the main GHG biogeochemical cycles.
+
+
+National Partners
+=================
+
 
 ========================= ==========================================
 Fundación CEAM                  http://www.ceam.es/     
-UGR			   	http://www.ugr.es/ 
+UGR				http://www.ugr.es/ 
 EEZA-CSIC			http://www.eeza.csic.es/ 
 CIFU				http://www.uclm.es/ 
 IC3				http://www.ic3.cat/ 
@@ -29,6 +34,7 @@ ICMAN-CSIC			http://www.icman.csic.es/
 CIAI-AEMET			http://www.izana.org/ 
 UTM-CSIC			http://www.utm.csic.es/ 
 ========================= ==========================================
+
 
 ==================== ===================================================================================================================
 |logo_ceam| 		Fundación Centro de Estudios Ambientales del Mediterráneo, CEAM 
@@ -51,6 +57,7 @@ UTM-CSIC			http://www.utm.csic.es/
 
 |logo_u_las_palmas|	Universidad de las Palmas de Gran Canaria, ULPGC
 ==================== ===================================================================================================================
+
 
 .. |logo_ceam| image:: logo_ceam.png
    :width: 75 px
