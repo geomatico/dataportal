@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.dataportal.SystemSingleton;
 import org.dataportal.controllers.JPASearchController;
 import org.dataportal.controllers.JPAUserController;
 import org.dataportal.model.Search;
@@ -61,7 +62,8 @@ public class JPASearchControllerTest extends TestCase {
 	 */
 	public EntityManager getEntityManager() {
 		EntityManagerFactory factoria = Persistence
-				.createEntityManagerFactory("dataportal");
+				.createEntityManagerFactory(SystemSingleton
+						.getPersistenceUnit());
 		EntityManager manager = factoria.createEntityManager();
 		return manager;
 	}

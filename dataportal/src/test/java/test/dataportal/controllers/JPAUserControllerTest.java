@@ -12,6 +12,7 @@ import javax.persistence.Persistence;
 
 import junit.framework.TestCase;
 
+import org.dataportal.SystemSingleton;
 import org.dataportal.controllers.JPAUserController;
 import org.dataportal.model.User;
 
@@ -43,7 +44,8 @@ public class JPAUserControllerTest extends TestCase {
 	 */
 	public EntityManager getEntityManager() {
 		EntityManagerFactory factoria = Persistence
-				.createEntityManagerFactory("dataportal");
+				.createEntityManagerFactory(SystemSingleton
+						.getPersistenceUnit());
 		EntityManager manager = factoria.createEntityManager();
 		return manager;
 	}

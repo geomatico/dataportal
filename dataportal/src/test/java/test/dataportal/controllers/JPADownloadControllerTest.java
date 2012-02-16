@@ -24,7 +24,7 @@ public class JPADownloadControllerTest extends TestCase {
 	private JPADownloadController controladorDescarga = new JPADownloadController();
 	private JPAUserController controladorUsuario = new JPAUserController();
 	private User user = null;
-	static final String IDDOWNLOADTEST = "306689ec-a58a-4e47-9dc9-78c5dc5f72f5";
+	static final String IDDOWNLOADTEST = "00000000-0000-0000-0000-000000000000";
 
 	private void createUser() throws Exception {
 		user = controladorUsuario.existsInto(new User("user.test"));
@@ -34,6 +34,15 @@ public class JPADownloadControllerTest extends TestCase {
 			controladorUsuario.insert(user);
 		}
 	}
+	
+	public void testDownloads() throws Exception {
+		// This is a hack to force an ordered execution... shouldn't.
+		insert();
+		insertItems();
+		getDownloadItems();
+		delete();
+		
+	}
 
 	/**
 	 * Test method for
@@ -41,13 +50,20 @@ public class JPADownloadControllerTest extends TestCase {
 	 * .
 	 * @throws Exception 
 	 */
-	public void testInsert() throws Exception {
+	public void insert() throws Exception {
 		
 		createUser();
-
+		
 		Download download = new Download(IDDOWNLOADTEST,
 				"micho.garcia_20110509.zip",
 				Utils.extractDateSystemTimeStamp(), user);
+		
+		// Just remove it if it already exists.
+		Download downloadToRemove = controladorDescarga.exists(download);
+		if (downloadToRemove != null) {
+			controladorDescarga.delete(downloadToRemove);
+		}
+		
 		boolean insertado = controladorDescarga.insert(download);
 		try {
 			Thread.sleep(9000);
@@ -69,7 +85,7 @@ public class JPADownloadControllerTest extends TestCase {
 	 * .
 	 * @throws Exception 
 	 */
-	public void testInsertItems() throws Exception {
+	public void insertItems() throws Exception {
 
 		Download download = controladorDescarga.exists(new Download(IDDOWNLOADTEST));
 		ArrayList<DownloadItem> items = new ArrayList<DownloadItem>();
@@ -105,7 +121,7 @@ public class JPADownloadControllerTest extends TestCase {
 	 * .
 	 * @throws Exception
 	 */
-	public void testGetDownloadItems() throws Exception {
+	public void getDownloadItems() throws Exception {
 		Download download = controladorDescarga.exists(new Download(IDDOWNLOADTEST));
 		ArrayList<DownloadItem> items = controladorDescarga.getDownloadItems(download);
 		assertEquals(3, items.size());
@@ -117,7 +133,7 @@ public class JPADownloadControllerTest extends TestCase {
 	 * .
 	 * @throws Exception 
 	 */
-	public void testDelete() throws Exception {
+	public void delete() throws Exception {
 		Download download = new Download(IDDOWNLOADTEST);
 		Download downloadToRemove = controladorDescarga.exists(download);
 		boolean borrada = false;

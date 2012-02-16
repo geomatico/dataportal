@@ -72,17 +72,14 @@ public class QueryControllerTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testAsk2gnWithId() throws Exception {
-
-		String[] id = { "306689ec-a58a-4e47-9dc9-78c5dc5f72f5" };
-		params.put("id", id);
 		
 		JPADownloadControllerTest testDescarga = new JPADownloadControllerTest();
-		testDescarga.testInsert();
-		testDescarga.testInsertItems();
+		testDescarga.insert();
+		testDescarga.insertItems();
 
 		controlador.ask2gn(params);
 		
-		testDescarga.testDelete();
+		testDescarga.delete();
 	}
 	
 	/**

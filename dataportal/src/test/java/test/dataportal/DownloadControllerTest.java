@@ -41,11 +41,15 @@ public class DownloadControllerTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
+		boolean inserted = false, exists = false;
 		user = controladorUsuario.existsInto(new User("user.test"));
 		if (user == null) {
 			user = new User("user.test", "password.test");
 			user.setState(JPAUserController.ACTIVE);
-			controladorUsuario.insert(user);
+			inserted = controladorUsuario.insert(user);
+			exists = (controladorUsuario.existsInto(user) != null);
+			System.out.println(inserted);
+			System.out.println(exists);
 		}
 		tempDir = Config.get("temp.dir");
 	}
@@ -61,6 +65,7 @@ public class DownloadControllerTest extends TestCase {
 				"/testResponse2Client.xml");
 
 		DownloadController controlador = new DownloadController("es");
+		user = controladorUsuario.existsInto(user);
 		controlador.setUser(user);
 		controlador.setUrl("http://foo.com");
 		String filename = controlador.askgn2download(isRequestXML);
