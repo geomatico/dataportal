@@ -3,6 +3,6 @@ target/
 .classpath
 .settings
 .metadata/
-.externalToolBuilders/
 datanucleus.log
 doc/_*
+/Servers/
