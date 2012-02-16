@@ -23,10 +23,6 @@ import org.dataportal.model.DownloadItem;
  */
 public class JPADownloadController {
 
-	EntityManagerFactory entityFactory = Persistence
-			.createEntityManagerFactory(SystemSingleton
-					.getPersistenceUnit());
-
 	/**
 	 * 
 	 * Create an entitymanager
@@ -34,6 +30,9 @@ public class JPADownloadController {
 	 * @return EntityManager
 	 */
 	public EntityManager getEntityManager() {
+		EntityManagerFactory entityFactory = Persistence
+				.createEntityManagerFactory(SystemSingleton
+						.getPersistenceUnit());
 		return entityFactory.createEntityManager();
 	}
 

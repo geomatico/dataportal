@@ -17,10 +17,6 @@ import org.dataportal.model.Search;
  */
 public class JPASearchController {
 
-	EntityManagerFactory entityFactory = Persistence
-			.createEntityManagerFactory(SystemSingleton
-					.getPersistenceUnit());
-
 	/**
 	 * 
 	 * Create an entitymanager
@@ -28,6 +24,9 @@ public class JPASearchController {
 	 * @return EntityManager
 	 */
 	public EntityManager getEntityManager() {
+		EntityManagerFactory entityFactory = Persistence
+				.createEntityManagerFactory(SystemSingleton
+						.getPersistenceUnit());
 		return entityFactory.createEntityManager();
 	}
 

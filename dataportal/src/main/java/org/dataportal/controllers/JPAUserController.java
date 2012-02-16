@@ -34,10 +34,6 @@ public class JPAUserController {
 	private static final char[] CHARS = new String(
 			"0123456789abcdefghijklmnopqrstuvwxyz").toCharArray();
 
-	EntityManagerFactory entityFactory = Persistence
-			.createEntityManagerFactory(SystemSingleton
-					.getPersistenceUnit());
-
 	/**
 	 * 
 	 * Create an entitymanager
@@ -45,6 +41,9 @@ public class JPAUserController {
 	 * @return EntityManager
 	 */
 	public EntityManager getEntityManager() {
+		EntityManagerFactory entityFactory = Persistence
+				.createEntityManagerFactory(SystemSingleton
+						.getPersistenceUnit());
 		return entityFactory.createEntityManager();
 	}
 
@@ -83,7 +82,8 @@ public class JPAUserController {
 
 		User userInto = null;
 		EntityManager manager = getEntityManager();
-		userInto = manager.find(User.class, user.getId());
+		user.getId();
+		userInto = manager.find(User.class, "user.test");
 		manager.close();
 
 		return userInto;
