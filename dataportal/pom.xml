@@ -150,6 +150,11 @@
 			<version>2.4</version>
 			<classifier>jdk15</classifier>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>juli</artifactId>
+			<version>6.0.35</version>
+		</dependency>
 
 		<!-- Datanucleus dependencies -->
 		<dependency>
