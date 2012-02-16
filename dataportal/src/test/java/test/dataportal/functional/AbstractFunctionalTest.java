@@ -3,6 +3,7 @@ package test.dataportal.functional;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Map;
 
 import javax.mail.MessagingException;
@@ -10,6 +11,13 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
@@ -22,6 +30,9 @@ import org.dataportal.datasources.Mail;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public abstract class AbstractFunctionalTest extends TestCase {
@@ -82,6 +93,28 @@ public abstract class AbstractFunctionalTest extends TestCase {
 		XPath xpath = pathFactory.newXPath();
 		XPathExpression expr = xpath.compile(xpathExpression);
 		Object result = expr.evaluate(doc, nodeType);
+		return result;
+	}
+
+	protected String nodeList2String(NodeList down1, String rootNodeName)
+			throws ParserConfigurationException,
+			TransformerConfigurationException,
+			TransformerFactoryConfigurationError, TransformerException {
+		Document newXmlDocument = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder().newDocument();
+		Element root = newXmlDocument.createElement(rootNodeName);
+		newXmlDocument.appendChild(root);
+		for (int i = 0; i < down1.getLength(); i++) {
+			Node node = down1.item(i);
+			Node copyNode = newXmlDocument.importNode(node, true);
+			root.appendChild(copyNode);
+		}
+
+		StringWriter sw = new StringWriter();
+		Transformer serializer = TransformerFactory.newInstance()
+				.newTransformer();
+		serializer.transform(new DOMSource(root), new StreamResult(sw));
+		String result = sw.toString();
 		return result;
 	}
 

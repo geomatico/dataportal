@@ -16,6 +16,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.io.IOUtils;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class DownloadTest extends AbstractFunctionalTest {
@@ -27,10 +28,29 @@ public class DownloadTest extends AbstractFunctionalTest {
 		assertTrue(services.register(userName, password));
 		assertTrue(services.activate(userName));
 
-		DownloadRunnable t1 = new DownloadRunnable(userName, password,
-				"download-post.xml", "29HE20101129_posicion.nc");
-		DownloadRunnable t2 = new DownloadRunnable(userName, password,
-				"download-post2.xml", "ws_0.nc");
+		String START = "0";
+		String ORDER_FIELD = "title";
+		String ORDER_DIRECTION = "ASC";
+		String LANG = "es";
+		String LIMIT = "4";
+		String ret = services.query(LANG, "", "", "", "", "", START, LIMIT,
+				ORDER_FIELD, ORDER_DIRECTION);
+		NodeList down1 = (NodeList) evaluateXPath(ret,
+				"/response/item[position() <= 3]", XPathConstants.NODESET);
+		String query1 = nodeList2String(down1, "response");
+		String checkFile1 = (String) evaluateXPath(ret,
+				"/response/item[1]/title", XPathConstants.STRING);
+		checkFile1 = checkFile1.substring(checkFile1.lastIndexOf('/') + 1);
+		NodeList down2 = (NodeList) evaluateXPath(ret,
+				"/response/item[position() >= 3]", XPathConstants.NODESET);
+		String query2 = nodeList2String(down2, "response");
+		String checkFile2 = (String) evaluateXPath(ret,
+				"/response/item[4]/title", XPathConstants.STRING);
+		checkFile2 = checkFile2.substring(checkFile1.lastIndexOf('/') + 1);
+		DownloadRunnable t1 = new DownloadRunnable(userName, password, query1,
+				checkFile1);
+		DownloadRunnable t2 = new DownloadRunnable(userName, password, query2,
+				checkFile2);
 		t1.start();
 		t2.start();
 
@@ -44,14 +64,14 @@ public class DownloadTest extends AbstractFunctionalTest {
 
 	private final class DownloadRunnable extends Thread {
 		private String error;
-		private String downloadResource;
+		private String downloadQuery;
 		private String fileCheck;
 		private String userName;
 		private String password;
 
 		public DownloadRunnable(String userName, String password,
-				String downloadResource, String fileCheck) {
-			this.downloadResource = downloadResource;
+				String downloadQuery, String fileCheck) {
+			this.downloadQuery = downloadQuery;
 			this.fileCheck = fileCheck;
 			this.error = null;
 			this.userName = userName;
@@ -61,20 +81,17 @@ public class DownloadTest extends AbstractFunctionalTest {
 		@Override
 		public void run() {
 			try {
-				download(downloadResource, fileCheck);
+				download(downloadQuery, fileCheck);
 			} catch (Exception e) {
 				error = e.getMessage();
 				e.printStackTrace();
 			}
 		}
 
-		private void download(String downloadResource, String fileCheck)
-				throws IOException, HttpException,
-				ParserConfigurationException, SAXException,
+		private void download(String xml, String fileCheck) throws IOException,
+				HttpException, ParserConfigurationException, SAXException,
 				XPathExpressionException, Exception, FileNotFoundException,
 				ZipException {
-			String xml = new String(IOUtils.toByteArray(this.getClass()
-					.getResourceAsStream(downloadResource)));
 			Services services = new Services();
 			services.login(userName, password);
 			String ret = services.download(xml);

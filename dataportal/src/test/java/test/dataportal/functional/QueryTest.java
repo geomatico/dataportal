@@ -11,7 +11,7 @@ import org.xml.sax.SAXException;
 public class QueryTest extends AbstractFunctionalTest {
 
 	private static final String LIMIT = "9999";
-	private static final String START = "1";
+	private static final String START = "0";
 	private static final String ORDER_FIELD = "title";
 	private static final String ORDER_DIRECTION = "ASC";
 	private static final String LANG = "es";
@@ -63,7 +63,8 @@ public class QueryTest extends AbstractFunctionalTest {
 	}
 
 	public void testFilterVariable() throws Exception {
-		String ret = services.query(LANG, "", "", "", "depth", "", START,
+		String ret = services.query(LANG, "", "", "", "sea_water_sigmat", "",
+				START,
 				LIMIT, ORDER_FIELD, ORDER_DIRECTION);
 		int count = getItemCount(ret).intValue();
 		assertTrue(count > 0);
