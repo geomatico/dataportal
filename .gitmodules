@@ -1,3 +1,3 @@
-[submodule "query-core/src/main/webapp/js/GeoExt"]
-	path = query-core/src/main/webapp/js/GeoExt
+[submodule "dataportal/src/main/webapp/js/GeoExt"]
+	path = dataportal/src/main/webapp/js/GeoExt
 	url = git://github.com/geomatico/geoext.git
