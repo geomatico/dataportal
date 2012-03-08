@@ -149,6 +149,7 @@ public class DownloadServlet extends HttpServlet implements DataportalCodes {
 				error.setCode(RUNTIMEERROR);				
 			}
 			error.setMessage(e.getMessage());
+			e.printStackTrace();
 			writer2Client.write(error.getErrorMessage());
 		} finally {
 			writer2Client.flush();

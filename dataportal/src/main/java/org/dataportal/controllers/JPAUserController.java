@@ -82,8 +82,7 @@ public class JPAUserController {
 
 		User userInto = null;
 		EntityManager manager = getEntityManager();
-		user.getId();
-		userInto = manager.find(User.class, "user.test");
+		userInto = manager.find(User.class, user.getId());
 		manager.close();
 
 		return userInto;
