@@ -25,6 +25,8 @@ import co.geomati.netcdf.ConverterException;
 public abstract class MainUTMVariable implements
 		UTMVariable {
 
+	private static final String URL_VOCABULARY_XML = "http://ciclope.cmima.csic.es:8080/dataportal/xml/vocabulary.xml";
+	
 	private String standardName;
 	private String name;
 	private String longName;
@@ -45,7 +47,7 @@ public abstract class MainUTMVariable implements
 		String longName;
 		String units;
 		URL vocabularyURL = new URL(
-				"http://ciclope.cmima.csic.es:8080/dataportal/xml/vocabulario.xml");
+				URL_VOCABULARY_XML);
 		InputStream vocStream = vocabularyURL.openStream();
 		String vocabulary = IOUtils.toString(vocStream);
 		try {

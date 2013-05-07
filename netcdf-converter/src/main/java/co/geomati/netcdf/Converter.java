@@ -36,7 +36,7 @@ import co.geomati.netcdf.dataset.Trajectory;
 
 public class Converter {
 
-	private static final String VOCABULARY_URL = "http://ciclope.cmima.csic.es:8080/dataportal/xml/vocabulario.xml";
+	private static final String VOCABULARY_URL = "http://ciclope.cmima.csic.es:8080/dataportal/xml/vocabulary.xml";
 	private static final ConverterException WRONG_VARIABLE_IMPLEMENTATION = new ConverterException(
 			"Variables must " + "implement "
 					+ DatasetIntVariable.class.getName() + " or "
