@@ -4,7 +4,7 @@
 	<groupId>cmima.icos</groupId>
 	<artifactId>dataportal</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<name>ICOS Carbon Data Portal</name>
 	<url>http://www.icos-spain.es</url>
 	<organization>
@@ -231,14 +231,17 @@
 					</webResources>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>tomcat-maven-plugin</artifactId>
-				<configuration>
-					<server>local_tomcat</server>
-					<url>http://localhost:8080/manager</url>
-				</configuration>
-			</plugin>
+			  <plugin>
+  				  <groupId>org.apache.tomcat.maven</groupId>
+				    <artifactId>tomcat6-maven-plugin</artifactId>
+				    <version>2.1</version>
+				    <configuration>
+				      	<path>/dataportal</path>
+				    </configuration>
+				    <!-- For any extra dependencies needed when running embedded Tomcat (not WAR dependencies) add them below -->
+				    <dependencies>
+				    </dependencies>
+  			</plugin>
 			<plugin>
 				<groupId>org.datanucleus</groupId>
 				<artifactId>maven-datanucleus-plugin</artifactId>
