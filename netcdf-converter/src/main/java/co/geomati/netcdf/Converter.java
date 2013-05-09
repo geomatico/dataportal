@@ -1,3 +1,6 @@
+/**
+ * @author fergonco, Micho Garcia
+ */
 package co.geomati.netcdf;
 
 import java.awt.geom.Point2D;
@@ -9,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.UUID;
 
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -36,7 +38,6 @@ import co.geomati.netcdf.dataset.Trajectory;
 
 public class Converter {
 
-	private static final String VOCABULARY_URL = "http://ciclope.cmima.csic.es:8080/dataportal/xml/vocabulary.xml";
 	private static final ConverterException WRONG_VARIABLE_IMPLEMENTATION = new ConverterException(
 			"Variables must " + "implement "
 					+ DatasetIntVariable.class.getName() + " or "
@@ -49,6 +50,12 @@ public class Converter {
 
 	static {
 		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT0"));
+	}
+	
+	static NCGlobalAttributes globalAttributes = null;
+
+	public static void setGlobalAttributes(NCGlobalAttributes globalAttributes) {
+		Converter.globalAttributes = globalAttributes;
 	}
 
 	public static void convert(DatasetConversion conversion) {
@@ -86,16 +93,10 @@ public class Converter {
 
 		/*
 		 * Global metadata
-		 */
-		nc.addGlobalAttribute("id", UUID.randomUUID().toString());
-		nc.addGlobalAttribute("naming_authority", "UUID");
-		nc.addGlobalAttribute("standard_name_vocabulary", VOCABULARY_URL);
-		nc.addGlobalAttribute("icos_domain", dataset.getIcosDomain().toString());
-		nc.addGlobalAttribute("conventions", "CF-1.5");
-		nc.addGlobalAttribute("Metadata_Conventions",
-				"Unidata Dataset Discovery v1.0");
-		nc.addGlobalAttribute("institution", dataset.getInstitution().getName());
-		nc.addGlobalAttribute("creator_url", dataset.getInstitution().getUrl());
+		 */	
+		for (Attribute globalAttribute: globalAttributes) {
+			nc.addGlobalAttribute(globalAttribute);
+		}
 
 		/*
 		 * Add main variable
