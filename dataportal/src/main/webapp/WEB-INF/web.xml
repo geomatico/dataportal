@@ -52,12 +52,20 @@
         <servlet-name>ReportServlet</servlet-name>
         <url-pattern>/report</url-pattern>
     </servlet-mapping>
-        <servlet>
+    <servlet>
         <servlet-name>ProxyServlet</servlet-name>
         <servlet-class>org.dataportal.utils.ProxyServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ProxyServlet</servlet-name>
         <url-pattern>/proxy</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ConverterServlet</servlet-name>
+        <servlet-class>org.dataportal.ConverterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ConverterServlet</servlet-name>
+        <url-pattern>/converter</url-pattern>
     </servlet-mapping>
 </web-app>
