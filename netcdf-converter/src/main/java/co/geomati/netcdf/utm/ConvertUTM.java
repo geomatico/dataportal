@@ -11,6 +11,7 @@ import java.util.List;
 import co.geomati.netcdf.Converter;
 import co.geomati.netcdf.ConverterException;
 import co.geomati.netcdf.DatasetConversion;
+import co.geomati.netcdf.IConverter;
 import co.geomati.netcdf.TimeUnit;
 import co.geomati.netcdf.dataset.Dataset;
 
@@ -19,18 +20,18 @@ import co.geomati.netcdf.dataset.Dataset;
  * Converts the data from the utm.
  * </p>
  * 
- * @author fergonco
+ * @author fergonco, Micho Garcia
  * 
  */
-public class ConvertUTM {
-	public static void main(String[] args) throws IOException,
+public class ConvertUTM implements IConverter{
+	
+	@Override
+	public void doConversion(String[] files, String path) throws IOException,
 			ConverterException {
 
-		String[] files = new String[] { "29SG20110906_meteo",
-				"29SG20110906_termosal" };
 		for (final String base : files) {
 
-			File file = new File("../../data/utm/" + base + ".csv");
+			File file = new File(path + File.separator + base + ".csv");
 
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String separator = "\\Q,\\E";
@@ -63,8 +64,10 @@ public class ConvertUTM {
 			}
 
 			if (tempTimeVariable == null) {
+				reader.close();
 				throw new RuntimeException("No time variable found");
 			} else if (latitudeVariable == null || longitudeVariable == null) {
+				reader.close();
 				throw new RuntimeException("No position variables found");
 			}
 			final UTMTimeVariable timeVariable = tempTimeVariable;
@@ -77,6 +80,7 @@ public class ConvertUTM {
 					variable.addSample(values[i]);
 				}
 			}
+			reader.close();
 
 			Converter.convert(new DatasetConversion() {
 

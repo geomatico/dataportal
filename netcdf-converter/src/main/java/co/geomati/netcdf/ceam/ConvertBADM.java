@@ -1,8 +1,8 @@
 package co.geomati.netcdf.ceam;
 
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,31 +18,25 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import co.geomati.netcdf.Converter;
 import co.geomati.netcdf.ConverterException;
+import co.geomati.netcdf.IConverter;
 
 /**
  * Convert BADM files. Unmaintained after refactoring since BADM files were not
  * required (and quite difficult)
  * 
- * @author fergonco
+ * @author fergonco, Micho Garcia
  */
-public class ConvertBADM {
+public class ConvertBADM implements IConverter{
 	private static final int WAITING_START = 1;
 	private static final int VARIABLE_VALUES = 2;
 
-	public static void main(String[] args) throws FileNotFoundException,
-			IOException, ConverterException {
-		convertBADM();
-	}
+	@Override
+	public void doConversion(String[] files, String path) throws IOException, ConverterException {
 
-	private static void convertBADM() throws IOException,
-			FileNotFoundException, ConverterException {
-		String[] files = new String[] { "BADM_ES-LMa_2005", "BADM_ES-LMa_2006",
-				"BADM_ES-LMa_2007", "BADM_ES-LMa_2008", "BADM_ES-LMa_2009",
-				"BADM_ES-LMa_2010" };
 		for (String fileName : files) {
 			final ArrayList<VariableGroup> groups = new ArrayList<VariableGroup>();
 			Workbook wb = new HSSFWorkbook(new FileInputStream(
-					"../../data/ceam/" + fileName + ".xls"));
+					path + File.separator + fileName + ".xls"));
 			final Point2D position = getPosition(wb);
 			Sheet biodata = wb.getSheet("BioData");
 			Iterator<Row> rowIterator = biodata.rowIterator();

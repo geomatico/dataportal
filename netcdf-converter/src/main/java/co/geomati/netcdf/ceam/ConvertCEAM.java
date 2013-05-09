@@ -1,7 +1,7 @@
 package co.geomati.netcdf.ceam;
 
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,21 +22,19 @@ import org.apache.poi.ss.usermodel.Workbook;
 import co.geomati.netcdf.Converter;
 import co.geomati.netcdf.ConverterException;
 import co.geomati.netcdf.DatasetConversion;
+import co.geomati.netcdf.IConverter;
 import co.geomati.netcdf.dataset.Dataset;
 
-public class ConvertCEAM {
+public class ConvertCEAM implements IConverter {
+	
 	private static Properties ceamVocabulary;
 
-	public static void main(String[] args) throws FileNotFoundException,
-			IOException, ConverterException {
-		convertTemporalSeries();
-	}
+	@Override
+	public void doConversion(String[] files, String path) throws IOException, ConverterException {
 
-	private static void convertTemporalSeries() throws IOException {
-		String[] files = new String[] { "ES-LMa_FLX_2010_01_12_newformat" };
 		for (final String fileName : files) {
 			Workbook wb = new HSSFWorkbook(new FileInputStream(
-					"../../data/ceam/" + fileName + ".xls"));
+					path + File.separator + fileName + ".xls"));
 			Sheet data = wb.getSheetAt(0);
 			Iterator<Row> rowIterator = data.rowIterator();
 
@@ -117,7 +115,7 @@ public class ConvertCEAM {
 		}
 	}
 
-	private static String getVarName(String cellValue) {
+	private String getVarName(String cellValue) {
 		Pattern p = Pattern.compile("(.*)_\\d_\\d_\\d");
 		Matcher matcher = p.matcher(cellValue);
 		if (matcher.find()) {
@@ -127,15 +125,15 @@ public class ConvertCEAM {
 		}
 	}
 
-	private static String getUnits(String name) throws IOException {
+	private String getUnits(String name) throws IOException {
 		return getCEAMVocabulary().getProperty(name + "_UNITS");
 	}
 
-	private static String getLongName(String name) throws IOException {
+	private String getLongName(String name) throws IOException {
 		return getCEAMVocabulary().getProperty(name);
 	}
 
-	private static Properties getCEAMVocabulary() throws IOException {
+	private Properties getCEAMVocabulary() throws IOException {
 		if (ceamVocabulary == null) {
 			ceamVocabulary = new Properties();
 			ceamVocabulary.load(ConvertCEAM.class

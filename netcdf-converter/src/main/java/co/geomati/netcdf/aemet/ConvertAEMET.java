@@ -22,6 +22,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import co.geomati.netcdf.Converter;
 import co.geomati.netcdf.ConverterException;
 import co.geomati.netcdf.DatasetConversion;
+import co.geomati.netcdf.IConverter;
 import co.geomati.netcdf.TimeUnit;
 import co.geomati.netcdf.dataset.Dataset;
 
@@ -34,10 +35,10 @@ import co.geomati.netcdf.dataset.Dataset;
  * vocabulary
  * </p>
  * 
- * @author fergonco
+ * @author fergonco, Micho Garcia
  * 
  */
-public class ConvertAEMET {
+public class ConvertAEMET implements IConverter {
 
 	private static final String RELATIVE_HUMIDITY = "rh";
 	private static final String ATMOSPHERIC_TEMPERATURE = "at";
@@ -45,9 +46,9 @@ public class ConvertAEMET {
 	private static final String WIND_DIRECTION = "wd";
 	private static Properties vocabulary;
 
-	public static void main(String[] args) throws ConverterException {
-		String[] files = new String[] { "izoco2hour_10_newformat",
-				"izoco2daily_night_newformat", "izoco2monthly_night_newformat" };
+	@Override
+	public void doConversion(String[] files, String path) throws ConverterException, IOException {
+
 		String[] meanDescriptions = new String[] { "hourly means",
 				"daily night means (20:00-08:00)", "monthly means" };
 		for (int i = 0; i < meanDescriptions.length; i++) {
@@ -56,7 +57,7 @@ public class ConvertAEMET {
 			ByteArrayOutputStream os;
 			try {
 				BufferedInputStream is = new BufferedInputStream(
-						new FileInputStream(new File("../../data/aemet/"
+						new FileInputStream(new File(path + File.separator
 								+ fileName + ".txt")));
 				os = new ByteArrayOutputStream();
 				IOUtils.copy(is, os);
@@ -196,14 +197,11 @@ public class ConvertAEMET {
 								"Cannot access aemet vocabulary", e);
 					}
 
-					List<Double> mainVarData = ConvertAEMET
-							.<Double> getVariableData(varName, fields, data);
+					List<Double> mainVarData = getVariableData(varName, fields, data);
 
 					if (index == 0) {
-						List<Integer> ndData = ConvertAEMET
-								.<Integer> getVariableData("nd", fields, data);
-						List<Double> sdData = ConvertAEMET
-								.<Double> getVariableData("sd", fields, data);
+						List<Integer> ndData = getVariableData("nd", fields, data);
+						List<Double> sdData = getVariableData("sd", fields, data);
 						return new AEMETDataset(Collections.singletonList(pos),
 								variableUnit, longName, varName,
 								meanDescription, mainVarData, ndData, sdData,
@@ -235,11 +233,11 @@ public class ConvertAEMET {
 		}
 	}
 
-	private static String getVariableName(String input, String suffix) {
+	private String getVariableName(String input, String suffix) {
 		return input.toLowerCase().trim();
 	}
 
-	private static <T> List<T> getVariableData(String variableName,
+	private <T> List<T> getVariableData(String variableName,
 			String[] fields, ArrayList<?>[] data) throws ConverterException {
 		for (int i = 0; i < fields.length; i++) {
 			if (fields[i].startsWith(variableName)) {
@@ -252,7 +250,7 @@ public class ConvertAEMET {
 		throw new ConverterException("Cannot find CO2");
 	}
 
-	private static String getLongName(String variableName) throws IOException {
+	private String getLongName(String variableName) throws IOException {
 		if (vocabulary == null) {
 			vocabulary = new Properties();
 			vocabulary.load(ConvertAEMET.class
@@ -262,7 +260,7 @@ public class ConvertAEMET {
 		return vocabulary.getProperty(variableName);
 	}
 
-	private static Point2D getPosition(String lat, String lon)
+	private Point2D getPosition(String lat, String lon)
 			throws ConverterException {
 		double latitude = degreesToDouble(lat);
 		double longitude = degreesToDouble(lon);
@@ -270,7 +268,7 @@ public class ConvertAEMET {
 		return new Point2D.Double(longitude, latitude);
 	}
 
-	private static double degreesToDouble(String latlon)
+	private double degreesToDouble(String latlon)
 			throws ConverterException {
 		latlon = latlon.trim();
 		char northingWesting = latlon.charAt(latlon.length() - 1);
@@ -291,11 +289,11 @@ public class ConvertAEMET {
 		}
 	}
 
-	private static String getMatch(String content, String regexp) {
+	private String getMatch(String content, String regexp) {
 		return getMatches(content, regexp)[0];
 	}
 
-	private static String[] getMatches(String content, String regexp) {
+	private String[] getMatches(String content, String regexp) {
 		Pattern p = Pattern.compile(regexp);
 		Matcher matcher = p.matcher(content);
 		if (matcher.find()) {
