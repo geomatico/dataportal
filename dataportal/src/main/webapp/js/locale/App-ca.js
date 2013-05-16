@@ -14,6 +14,7 @@ GeoExt.Lang.add("ca", {
         homeCreateUser: "Nou usuari",
         homeLogout: "Surt",
         homeUpdateUser: "Canvia la paraula de pas",
+        homeUploadData: "Pujar arxius",
         searchButtonText: "Cerca >>",
         showButtonText: "Mostra dades >>",
         aboutButtonTooltip: "Quant a...",

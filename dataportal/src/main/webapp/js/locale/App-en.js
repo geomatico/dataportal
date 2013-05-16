@@ -14,6 +14,7 @@ GeoExt.Lang.add("en", {
         homeCreateUser: "Sign Up",
         homeLogout: "Logout",
         homeUpdateUser: "Change Password",
+        homeUploadData: "Upload Files",
         searchButtonText: "Search >>",
         showButtonText: "Show Dataset >>",
         aboutButtonTooltip: "About",
