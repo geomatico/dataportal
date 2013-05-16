@@ -33,6 +33,9 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
+		resp.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
+		resp.setContentType("text/json"); //$NON-NLS-1$
+		PrintWriter out = resp.getWriter();
 	}
 
 	

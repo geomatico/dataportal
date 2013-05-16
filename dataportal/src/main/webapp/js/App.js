@@ -12,6 +12,7 @@ Ext.define('App', {
     homeCreateUser: "Sign Up",
     homeLogout: "Logout",
     homeUpdateUser: "Change Password",
+    uploadDataText: "Upload Files",
     showButtonText: "Show Dataset >>",
     searchButtonText: "Search >>",
     aboutButtonTooltip: "About",
@@ -24,6 +25,12 @@ Ext.define('App', {
     resultGrid: null,
     downloadPanel: null,
     user: null,
+    
+    /**
+     * Property: object with the upload fields gets from server
+     * {Object}  
+     */
+    uploadFieldsForm: null,
     
     layout: 'border',
     padding: 0,
@@ -182,6 +189,32 @@ Ext.define('App', {
         }];
         
         this.callParent(arguments);
+        
+        Ext.get('uploadFile').on(
+        		'click', 
+        		this.showUploadForm, 
+        		this
+        );
+    },
+    
+    /**
+     * 
+     */
+    showUploadForm: function(evt) {    	
+    	if (this.uploadFieldsForm == null) {
+    		Ext.Ajax.request({
+    			url: 'converter',
+    			success: function(response, request) {
+    				
+    			},
+    			failure: function(response, request) {
+    				
+    			},
+    			timeout: 10000
+    		})
+    	} else {
+    		
+    	}
     },
 
     doQuery: function() {
@@ -217,6 +250,7 @@ Ext.define('App', {
         Ext.get("createUser").update(this.homeCreateUser);
         Ext.get("logout").update(this.homeLogout);
         Ext.get("updateUser").update(this.homeUpdateUser);
+        Ext.get("uploadFile").update(this.homeUploadData);
     }
     
 });
