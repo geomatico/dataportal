@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<converters>
+	<converter name='ConvertUTM'>
+		<institution name='UTM'>
+			<realname>Unidad de Tecnología Marina (UTM), CSIC</realname>
+			<url>http://www.utm.csic.es/</url>
+		</institution>
+	</converter>
+	<converter name='ConvertAEMET'>
+		<institution name='AEMET'>
+			<realname>Centro de Investigación Atmosférica de Izaña, AEMET</realname>
+			<url>http://www.izana.org/</url>
+		</institution>
+	</converter>
+	<converter name='ConvertBADM'>
+		<institution name='CEAM'>
+			<realname>Centro de Estudios Ambientales del Mediterráneo (CEAM)</realname>
+			<url>http://www.ceam.es/</url>
+		</institution>
+	</converter>
+	<converter name='ConvertCEAM'>
+		<institution name='CEAM'>
+			<realname>Centro de Estudios Ambientales del Mediterráneo (CEAM)</realname>
+			<url>http://www.ceam.es/</url>
+		</institution>
+	</converter>			
+</converters>
