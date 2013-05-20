@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<globalmetadata>
+	<globalattribute>
+		<CFname>id</CFname>
+		<formname>ID</formname>
+		<defaultvalue></defaultvalue>
+	</globalattribute>
+	<globalattribute>
+		<CFname>naming_authority</CFname>
+		<formname>Naming Authority</formname>
+		<defaultvalue>UUID</defaultvalue>
+	</globalattribute>
+	<globalattribute>
+		<CFname>standard_name_vocabulary</CFname>
+		<formname>Standard Name Vocabulary</formname>
+		<defaultvalue>http://ciclope.cmima.csic.es:8080/dataportal/xml/vocabulary.xml</defaultvalue>
+	</globalattribute>
+	<globalattribute>
+		<CFname>icos_domain</CFname>
+		<formname>ICOS Domain</formname>
+		<defaultvalue></defaultvalue>
+	</globalattribute>
+	<globalattribute>
+		<CFname>conventions</CFname>
+		<formname>Conventions</formname>
+		<defaultvalue>CF-1.5</defaultvalue>
+	</globalattribute>
+	<globalattribute>
+		<CFname>Metadata_Conventions</CFname>
+		<formname>Metadata Conventions</formname>
+		<defaultvalue>Unidata Dataset Discovery v1.0</defaultvalue>
+	</globalattribute>
+	<globalattribute>
+		<CFname>institution</CFname>
+		<formname>Intitution</formname>
+		<defaultvalue></defaultvalue>
+	</globalattribute>
+	<globalattribute>
+		<CFname>creator_url</CFname>
+		<formname>Creator URL</formname>
+		<defaultvalue></defaultvalue>
+	</globalattribute>
+</globalmetadata>
