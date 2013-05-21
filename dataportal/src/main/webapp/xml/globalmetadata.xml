@@ -32,7 +32,7 @@
 	</globalattribute>
 	<globalattribute>
 		<CFname>institution</CFname>
-		<formname>Intitution</formname>
+		<formname>Institution</formname>
 		<defaultvalue></defaultvalue>
 	</globalattribute>
 	<globalattribute>

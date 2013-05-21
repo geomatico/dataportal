@@ -16,19 +16,15 @@ Ext.define('converter.Form', {
 	height : 400,
 	getInstitutionButtonsItems : [],
 
-	institutionPanel : Ext.create('Ext.panel.Panel', {}),
+	globalMetadataPanel : Ext.create('Ext.panel.Panel'),
+	institutionPanel : Ext.create('Ext.panel.Panel'),
+	setConverterType : null,
 
 	initComponent : function() {
 
-		this.getInstitutionButtons();
+		this.createInstitutionButtons();
 
-		this.items = [ {
-			items : [ {
-				xtype : 'panel',
-				height : 300,
-				margin : 2
-			} ]
-		}, this.institutionPanel, {
+		this.items = [ this.globalMetadataPanel, this.institutionPanel, {
 			xtype : 'filefield',
 			name : 'uploadfile',
 			fieldLabel : this.uploadFileLabel,
@@ -66,7 +62,7 @@ Ext.define('converter.Form', {
 	/**
 	 * 
 	 */
-	getInstitutionButtons : function() {
+	createInstitutionButtons : function() {
 
 		Ext.define('Converter', {
 			extend : 'Ext.data.Model',
@@ -90,8 +86,6 @@ Ext.define('converter.Form', {
 			}
 		})
 
-		var items = new Array();
-
 		store.load({
 			scope : this,
 			callback : function(records, operation, success) {
@@ -99,12 +93,26 @@ Ext.define('converter.Form', {
 					for ( var indexRecord in records) {
 						var record = records[indexRecord];
 						this.institutionPanel.add(Ext.create('Ext.Button', {
+							height : 60,
+							margin : 2,
 							text : record.data.name,
-							handler : this.assignConverter
+							enableToggle : true,
+							toggleGroup : 'converters',
+							scope : this,
+							handler : function(control) {
+								this.setConverterType = control.text;
+							}
 						}))
 					}
 				}
 			}
 		});
+	},
+
+	/**
+	 * 
+	 */
+	createGlobalMetadataFields : function() {
+		
 	}
 });
