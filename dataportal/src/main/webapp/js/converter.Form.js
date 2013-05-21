@@ -12,16 +12,22 @@ Ext.define('converter.Form', {
 	cancelButtonText : 'Cancel',
 	/* ~i18n */
 
-	width : 600,
+	width : 400,
 	height : 400,
 	getInstitutionButtonsItems : [],
 
-	globalMetadataPanel : Ext.create('Ext.panel.Panel'),
-	institutionPanel : Ext.create('Ext.panel.Panel'),
+	globalMetadataPanel : Ext.create('Ext.panel.Panel', {
+		border: false
+	}),
+	institutionPanel : Ext.create('Ext.panel.Panel',{
+		margin: 2,
+		border: false
+	}),
 	setConverterType : null,
 
 	initComponent : function() {
 
+		this.createGlobalMetadataFields();
 		this.createInstitutionButtons();
 
 		this.items = [ this.globalMetadataPanel, this.institutionPanel, {
@@ -113,6 +119,39 @@ Ext.define('converter.Form', {
 	 * 
 	 */
 	createGlobalMetadataFields : function() {
-		
+		Ext.define('GlobalAttribute', {
+			extend : 'Ext.data.Model',
+			fields : [ 'CFname', 'formname', 'defaultvalue' ]
+		})
+
+		var store = Ext.create('Ext.data.Store', {
+			model : 'GlobalAttribute',
+			proxy : {
+				type : 'ajax',
+				url : 'xml/globalmetadata.xml',
+				reader : {
+					type : 'xml',
+					record : 'globalattribute',
+					root : 'globalmetadata'
+				}
+			}
+		})
+
+		store.load({
+			scope : this,
+			callback : function(records, operation, success) {
+				if (success) {
+					for ( var indexRecord in records) {
+						var record = records[indexRecord];
+						this.globalMetadataPanel.add(Ext.create(
+								'Ext.form.field.Text', {
+									fieldLabel : record.data.formname,
+									emptyText : record.data.defaultvalue,
+									margin: 1
+								}))
+					}
+				}
+			}
+		});
 	}
 });
