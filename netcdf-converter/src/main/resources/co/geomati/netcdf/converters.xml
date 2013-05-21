@@ -1,27 +1,30 @@
 <?xml version="1.0"?>
 <converters>
-	<converter name='ConvertUTM'>
-		<institution name='UTM'>
-			<realname>Unidad de Tecnología Marina (UTM), CSIC</realname>
-			<url>http://www.utm.csic.es/</url>
-		</institution>
+	<converter>
+		<name>ConvertUTM</name>
+		<institution_name>UTM</institution_name>
+		<institution_realname>Unidad de Tecnología Marina (UTM), CSIC</institution_realname>
+		<institution_url>http://www.utm.csic.es/</institution_url>
 	</converter>
-	<converter name='ConvertAEMET'>
-		<institution name='AEMET'>
-			<realname>Centro de Investigación Atmosférica de Izaña, AEMET</realname>
-			<url>http://www.izana.org/</url>
-		</institution>
+	<converter>
+		<name>ConvertAEMET</name>
+		<institution_name>AEMET</institution_name>
+		<institution_realname>Centro de Investigación Atmosférica de Izaña, AEMET
+		</institution_realname>
+		<institution_url>http://www.izana.org/</institution_url>
 	</converter>
-	<converter name='ConvertBADM'>
-		<institution name='CEAM'>
-			<realname>Centro de Estudios Ambientales del Mediterráneo (CEAM)</realname>
-			<url>http://www.ceam.es/</url>
-		</institution>
+	<converter>
+		<name>ConvertBADM</name>
+		<institution_name>CEAM</institution_name>
+		<institution_realname>Centro de Estudios Ambientales del Mediterráneo (CEAM)
+		</institution_realname>
+		<institution_url>http://www.ceam.es/</institution_url>
 	</converter>
-	<converter name='ConvertCEAM'>
-		<institution name='CEAM'>
-			<realname>Centro de Estudios Ambientales del Mediterráneo (CEAM)</realname>
-			<url>http://www.ceam.es/</url>
-		</institution>
-	</converter>			
+	<converter>
+		<name>ConvertCEAM</name>
+		<institution_name>CEAM</institution_name>
+		<institution_realname>Centro de Estudios Ambientales del Mediterráneo (CEAM)
+		</institution_realname>
+		<institution_url>http://www.ceam.es/</institution_url>
+	</converter>
 </converters>
