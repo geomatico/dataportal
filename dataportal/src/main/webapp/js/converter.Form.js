@@ -15,15 +15,14 @@ Ext.define('converter.Form', {
 	width : 400,
 	height : 400,
 	getInstitutionButtonsItems : [],
-
+	store : null,
 	globalMetadataPanel : Ext.create('Ext.panel.Panel', {
-		border: false
+		border : false
 	}),
-	institutionPanel : Ext.create('Ext.panel.Panel',{
-		margin: 2,
-		border: false
+	institutionPanel : Ext.create('Ext.panel.Panel', {
+		margin : 2,
+		border : false
 	}),
-	setConverterType : null,
 
 	initComponent : function() {
 
@@ -73,10 +72,10 @@ Ext.define('converter.Form', {
 		Ext.define('Converter', {
 			extend : 'Ext.data.Model',
 			fields : [ 'name', 'institution_name', 'institution_realname',
-					'institution_url' ]
+					'institution_url', 'icos_domain' ]
 		})
 
-		var store = Ext.create('Ext.data.Store', {
+		this.store = Ext.create('Ext.data.Store', {
 			model : 'Converter',
 			proxy : {
 				type : 'ajax',
@@ -92,23 +91,35 @@ Ext.define('converter.Form', {
 			}
 		})
 
-		store.load({
+		Ext.define('converter.Button', {
+			extend : 'Ext.Button',
+			height : 60,
+			margin : 2,
+			contains : null
+		})
+
+		this.store.load({
 			scope : this,
 			callback : function(records, operation, success) {
 				if (success) {
 					for ( var indexRecord in records) {
 						var record = records[indexRecord];
-						this.institutionPanel.add(Ext.create('Ext.Button', {
-							height : 60,
-							margin : 2,
-							text : record.data.name,
-							enableToggle : true,
-							toggleGroup : 'converters',
-							scope : this,
-							handler : function(control) {
-								this.setConverterType = control.text;
-							}
-						}))
+						this.institutionPanel.add(Ext.create(
+								'converter.Button', {
+									text : record.data.name,
+									enableToggle : true,
+									toggleGroup : 'converters',
+									scope : this,
+									contains: record,
+									handler : function(control) {
+										this.globalMetadataPanel.getComponent(
+												'institution').setValue(control.contains.data.institution_realname);
+										this.globalMetadataPanel.getComponent(
+												'creator_url').setValue(control.contains.data.institution_url);
+										this.globalMetadataPanel.getComponent(
+												'icos_domain').setValue(control.contains.data.icos_domain);
+									}
+								}))
 					}
 				}
 			}
@@ -147,7 +158,8 @@ Ext.define('converter.Form', {
 								'Ext.form.field.Text', {
 									fieldLabel : record.data.formname,
 									emptyText : record.data.defaultvalue,
-									margin: 1
+									margin : 1,
+									id : record.data.CFname
 								}))
 					}
 				}
