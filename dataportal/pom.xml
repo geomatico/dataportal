@@ -135,6 +135,11 @@
 			<version>1.3</version>
 		</dependency>
 		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3</version>
+		</dependency>
+		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 			<version>1.4.4</version>
@@ -236,17 +241,18 @@
 					</webResources>
 				</configuration>
 			</plugin>
-			  <plugin>
-  				  <groupId>org.apache.tomcat.maven</groupId>
-				    <artifactId>tomcat6-maven-plugin</artifactId>
-				    <version>2.1</version>
-				    <configuration>
-				      	<path>/dataportal</path>
-				    </configuration>
-				    <!-- For any extra dependencies needed when running embedded Tomcat (not WAR dependencies) add them below -->
-				    <dependencies>
-				    </dependencies>
-  			</plugin>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat6-maven-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<path>/dataportal</path>
+				</configuration>
+				<!-- For any extra dependencies needed when running embedded Tomcat (not 
+					WAR dependencies) add them below -->
+				<dependencies>
+				</dependencies>
+			</plugin>
 			<plugin>
 				<groupId>org.datanucleus</groupId>
 				<artifactId>maven-datanucleus-plugin</artifactId>

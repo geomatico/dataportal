@@ -41,22 +41,33 @@ Ext.define('converter.Form', {
 		} ],
 
 		this.buttons = [ {
+			scope: this,
 			text : this.uploadButtonText,
 			handler : function() {
-				if (this.isValid()) {
+//				if (this.isValid()) {
 					this.submit({
-						url : 'dataportal/uploadFile',
+						url : 'converter',
+						method : 'POST',
 						waitMsg : this.waitingMessageText,
 						sucess : function(form, action) {
-
+							console.log('epa');
 						},
 						failure : function(form, action) {
-
+					        switch (action.failureType) {
+					            case Ext.form.action.Action.CLIENT_INVALID:
+					                Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+					                break;
+					            case Ext.form.action.Action.CONNECT_FAILURE:
+					                Ext.Msg.alert('Failure', 'Ajax communication failed');
+					                break;
+					            case Ext.form.action.Action.SERVER_INVALID:
+					            	Ext.Msg.alert('Failure', action.result.msg);
+					        }
 						}
 					})
-				} else {
-					// TODO is form is not valid
-				}
+//				} else {
+//					// TODO is form is not valid
+//				}
 			}
 		}, {
 			text : this.cancelButtonText

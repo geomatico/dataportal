@@ -5,6 +5,7 @@
 		<institution_name>UTM</institution_name>
 		<institution_realname>Unidad de Tecnología Marina (UTM), CSIC</institution_realname>
 		<institution_url>http://www.utm.csic.es/</institution_url>
+		<icos_domain>oceans</icos_domain>
 	</converter>
 	<converter>
 		<name>ConvertAEMET</name>
@@ -12,6 +13,7 @@
 		<institution_realname>Centro de Investigación Atmosférica de Izaña, AEMET
 		</institution_realname>
 		<institution_url>http://www.izana.org/</institution_url>
+		<icos_domain>atmosphere</icos_domain>
 	</converter>
 	<converter>
 		<name>ConvertBADM</name>
@@ -19,6 +21,7 @@
 		<institution_realname>Centro de Estudios Ambientales del Mediterráneo (CEAM)
 		</institution_realname>
 		<institution_url>http://www.ceam.es/</institution_url>
+		<icos_domain>environment</icos_domain>
 	</converter>
 	<converter>
 		<name>ConvertCEAM</name>
@@ -26,5 +29,6 @@
 		<institution_realname>Centro de Estudios Ambientales del Mediterráneo (CEAM)
 		</institution_realname>
 		<institution_url>http://www.ceam.es/</institution_url>
+		<icos_domain>environment</icos_domain>
 	</converter>
 </converters>
