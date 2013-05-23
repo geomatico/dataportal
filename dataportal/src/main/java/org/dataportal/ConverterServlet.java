@@ -68,13 +68,19 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		
+		JSONObject jsonResponse = new JSONObject();
+		StringWriter stringJSON = new StringWriter();
 
 		response.setCharacterEncoding("UTF-8"); 
 		response.setContentType("text/html");
 		PrintWriter writer = response.getWriter();
 		if (!ServletFileUpload.isMultipartContent(request)) {
-			writer.println("Error: Form must has enctype=multipart/form-data.");
+			jsonResponse.put(SUCCESS, false);
+			jsonResponse.put(MESSAGE, "Error: Form must has enctype=multipart/form-data."); //TODO Localize
+			writer.print(stringJSON.toString());
 			writer.flush();
+			writer.close();
 			return;
 		}
 
@@ -95,7 +101,7 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 		if (!uploadDir.exists()) {
 			uploadDir.mkdir();
 		}
-		JSONObject jsonResponse = new JSONObject();
+		
 		try {
 			List<FileItem> formItems = upload.parseRequest(request);
 
@@ -116,8 +122,7 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 		} catch (Exception ex) {
 			jsonResponse.put(SUCCESS, false);
 			jsonResponse.put(MESSAGE, ex.getMessage());
-		}
-		StringWriter stringJSON = new StringWriter();
+		}		
 		jsonResponse.write(stringJSON);
 		writer.print(stringJSON.toString());
 		writer.flush();

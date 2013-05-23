@@ -10,12 +10,11 @@ Ext.define('converter.Form', {
 	waitingMessageText : "Waiting...",
 	uploadButtonText : "Upload",
 	cancelButtonText : 'Cancel',
+	convertButtonText : 'Convert',
 	/* ~i18n */
 
 	width : 400,
-	height : 400,
-	getInstitutionButtonsItems : [],
-	store : null,
+
 	globalMetadataPanel : Ext.create('Ext.panel.Panel', {
 		border : false
 	}),
@@ -28,50 +27,78 @@ Ext.define('converter.Form', {
 
 		this.createGlobalMetadataFields();
 		this.createInstitutionButtons();
+						
+		this.items = [ {
 
-		this.items = [ this.globalMetadataPanel, this.institutionPanel, {
-			xtype : 'filefield',
-			name : 'uploadfile',
-			fieldLabel : this.uploadFileLabel,
-			msgTarget : 'side',
-			allowBlank : false,
-			anchor : '100%',
-			margin : 2,
-			buttonText : this.selectFileButtonText
-		} ],
+									xtype : 'panel',
+									id : 'metadata-panel',
+									hidden : true,
+									items : [
+											 this.globalMetadataPanel, 
+								               this.institutionPanel
+									         ]
+								}, {
+									xtype : 'filefield',
+									name : 'uploadfile',
+									id : 'uploadfile',
+									fieldLabel : this.uploadFileLabel,
+									msgTarget : 'side',
+									allowBlank : false,
+									anchor : '100%',
+									margin : 2,
+									buttonText : this.selectFileButtonText
+								} ],
 
 		this.buttons = [ {
+			id : 'uploadButton',
 			scope: this,
 			text : this.uploadButtonText,
 			handler : function() {
-//				if (this.isValid()) {
+					//		if (this.isValid()) {
 					this.submit({
 						url : 'converter',
+						scope : this,
 						method : 'POST',
 						waitMsg : this.waitingMessageText,
-						sucess : function(form, action) {
-							console.log('epa');
+						success : function(form, action) {
+							this.getComponent('metadata-panel').setVisible(true);
+							this.getComponent('uploadfile').setVisible(false);
+							(this.getDockedItems('.toolbar')[0]).getComponent('convertButton').setVisible(true);
+							(this.getDockedItems('.toolbar')[0]).getComponent('uploadButton').setVisible(false);
 						},
 						failure : function(form, action) {
 					        switch (action.failureType) {
 					            case Ext.form.action.Action.CLIENT_INVALID:
-					                Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+					                
 					                break;
 					            case Ext.form.action.Action.CONNECT_FAILURE:
-					                Ext.Msg.alert('Failure', 'Ajax communication failed');
+					                
 					                break;
 					            case Ext.form.action.Action.SERVER_INVALID:
-					            	Ext.Msg.alert('Failure', action.result.msg);
+					            	
 					        }
 						}
 					})
-//				} else {
-//					// TODO is form is not valid
-//				}
+			//	} else {
+			//		// TODO is form is not valid
+			//	}
 			}
 		}, {
-			text : this.cancelButtonText
+			id : 'convertButton',
+			scope: this,
+			text : this.convertButtonText,
+			hidden : true,
+			handler : function() {
+				
+			}		
+		}, {
+			scope : this,
+			text : this.cancelButtonText,
+			handler : function() {
+				this.ownerCt.destroy();
+			}
 		} ]
+		
 		this.callParent(arguments);
 	},
 
@@ -86,7 +113,7 @@ Ext.define('converter.Form', {
 					'institution_url', 'icos_domain' ]
 		})
 
-		this.store = Ext.create('Ext.data.Store', {
+		var store = Ext.create('Ext.data.Store', {
 			model : 'Converter',
 			proxy : {
 				type : 'ajax',
@@ -109,7 +136,7 @@ Ext.define('converter.Form', {
 			contains : null
 		})
 
-		this.store.load({
+		store.load({
 			scope : this,
 			callback : function(records, operation, success) {
 				if (success) {
@@ -170,6 +197,7 @@ Ext.define('converter.Form', {
 									fieldLabel : record.data.formname,
 									emptyText : record.data.defaultvalue,
 									margin : 1,
+									width : 300,
 									id : record.data.CFname
 								}))
 					}
