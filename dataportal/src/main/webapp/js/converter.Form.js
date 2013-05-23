@@ -88,6 +88,7 @@ Ext.define('converter.Form', {
 			scope: this,
 			text : this.convertButtonText,
 			hidden : true,
+			disabled : true,
 			handler : function() {
 				
 			}		
@@ -156,6 +157,7 @@ Ext.define('converter.Form', {
 												'creator_url').setValue(control.contains.data.institution_url);
 										this.globalMetadataPanel.getComponent(
 												'icos_domain').setValue(control.contains.data.icos_domain);
+										(this.getDockedItems('.toolbar')[0]).getComponent('convertButton').setDisabled(false);
 									}
 								}))
 					}
