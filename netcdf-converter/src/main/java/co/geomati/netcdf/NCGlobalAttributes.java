@@ -13,7 +13,7 @@ import ucar.nc2.Attribute;
  */
 public class NCGlobalAttributes implements Iterable<Attribute>{
 	
-	private ArrayList<Attribute> globalAttributes;
+	private ArrayList<Attribute> globalAttributes = new ArrayList<Attribute>();
 
 	public void addAtribute(String name, String value) {
 		Attribute atributte = new Attribute(name, value);
