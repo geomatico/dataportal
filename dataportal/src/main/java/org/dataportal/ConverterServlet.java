@@ -22,6 +22,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import co.geomati.netcdf.Converter;
@@ -34,13 +35,15 @@ import co.geomati.netcdf.NCGlobalAttributes;
  */
 public class ConverterServlet extends HttpServlet implements DataportalCodes {
 
-	private static final String ON = "on";
-	private static final String ID = "id";
-
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private static final String TEMP_DIR = "temp.dir";
+	private static final String ON = "on";
+	private static final String ID = "id";
+	private static final String NC_EXTENSION = ".nc";
 
 	private static final String UPLOAD_DIRECTORY = "upload";
 
@@ -93,15 +96,14 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		factory.setSizeThreshold(MEMORY_THRESHOLD);
-		factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
+		factory.setRepository(new File(Config.get(TEMP_DIR)));
 
 		ServletFileUpload upload = new ServletFileUpload(factory);
 
 		upload.setFileSizeMax(MAX_FILE_SIZE);
 		upload.setSizeMax(MAX_REQUEST_SIZE);
 
-		// How can I saves file into /tmp system folder?
-		String uploadPath = System.getProperty("java.io.tmpdir")
+		String uploadPath = Config.get(TEMP_DIR)
 				+ File.separator + UPLOAD_DIRECTORY;
 
 		File uploadDir = new File(uploadPath);
@@ -114,8 +116,7 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 			NCGlobalAttributes globalAttributes = new NCGlobalAttributes();
 			IConverter converter = null;
 			ArrayList<String> files = new ArrayList<String>();
-			String fileName = null;
-			String filePath = null;
+			String fileName, filePath = null;
 
 			if (formItems != null && formItems.size() > 0) {
 				for (FileItem item : formItems) {
@@ -139,8 +140,12 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 					}
 				}
 
+				Converter.setTempSavePath(Config.get(TEMP_DIR));
 				Converter.setGlobalAttributes(globalAttributes);
 				converter.doConversion(files.toArray(new String[files.size()]), uploadPath);
+				
+				copyToThredds(files.toArray(new String[files.size()]));
+				FileUtils.forceDelete(uploadDir);
 			}
 			jsonResponse.put(SUCCESS, true);
 			jsonResponse.put(MESSAGE, id);
@@ -152,5 +157,13 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 		writer.print(stringJSON.toString());
 		writer.flush();
 		writer.close();
+	}
+
+	private void copyToThredds(String[] files) throws IOException {
+		for (String file : files) {
+			File tmpFile = new File(Config.get(TEMP_DIR) + File.separator + file + NC_EXTENSION);
+			FileUtils.copyFileToDirectory(tmpFile, new File(Config.get("thredds.dir")));
+			tmpFile.delete();
+		}
 	}
 }
