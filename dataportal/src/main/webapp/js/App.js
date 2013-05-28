@@ -17,6 +17,7 @@ Ext.define('App', {
     searchButtonText: "Search >>",
     aboutButtonTooltip: "About",
     reportButtonTooltip: "Usage Report",
+    uploadFormTitle: "Upload Data",
     /* ~i18n */
     
     vocabulary: null,
@@ -200,21 +201,16 @@ Ext.define('App', {
     /**
      * 
      */
-    showUploadForm: function(evt) {    	
-    	if (this.uploadFieldsForm == null) {
-    		Ext.Ajax.request({
-    			url: 'converter',
-    			success: function(response, request) {
-    				
-    			},
-    			failure: function(response, request) {
-    				
-    			},
-    			timeout: 10000
-    		})
-    	} else {
-    		
-    	}
+    showUploadForm: function(evt) {
+	    new Ext.Window({
+	    	id : 'uploadWindow',
+	        title: this.uploadFormTitle,
+	        layout: 'fit',
+	        closable: true,
+	        draggable: true,
+	        modal: true,
+	        items: [ Ext.create('converter.Form') ]
+	    }).show();
     },
 
     doQuery: function() {
