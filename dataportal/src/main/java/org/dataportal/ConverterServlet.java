@@ -144,7 +144,7 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 				Converter.setGlobalAttributes(globalAttributes);
 				converter.doConversion(files.toArray(new String[files.size()]), uploadPath);
 				
-				copyToThredds(files.toArray(new String[files.size()]));
+				copyToThreddsCatalogFolder(files.toArray(new String[files.size()]));
 				FileUtils.forceDelete(uploadDir);
 			}
 			jsonResponse.put(SUCCESS, true);
@@ -159,7 +159,7 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 		writer.close();
 	}
 
-	private void copyToThredds(String[] files) throws IOException {
+	private void copyToThreddsCatalogFolder(String[] files) throws IOException {
 		for (String file : files) {
 			File tmpFile = new File(Config.get(TEMP_DIR) + File.separator + file + NC_EXTENSION);
 			FileUtils.copyFileToDirectory(tmpFile, new File(Config.get("thredds.dir")));
