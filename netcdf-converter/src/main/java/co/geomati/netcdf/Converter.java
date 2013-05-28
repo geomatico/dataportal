@@ -65,6 +65,7 @@ public class Converter {
 	}
 	
 	static NCGlobalAttributes globalAttributes = null;
+	static String tempSavePath = System.getProperty("java.io.tmpdir");
 
 	public static void setGlobalAttributes(NCGlobalAttributes globalAttributes) {
 		Converter.globalAttributes = globalAttributes;
@@ -78,7 +79,7 @@ public class Converter {
 				Dataset dataset = conversion.getDataset(i);
 				r.setDatasetName(dataset.getName());
 				String fileName = dataset.getName();
-				File tempFile = new File(System.getProperty("java.io.tmpdir")
+				File tempFile = new File(tempSavePath
 						+ "/" + fileName + ".nc");
 				if (tempFile.exists()) {
 					throw new ConverterException("The file already exists: "
@@ -93,6 +94,10 @@ public class Converter {
 		}
 
 		System.out.println(r);
+	}
+
+	public static void setTempSavePath(String tempSavePath) {
+		Converter.tempSavePath = tempSavePath;
 	}
 
 	static void convert(Dataset dataset, File file) throws ConverterException {
