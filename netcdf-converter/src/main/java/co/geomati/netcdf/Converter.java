@@ -7,14 +7,26 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
@@ -540,5 +552,31 @@ public class Converter {
 			A.setInt(ima.set(i), getter.get(list.get(i)));
 		}
 		return A;
+	}
+	
+	public static IConverter getConverterToUse(String name)
+			throws ParserConfigurationException, SAXException, IOException,
+			XPathExpressionException, ClassNotFoundException,
+			InstantiationException, IllegalAccessException {
+
+		DocumentBuilderFactory domFactory = DocumentBuilderFactory
+				.newInstance();
+		URL xml = Converter.class.getClassLoader().getResource(
+				"co/geomati/netcdf/converters.xml");
+
+		DocumentBuilder builder = domFactory.newDocumentBuilder();
+		Document dDoc = builder.parse(xml.toString());
+
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		Node node = (Node) xPath.evaluate("/converters/converter[name=\""
+				+ name + "\"]/class", dDoc, XPathConstants.NODE);
+		String className = node.getTextContent();
+
+		@SuppressWarnings("unchecked")
+		Class<IConverter> converter = (Class<IConverter>) Class
+				.forName(className);
+
+		return converter.newInstance();
+
 	}
 }
