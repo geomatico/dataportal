@@ -1,14 +1,16 @@
 <?xml version="1.0"?>
 <converters>
 	<converter>
-		<name>ConvertUTM</name>
+		<name>UTM</name>
+		<class>co.geomati.netcdf.utm.ConvertUTM</class>
 		<institution_name>UTM</institution_name>
 		<institution_realname>Unidad de Tecnología Marina (UTM), CSIC</institution_realname>
 		<institution_url>http://www.utm.csic.es/</institution_url>
 		<icos_domain>oceans</icos_domain>
 	</converter>
 	<converter>
-		<name>ConvertAEMET</name>
+		<name>AEMET</name>
+		<class>co.geomati.netcdf.aemet.ConvertAEMET</class>
 		<institution_name>AEMET</institution_name>
 		<institution_realname>Centro de Investigación Atmosférica de Izaña, AEMET
 		</institution_realname>
@@ -16,7 +18,8 @@
 		<icos_domain>atmosphere</icos_domain>
 	</converter>
 	<converter>
-		<name>ConvertBADM</name>
+		<name>BADM</name>
+		<class>co.geomati.netcdf.ceam.ConvertBADM</class>
 		<institution_name>CEAM</institution_name>
 		<institution_realname>Centro de Estudios Ambientales del Mediterráneo (CEAM)
 		</institution_realname>
@@ -24,7 +27,8 @@
 		<icos_domain>environment</icos_domain>
 	</converter>
 	<converter>
-		<name>ConvertCEAM</name>
+		<name>CEAM</name>
+		<class>co.geomati.netcdf.ceam.ConvertCEAM</class>
 		<institution_name>CEAM</institution_name>
 		<institution_realname>Centro de Estudios Ambientales del Mediterráneo (CEAM)
 		</institution_realname>
