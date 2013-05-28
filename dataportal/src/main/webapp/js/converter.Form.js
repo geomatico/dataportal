@@ -159,22 +159,28 @@ Ext.define('converter.Form', {
 				if (success) {
 					for ( var indexRecord in records) {
 						var record = records[indexRecord];
-						this.institutionPanel.getComponent('institutionRadio').add(Ext.create(
+						var radio = new Ext.create(
 								'converter.Radio', {
 									boxLabel : record.data.name,
-									name : record.data.name,
+									inputValue : record.data.name,
+									name : 'converter',
 									scope : this,
-									contains: record,
-									handler : function(control) {
-										this.globalMetadataPanel.getComponent(
-												'institution').setValue(control.contains.data.institution_realname);
-										this.globalMetadataPanel.getComponent(
-												'creator_url').setValue(control.contains.data.institution_url);
-										this.globalMetadataPanel.getComponent(
-												'icos_domain').setValue(control.contains.data.icos_domain);
-										(this.getDockedItems('.toolbar')[0]).getComponent('convertButton').setDisabled(false);
-									}
-								}))
+									contains: record
+								});
+						
+						radio.on({'change' : function(control, newValue, oldValue){
+								if (newValue == true) {
+									this.globalMetadataPanel.getComponent(
+									'institution').setValue(control.contains.data.institution_realname);
+									this.globalMetadataPanel.getComponent(
+											'creator_url').setValue(control.contains.data.institution_url);
+									this.globalMetadataPanel.getComponent(
+											'icos_domain').setValue(control.contains.data.icos_domain);
+									(this.getDockedItems('.toolbar')[0]).getComponent('convertButton').setDisabled(false);									
+								}
+						}, scope : this})
+						
+						this.institutionPanel.getComponent('institutionRadio').add(radio);
 					}
 				}
 			}

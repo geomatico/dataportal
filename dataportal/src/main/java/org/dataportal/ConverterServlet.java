@@ -41,10 +41,9 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 	private static final long serialVersionUID = 1L;
 	
 	private static final String TEMP_DIR = "temp.dir";
-	private static final String ON = "on";
 	private static final String ID = "id";
 	private static final String NC_EXTENSION = ".nc";
-
+	private static final Object CONVERTER = "converter";
 	private static final String UPLOAD_DIRECTORY = "upload";
 
 	// upload settings
@@ -130,9 +129,9 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 						files.add(fileName.substring(0, fileName.lastIndexOf('.')));
 
 						item.write(storeFile);
-					} else if (value.equals(ON)) {
-						institution = name.toLowerCase();
-						converter  = Converter.getConverterToUse(name);
+					} else if (name.equals(CONVERTER)) {
+						institution = value.toLowerCase();
+						converter  = Converter.getConverterToUse(value);
 					} else if (name.equals(ID)){
 						id = UUID.randomUUID().toString();
 						globalAttributes.addAtribute(name, id);
