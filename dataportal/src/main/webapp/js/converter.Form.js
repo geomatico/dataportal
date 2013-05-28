@@ -15,28 +15,21 @@ Ext.define('converter.Form', {
 	uploadButtonText : "Upload",
 	cancelButtonText : 'Cancel',
 	convertButtonText : 'Convert',
+	failureMessageTitle : 'Error!',
+	successMessageTitle : 'Success!',
+	successMessageText : 'Upload data and generated NC File with ID: ',
+	inValidFormText : 'Form not valid!',
 	/* ~i18n */
 
-	width : 400,
+	autoDestroy : true,
 
-	globalMetadataPanel : Ext.create('Ext.form.Panel', {
-		border : false
-	}),
-	institutionPanel : Ext.create('Ext.form.Panel', {
-		margin : 2,
-		border : false,
-		items : [{
-		            xtype : 'fieldcontainer',
-		            defaultType : 'radiofield',
-		    		layout : 'hbox',
-		    		id : 'institutionRadio'
-		         }]
-	}),
+	globalMetadataPanel : null,
+	institutionPanel : null,
 
 	initComponent : function() {
 
 		this.createGlobalMetadataFields();
-		this.createInstitutionButtons();
+		this.createInstitutionRadios();
 		
 		this.fileUpload = Ext.create('Ext.form.field.File',  {
 			name : 'uploadfile',
@@ -70,39 +63,49 @@ Ext.define('converter.Form', {
 			text : this.convertButtonText,
 			disabled : true,
 			handler : function() {
-//				if (this.isValid()) {
-				this.submit({
-					url : 'converter',
-					method : 'POST',
-					scope : this,			
-					waitMsg : this.waitingMessageText,
-					waitTitle : this.waitingTitleText,
-					success : function(form, action) {
-						
-					},
-					failure : function(form, action) {
-				        switch (action.failureType) {
-				            case Ext.form.action.Action.CLIENT_INVALID:
-				                
-				                break;
-				            case Ext.form.action.Action.CONNECT_FAILURE:
-				                
-				                break;
-				            case Ext.form.action.Action.SERVER_INVALID:
-				            	
-				            	break;
-				        }					
-					}
-				})
-//		} else {
-//		// TODO is form is not valid
-//	}
+				if (this.getForm().isValid()) {
+					this.getForm().submit({
+						url : 'converter',
+						method : 'POST',
+						scope : this,			
+						waitMsg : this.waitingMessageText,
+						waitTitle : this.waitingTitleText,
+						success : function(form, action) {
+							Ext.MessageBox.show({
+								title: this.successMessageTitle,
+								msg: this.successMessageText + action.result.msg,
+								buttons: Ext.MessageBox.OK,
+								scope : this,
+								fn : function(button) {
+									this.ownerCt.destroy();
+									this.destroy()
+								}
+							});
+						},
+						failure : function(form, action) {
+							Ext.MessageBox.show({
+									title: this.failureMessageTitle,
+									msg: action.result.msg || action.response.responseText,
+									buttons: Ext.MessageBox.OK,
+									icon: Ext.MessageBox.ERROR
+								});
+						}
+					})
+				} else {
+					Ext.MessageBox.show({
+						title: this.failureMessageTitle,
+						msg: this.inValidFormText,
+						buttons: Ext.MessageBox.OK,
+						icon: Ext.MessageBox.ERROR
+					});
+				}
 			}		
 		}, {
 			scope : this,
 			text : this.cancelButtonText,
 			handler : function() {
 				this.ownerCt.destroy();
+				this.destroy()
 			}
 		} ];
 		
@@ -112,7 +115,18 @@ Ext.define('converter.Form', {
 	/**
 	 * 
 	 */
-	createInstitutionButtons : function() {
+	createInstitutionRadios : function() {
+		
+		this.institutionPanel = Ext.create('Ext.form.Panel', {
+			margin : 2,
+			border : false,
+			items : [{
+			            xtype : 'fieldcontainer',
+			            defaultType : 'radiofield',
+			    		layout : 'hbox',
+			    		id : 'institutionRadio'
+			         }]
+		});
 
 		Ext.define('Converter', {
 			extend : 'Ext.data.Model',
@@ -125,9 +139,6 @@ Ext.define('converter.Form', {
 			proxy : {
 				type : 'ajax',
 				url : 'converter',
-				extraParams : {
-					institutionbuttons : true
-				},
 				reader : {
 					type : 'xml',
 					record : 'converter',
@@ -148,7 +159,6 @@ Ext.define('converter.Form', {
 				if (success) {
 					for ( var indexRecord in records) {
 						var record = records[indexRecord];
-						console.log(this);
 						this.institutionPanel.getComponent('institutionRadio').add(Ext.create(
 								'converter.Radio', {
 									boxLabel : record.data.name,
@@ -175,6 +185,11 @@ Ext.define('converter.Form', {
 	 * 
 	 */
 	createGlobalMetadataFields : function() {
+		
+		this.globalMetadataPanel = Ext.create('Ext.form.Panel', {
+			border : false
+		});
+		
 		Ext.define('GlobalAttribute', {
 			extend : 'Ext.data.Model',
 			fields : [ 'CFname', 'formname', 'defaultvalue' ]

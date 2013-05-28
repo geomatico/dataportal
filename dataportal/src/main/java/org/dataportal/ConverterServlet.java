@@ -56,20 +56,17 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		String converters = req.getParameter("institutionbuttons");
+		resp.setCharacterEncoding("UTF-8");
+		resp.setContentType("text/xml");
 
-		if (converters != null) {
-			resp.setCharacterEncoding("UTF-8");
-			resp.setContentType("text/xml");
+		InputStream StreamConvertersXML = Converter.class.getClassLoader()
+				.getResourceAsStream("co/geomati/netcdf/converters.xml");
+		String convertersXML = IOUtils.toString(StreamConvertersXML);
+		PrintWriter out = resp.getWriter();
+		out.print(convertersXML);
+		StreamConvertersXML.close();
+		out.close();
 
-			InputStream StreamConvertersXML = Converter.class.getClassLoader()
-					.getResourceAsStream("co/geomati/netcdf/converters.xml");
-			String convertersXML = IOUtils.toString(StreamConvertersXML);
-			PrintWriter out = resp.getWriter();
-			out.print(convertersXML);
-			StreamConvertersXML.close();
-			out.close();
-		}
 	}
 
 	@Override
