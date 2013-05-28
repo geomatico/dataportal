@@ -116,7 +116,7 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 			NCGlobalAttributes globalAttributes = new NCGlobalAttributes();
 			IConverter converter = null;
 			ArrayList<String> files = new ArrayList<String>();
-			String fileName, filePath = null;
+			String fileName, filePath, institution = null;
 
 			if (formItems != null && formItems.size() > 0) {
 				for (FileItem item : formItems) {
@@ -131,6 +131,7 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 
 						item.write(storeFile);
 					} else if (value.equals(ON)) {
+						institution = name.toLowerCase();
 						converter  = Converter.getConverterToUse(name);
 					} else if (name.equals(ID)){
 						id = UUID.randomUUID().toString();
@@ -144,7 +145,7 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 				Converter.setGlobalAttributes(globalAttributes);
 				converter.doConversion(files.toArray(new String[files.size()]), uploadPath);
 				
-				copyToThreddsCatalogFolder(files.toArray(new String[files.size()]));
+				copyToThreddsCatalogFolder(files.toArray(new String[files.size()]), institution);
 				FileUtils.forceDelete(uploadDir);
 			}
 			jsonResponse.put(SUCCESS, true);
@@ -159,10 +160,10 @@ public class ConverterServlet extends HttpServlet implements DataportalCodes {
 		writer.close();
 	}
 
-	private void copyToThreddsCatalogFolder(String[] files) throws IOException {
+	private void copyToThreddsCatalogFolder(String[] files, String institution) throws IOException {
 		for (String file : files) {
 			File tmpFile = new File(Config.get(TEMP_DIR) + File.separator + file + NC_EXTENSION);
-			FileUtils.copyFileToDirectory(tmpFile, new File(Config.get("thredds.dir")));
+			FileUtils.copyFileToDirectory(tmpFile, new File(Config.get("thredds.dir") + File.separator + institution));
 			tmpFile.delete();
 		}
 	}
