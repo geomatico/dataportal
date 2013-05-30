@@ -19,6 +19,9 @@ Ext.define('converter.Form', {
 	successMessageTitle : 'Success!',
 	successMessageText : 'Upload data and generated NC File with ID: ',
 	inValidFormText : 'Form not valid!',
+	globalMetadataPanelTitle : 'Global Metadata',
+	converterComboLabel : 'Choose converter',
+	converterPanelTitle : 'Converters available',
 	/* ~i18n */
 
 	autoDestroy : true,
@@ -29,9 +32,9 @@ Ext.define('converter.Form', {
 	initComponent : function() {
 
 		this.createGlobalMetadataFields();
-		this.createInstitutionRadios();
+		this.createInstitutionCombo();
 		
-		this.fileUpload = Ext.create('Ext.form.field.File',  {
+		var fileUpload = Ext.create('Ext.form.field.File',  {
 			name : 'uploadfile',
 			id : 'uploadfile',
 			fieldLabel : this.uploadFileLabel,
@@ -42,7 +45,7 @@ Ext.define('converter.Form', {
 			buttonText : this.selectFileButtonText
 		});
 		
-		this.fileUpload.on({
+		fileUpload.on({
 			'change' : function(button, value) {
 				button.up().getComponent('metadata-panel').setVisible(true);
 			}, scope : this });
@@ -55,7 +58,7 @@ Ext.define('converter.Form', {
 				         	this.globalMetadataPanel, 
 				         	this.institutionPanel
 				        ]}, 
-				        this.fileUpload ];
+				        fileUpload ];
 
 		this.buttons = [{
 			id : 'convertButton',
@@ -115,17 +118,12 @@ Ext.define('converter.Form', {
 	/**
 	 * 
 	 */
-	createInstitutionRadios : function() {
+	createInstitutionCombo : function() {
 		
 		this.institutionPanel = Ext.create('Ext.form.Panel', {
 			margin : 2,
 			border : false,
-			items : [{
-			            xtype : 'fieldcontainer',
-			            defaultType : 'radiofield',
-			    		layout : 'hbox',
-			    		id : 'institutionRadio'
-			         }]
+			title : this.converterPanelTitle
 		});
 
 		Ext.define('Converter', {
@@ -147,44 +145,29 @@ Ext.define('converter.Form', {
 			}
 		})
 
-		Ext.define('converter.Radio', {
-			extend : 'Ext.form.field.Radio',
-			margin: 20,
-			contains : null
-		})
-
-		store.load({
-			scope : this,
-			callback : function(records, operation, success) {
-				if (success) {
-					for ( var indexRecord in records) {
-						var record = records[indexRecord];
-						var radio = new Ext.create(
-								'converter.Radio', {
-									boxLabel : record.data.name,
-									inputValue : record.data.name,
-									name : 'converter',
-									scope : this,
-									contains: record
-								});
-						
-						radio.on({'change' : function(control, newValue, oldValue){
-								if (newValue == true) {
-									this.globalMetadataPanel.getComponent(
-									'institution').setValue(control.contains.data.institution_realname);
-									this.globalMetadataPanel.getComponent(
-											'creator_url').setValue(control.contains.data.institution_url);
-									this.globalMetadataPanel.getComponent(
-											'icos_domain').setValue(control.contains.data.icos_domain);
-									(this.getDockedItems('.toolbar')[0]).getComponent('convertButton').setDisabled(false);									
-								}
-						}, scope : this})
-						
-						this.institutionPanel.getComponent('institutionRadio').add(radio);
-					}
-				}
-			}
+		var comboconverters = Ext.create('Ext.form.ComboBox', {
+			margin : 2,
+		    fieldLabel: this.converterComboLabel,
+		    store: store,
+		    name: 'converter',
+		    displayField: 'name',
+		    valueField: 'name'
 		});
+		
+		comboconverters.on(
+				{'change' : function(control, newValue, oldValue){
+				    var record = control.findRecord(control.valueField, control.getValue());				
+					this.globalMetadataPanel.getComponent(
+							'institution').setValue(record.data.institution_realname);
+					this.globalMetadataPanel.getComponent(
+							'creator_url').setValue(record.data.institution_url);
+					this.globalMetadataPanel.getComponent(
+							'icos_domain').setValue(record.data.icos_domain);
+					(this.getDockedItems('.toolbar')[0]).getComponent('convertButton').setDisabled(false);									
+				}, scope : this})
+		
+		this.institutionPanel.add(comboconverters);
+
 	},
 
 	/**
@@ -193,7 +176,9 @@ Ext.define('converter.Form', {
 	createGlobalMetadataFields : function() {
 		
 		this.globalMetadataPanel = Ext.create('Ext.form.Panel', {
-			border : false
+			title : this.globalMetadataPanelTitle,
+			border : false,
+			padding : 2
 		});
 		
 		Ext.define('GlobalAttribute', {
