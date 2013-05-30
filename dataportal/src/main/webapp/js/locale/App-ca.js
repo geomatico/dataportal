@@ -18,7 +18,8 @@ GeoExt.Lang.add("ca", {
         searchButtonText: "Cerca >>",
         showButtonText: "Mostra dades >>",
         aboutButtonTooltip: "Quant a...",
-        reportButtonTooltip: "Informe d'us"
+        reportButtonTooltip: "Informe d'us",
+        uploadFormTitle: "Pujar dades"
     },
     "Authentication.prototype": {
         userFieldLabel: "E-mail",
@@ -90,5 +91,20 @@ GeoExt.Lang.add("ca", {
     },
     "OpenLayers.Control.DeleteFeature.prototype": {
         confirmText: "Esteu segurs de voler eliminar l'element sel·leccionat?"
+    },
+    "converter.Form.prototype": {
+    	uploadFileLabel : "Puxar dades",
+    	selectFileButtonText : "Seleccionar arxiu:",
+    	waitingMessageText : "Esperant...",
+    	waitingTitleText : "Pujant arxius i convertint...",
+    	cancelButtonText : 'Cancel',
+    	convertButtonText : 'Converteix',
+    	failureMessageTitle : 'Error!',
+    	successMessageTitle : 'Finalitzat!',
+    	successMessageText : 'Dades pujats i arxiu NC Generat amb ID: ',
+    	inValidFormText : 'Formulari no vàlid!',
+    	globalMetadataPanelTitle : 'Metadades globals',
+    	converterComboLabel : 'Trieu convertidor',
+    	converterPanelTitle : 'Convertidors disponibles'
     }
 });

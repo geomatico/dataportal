@@ -18,7 +18,8 @@ GeoExt.Lang.add("en", {
         searchButtonText: "Search >>",
         showButtonText: "Show Dataset >>",
         aboutButtonTooltip: "About",
-        reportButtonTooltip: "Usage Report"
+        reportButtonTooltip: "Usage Report",
+        uploadFormTitle: "Upload Data"
     },
     "Authentication.prototype": {
         userFieldLabel: "Email address",
@@ -90,5 +91,20 @@ GeoExt.Lang.add("en", {
     },
     "OpenLayers.Control.DeleteFeature.prototype": {
         confirmText: "Do you really want to remove the selected feature?"
+    },
+    "converter.Form.prototype": {
+    	uploadFileLabel : "Upload File",
+    	selectFileButtonText : "Select File:",
+    	waitingMessageText : "Waiting...",
+    	waitingTitleText : "Uploading data and converting...",
+    	cancelButtonText : 'Cancel',
+    	convertButtonText : 'Convert',
+    	failureMessageTitle : 'Error!',
+    	successMessageTitle : 'Success!',
+    	successMessageText : 'Upload data and generated NC File with ID: ',
+    	inValidFormText : 'Form not valid!',
+    	globalMetadataPanelTitle : 'Global Metadata',
+    	converterComboLabel : 'Choose converter',
+    	converterPanelTitle : 'Converters available'
     }
 });

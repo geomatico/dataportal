@@ -12,7 +12,6 @@ Ext.define('converter.Form', {
 	selectFileButtonText : "Select File:",
 	waitingMessageText : "Waiting...",
 	waitingTitleText : "Uploading data...",
-	uploadButtonText : "Upload",
 	cancelButtonText : 'Cancel',
 	convertButtonText : 'Convert',
 	failureMessageTitle : 'Error!',
