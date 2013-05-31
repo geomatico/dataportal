@@ -16,6 +16,7 @@ Contents:
    data
    search-service
    converter
+   converter-service
    performance-tests
    service-performance
    website
