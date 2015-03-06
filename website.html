@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Sitio web &mdash; ICOS Carbon Data Portal 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ICOS Carbon Data Portal 1 documentation" href="index.html" />
+    <link rel="prev" title="Rendimiento servicios" href="service-performance.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="service-performance.html" title="Rendimiento servicios"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="sitio-web">
+<h1>Sitio web<a class="headerlink" href="#sitio-web" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="tecnologias-utilizadas">
+<h2>Tecnologías utilizadas<a class="headerlink" href="#tecnologias-utilizadas" title="Permalink to this headline">¶</a></h2>
+<p>Para la creación del sitio web se ha utilizado rest2web <a class="footnote-reference" href="#id5" id="id1">[1]</a>, que permite la generación de HTML estático
+a partir de ficheros escritos en reStructuredText y una plantilla HTML.</p>
+<p>reStructuredText <a class="footnote-reference" href="#id6" id="id2">[2]</a> es un formato tipo <em>wiki</em> que permite crear de forma sencilla tablas, incluir imágenes, etc.
+Aquí <a class="footnote-reference" href="#id7" id="id3">[3]</a> se puede consultar una guía rápida del formato.</p>
+<p>La principal ventaja de dicha aproximación es que el resultado es HTML estático y por tanto los
+requisitos del servidor son mínimos.</p>
+</div>
+<div class="section" id="instalacion">
+<h2>Instalación<a class="headerlink" href="#instalacion" title="Permalink to this headline">¶</a></h2>
+<p>En ubuntu basta con teclear:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo apt-get install rest2web
+</pre></div>
+</div>
+<p>en una línea de comandos.</p>
+</div>
+<div class="section" id="descripcion-del-proyecto">
+<h2>Descripción del proyecto<a class="headerlink" href="#descripcion-del-proyecto" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="estructura">
+<h3>Estructura<a class="headerlink" href="#estructura" title="Permalink to this headline">¶</a></h3>
+<p>El directorio raíz de la web contiene un fichero <em>webicos.ini</em> con la configuración y los directorios <em>input</em> y <em>output</em>.</p>
+<p><em>Input</em> contiene la plantilla y los ficheros en reStructuredText, mientras que <em>output</em> contiene el sitio web generado.</p>
+<p>Para generar hay que ejecutar r2w webicos.ini en el directorio raíz.</p>
+</div>
+<div class="section" id="contenidos">
+<h3>Contenidos<a class="headerlink" href="#contenidos" title="Permalink to this headline">¶</a></h3>
+<p>En <em>input</em>, cada fichero .txt consta de dos partes, una sección <em>restindex</em> y otra con los contenidos que se muestran
+en la web. Por ejemlo:</p>
+<div class="highlight-python"><div class="highlight"><pre>restindex
+    crumb: partners
+    format:rest
+    page-title: Project Overview
+    encoding: utf-8
+    output-encoding: None
+    target: index.html
+/restindex
+
+Objectives
+==========
+
+To provide the long-term observations required to understand the present state and predict future behaviour of the global carbon
+cycle and greenhouse gas emissions.
+</pre></div>
+</div>
+<p>La sección <em>restindex</em> permite especificar parámetros para la generación del HTML, como por ejemplo el título de la
+página (<em>page-title</em>) o el nombre de la página destino (<em>target</em>).</p>
+</div>
+<div class="section" id="index-txt">
+<h3>index.txt<a class="headerlink" href="#index-txt" title="Permalink to this headline">¶</a></h3>
+<p>Especial atención requiere el fichero index.txt, que contiene sólo la sección <em>restindex</em> con atributos globales de todo el sitio:</p>
+<div class="highlight-python"><div class="highlight"><pre>restindex
+    crumb: home
+    format:rest
+    page-title: ICOS Spain
+    encoding: utf-8
+    output-encoding: utf-8
+    section-pages: ,overview,organization,infrastructure,outreach,links,contacts
+    file: style.css
+    file: images/cabecera.jpg
+    file: images/geomatico.png
+    file: images/lsce.gif
+    file: images/logo_UE_fp7.jpeg
+    file: images/icos_bottom_banner.png
+    file: images/logo_aemet.png
+    file: images/logo_ceam.png
+    file: images/logo_csic.png
+    file: images/logo_ic3.png
+    file: images/logo_uclm.png
+    file: images/logo_ugr.png
+    file: images/logo_u_las_palmas.png
+
+    build: no
+/restindex
+</pre></div>
+</div>
+<p>Los elementos más frecuentemente actualizados de esta página son el parámetro <em>section-pages</em> en caso de quere añadir
+una nueva sección o los parámetros <em>file</em> en caso de querer incluir en el directorio <em>output</em> un nuevo fichero, ya
+sea imagen, hoja css, etc.</p>
+</div>
+<div class="section" id="plantilla">
+<h3>Plantilla<a class="headerlink" href="#plantilla" title="Permalink to this headline">¶</a></h3>
+<p>Dentro de <em>input</em> es posible encontrar el fichero <em>template.txt</em> que contiene la plantilla HTML que se usará para
+generar el HTML correspondiente a cada sección.</p>
+<p>Dentro de dicho fichero es posible encontrar macros como  &#8220;&lt;% title %&gt;&#8221; que son susituidas en el momento de la
+generación por contenido extraido de los ficheros correspondientes a las secciones.</p>
+<p>También es posible ejecutar código Python existente para generar contenido dinámicamente. Estas llamadas se delimitan
+por &#8220;&lt;#&#8221; y &#8220;#&gt;&#8221;, por ejemplo:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;#
+    print_details(default_section, item_wrapper = &#39;%s&#39;, page_title = &#39;&#39;)
+#&gt;
+</pre></div>
+</div>
+<p>Para más información sobre las llamadas y macros disponibles, consultar <a class="footnote-reference" href="#id8" id="id4">[4]</a> .</p>
+</div>
+</div>
+<div class="section" id="referencias">
+<h2>Referencias<a class="headerlink" href="#referencias" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://www.voidspace.org.uk/python/rest2web/">http://www.voidspace.org.uk/python/rest2web/</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td><a class="reference external" href="http://docutils.sourceforge.net/rst.html">http://docutils.sourceforge.net/rst.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td><a class="reference external" href="http://docutils.sourceforge.net/docs/user/rst/quickref.html">http://docutils.sourceforge.net/docs/user/rst/quickref.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[4]</a></td><td><a class="reference external" href="http://www.voidspace.org.uk/python/rest2web/templating.html">http://www.voidspace.org.uk/python/rest2web/templating.html</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Sitio web</a><ul>
+<li><a class="reference internal" href="#tecnologias-utilizadas">Tecnologías utilizadas</a></li>
+<li><a class="reference internal" href="#instalacion">Instalación</a></li>
+<li><a class="reference internal" href="#descripcion-del-proyecto">Descripción del proyecto</a><ul>
+<li><a class="reference internal" href="#estructura">Estructura</a></li>
+<li><a class="reference internal" href="#contenidos">Contenidos</a></li>
+<li><a class="reference internal" href="#index-txt">index.txt</a></li>
+<li><a class="reference internal" href="#plantilla">Plantilla</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#referencias">Referencias</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="service-performance.html"
+                        title="previous chapter">Rendimiento servicios</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/website.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="service-performance.html" title="Rendimiento servicios"
+             >previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Oscar Fonts, Micho García.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

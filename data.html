@@ -1,0 +1,624 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Preparación de los datos netCDF &mdash; ICOS Carbon Data Portal 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ICOS Carbon Data Portal 1 documentation" href="index.html" />
+    <link rel="next" title="Servicio “search” de búsqueda de datos" href="search-service.html" />
+    <link rel="prev" title="Instalación" href="install.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="search-service.html" title="Servicio “search” de búsqueda de datos"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Instalación"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="preparacion-de-los-datos-netcdf">
+<h1>Preparación de los datos netCDF<a class="headerlink" href="#preparacion-de-los-datos-netcdf" title="Permalink to this headline">¶</a></h1>
+<p>El <em>Data Portal</em> puede realizar búsquedas por ámbito geográfico, período temporal, conjunto de variables, o por texto libre, dentro de un conjunto de ficheros netCDF. Para que los datos originales sean recuperables mediante estos criterios, es necesario que éstos estén convenientemente descritos.</p>
+<p>A tal efecto, se han seguido las convenciones <a class="reference external" href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html">NetCDF Attribute Convention for Dataset Discovery</a>. En concreto, es necesario que los ficheros netCDF contengan <em>al menos</em> los siguientes atributos globales:</p>
+<div class="section" id="atributos-globales-minimos">
+<h2>Atributos Globales Mínimos<a class="headerlink" href="#atributos-globales-minimos" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Atributo</th>
+<th class="head">Descripción</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Metadata_Conventions</td>
+<td>Literal: &#8220;Unidata Dataset Discovery v1.0&#8221;.</td>
+</tr>
+<tr class="row-odd"><td>id</td>
+<td>Identificador de este dataset. Idealmente un DOI.
+De momento un UUID.</td>
+</tr>
+<tr class="row-even"><td>naming_authority</td>
+<td>Junto con <em>id</em>, debe formar un identificador
+global único. Como UUID ya es global y único <em>per se</em>,
+pondremos el literal &#8220;UUID&#8221;, que indica su tipo.</td>
+</tr>
+<tr class="row-odd"><td>title</td>
+<td>Descripción concisa del conjunto de datos.</td>
+</tr>
+<tr class="row-even"><td>summary</td>
+<td>Un párrafo describiendo los datos con mayor
+detalle.</td>
+</tr>
+<tr class="row-odd"><td>keywords</td>
+<td>Una lista de palabras clave separada por comas.</td>
+</tr>
+<tr class="row-even"><td>standard_name_vocabulary</td>
+<td>Idealmente se usaría el estándar <a class="reference external" href="http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/18/cf-standard-name-table.html">CF standard names v.18</a>.
+Si esto no es posible, crearemos nuestro propio
+vocabulario &#8220;ICOS-SPAIN&#8221;, ampliando el <a class="reference external" href="http://ciclope.cmima.csic.es:8080/dataportal/xml/vocabulario.xml">vocabulario usado en la UTM</a>.
+Este atributo contendrá la URL donde pueda descargarse
+el vocabulario.</td>
+</tr>
+<tr class="row-odd"><td>license</td>
+<td>Licencia de uso de los datos. Se recomienda la <a class="reference external" href="http://opendatacommons.org/licenses/odbl/">Open Database License</a>.</td>
+</tr>
+<tr class="row-even"><td>geospatial_lat_min</td>
+<td>Límites geográficos en los que están contenidas
+las medidas, coordenadas geográficas en grados
+decimales, sistema de referencia WGS84 (EPSG:4326).</td>
+</tr>
+<tr class="row-odd"><td>geospatial_lat_max</td>
+<td><em>idem</em></td>
+</tr>
+<tr class="row-even"><td>geospatial_lon_min</td>
+<td><em>idem</em></td>
+</tr>
+<tr class="row-odd"><td>geospatial_lon_max</td>
+<td><em>idem</em></td>
+</tr>
+<tr class="row-even"><td>time_coverage_start</td>
+<td>Instante del dato más remoto, en formato <a class="reference external" href="http://es.wikipedia.org/wiki/ISO_8601">ISO8601</a>.</td>
+</tr>
+<tr class="row-odd"><td>time_coverage_end</td>
+<td>Instante del dato más reciente, en formato <a class="reference external" href="http://es.wikipedia.org/wiki/ISO_8601">ISO8601</a>.</td>
+</tr>
+<tr class="row-even"><td>institution</td>
+<td>Institución que publica los datos.</td>
+</tr>
+<tr class="row-odd"><td>creator_url</td>
+<td>Dirección web de la istitución.</td>
+</tr>
+<tr class="row-even"><td>cdm_data_type</td>
+<td><a class="reference external" href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#cdm_data_type_Attribute">Tipo de datos Thredds</a>. Uno de &#8220;Grid&#8221;, &#8220;Image&#8221;, &#8220;Station&#8221;, &#8220;Radial&#8221;
+o &#8220;Trajectory&#8221;.</td>
+</tr>
+<tr class="row-odd"><td>icos_domain</td>
+<td>Atributo propio (no responde a ninguna convención),
+que necesitamos a efectos estadísticos.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="lista-de-valores-de-institution-y-creator-url">
+<h3>Lista de valores de &#8216;institution&#8217; y &#8216;creator_url&#8217;<a class="headerlink" href="#lista-de-valores-de-institution-y-creator-url" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>&#8220;Unidad de Tecnología Marina (UTM), CSIC&#8221; =&gt; <a class="reference external" href="http://www.utm.csic.es/">http://www.utm.csic.es/</a></li>
+<li>&#8220;Centro de Estudios Ambientales del Mediterráneo (CEAM)&#8221; =&gt; <a class="reference external" href="http://www.ceam.es/">http://www.ceam.es/</a></li>
+<li>&#8220;Centro de Investigación Atmosférica de Izaña, AEMET&#8221; =&gt; <a class="reference external" href="http://www.izana.org/">http://www.izana.org/</a></li>
+<li>&#8220;Institut Català de Ciències del Clima (IC3)&#8221; =&gt; <a class="reference external" href="http://www.ic3.cat/">http://www.ic3.cat/</a></li>
+<li><strong>... TODO: completar con lista de contribuidores en ICOS-SPAIN.</strong></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="lista-de-valores-de-icos-domain">
+<h3>Lista de valores de &#8216;icos_domain&#8217;<a class="headerlink" href="#lista-de-valores-de-icos-domain" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>&#8220;environment&#8221; (terrestre/ecosistemas)</li>
+<li>&#8220;atmosphere&#8221;</li>
+<li>&#8220;oceans&#8221;</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="atributos-globales-recomendados">
+<h2>Atributos Globales Recomendados<a class="headerlink" href="#atributos-globales-recomendados" title="Permalink to this headline">¶</a></h2>
+<p>Se recomienda seguir el resto de las convenciones <a class="reference external" href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html">NetCDF Attribute Convention for Dataset Discovery</a>, en especial se recomienda
+incluir <strong>alguna manera de contactar</strong> con el creador o el publicador de los datos.</p>
+<p>Ejemplo de un set de atributos globales según las <a class="reference external" href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html">NetCDF Attribute Convention for Dataset Discovery</a>, expresados en <em>ncML</em>:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;attribute name=&quot;Metadata_Conventions&quot; value=&quot;Unidata Dataset Discovery v1.0&quot; /&gt;
+&lt;attribute name=&quot;id&quot; value=&quot;icos-sample-1&quot; /&gt;
+&lt;attribute name=&quot;naming_authority&quot; value=&quot;co.geomati&quot; /&gt;
+&lt;attribute name=&quot;title&quot; value=&quot;Global Wind-Wave Forecast Model and Ocean Wave model&quot; /&gt;
+&lt;attribute name=&quot;summary&quot; value=&quot;This is a sample global ocean file that comes with default Thredds installation. Its global attributes have been modified to conform with Dataset Discovery convention&quot; /&gt;
+&lt;attribute name=&quot;keywords&quot; value=&quot;ocean, sample, metadata, icos, geomati.co&quot; /&gt;
+&lt;attribute name=&quot;license&quot; value=&quot;Open Database License v.1.0&quot; /&gt;
+&lt;attribute name=&quot;standard_name_vocabulary&quot; value=&quot;UTM.CSIC.ES&quot; /&gt;
+&lt;attribute name=&quot;geospatial_lat_min&quot; value=&quot;40&quot; /&gt;
+&lt;attribute name=&quot;geospatial_lat_max&quot; value=&quot;50&quot; /&gt;
+&lt;attribute name=&quot;geospatial_lon_min&quot; value=&quot;-10&quot; /&gt;
+&lt;attribute name=&quot;geospatial_lon_max&quot; value=&quot;10&quot; /&gt;
+&lt;attribute name=&quot;time_coverage_start&quot; value=&quot;2011-07-10T12:00&quot; /&gt;
+&lt;attribute name=&quot;time_coverage_end&quot; value=&quot;2011-07-15T12:00&quot; /&gt;
+
+&lt;attribute name=&quot;geospatial_vertical_min&quot; value=&quot;-1&quot; /&gt;
+&lt;attribute name=&quot;geospatial_vertical_max&quot; value=&quot;1&quot; /&gt;
+&lt;attribute name=&quot;geospatial_vertical_units&quot; value=&quot;m&quot; /&gt;
+&lt;attribute name=&quot;geospatial_vertical_resolution&quot; value=&quot;1&quot; /&gt;
+&lt;attribute name=&quot;geospatial_vertical_positive&quot; value=&quot;up&quot; /&gt;
+&lt;attribute name=&quot;time_coverage_duration&quot; value=&quot;P10D&quot; /&gt;
+&lt;attribute name=&quot;time_coverage_resolution&quot; value=&quot;1&quot; /&gt;
+
+&lt;attribute name=&quot;Metadata_Link&quot; value=&quot;http://ciclope.cmima.csic.es:8080/thredds/iso/wcsExample/ocean-metadata-sample.nc&quot; /&gt;
+&lt;attribute name=&quot;history&quot; value=&quot;2011-08-16 - metadata changed to conform to data portal specification&quot; /&gt;
+&lt;attribute name=&quot;comment&quot; value=&quot;Half of this metadata is fake&quot; /&gt;
+
+&lt;attribute name=&quot;creator_name&quot; value=&quot;gribtocdl&quot; /&gt;
+&lt;attribute name=&quot;creator_url&quot; value=&quot;http://www.unidata.ucar.edu/projects/THREDDS/&quot; /&gt;
+&lt;attribute name=&quot;creator_email&quot; value=&quot;support@unidata.ucar.edu&quot; /&gt;
+&lt;attribute name=&quot;institution&quot; value=&quot;unidata&quot; /&gt;
+&lt;attribute name=&quot;date_created&quot; value=&quot;2003-04-02 12:12:50&quot; /&gt;
+&lt;attribute name=&quot;date_modified&quot; value=&quot;2011-07-15 11:00:00&quot; /&gt;
+&lt;attribute name=&quot;date_issued&quot; value=&quot;2011-07-10 12:00:00&quot; /&gt;
+&lt;attribute name=&quot;project&quot; value=&quot;ICOS-SPAIN&quot; /&gt;
+&lt;attribute name=&quot;acknowledgement&quot; value=&quot;UTM/CSIC&quot; /&gt;
+&lt;attribute name=&quot;contributor_name&quot; value=&quot;Oscar Fonts&quot; /&gt;
+&lt;attribute name=&quot;contributor_role&quot; value=&quot;Inventing Discovery Metadata Attributes&quot; /&gt;
+&lt;attribute name=&quot;publisher_name&quot; value=&quot;UTM/CMIMA/CSIC&quot; /&gt;
+&lt;attribute name=&quot;publisher_url&quot; value=&quot;http://www.utm.csic.es/&quot; /&gt;
+&lt;attribute name=&quot;publisher_email&quot; value=&quot;esto@un.correo.es&quot; /&gt;
+&lt;attribute name=&quot;publisher_email&quot; value=&quot;esto@un.correo.es&quot; /&gt;
+
+&lt;attribute name=&quot;processing_level&quot; value=&quot;Who knows&quot; /&gt;
+&lt;attribute name=&quot;cdm_data_type&quot; value=&quot;Grid&quot; /&gt;
+&lt;attribute name=&quot;record&quot; value=&quot;reftime, valtime&quot; /&gt;
+
+&lt;attribute name=&quot;Conventions&quot; value=&quot;NUWG&quot; /&gt;
+&lt;attribute name=&quot;GRIB_reference&quot; value=&quot;Office Note 388 GRIB&quot; /&gt;
+&lt;attribute name=&quot;GRIB_URL&quot; value=&quot;http://www.nco.ncep.noaa.gov/pmb/docs/on388/&quot; /&gt;
+&lt;attribute name=&quot;version&quot; type=&quot;double&quot; value=&quot;0.0&quot; /&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="tabla-equivalencias-metadatos">
+<h2>Tabla equivalencias metadatos<a class="headerlink" href="#tabla-equivalencias-metadatos" title="Permalink to this headline">¶</a></h2>
+<p>A lo largo de la aplicación, estos <strong>atributos netCDF</strong> se transformarán en una <strong>fichas ISO</strong> en un proceso de harvesting. El servicio <strong>search</strong> podrá filtrar por alguno de estos conceptos vía <strong>parámetros de búsqueda</strong>, que se convertirán en un <strong>request CSW</strong>, y que dará lugar a unos <strong>resultados de búsqueda</strong>. Estos resultados, además, serán <strong>ordenables</strong> por alguno de los parámetros.</p>
+<p>Puesto que en cada etapa estos metadatos siguen esquemas y toman nombres distintos, se detalla aquí una tabla de equivalencias (ISO basado en <a class="reference external" href="https://geo-ide.noaa.gov/wiki/index.php?title=NetCDF_Attribute_Convention_for_Dataset_Discovery_Conformance_Test">NOAA&#8217;s NetCDF Attribute Convention for Dataset Discovery Conformance Test</a>):</p>
+<table border="1" class="docutils">
+<caption><em>Equivalencia entre los nombres de los metadatos en diferentes fases del proceso</em></caption>
+<colgroup>
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">netCDF global attribute</th>
+<th class="head">ISO 19115:2003/19139</th>
+<th class="head">Search request param</th>
+<th class="head">CSW Filter</th>
+<th class="head">Search order-by param</th>
+<th class="head">Search result field</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>id</td>
+<td>/gmd:MD_Metadata/gmd:fileIdentifier/gco:CharacterString</td>
+<td>&#8211; (no se busca por id, de momento)</td>
+<td>Operación <em>getRecordById</em>.</td>
+<td>id</td>
+<td>id</td>
+</tr>
+<tr class="row-odd"><td>title</td>
+<td>/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString</td>
+<td>text (texto libre)</td>
+<td>any</td>
+<td>title</td>
+<td>title</td>
+</tr>
+<tr class="row-even"><td>summary</td>
+<td>/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString</td>
+<td>text (texto libre)</td>
+<td>any</td>
+<td>&#8211; (no se ordena por resumen)</td>
+<td>summary</td>
+</tr>
+<tr class="row-odd"><td>geospatial_lat_min, geospatial_lat_max, geospatial_lon_min, geospatial_lon_max</td>
+<td>/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/gmd:westBoundLongitude/gco:Decimal
+/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/gmd:eastBoundLongitude/gco:Decimal
+/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/gmd:southBoundLongitude/gco:Decimal
+/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/gmd:northBoundLongitude/gco:Decimal</td>
+<td>bboxes (múltiples)</td>
+<td>OGC BBOX filter</td>
+<td>&#8211; (no se ordena por bbox)</td>
+<td>geo_extent (WKT)</td>
+</tr>
+<tr class="row-even"><td>time_coverage_start</td>
+<td>/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:beginPosition</td>
+<td>start_date</td>
+<td>TempExtent_begin</td>
+<td>start_time</td>
+<td>start_time</td>
+</tr>
+<tr class="row-odd"><td>time_coverage_end</td>
+<td>/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition</td>
+<td>end_date</td>
+<td>TempExtent_end</td>
+<td>end_time</td>
+<td>end_time</td>
+</tr>
+<tr class="row-even"><td>variables (<em>no son atributos</em>)</td>
+<td>/gmd:MD_Metadata/gmd:contentInfo/gmi:MI_CoverageDescription/gmd:dimension/gmd:MD_Band/gmd:sequenceIdentifier/gco:MemberName/gco:aName/gco:CharacterString</td>
+<td>variables (multiselect)</td>
+<td>ContentInfo</td>
+<td>&#8211; (no se ordena por variables)</td>
+<td>variables</td>
+</tr>
+<tr class="row-odd"><td>institution</td>
+<td>/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString</td>
+<td>&#8211; (no se busca por institucion)</td>
+<td>&#8211; (no se filtra por institucion)</td>
+<td>&#8211; (no se ordena por institucion)</td>
+<td>institution</td>
+</tr>
+<tr class="row-even"><td>creator_url</td>
+<td>/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:onlineResource/gmd:CI_OnlineResource/gmd:linkage/gmd:URL</td>
+<td>&#8211; (no se busca por URL de institución)</td>
+<td>&#8211; (no se filtra por URL de institución)</td>
+<td>&#8211; (no se ordena por URL de institución)</td>
+<td>creator_url</td>
+</tr>
+<tr class="row-odd"><td>cdm_data_type</td>
+<td>/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialRepresentationType/gmd:MD_SpatialRepresentationTypeCode <em>May need some extensions to this codelist. Current values: vector, grid, textTable, tin, stereoModel, video.</em></td>
+<td>&#8211; (no se busca por tipo)</td>
+<td>&#8211; (no se filtra por tipo)</td>
+<td>&#8211; (no se ordena por tipo)</td>
+<td>data_type</td>
+</tr>
+<tr class="row-even"><td>icos_domain</td>
+<td>/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:topicCategory/gmd:MD_TopicCategoryCode</td>
+<td>&#8211; (no se busca por área temática)</td>
+<td>&#8211; (no se filtra por área temática)</td>
+<td>&#8211; (no se ordena por área temática)</td>
+<td>icos_domain</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="convencion-datos">
+<h2>Convención datos<a class="headerlink" href="#convencion-datos" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="observaciones-norma-seguida-por-netcdf-de-la-utm-presentes-en-thredds">
+<h3>Observaciones norma seguida por NetCDF de la UTM presentes en Thredds<a class="headerlink" href="#observaciones-norma-seguida-por-netcdf-de-la-utm-presentes-en-thredds" title="Permalink to this headline">¶</a></h3>
+<p>Los ficheros NetCDF existentes en la instancia de Thredds de cíclope especifican un atributo &#8220;conventions=Unidata Observation Dataset v1.0&#8221;.</p>
+<p>Dicha norma está desaconsejada en favor de CF Conventions for Point Observations[1]:</p>
+<ul class="simple">
+<li>This Conventions is deprecated in favor of the CF Conventions for Point Observations</li>
+</ul>
+<p>y las CF Conventions for Point Observations forman parte del &#8220;draft incompleto&#8221; de la CF-1.6.
+Para este documento se ha trabajado con la versión 1.5 de CF, ignorando los trabajos en curso de la 1.6</p>
+<p>En cuanto a los atributos globales, se sigue la norma NetCDF Attribute Convention for Dataset
+Discovery, en la que se referencia en la cabecera un vocabulario[2], pero las variables no
+contienen un atributo <em>standard_name</em> que haga referencia a las variables definidas en dicho
+vocabulario, como se recomienda en dicha norma.</p>
+<p>Las entradas del vocabulario no deberían tener unidades, ya que es posible tomar datos de la
+misma variable en medidas distintas. Por ejemplo dos instituciones distintas pueden producir
+información de profundidad, una en metros y la otra en kilómetros.</p>
+</div>
+<div class="section" id="descripcion-de-la-convencion">
+<h3>Descripción de la convención<a class="headerlink" href="#descripcion-de-la-convencion" title="Permalink to this headline">¶</a></h3>
+<p>Para cada variable se especificará el atributo &#8220;units&#8221;. Por el momento se usará una cadena de carácter
+descriptiva de las unidad que vienen en los ficheros originales importados a NetCDF. En un futuro
+se plantea la posibilidad de seguir CF, es decir, encontrando la unidad en el fichero udunits.dat del programa
+Udunits de Unidata.</p>
+<p>Se especificará un atributo standard_name que referenciará la entrada en el vocabulario de la variable que se está midiendo.</p>
+<p>Para las variables coordenadas se seguirá CF y se especificarán los atributos <em>units</em>, <em>standard_name</em> y <em>axis</em>. Las unidades para
+latitud y longitud serán siempre &#8220;degrees_north&#8221; y &#8220;degrees_east&#8221; respectivamente.</p>
+<p>Para las coordenadas verticales se especificará en caso necesario un atributo <em>positive</em> con la dirección
+creciente de la dimensión. Aunque estén desaconsejadas, en caso de que las coordenadas verticales no sean
+dimensionales (nivel, capa, etc.) estas serán utilizadas. La alternativa es especificar mediante atributos
+una fórmula para convertir el nivel a atmósferas, lo cual complica en exceso la carga de los datos de los
+distintos proveedores.</p>
+<p>Para la coordenada tiempo se seguirá también CF.</p>
+<p>Para la obtención de las coordenadas de una variable se sigue la convención CF para trayectorias,
+datos puntuales y mallas (ver resumen de CF más abajo), aunque en principio se intuye que sólo va a
+haber datos puntuales y trayectorias.</p>
+<p>Las variables que sean calculadas como una media, incluirán un atributo
+<em>mean_desc</em> y <em>mean</em> que contendrán respectivamente una descripción de
+la media y los nombres, separados por un espacio, de las dos variables
+que contienen el número de elementos que se usaron para calcular la
+media (<em>nd</em>) y la desviación típica (<em>sd</em>).</p>
+<p>Estas variables tendrán la misma forma (<em>shape</em>) y por tanto, el mismo número de
+valores, que la variable media. Esto es así porque cada valor de la variable media
+se corresponde con el valor en la misma posición de cada una de las variables
+auxiliares.</p>
+<p>Además, con el fin de poder identificar las variables <em>nd</em> y <em>std</em> sin
+tener que buscar atributos <em>mean</em> en todas las variables, estas incorporarán un atributo
+<em>mean_role</em> con valor &#8220;nd&#8221; o &#8220;std&#8221;. Por ejemplo:</p>
+<div class="highlight-python"><div class="highlight"><pre>dimensions:
+ station = 10 ; // measurement locations
+ time = UNLIMITED ;
+variables:
+ float co2(time,station) ;
+  co2:long_name = &quot;carbon dioxide&quot; ;
+  co2:coordinates = &quot;lat lon&quot; ;
+  co2:mean = &quot;nd sd&quot;
+  co2:mean_desc = &quot;Hourly data means of 10 minutes means&quot;
+ int nd(time,station) ;
+  nd:mean_role = &quot;nd&quot;
+ int sd(time,station) ;
+  sd:mean_role = &quot;sd&quot;
+ double time(time) ;
+  time:long_name = &quot;time of measurement&quot; ;
+  time:units = &quot;days since 1970-01-01 00:00:00&quot; ;
+ float lon(station) ;
+  lon:long_name = &quot;station longitude&quot;;
+  lon:units = &quot;degrees_east&quot;;
+ float lat(station) ;
+  lat:long_name = &quot;station latitude&quot; ;
+  lat:units = &quot;degrees_north&quot; ;
+</pre></div>
+</div>
+<p>Se considera la utilización de un único sistema de referencia, por simplicidad. El sistema común
+será el WGS84 y no se incluirá información sobre el CRS dentro del fichero.</p>
+</div>
+</div>
+<div class="section" id="cambios-con-respecto-a-la-convencion-implicita-de-la-fase-1">
+<h2>Cambios con respecto a la convención (implícita) de la fase 1<a class="headerlink" href="#cambios-con-respecto-a-la-convencion-implicita-de-la-fase-1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Eliminación de las unidades en el vocabulario.</li>
+<li>Se usaría un UUID como &#8220;id&#8221; (fácil de generar en java, a falta de DOIs).</li>
+<li>Especificación del atributo global naming_autority.</li>
+<li>Especificación del atributo global standard_name_vocabulary</li>
+<li>Especificación del atributo global &#8220;icos_domain&#8221; con los valores mencionados más arriba.</li>
+<li>Especificación del atributo &#8220;cdm_data_type&#8221; con uno de los <a class="reference external" href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#cdm_data_type_Attribute">Tipo de datos Thredds</a>.</li>
+<li>Codificación de las trayectorias, mallas, etc. como se especifica en CF (ver <a class="reference internal" href="#coordsys"><em>Sistemas de coordenadas</em></a>), incluyendo el atributo &#8220;axis&#8221; y un &#8220;standard_name&#8221; que indique una variable existente en el vocabulario.</li>
+<li>Especificación del atributo global &#8220;conventions = CF-1.5&#8221;.</li>
+<li>Especificación del atributo global &#8220;Metadata_Conventions=Unidata Dataset Discovery v1.0&#8221;.</li>
+<li>Especificación del atributo global &#8220;institution&#8221; y &#8220;creator_url&#8221;.</li>
+<li>Especificación de los &#8220;atributos globales mínimos&#8221; (sobre todo bbox y time range) según: <a class="reference external" href="https://github.com/michogar/dataportal/blob/master/doc/data.rst">https://github.com/michogar/dataportal/blob/master/doc/data.rst</a></li>
+<li>Opcionalmente, especificación del resto de atributos globales recomendados en las discovery conventions: <a class="reference external" href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html">http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html</a></li>
+</ul>
+</div>
+<div class="section" id="climate-forecast">
+<h2>Climate &amp; Forecast<a class="headerlink" href="#climate-forecast" title="Permalink to this headline">¶</a></h2>
+<p>Es una convención que define ciertas normas y recomendaciones para los contenidos de los ficheros netcdf.</p>
+<p>Las definiciones que más nos pueden interesar son las relativas a la organización de las variables que contienen las coordenadas y su relación con las variables que contienen los datos que han sido medidos, de manera que para una variable de interés concreta, sea posible saber qué variables contienen las coordenadas (lat, lon, vertical y tiempo) dónde y cuándo se midió cada valor, tanto si las mediciones representan una malla, datos puntuales, trayectorias, etc.</p>
+<p>A continuación se describe su versión 1.5.</p>
+<div class="section" id="descripcion-de-los-contenidos">
+<h3>Descripción de los contenidos<a class="headerlink" href="#descripcion-de-los-contenidos" title="Permalink to this headline">¶</a></h3>
+<p>Descripción de los contenidos del fichero. En particular &#8220;institution&#8221; permite describir la organización que produjo los datos</p>
+</div>
+<div class="section" id="descripcion-de-los-datos">
+<h3>Descripción de los datos<a class="headerlink" href="#descripcion-de-los-datos" title="Permalink to this headline">¶</a></h3>
+<p>Se requiere el atributo &#8220;units&#8221; para todas las variables dimensionales (creo que se refiere a aquellas que tienen unidad, las que no son porcentajes, ratios, etc.)</p>
+<p>Los valores válidos son los aceptados por un paquete informático de Unidata llamado Udunits, que incorpora un fichero udunits.dat con la lista de los nombres de unidad soportados.</p>
+<p>long_name es el nombre de la variable que se presenta a los usuarios</p>
+<p>standard_name define una manera de identificar unívocamente la magnitud que se está representando. Consta de una referencia a la tabla de standard names seguida opcionalmente de algunos modificadores.</p>
+</div>
+<div class="section" id="descripcion-de-las-coordenadas">
+<h3>Descripción de las coordenadas<a class="headerlink" href="#descripcion-de-las-coordenadas" title="Permalink to this headline">¶</a></h3>
+<p>Las variables que representan latitud y longitud deben llevar siempre el atributo &#8220;units&#8221;. Se recomienda:</p>
+<ul class="simple">
+<li>Para latitud: degrees_north. Equivalente a degree_north, degree_N, degrees_N, degreeN y degreesN</li>
+<li>Para longitud: degrees_east. Equivalente a degree_east, degree_E, degrees_E, degreeE y degreesE</li>
+</ul>
+<p>Opcionalmente, para indicar que una variable representa datos de latitud o longitud, es posible especificar
+un attributo (standard_name=&#8221;latitude&#8221; | standard_name=&#8221;longitude&#8221;) o un atributo (axis=&#8221;Y&#8221; | axis=&#8221;X&#8221;)</p>
+</div>
+<div class="section" id="descripcion-altura-o-profundidad">
+<h3>Descripción altura o profundidad<a class="headerlink" href="#descripcion-altura-o-profundidad" title="Permalink to this headline">¶</a></h3>
+<p>Las variables que representan altura o profundidad deben llevar siempre el atributo &#8220;units&#8221;.</p>
+<p>Cuando las coordenadas son dimensionales, es posible indicar:</p>
+<ul class="simple">
+<li>Unidades de presión: bar, millibar, decibar, atmosphere (atm), pascal (Pa), hPa</li>
+<li>Unidades de longitud: meter, m, kilometer, km</li>
+<li>Otras</li>
+</ul>
+<p>Si units no indica una unidad válida de presión, es necesario indicar el atributo &#8220;positive=(up|down)&#8221;</p>
+<p>Opcionalmente, para indicar que una variable representa coordenadas verticales es posible especificar un attributo standard_name con un valor apropiado o un atributo (axis=&#8221;Z&#8221;)</p>
+<p>En caso de coordenadas adimensionales, es posible, aunque desaconsejado, utilizar &#8220;level&#8221;, &#8220;layer&#8221; o &#8220;sigma_level&#8221; como valor de &#8220;units&#8221;. La forma recomendada por la convención CF es utilizar una serie de atributos que definen una fórmula que transforma un determinado valor de &#8220;level&#8221; a un valor dimensional. Estos atributos son &#8220;standard_name&#8221; para identificar la formula y &#8220;formula_terms&#8221; para especificar las entradas.</p>
+</div>
+<div class="section" id="descripcion-variables-de-tiempo">
+<h3>Descripción variables de tiempo<a class="headerlink" href="#descripcion-variables-de-tiempo" title="Permalink to this headline">¶</a></h3>
+<p>Las variables que representan tiempo deben llevar siempre el atributo &#8220;units&#8221;. Se especifica:</p>
+<div class="highlight-python"><div class="highlight"><pre>units=[unidad temporal] since [fecha_inicio]
+</pre></div>
+</div>
+<p>Por ejemplo:</p>
+<div class="highlight-python"><div class="highlight"><pre>units=seconds since 1992-10-8 15:15:42.5 -6:00
+</pre></div>
+</div>
+<p>La unidad temporal puede ser: day (d), hour (hr, h), minute (min) y second (sec, s)</p>
+<p>Una variable temporal puede ser identificada con las unidades sólo, pero también es posible utilizar &#8220;standard_name&#8221; con un valor apropiado o (axis=&#8217;Z&#8217;).</p>
+</div>
+<div class="section" id="sistemas-de-coordenadas">
+<span id="coordsys"></span><h3>Sistemas de coordenadas<a class="headerlink" href="#sistemas-de-coordenadas" title="Permalink to this headline">¶</a></h3>
+<p>Las dimensiones de una variable espacio temporal son utilizadas para localizar los valores de la variable en el espacio y en el tiempo. Existen varias maneras de localizar dichos valores.</p>
+<div class="section" id="latitud-longitud-vertical-y-tiempo-independiente">
+<h4>Latitud, longitud, vertical y tiempo independiente<a class="headerlink" href="#latitud-longitud-vertical-y-tiempo-independiente" title="Permalink to this headline">¶</a></h4>
+<p>Cada una de las dimensiones es identificada por una &#8220;coordinate variable&#8221; según se explica en el NetCDF User Guide.</p>
+</div>
+<div class="section" id="series-temporales-de-datos-estacionarios">
+<h4>Series temporales de datos estacionarios<a class="headerlink" href="#series-temporales-de-datos-estacionarios" title="Permalink to this headline">¶</a></h4>
+<p>La variable tiene, en lugar de dimensiones latitud y longitud, una dimensión que identifica la posición de la medida. Variables coordenada auxiliares dan la latitud y longitud para cada posición. En el siguiente ejemplo se puede ver como una de las dimensiones de &#8220;humidity&#8221; es &#8220;station&#8221; y que las variables lat y lon tienen como única dimensión &#8220;station&#8221;. Es decir, existe un valor de lat/lon para cada valor de station:</p>
+<div class="highlight-python"><div class="highlight"><pre>dimensions:
+ station = 10 ; // measurement locations
+ pressure = 11 ; // pressure levels
+ time = UNLIMITED ;
+variables:
+ float humidity(time,pressure,station) ;
+  humidity:long_name = &quot;specific humidity&quot; ;
+  humidity:coordinates = &quot;lat lon&quot; ;
+ double time(time) ;
+  time:long_name = &quot;time of measurement&quot; ;
+  time:units = &quot;days since 1970-01-01 00:00:00&quot; ;
+ float lon(station) ;
+  lon:long_name = &quot;station longitude&quot;;
+  lon:units = &quot;degrees_east&quot;;
+ float lat(station) ;
+  lat:long_name = &quot;station latitude&quot; ;
+  lat:units = &quot;degrees_north&quot; ;
+ float pressure(pressure) ;
+  pressure:long_name = &quot;pressure&quot; ;
+  pressure:units = &quot;hPa&quot; ;
+</pre></div>
+</div>
+</div>
+<div class="section" id="trayectorias">
+<h4>Trayectorias<a class="headerlink" href="#trayectorias" title="Permalink to this headline">¶</a></h4>
+<p>El mismo caso que el anterior pero la variable tiene una dimensión temporal y existen variables coordenada auxiliares que dan la latitud, longitud y coordenada vertical para cada valor de tiempo.
+En el siguiente ejemplo está la variable coordenada &#8220;time&#8221; que es la dimensión de todas las variables coordenada auxiliares: lat, lon y z:</p>
+<div class="highlight-python"><div class="highlight"><pre>dimensions:
+ time = 1000 ;
+variables:
+ float O3(time) ;
+  O3:long_name = &quot;ozone concentration&quot; ;
+  O3:units = &quot;1e-9&quot; ;
+  O3:coordinates = &quot;lon lat z&quot; ;
+ double time(time) ;
+  time:long_name = &quot;time&quot; ;
+  time:units = &quot;days since 1970-01-01 00:00:00&quot; ;
+ float lon(time) ;
+  lon:long_name = &quot;longitude&quot; ;
+  lon:units = &quot;degrees_east&quot; ;
+ float lat(time) ;
+  lat:long_name = &quot;latitude&quot; ;
+  lat:units = &quot;degrees_north&quot; ;
+ float z(time) ;
+  z:long_name = &quot;height above mean sea level&quot; ;
+  z:units = &quot;km&quot; ;
+  z:positive = &quot;up&quot; ;
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Preparación de los datos netCDF</a><ul>
+<li><a class="reference internal" href="#atributos-globales-minimos">Atributos Globales Mínimos</a><ul>
+<li><a class="reference internal" href="#lista-de-valores-de-institution-y-creator-url">Lista de valores de &#8216;institution&#8217; y &#8216;creator_url&#8217;</a></li>
+<li><a class="reference internal" href="#lista-de-valores-de-icos-domain">Lista de valores de &#8216;icos_domain&#8217;</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#atributos-globales-recomendados">Atributos Globales Recomendados</a></li>
+<li><a class="reference internal" href="#tabla-equivalencias-metadatos">Tabla equivalencias metadatos</a></li>
+<li><a class="reference internal" href="#convencion-datos">Convención datos</a><ul>
+<li><a class="reference internal" href="#observaciones-norma-seguida-por-netcdf-de-la-utm-presentes-en-thredds">Observaciones norma seguida por NetCDF de la UTM presentes en Thredds</a></li>
+<li><a class="reference internal" href="#descripcion-de-la-convencion">Descripción de la convención</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cambios-con-respecto-a-la-convencion-implicita-de-la-fase-1">Cambios con respecto a la convención (implícita) de la fase 1</a></li>
+<li><a class="reference internal" href="#climate-forecast">Climate &amp; Forecast</a><ul>
+<li><a class="reference internal" href="#descripcion-de-los-contenidos">Descripción de los contenidos</a></li>
+<li><a class="reference internal" href="#descripcion-de-los-datos">Descripción de los datos</a></li>
+<li><a class="reference internal" href="#descripcion-de-las-coordenadas">Descripción de las coordenadas</a></li>
+<li><a class="reference internal" href="#descripcion-altura-o-profundidad">Descripción altura o profundidad</a></li>
+<li><a class="reference internal" href="#descripcion-variables-de-tiempo">Descripción variables de tiempo</a></li>
+<li><a class="reference internal" href="#sistemas-de-coordenadas">Sistemas de coordenadas</a><ul>
+<li><a class="reference internal" href="#latitud-longitud-vertical-y-tiempo-independiente">Latitud, longitud, vertical y tiempo independiente</a></li>
+<li><a class="reference internal" href="#series-temporales-de-datos-estacionarios">Series temporales de datos estacionarios</a></li>
+<li><a class="reference internal" href="#trayectorias">Trayectorias</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="previous chapter">Instalación</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="search-service.html"
+                        title="next chapter">Servicio &#8220;search&#8221; de búsqueda de datos</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/data.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="search-service.html" title="Servicio “search” de búsqueda de datos"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Instalación"
+             >previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Oscar Fonts, Micho García.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

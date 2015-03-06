@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Rendimiento servicios &mdash; ICOS Carbon Data Portal 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ICOS Carbon Data Portal 1 documentation" href="index.html" />
+    <link rel="next" title="Sitio web" href="website.html" />
+    <link rel="prev" title="Performance tests" href="performance-tests.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="website.html" title="Sitio web"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="performance-tests.html" title="Performance tests"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="rendimiento-servicios">
+<h1>Rendimiento servicios<a class="headerlink" href="#rendimiento-servicios" title="Permalink to this headline">¶</a></h1>
+<p>Todas las pruebas realizadas a continuación se han hecho atacando a
+los servicios de forma local y estos a geonetwork de forma
+remota (en cíclope).</p>
+<p>Las pruebas están hechas a fecha 11/1/2012. El hash del último commit
+es &#8220;fa1e976&#8221;.</p>
+<div class="section" id="servicio-de-busqueda">
+<h2>Servicio de búsqueda<a class="headerlink" href="#servicio-de-busqueda" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="tests-sin-filtro">
+<h3>Tests sin filtro<a class="headerlink" href="#tests-sin-filtro" title="Permalink to this headline">¶</a></h3>
+<p>Los siguientes tests se han realizado con una petición que
+devuelve la primera página de 25 resultados sin hacer ningún filtro.</p>
+<div class="section" id="uso-continuado">
+<h4>Uso continuado<a class="headerlink" href="#uso-continuado" title="Permalink to this headline">¶</a></h4>
+<p>Se lanzan 1000 peticiones sin filtros en 3000 segundos. Es
+decir, una petición cada 3 segundos. Como cada petición tarda menos de
+3 segundos no hay concurrencia. El objetivo de esta prueba es ver el
+uso continuado del servidor sin estreses puntuales.</p>
+<p><strong>Resultados</strong></p>
+<p>Se observa en el <em>manager</em> de Tomcat que el número de sesiones
+abiertas en geonetwork crece por cada petición. El valor más grande
+observado es de 5759, sin que esto afecte al rendimiento
+aparentemente. Se observa que el número decrece con el tiempo. Al
+parecer se trata de un timeout elevado.</p>
+<p>La siguiente figura muestra los resultados obtenidos.</p>
+<div class="figure">
+<img alt="_images/jmeter_search_continuous.png" src="_images/jmeter_search_continuous.png" />
+<p class="caption">Resultados búsqueda continua sin concurrencia.</p>
+</div>
+</div>
+<div class="section" id="uso-intenso-real">
+<h4>Uso intenso &#8220;real&#8221;<a class="headerlink" href="#uso-intenso-real" title="Permalink to this headline">¶</a></h4>
+<p>Se lanzan 200 peticiones sin filtros en 200 segundos. Es
+decir, una petición cada segundo. El grado de concurrencia es bastante
+alto. El objetivo es estresar GN para ver en qué punto se rompe.</p>
+<p><strong>Resultados</strong></p>
+<p>Todas las peticiones fueron servidas.</p>
+<p>Se da concurrencia creciente, alcanzando más de 30 clientes
+simultáneos. Los tiempos se incrementan proporcionalmente a la
+concurrencia, como puede verse en la siguiente figura:</p>
+<div class="figure">
+<img alt="_images/jmeter_search_real.png" src="_images/jmeter_search_real.png" />
+</div>
+<p>Se puede apreciar que la productividad es casi el doble de lo que se podría obtener
+encadenando peticiones una detrás de otra (0.5 peticiones/s).</p>
+</div>
+<div class="section" id="uso-mas-intensivo">
+<h4>Uso más intensivo<a class="headerlink" href="#uso-mas-intensivo" title="Permalink to this headline">¶</a></h4>
+<p>Se lanzan 10 peticiones sin filtros en 2 segundos pero el
+loop se pone a 100. Aparentemente, loop lo hace es enviar una nueva
+petición cada vez que se completa una para mantener 10 peticiones
+simultáneas hasta que se han consumido las 100*10 peticiones.
+Conclusión, se crece de 0 a 10 peticiones en dos segundos y se
+mantienen las 10 hasta el final del test.</p>
+<p><strong>Resultados</strong></p>
+<p>Se pueden ver en la siguiente figura3. Todas las peticiones se sirven. Ningún error.</p>
+<div class="figure">
+<img alt="_images/jmeter_search_real_intense.png" src="_images/jmeter_search_real_intense.png" />
+</div>
+</div>
+<div class="section" id="ddos">
+<h4>DDOS<a class="headerlink" href="#ddos" title="Permalink to this headline">¶</a></h4>
+<p>Se lanzan 200 peticiones sin filtros en 2 segundos. Es
+decir, 100 peticiones cada segundo. El grado de concurrencia va de 200
+a 0. El objetivo es petar GN, pero no lo he conseguido.</p>
+<p><strong>Resultados</strong></p>
+<p>Los tiempos se van bastante. Hay unas pocas peticiones que petan al
+principio (Raised exception while searching metadata :
+java.sql.SQLException: Cannot get a connection, pool error: Timeout
+waiting for idle object) pero el sistema se recupera y termina bien,
+con más de un 90% de peticiones servidas correctamente.</p>
+</div>
+</div>
+<div class="section" id="filtro-bbox">
+<h3>Filtro BBox<a class="headerlink" href="#filtro-bbox" title="Permalink to this headline">¶</a></h3>
+<p>Se ha realizado un test con un filtro bbox de la mitad del planeta
+(-180, -90, 0, 90) y lanzando 100 peticiones en 100 segundos.</p>
+<p>Se observa que el comportamiento es muy similar al de los tests sin filtro.</p>
+<div class="figure">
+<img alt="_images/jmeter_search_bbox.png" src="_images/jmeter_search_bbox.png" />
+</div>
+</div>
+<div class="section" id="filtro-temporal">
+<h3>Filtro temporal<a class="headerlink" href="#filtro-temporal" title="Permalink to this headline">¶</a></h3>
+<p>Se ha realizado un test con un filtro tempora de &#8220;2010-1-1&#8221; a &#8220;2010-6-1&#8221;
+y lanzando 100 peticiones en 100 segundos.</p>
+<p>Se observa que el comportamiento es muy similar al de los tests sin filtro.</p>
+<div class="figure">
+<img alt="_images/jmeter_search_date.png" src="_images/jmeter_search_date.png" />
+</div>
+</div>
+<div class="section" id="filtro-por-variable">
+<h3>Filtro por variable<a class="headerlink" href="#filtro-por-variable" title="Permalink to this headline">¶</a></h3>
+<p>Se ha realizado un test consultando los datasets que incluyen la variable
+<em>depth</em> y lanzando 100 peticiones en 45 segundos. El tiempo es menor que en
+los casos anteriores porque la productividad en este caso es mayor y se pretende
+testear entornos con varios clientes simultáneos, cosa que no se conseguía realizando
+una petición por segundo.</p>
+<div class="figure">
+<img alt="_images/jmeter_search_var.png" src="_images/jmeter_search_var.png" />
+</div>
+</div>
+</div>
+<div class="section" id="servicio-de-descarga">
+<h2>Servicio de descarga<a class="headerlink" href="#servicio-de-descarga" title="Permalink to this headline">¶</a></h2>
+<p>Los tests para el servicio de descarga se han realizado solicitando la descarga de
+3 ficheros que suman 450Kb.</p>
+<p>El tiempo de respuesta de una petición aislada está entre 1.5s y 2s.</p>
+<p>Se han realizado 1000 peticiones en 1000 segundos. Es decir una petición por segundo,
+lo que ha ocasionado 2 peticiones simultáneas constantemente. Se han obtenido tiempos
+de respuesta iguales a los obtenidos por peticiones individuales.</p>
+<p>Se han realizado test más agresivos (50 peticiones en 5 segundos) obteniendo tiempos
+de respuesta más altos pero la misma productividad (por encima incluso que en el
+caso anterior).</p>
+<p>Esto se debe a que una gran parte del tiempo del servicio se emplea en la transmisión
+de los datos por la red y que no se ha alcanzado el límite de capacidad de la conexión.</p>
+<p>También existe un pool de threads que permite maximizar el uso de dicha conexión.</p>
+<div class="figure">
+<img alt="_images/jmeter_download.png" src="_images/jmeter_download.png" />
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Rendimiento servicios</a><ul>
+<li><a class="reference internal" href="#servicio-de-busqueda">Servicio de búsqueda</a><ul>
+<li><a class="reference internal" href="#tests-sin-filtro">Tests sin filtro</a><ul>
+<li><a class="reference internal" href="#uso-continuado">Uso continuado</a></li>
+<li><a class="reference internal" href="#uso-intenso-real">Uso intenso &#8220;real&#8221;</a></li>
+<li><a class="reference internal" href="#uso-mas-intensivo">Uso más intensivo</a></li>
+<li><a class="reference internal" href="#ddos">DDOS</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#filtro-bbox">Filtro BBox</a></li>
+<li><a class="reference internal" href="#filtro-temporal">Filtro temporal</a></li>
+<li><a class="reference internal" href="#filtro-por-variable">Filtro por variable</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#servicio-de-descarga">Servicio de descarga</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="performance-tests.html"
+                        title="previous chapter">Performance tests</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="website.html"
+                        title="next chapter">Sitio web</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/service-performance.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="website.html" title="Sitio web"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="performance-tests.html" title="Performance tests"
+             >previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Oscar Fonts, Micho García.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

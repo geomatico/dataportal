@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Conversión a NetCDF &mdash; ICOS Carbon Data Portal 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ICOS Carbon Data Portal 1 documentation" href="index.html" />
+    <link rel="next" title="Performance tests" href="performance-tests.html" />
+    <link rel="prev" title="Servicio “search” de búsqueda de datos" href="search-service.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="performance-tests.html" title="Performance tests"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="search-service.html" title="Servicio “search” de búsqueda de datos"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="conversion-a-netcdf">
+<h1>Conversión a NetCDF<a class="headerlink" href="#conversion-a-netcdf" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="configuracion-del-proyecto">
+<h2>Configuración del proyecto<a class="headerlink" href="#configuracion-del-proyecto" title="Permalink to this headline">¶</a></h2>
+<p>Se ha creado un proyecto Java para generar NetCDFs que cumplan la convención utilizada en ICOS. Para hacer uso del proyecto
+es necesario crear un proyecto Java y añadir la dependencia a <em>netcdf-converter</em>. Con maven, basta con añadir la siguiente
+dependencia en el <em>pom.xml</em>:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;dependency&gt;
+        &lt;groupId&gt;co.geomati&lt;/groupId&gt;
+        &lt;artifactId&gt;netcdf-converter&lt;/artifactId&gt;
+        &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;
+</pre></div>
+</div>
+<p>Las dependencias están desplegadas en el repositorio maven de Fernando, por lo que habrá que añadir
+también la siguiente sección de repositorios:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;repositories&gt;
+        &lt;repository&gt;
+                &lt;id&gt;fergonco&lt;/id&gt;
+                &lt;name&gt;Repo en fergonco.es&lt;/name&gt;
+                &lt;url&gt;http://www.fergonco.es/maven-repo/&lt;/url&gt;
+        &lt;/repository&gt;
+&lt;/repositories&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="interfaces-a-implementar">
+<h2>Interfaces a implementar<a class="headerlink" href="#interfaces-a-implementar" title="Permalink to this headline">¶</a></h2>
+<p>Una vez el proyecto depende del conversor es necesario implementar la interfaz <em>DatasetConversion</em>, a la que se le pedirán
+los <em>Dataset</em>&#8216;s para la conversión.</p>
+<p>Los <em>Dataset</em>&#8216;s devueltos por la implementación de <em>DatasetConversion</em> deberán implementar la interfaz <em>Dataset</em> y además, en función
+de si contiene datos estacionarios o trayectorias, una (y sólo una) de las siguientes interfaces:</p>
+<ul class="simple">
+<li><em>Station</em> (o <em>GeoreferencedStation</em> ver javadoc).</li>
+<li><em>Trajectory</em>.</li>
+</ul>
+<p>En caso de implementar <em>Station</em> puede implementar opcionalmente la interfaz <em>TimeSerie</em> indicando así que los datos
+dependen de la dimensión tiempo.</p>
+<p>En caso de <em>Trajectory</em>, esta extiende a <em>TimeSerie</em> por lo que no es necesario implementarla explícitamente.</p>
+<p>Las implementaciones de <em>Dataset</em> deben devolver una o más variables principales que serán una implementación
+de <em>DatasetIntVariable</em> o de <em>DatasetDoubleVariable</em>, dependiendo de si la variable en cuestión contiene valores enteros o decimales.</p>
+</div>
+<div class="section" id="conversion">
+<h2>Conversión<a class="headerlink" href="#conversion" title="Permalink to this headline">¶</a></h2>
+<p>Una vez las interfaces hayan sido implementadas, ya sólo es necesario ejecutar un <em>main</em> con la siguiente línea:</p>
+<div class="highlight-python"><div class="highlight"><pre>public static void main(String[] args) {
+        Converter.convert(new UTMDatasetConversion());
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="limitaciones">
+<h2>Limitaciones<a class="headerlink" href="#limitaciones" title="Permalink to this headline">¶</a></h2>
+<p>Coordenadas verticales no están soportadas.</p>
+<p>Las variables no pueden tener más dimensión que tiempo y posición.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Conversión a NetCDF</a><ul>
+<li><a class="reference internal" href="#configuracion-del-proyecto">Configuración del proyecto</a></li>
+<li><a class="reference internal" href="#interfaces-a-implementar">Interfaces a implementar</a></li>
+<li><a class="reference internal" href="#conversion">Conversión</a></li>
+<li><a class="reference internal" href="#limitaciones">Limitaciones</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="search-service.html"
+                        title="previous chapter">Servicio &#8220;search&#8221; de búsqueda de datos</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="performance-tests.html"
+                        title="next chapter">Performance tests</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/converter.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="performance-tests.html" title="Performance tests"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="search-service.html" title="Servicio “search” de búsqueda de datos"
+             >previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Oscar Fonts, Micho García.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

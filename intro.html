@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introducción &mdash; ICOS Carbon Data Portal 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ICOS Carbon Data Portal 1 documentation" href="index.html" />
+    <link rel="next" title="Instalación" href="install.html" />
+    <link rel="prev" title="Welcome to ICOS Carbon Data Portal’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Instalación"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to ICOS Carbon Data Portal’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introduccion">
+<h1>Introducción<a class="headerlink" href="#introduccion" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="escenario">
+<h2>Escenario<a class="headerlink" href="#escenario" title="Permalink to this headline">¶</a></h2>
+<p>Partimos de una colección compleja y heterogénea de de datasets. Se diferencian dos grandes grupos:</p>
+<ol class="arabic simple">
+<li>Datos del contínuo (underway): Sets de datos más sencillos, que no son los que nos interesan en esta primera aproximación. Almacenados en bases de datos PostGIS, accessibles mediante servicios web OGC (WMS, WFS y WCS) publicados en un GeoServer.</li>
+<li>Datos más complejos (4 o más dimensiones): ficheros netCDF con un contenido muy diverso: datos marinos, atmosféricos, y terrestres. Los ficheros netCDF se sirven con Thredds. Estos ficheros son los que nos interesan. La lástima es que no podemos servir todo con GeoServer, por ejemplo.</li>
+</ol>
+</div>
+<div class="section" id="portal">
+<h2>Portal<a class="headerlink" href="#portal" title="Permalink to this headline">¶</a></h2>
+<p>El portal consistiría en una primera pantalla de login para validar el usuario. A continuación habría dos opciones:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Realizar una búsqueda de datos.</li>
+<li>Recuperar búsqueda guardada por su identificador QI (Query Identifier).</li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="pantalla-de-busqueda">
+<h2>Pantalla de búsqueda<a class="headerlink" href="#pantalla-de-busqueda" title="Permalink to this headline">¶</a></h2>
+<p>Permite seleccionar por:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Rango temporal: fecha inicial – fecha final.</p>
+</li>
+<li><p class="first">Boundig Box: buscar en un área geográfica. La particularidad en este caso sería permitir definir múltiples cajas de búsqueda simultáneas.</p>
+</li>
+<li><p class="first">Selección de variables: qué variables queremos recuperar: temperatura, salinidad, velocidad del viento, etc. Las variables se han de buscar dentro del fichero netCDF (¿definiendo consultas con ncML?). El listado de posibles variables se lee de un fichero XML del tipo:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;term&gt;
+  &lt;sado_term&gt;salinidad&lt;/sado_term&gt;
+  &lt;nc_term&gt;sea_water_salinity&lt;/nc_term&gt;
+  &lt;nc_long_term&gt;sea water salinity&lt;/nc_long_term&gt;
+  &lt;nc_units&gt;psu&lt;/nc_units&gt;
+  &lt;nc_data_type&gt;DOUBLE&lt;/nc_data_type&gt;
+  &lt;nc_coordinate_axis_type&gt;&lt;/nc_coordinate_axis_type&gt;
+&lt;/term&gt;
+&lt;term&gt;
+  &lt;sado_term&gt;temperatura&lt;/sado_term&gt;
+  &lt;nc_term&gt;sea_water_temperature&lt;/nc_term&gt;
+  &lt;nc_long_term&gt;sea water temperature&lt;/nc_long_term&gt;
+  &lt;nc_units&gt;degree_Celsius&lt;/nc_units&gt;
+  &lt;nc_data_type&gt;DOUBLE&lt;/nc_data_type&gt;
+  &lt;nc_coordinate_axis_type&gt;&lt;/nc_coordinate_axis_type&gt;
+&lt;/term&gt;
+[...]
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+<p>Una vez realizada la búsqueda, se descargan los datos que corresponden al filtro. Con otro botón se genera un identificador de búsqueda (QI) de manera que se pueda reproducir la búsqueda y recuperar la misma colección de datos posteriormente. El QI se genera llamando a un servicio externo. La aplicación de búsqueda deberá almacenar el QI junto con los datos recuperados y los criterios de búsqueda utilizados, el usuario que ha realizado la búsqueda, etc.</p>
+</div>
+<div class="section" id="recuperar-la-busqueda-a-partir-de-un-qi">
+<h2>Recuperar la búsqueda a partir de un QI<a class="headerlink" href="#recuperar-la-busqueda-a-partir-de-un-qi" title="Permalink to this headline">¶</a></h2>
+<p>Otro usuario podría introducir el QI, de modo que el formulario muester los criterios de búsqueda utlizados, así como un enlace a la colección de datos que se recuperaron en su momento. El objetivo es que las búsquedas sean reproducibles, y los criterios de búsqueda recuperables.</p>
+</div>
+<div class="section" id="report">
+<h2>Report<a class="headerlink" href="#report" title="Permalink to this headline">¶</a></h2>
+<p>Report en PDF: Un usuario validado puede ver con cuántos QI está relacionado. O, dicho de otro modo, un publicador de datos puede ver en qué búsquedas aparecen datos suyos, y un consumidor de datos puede consultar sus búsquedas y descargas anteriores.</p>
+</div>
+<div class="section" id="esquema-de-bloques">
+<h2>Esquema de bloques<a class="headerlink" href="#esquema-de-bloques" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="_images/dataportal.svg"><div align="center" class="align-center"><img alt="esquema de bloques de la aplicación *data portal*" src="_images/dataportal.svg" width="900px" /></div>
+</a>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introducción</a><ul>
+<li><a class="reference internal" href="#escenario">Escenario</a></li>
+<li><a class="reference internal" href="#portal">Portal</a></li>
+<li><a class="reference internal" href="#pantalla-de-busqueda">Pantalla de búsqueda</a></li>
+<li><a class="reference internal" href="#recuperar-la-busqueda-a-partir-de-un-qi">Recuperar la búsqueda a partir de un QI</a></li>
+<li><a class="reference internal" href="#report">Report</a></li>
+<li><a class="reference internal" href="#esquema-de-bloques">Esquema de bloques</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to ICOS Carbon Data Portal&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="next chapter">Instalación</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/intro.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Instalación"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to ICOS Carbon Data Portal’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Oscar Fonts, Micho García.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

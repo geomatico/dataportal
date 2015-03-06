@@ -1,0 +1,905 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Instalación &mdash; ICOS Carbon Data Portal 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ICOS Carbon Data Portal 1 documentation" href="index.html" />
+    <link rel="next" title="Preparación de los datos netCDF" href="data.html" />
+    <link rel="prev" title="Introducción" href="intro.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="data.html" title="Preparación de los datos netCDF"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="Introducción"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="instalacion">
+<h1>Instalación<a class="headerlink" href="#instalacion" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="tct-y-java">
+<h2><em>Tomcat</em> y Java<a class="headerlink" href="#tct-y-java" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="instalacion-de-java-de-sun">
+<h3>Instalación de JAVA de SUN<a class="headerlink" href="#instalacion-de-java-de-sun" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="utilizando-los-repositorios-de-ubuntu">
+<h4>Utilizando los repositorios de Ubuntu<a class="headerlink" href="#utilizando-los-repositorios-de-ubuntu" title="Permalink to this headline">¶</a></h4>
+<p>Primero instalaremos la versión necesaria de Java, en este caso la 6. Para ello teclearemos en la terminal:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo apt-get install sun-java6-jdk sun-java6-bin sun-java6-jre
+</pre></div>
+</div>
+<p>Comprobaremos que Ubuntu está utilizando la versión que nos interesa de Java y no la que lleva instalada por defecto. Para ello indicamos en la terminal:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ java -version
+</pre></div>
+</div>
+<p>que nos mostrará el mensaje:</p>
+<div class="highlight-python"><div class="highlight"><pre>java version &quot;1.6.0_26&quot;
+Java(TM) SE Runtime Environment (build 1.6.0_26-b03)
+Java HotSpot(TM) Client VM (build 20.1-b02, mixed mode, sharing)
+</pre></div>
+</div>
+<p>indicando nuestra versión de Java. En caso contrario será necesario instalar nuestra vesión como alternativa. Para ello primero comprobamos las alternativas que está utilizando. Accedemos a la ruta:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cd /etc/alternatives
+</pre></div>
+</div>
+<p>y mostramos las que nos interesan:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ls -la ja*
+</pre></div>
+</div>
+<p>podremos observar que alternativa de java está disponible:</p>
+<div class="highlight-python"><div class="highlight"><pre>java -&gt; /usr/lib/jvm/java-6-openjdk/jre/bin/java
+</pre></div>
+</div>
+<p>para modificar esta debemos primero instalar nuestra versión de java como alternativa:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-6-sun/jre/bin/java 1
+</pre></div>
+</div>
+<p>y después asignaremos esta alternativa:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo update-alternatives --set java /usr/lib/jvm/java-6-sun/jre/bin/java
+</pre></div>
+</div>
+<p>ahora podemos comprobar a que máquina de Java apunta:</p>
+<div class="highlight-python"><div class="highlight"><pre>java -&gt; /usr/lib/jvm/java-6-sun/jre/bin/java
+</pre></div>
+</div>
+</div>
+<div class="section" id="descargando-java">
+<h4>Descargando Java<a class="headerlink" href="#descargando-java" title="Permalink to this headline">¶</a></h4>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Si ya se ha instalado java mediante apt-get (apartado anterior), esto no hace falta.</p>
+</div>
+<p>Primero descargaremos la versión de Java que nos interesa desde:</p>
+<div class="highlight-python"><div class="highlight"><pre>http://www.oracle.com/technetwork/java/javase/downloads/jdk-6u27-download-440405.html
+</pre></div>
+</div>
+<p>Accedemos a la carpeta de descarga del archivo y modificamos su permiso de ejecución:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo chmod +x &lt;nombre del archivo&gt;
+</pre></div>
+</div>
+<p>y ejecutamos:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo ./&lt;nombre del archivo&gt;
+</pre></div>
+</div>
+<p>este paso nos solicitará nuestra confirmación y descomprimirá los archivos en una carpeta en el mismo directorio donde lo hayamos ejecutado. Movemos esa carpeta a una localización mas acorde:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ mv &lt;ruta de la carpeta&gt; /usr/lib/jvm
+</pre></div>
+</div>
+<p>después realizaremos los mismos pasos para asignar la alternativa que en el caso anterior.</p>
+<p><strong>Referencias</strong></p>
+<ul class="simple">
+<li>Cambiar las preferencias de Java (alternatives) en Debian/Ubuntu <a class="footnote-reference" href="#id10" id="id1">[1]</a></li>
+<li>Instalación de Java Guia-Ubuntu <a class="footnote-reference" href="#id11" id="id2">[2]</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="instalacion-de-tomcat">
+<h3>Instalación de Tomcat<a class="headerlink" href="#instalacion-de-tomcat" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="instalacion-desde-los-repositorios">
+<h4>Instalación desde los repositorios<a class="headerlink" href="#instalacion-desde-los-repositorios" title="Permalink to this headline">¶</a></h4>
+<p>Abrimos un terminal y tecleamos:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo apt-get install tomcat6
+</pre></div>
+</div>
+<p>de esta manera instalaremos <em>Tomcat</em>. Para comprobar que la instalación es correcta:</p>
+<div class="highlight-python"><div class="highlight"><pre>http://localhost:8080
+</pre></div>
+</div>
+<p>apareciendo el mensaje <strong>It works!</strong>.
+Esta instalación de <em>Tomcat</em> crea la siguiente estructura de directorios que mas adelante nos hará falta conocer:</p>
+<div class="highlight-python"><div class="highlight"><pre>Directorio de logs; logs --&gt; /var/lib/tomcat6/logs
+Directorio de configuracion; conf --&gt; /var/lib/tomcat6/conf
+Directorio de aplicaciones; webapps --&gt; /var/lib/tomcat6/webapps
+</pre></div>
+</div>
+<p>La instalación creara un usuario y un grupo, tomcat6::tomcat6. Para arrancar/parar o reiniciar esta instancia de <em>Tomcat</em>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo /etc/init.d/tomcat6 [start|stop|restart]
+</pre></div>
+</div>
+<p>Para acceder al manager de <em>Tomcat</em> primero instalaremos la aplicación necesaria para gestionar el servidor. Para ello tecleamos desde una terminal:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo apt-get install tomcat6-admin
+</pre></div>
+</div>
+<p>Una vez instalado incluiremos en el archivo /var/lib/tomcat6/conf/tomcat-users.xml el rol y el usuario necesario para acceder a la aplicación. Para ello incluiremos bajo la raiz &lt;tomcat-users&gt; lo siguiente:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;role rolename=&quot;tomcat&quot;/&gt;
+&lt;role rolename=&quot;manager&quot;/&gt;
+&lt;user username=&quot;icos&quot; password=&quot;XXXX&quot; roles=&quot;tomcat,manager&quot;/&gt;
+</pre></div>
+</div>
+<p>Reiniciaremos el servidor y probamos el acceso a través de:</p>
+<div class="highlight-python"><div class="highlight"><pre>http://localhost:8080/manager/html
+</pre></div>
+</div>
+<p>e introduciremos los datos incluidos en el fichero tomcat-users.xml</p>
+<p>La configuración de GeoServer se hará entrando como admin en: <a class="reference external" href="http://localhost:8080/geoserver/web/">http://localhost:8080/geoserver/web/</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="gs">
+<h2><em>GeoServer</em><a class="headerlink" href="#gs" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="publicacion-de-capas-base-para-gn-y-dp">
+<h3>Publicación de capas base para <em>GeoNetwork</em> y <em>Data Portal</em><a class="headerlink" href="#publicacion-de-capas-base-para-gn-y-dp" title="Permalink to this headline">¶</a></h3>
+<p>Tanto la interfaz web de <em>GeoNetwork</em> como el <em>Data Portal</em> utilizan de un par de capas de base:</p>
+<ul class="simple">
+<li>gn:world: Capa de origen raster con el Blue Marble de la NASA.</li>
+<li>gn:gboundaries: Capa de origen vectorial con las fronteras de los países.</li>
+</ul>
+<p>La forma más cómoda de incorporar estas capas es a partir de una distribución <em>con instalador</em> de <em>GeoNetwork</em>. El instalador incluye un directorio <strong>geoserver_data</strong> que puede copiarse tal cual en algún lugar del servidor. El usuario tomcat6 debe tener permisos de escritura sobre todo el contenido del directorio:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ chown -R tomcat6:tomcat6 .
+</pre></div>
+</div>
+<p>Además, debe editarse el parámetro GEOSERVER_DATA_DIR dentro de la instalación de GeoServer, en WEB-INF/web.xml:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;web-app&gt;
+  ...
+  &lt;context-param&gt;
+    &lt;param-name&gt;GEOSERVER_DATA_DIR&lt;/param-name&gt;
+    &lt;param-value&gt;/home/icos/data/geoserver_data&lt;/param-value&gt;
+  &lt;/context-param&gt;
+  ...
+&lt;/web-app&gt;
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">La copia directa del <strong>geoserver_data</strong> se ha probado con las versiones de <em>GeoNetwork</em> 2.6.4 y <em>GeoServer</em> 2.1.x.</p>
+</div>
+</div>
+<div class="section" id="configuracion-inicial">
+<h3>Configuración inicial<a class="headerlink" href="#configuracion-inicial" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="metadatos-de-servicio">
+<h4>Metadatos de servicio<a class="headerlink" href="#metadatos-de-servicio" title="Permalink to this headline">¶</a></h4>
+<p>En Servidor =&gt; Información de Contacto, pondremos los datos de contacto que queremos que aparezcan en los documentos de GetCapabilities de los servicios OGC.</p>
+<a class="reference internal image-reference" href="_images/geoserver-contactinfo.png"><img alt="Servidor =&gt; Información de contacto" class="align-center" src="_images/geoserver-contactinfo.png" style="width: 480px;" /></a>
+<p>Por ejemplo:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Persona de contacto: Jordi Sorribas</li>
+<li>Organización: Unidad de Tecnología Marina, CSIC</li>
+<li>Posición: Responsable servicios telemáticos</li>
+<li>Tipo de dirección: postal</li>
+<li>Dirección: Pg. Maritim de la Barceloneta 37-49</li>
+<li>Ciudad: Barcelona</li>
+<li>Estado o provincia: Barcelona</li>
+<li>Código postal o ZIP: E-08003</li>
+<li>País: Spain</li>
+<li>Teléfono: (+34)932309500</li>
+<li>Fax: (+34)932309555</li>
+<li>Correo electrónico: sorribas at utm.csic.es</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="borrado-de-datos-de-ejemplo">
+<h4>Borrado de datos de ejemplo<a class="headerlink" href="#borrado-de-datos-de-ejemplo" title="Permalink to this headline">¶</a></h4>
+<p>En caso de querer publicar nuestros propios datos, en algún momento deberemos proceder al borrado de los datos iniciales que vienen de ejemplo. Para evitar conflictos, deben borrarse por este orden:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Datos =&gt; Grupos de capas</li>
+<li>Datos =&gt; Capas</li>
+<li>Datos =&gt; Almacenes de datos</li>
+<li>Datos =&gt; Espacios de trabajo</li>
+<li>Datos =&gt; Estilos (excepto los estilos &#8216;point&#8217;, &#8216;line&#8217;, &#8216;polygon&#8217; y &#8216;raster&#8217;, que deben conservarse porque son los que se usarán al publicar nuevas capas de datos)</li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="servicios">
+<h4>Servicios<a class="headerlink" href="#servicios" title="Permalink to this headline">¶</a></h4>
+<p>En Servicios =&gt; WCS, poner la información (para los metadatos del servicio) que se crea necesaria: responsable de mantenimiento, recurso en línea, título, resumen, tasas, restricciones de acceso, palabras clave. Además conviene tener en cuenta:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Procesado de coberturas: Para una calidad óptima, utilizar submuestreo y overviews de mayor resolución.</li>
+<li>Imponer limitaciones en el consumo de recursos para evitar peticiones absurdamente grandes. Por ejemplo, limitar la memoria a 65 536 Kb (64 Mb) en ambos casos.</li>
+</ul>
+</div></blockquote>
+<p>En  Servicios =&gt; WFS, rellenar también los metadatos del servicio. Además:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Features =&gt; Máximo número de features: Esto también impedirá peticiones absurdamente grandes. Por ejemplo, se puede limitar a 100 000.</li>
+</ul>
+</div></blockquote>
+<p>En Servicios =&gt; WMS, rellenar también los metadatos del servicio. Además:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>Lista de SRS limitada: Para evitar que el GetCapabilities contenga <em>todos</em> los posibles SRS (cientos de ellos), es recomendable poner aquí la lista de SRS que es razonable ofrecer. Dependiendo del área geográfica de los datos, esta lista puede cambiar, pero se recomienda que contenga:</dt>
+<dd><ul class="first last simple">
+<li>Proyección UTM en los husos que corresponda. Para Europa, será habitual usar los datums ED50, ETRS89 y WGS84. Por ejemplo, para el Huso UTM 31N, serían: 23031, 25831, 32431.</li>
+<li>Latitud, longitud en WGS84 (las “coordenadas típicas” de los no profesionales): Es decir, 4326.</li>
+<li>La “proyección” de Google Maps. Tiene dos códigos EPSG: el oficial (3857), y el no oficial (900913).</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Opciones de renderizado raster: Escoger método de interpolación según la calidad deseada:</dt>
+<dd><ul class="first last simple">
+<li>Bicúbica (máxima calidad, mayor tiempo de respuesta)</li>
+<li>Bilineal (calidad media, tiempo de respuesta medio)</li>
+<li>Vecino más próximo (calidad baja, velocidad alta)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Opciones de KML. Se recomienda estos valores:</dt>
+<dd><ul class="first last simple">
+<li>Modo per defecto del reflector: Superoverlay.</li>
+<li>Método de superoverlay: Auto.</li>
+<li>Generar placemarks de todo tipo.</li>
+<li>Umbral raster/vector: 40.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Límites en el consumo de recursos:</dt>
+<dd><ul class="first last simple">
+<li>Memoria máxima para renderizado (KB): 65 536.</li>
+<li>Máximo tiempo de renderizado (s): 60.</li>
+<li>Máximo número de errores de renderizado: 1000.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Configuración de la filigrana: Permite añadir un logo o “firma” en cada respuesta de GetMap. No se recomienda utilizarlo, porque es muy intrusivo (por ejemplo, da al traste con cualquier técnica de teselado).</p>
+</li>
+</ul>
+</div></blockquote>
+<a class="reference internal image-reference" href="_images/geoserver-WMS.png"><img alt="Algunas de las opciones de Servicios =&gt; WMS" class="align-center" src="_images/geoserver-WMS.png" style="width: 480px;" /></a>
+</div>
+<div class="section" id="settings-global">
+<h4>Settings =&gt; Global<a class="headerlink" href="#settings-global" title="Permalink to this headline">¶</a></h4>
+<p>En Configuración Gobal, poner:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Cantidad de decimales: Si se trabaja en coordenadas geográficas y con precisiones del orden de un metro (escalas no mayores que 1: 5 000), puede cambiarse este valor a  6.</li>
+<li>Codificación de caracteres: Como regla general para cualquier aplicación informática, se recomienda, siempre que se pueda, usar UTF-8. Es la codificación universal, que incorpora todos los alfabetos mundiales.</li>
+<li>Perfil del registro: En un servidor de verdad, se cambiaría a PRODUCTION_LOGGING.properties</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="seguridad">
+<h4>Seguridad<a class="headerlink" href="#seguridad" title="Permalink to this headline">¶</a></h4>
+<p>Se propone aquí una configuración de seguridad simple, donde cualquiera tenga acceso de lectura, pero sólo el administrador pueda hacer cambios en los datos. Obviamente, esta configuración puede cambiarse para hacerla tan compleja como se quiera, creando diversos grupos de usuarios con diversos niveles de acceso a los datos y servicios.</p>
+<p><strong>Seguridad de los datos</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li>Conservar regla de lectura *.*.r para todos (*).</li>
+<li>Cambiar regla de escritura *.*.w para que sólo tenga derechos de edición ROLE_ADMINISTRATOR.</li>
+</ul>
+</div></blockquote>
+<a class="reference internal image-reference" href="_images/geoserver-security.png"><img alt="Reglas mínimas de acceso a datos" class="align-center" src="_images/geoserver-security.png" style="width: 600px;" /></a>
+<p><strong>Seguridad del catálogo</strong></p>
+<p>Se recomienda el método CHALLENGE, el más compatible con diversos clientes.</p>
+</div>
+<div class="section" id="referencias">
+<h4>Referencias<a class="headerlink" href="#referencias" title="Permalink to this headline">¶</a></h4>
+<p>Para más información sobre cómo diseñar y configurar entornos de producción reales, y sus implicaciones en seguridad y rendimiento, consultar el documento de OpenGeo Geoserver In Production: <a class="reference external" href="http://opengeo.org/publications/geoserver-production/">http://opengeo.org/publications/geoserver-production/</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="tds">
+<h2><em>Thredds</em><a class="headerlink" href="#tds" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="instalacion-de-thredds-data-server">
+<h3>Instalación de Thredds Data Server<a class="headerlink" href="#instalacion-de-thredds-data-server" title="Permalink to this headline">¶</a></h3>
+<p>En este apartado se explicará la instalación y configuración del servidor <em>Thredds</em>. En primer lugar necesitaremos descargarnos la versión adecuada del servidor, en nuestro caso será la versión 4.2.8:</p>
+<div class="highlight-python"><div class="highlight"><pre>ftp://ftp.unidata.ucar.edu/pub/thredds/4.2/thredds.war
+</pre></div>
+</div>
+<p>Descargamos un archivo .war que deberemos desplegar en nuestro servidor <em>Tomcat</em>. Antes de ello debemos efectuar unas configuraciones previas.
+Crearemos una variable de entorno que apunte a nuestro directorio de <em>Tomcat</em>. Editamos el archivo .bashrc de la sesión con la que estemos trabajando. Este archivo lo encontraremos en:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cd ~
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Si se ha isntalado el tomcat vía apt-get, y se inicia mediante /etc/init.d/tomcat6, entonces debe editarse dicho fichero y poner en $JAVA_OPTS los valores que corresponda, en lugar de editar .bashrc y setenv.sh</p>
+</div>
+<p>Modificamos el archivo <strong>.bashrc</strong> con un editor de texto:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ nano .bashrc
+</pre></div>
+</div>
+<p>e incluiremos la siguiente linea:</p>
+<div class="highlight-python"><div class="highlight"><pre>export TOMCAT_HOME=/usr/share/tomcat6
+</pre></div>
+</div>
+<p>Aplicamos los cambios escribiendo en el terminal:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ source .bashrc
+</pre></div>
+</div>
+<p>y comprobamos que aparece nuestra variable:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ echo $TOMCAT_HOME
+</pre></div>
+</div>
+<p>que nos mostrará el valor que hemos introducido en el archivo <strong>.bashrc</strong>, /usr/share/tomcat6</p>
+<p>Crearemos un script en la carpeta bin del <em>Tomcat</em> ($TOMCAT_HOME/bin) que permita a este encontrar unas determinadas variables que necesitará para arrancar <em>Thredds</em>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo nano $TOMCAT_HOME/bin/setenv.sh
+</pre></div>
+</div>
+<p>e incluiremos lo siguiente:</p>
+<div class="highlight-python"><div class="highlight"><pre>#!/bin/sh
+#
+# ENVARS for Tomcat and TDS environment
+#
+JAVA_HOME=&quot;/usr/lib/jvm/java-6-sun&quot;
+export JAVA_HOME
+
+JAVA_OPTS=&quot;-Xmx1500m -Xms512m -XX:MaxPermSize=180m -server -Djava.awt.headless=true -Djava.util.prefs.systemRoot=$CATALINA_HOME/content/thredds/javaUtilPrefs&quot;
+export JAVA_OPTS
+
+CATALINA_HOME=&quot;/usr/share/tomcat6&quot;
+export CATALINA_HOME
+</pre></div>
+</div>
+<p>Donde le indicamos la memoria máxima 1500 en caso de sistemas de 32-bit o 4096 o más en sistemas de 64-bit, y en caso de usar WMS con <em>Thredds</em> debemos añadirle la localización de javaUtilPrefs asignandole a <tt class="docutils literal"><span class="pre">-Djava.util.prefs.systemRoot</span></tt> la ruta.
+Una vez realizado esto, reiniciaremos <em>Tomcat</em> y comprobamos que los cambios se han producido:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ps -ef | grep tomcat
+</pre></div>
+</div>
+<p>que nos mostrará:</p>
+<div class="highlight-python"><div class="highlight"><pre>tomcat6   7376     1 45 14:48 ?        00:00:03 /usr/lib/jvm/java-6-sun/bin/java -Djava.util.logging.config.file=/var/lib/tomcat6/conf/logging.properties
+-Xmx1500m -Xms512m -XX:MaxPermSize=180m -server -Djava.awt.headless=true -Djava.util.prefs.systemRoot=/usr/share/tomcat6/content/thredds/javaUtilPrefs
+-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Djava.endorsed.dirs=/usr/share/tomcat6/endorsed -classpath /usr/share/tomcat6/bin/bootstrap.jar
+-Dcatalina.base=/var/lib/tomcat6 -Dcatalina.home=/usr/share/tomcat6 -Djava.io.tmpdir=/tmp/tomcat6-tmp org.apache.catalina.startup.Bootstrap start
+</pre></div>
+</div>
+<p>Donde podemos observar los valores que hemos introducido en nuestro script y que <em>Tomcat</em> ha incluido en el arranque.</p>
+<p>Antes de realizar el despliegue de <em>Thredds</em> crearemos la carpeta donde la instalación crea todos los archivos necesarios para la instalación y configuración del mismo. Para ello navegamos hasta el directorio donde el despliegue del war busca dicha carpeta por defecto:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cd /var/lib/tomcat
+</pre></div>
+</div>
+<p>y creamos la carpeta con el nombre por defecto:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ mkdir content
+</pre></div>
+</div>
+<p>seguidamente le asignaremos permisos al usuario y grupo tomcat6:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo chmod tomcat6:tomcat6 content
+</pre></div>
+</div>
+<p>Una vez hecho esto procederemos al despliegue de <em>Thredds</em> bien desde la pestaña manager de <em>Tomcat</em>, o copiando directamente el archivo thredds.war en la carpeta webapps de nuestra instancia de <em>Tomcat</em>. Es recomendable realizar un seguimiento de los cambios producidos en el servidor para comprobar que el despliegue de <em>Thredds</em> se realiza correctamente, para ello ejecutaremos previamente en una consola:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ tail -f /var/lib/tomcat6/logs/catalina.out
+</pre></div>
+</div>
+<p>de esta manera veremos por consola los mensajes que nos envia <em>Tomcat</em>.
+Para comprobar que la instalación ha ido correctamente:</p>
+<div class="highlight-python"><div class="highlight"><pre>http://localhost:8080/thredds
+</pre></div>
+</div>
+<p>y accederemos al catalogo de ejemplo que viene en <em>Thredds</em> por defecto.</p>
+</div>
+<div class="section" id="configuracion-de-modulos-en-tds">
+<h3>Configuración de módulos en <em>Thredds</em><a class="headerlink" href="#configuracion-de-modulos-en-tds" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="tds-remote-management">
+<h4>TDS Remote Management<a class="headerlink" href="#tds-remote-management" title="Permalink to this headline">¶</a></h4>
+<p>Desde el Remote Management de <em>Thredds</em> podemos acceder a información acerca del estado del servidor, reiniciar catálogos... Para porder acceder a este deberemos previamente configurar <em>Tomcat</em> para que permita el acceso mediante SSL. Lo primero que haremos será crear un certificado autofirmado en el servidor (keystore) y configuraremos <em>Tomcat</em> para utilizar un conector que permita el acceso mediante este protocolo.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">En lugar de utilizar ssl (en nuestro caso, el puerto SSL 443 no es accessible desde fuera), puede editarse el web.xml para cambiar las restricciones de acceso de este servicio de &#8220;CONFIDENTIAL&#8221; a &#8220;NONE&#8221;.</p>
+</div>
+<p>Lo primero que haremos será utilizar la herramienta keytool para generar el certificado. Esta herramienta viene suministrada con el JDK de Java y la encontraremos en:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ $JAVA_HOME/bin/
+</pre></div>
+</div>
+<p>y la ejecutaremos indicandole la ruta donde generaremos el archivo .keystore ($USER_HOME/.keystore por defecto):</p>
+<div class="highlight-python"><div class="highlight"><pre>$JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -validity 365 -keystore ~/.keystore
+</pre></div>
+</div>
+<p>y responderemos a las cuestiones que plantea. Respecto al password, por defecto <em>Tomcat</em> tiene definida <em>changeit</em> como contraseña por defecto, así que deberemos modificar en los valores del conector el valor de esta, indicandole la que hayamos definido en la creación del certificado. Para introducir esta y modificar algunos otros valores necesarios modificaremos el archivo server.xml de nuestra instancia de <em>Tomcat</em>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo nano /etc/tomcat6/server.xml
+</pre></div>
+</div>
+<p>descomentaremos las lineas que activan el conector:</p>
+<div class="highlight-python"><div class="highlight"><pre>      &lt;!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 --&gt;
+&lt;Connector port=&quot;8443&quot;
+           maxThreads=&quot;150&quot; minSpareThreads=&quot;25&quot; maxSpareThreads=&quot;75&quot;
+           enableLookups=&quot;false&quot; disableUploadTimeout=&quot;true&quot;
+           acceptCount=&quot;100&quot; debug=&quot;0&quot; scheme=&quot;https&quot; secure=&quot;true&quot;
+           clientAuth=&quot;false&quot; sslProtocol=&quot;TLS&quot; keystoreFile=&quot;&lt;ruta al .keystore creado&gt;&quot; keystorePass=&quot;&lt;contraseña al crear el keystore&gt;&quot;/&gt;
+</pre></div>
+</div>
+<p>introduciendo la ruta al archivo .keystore creado e indicandole la contraseña que hemos indicado en la creación del mismo. Una vez realizada esta modificación, reiniciaremos el <em>Tomcat</em> comprobaremos que los cambios se han realizado correctamente accediendo a:</p>
+<div class="highlight-python"><div class="highlight"><pre>http://localhost:8443
+</pre></div>
+</div>
+<p>Finalmente, para poder acceder al gestor remoto del <em>Thredds</em> deberemos crear el usuario y el rol en <em>Tomcat</em> que permite este acceso. Para ello modificaremos el archivo tomcat-users.xml incluyendo lo siguiente:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;role rolename=&quot;tdsConfig&quot;/&gt;
+&lt;user username=&quot;&lt;nombre usuario&gt;&quot; password=&quot;&lt;password usuario&gt;&quot; roles=&quot;tdsConfig&quot;/&gt;
+</pre></div>
+</div>
+<p>Está será la clave de acceso del usuario, por lo que no es necesario que sea igual a la que se ha definido en el conector de <em>Tomcat</em>. Reiniciaremos el <em>Tomcat</em> de nuevo y comprobamos el acceso a través de:</p>
+<div class="highlight-python"><div class="highlight"><pre>http://localhost:8443/thredds/admin/debug
+</pre></div>
+</div>
+<p><strong>Referencias</strong></p>
+<ul class="simple">
+<li>SSL Configuration HOW-TO <a class="footnote-reference" href="#id12" id="id3">[3]</a></li>
+<li>Enabling TDS Remote Management <a class="footnote-reference" href="#id15" id="id4">[6]</a></li>
+</ul>
+</div>
+<div class="section" id="configuracion-de-servicios-wms-y-wcs">
+<h4>Configuración de servicios WMS y WCS<a class="headerlink" href="#configuracion-de-servicios-wms-y-wcs" title="Permalink to this headline">¶</a></h4>
+<p><em>Thredds</em> tiene por defecto los servicios WMS y WCS desactivados. Para poder hacer uso de estos servicios tendremos que activarlos. Deberemos modificar el archivo <tt class="docutils literal"><span class="pre">threddsConfig.xml</span></tt> que encontraremos en la carpeta <tt class="docutils literal"><span class="pre">content</span></tt> de la instalación de <em>Thredds</em>. Modificaremos el archivo activando los servicios descomentando las etiquetas <tt class="docutils literal"><span class="pre">WMS</span></tt> y <tt class="docutils literal"><span class="pre">WCS</span></tt> y modificando el valor de la etiqueta <tt class="docutils literal"><span class="pre">allow</span></tt> a <tt class="docutils literal"><span class="pre">true</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;WMS&gt;
+&lt;allow&gt;true&lt;/allow&gt;
+&lt;/WMS&gt;
+</pre></div>
+</div>
+<p>para el servicio WMS y:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;WCS&gt;
+&lt;allow&gt;true&lt;/allow&gt;
+&lt;/WCS&gt;
+</pre></div>
+</div>
+<p>para el WCS. Ahora ya podremos indicar en nuestros catálogos que los servicios WMS y WCS se encuentran activos.</p>
+<p><strong>Referencias</strong></p>
+<ul class="simple">
+<li>OGC/ISO services (WMS, WCS and ncISO) <a class="footnote-reference" href="#id13" id="id5">[4]</a></li>
+</ul>
+</div>
+<div class="section" id="configuracion-de-nciso">
+<h4>Configuración de ncISO<a class="headerlink" href="#configuracion-de-nciso" title="Permalink to this headline">¶</a></h4>
+<p>Desde la versión 4.2.4 de <em>Thredds</em> se incluye el paquete <tt class="docutils literal"><span class="pre">ncISO</span></tt> que permite mostrar los metadatos de los datasets como fichas ISO. Para activar dicho servicio será necesario realizar unas modificaciones en el archivo <tt class="docutils literal"><span class="pre">threddsConfig.xml</span></tt> como en el caso de los servicios anteriores. Buscaremos en el archivo la linea que hace referencia el servicio ncISO las descomentaremos y modificaremos el valor a <tt class="docutils literal"><span class="pre">true</span></tt> para los tres casos:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;NCISO&gt;
+        &lt;ncmlAllow&gt;true&lt;/ncmlAllow&gt;
+        &lt;uddcAllow&gt;true&lt;/uddcAllow&gt;
+        &lt;isoAllow&gt;true&lt;/isoAllow&gt;
+&lt;/NCISO&gt;
+</pre></div>
+</div>
+<p>En caso de que estas lineas no apareciesen en nuestro archivo las creariamos. Después debemos acceder al archivo <tt class="docutils literal"><span class="pre">web.xml</span></tt> de nuestra instalación de <em>Thredds</em> y descomentaremos las lineas que activan el servicio <tt class="docutils literal"><span class="pre">ncISO</span></tt> de manera que quede así:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;filter-mapping&gt;
+        &lt;filter-name&gt;RequestQueryFilter&lt;/filter-name&gt;
+        &lt;servlet-name&gt;metadata&lt;/servlet-name&gt;
+&lt;/filter-mapping&gt;
+
+&lt;servlet&gt;
+        &lt;servlet-name&gt;metadata&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+        &lt;load-on-startup&gt;3&lt;/load-on-startup&gt;
+&lt;/servlet&gt;
+
+&lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;metadata&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/ncml/*&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+&lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;metadata&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/uddc/*&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+&lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;metadata&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/iso/*&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+</pre></div>
+</div>
+<p>Ahora será posible añadir estos servicios a nuestros catálogos.</p>
+<p><strong>Referencias</strong></p>
+<ul class="simple">
+<li>TDS and ncISO: Metadata Services <a class="footnote-reference" href="#id14" id="id6">[5]</a></li>
+</ul>
+</div>
+<div class="section" id="inclusion-de-servicios-ogc-iso-en-los-catalogos">
+<h4>Inclusión de servicios OGC/ISO en los catálogos<a class="headerlink" href="#inclusion-de-servicios-ogc-iso-en-los-catalogos" title="Permalink to this headline">¶</a></h4>
+<p>Una vez que hemos activado los servicios OGC/ISO será posible la utilización de estos en nuestros catálogos. <em>Thredds</em> utiliza archivos catalog.xml para definir las carpetas donde se almacenan los datasets, así como la estructura que tendrá el arbol que muestra dichos datasets. También se encarga de definir los servicios que están disponibles en el servidor y que permite el acceso a estos datasets.</p>
+<p>Existe la posibilidad de definir un tipo de servicio <tt class="docutils literal"><span class="pre">compound</span></tt> que lo que nos permite es asignar todos los servicios activos a los datasets que incluyan este servicio. Para definir esto, en nuestro <tt class="docutils literal"><span class="pre">catalog.xml</span></tt> incluiremos el siguiente elemento:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;service name=&quot;all&quot; base=&quot;&quot; serviceType=&quot;compound&quot;&gt;
+        &lt;service name=&quot;odap&quot; serviceType=&quot;OpenDAP&quot; base=&quot;/thredds/dodsC/&quot; /&gt;
+        &lt;service name=&quot;http&quot; serviceType=&quot;HTTPServer&quot; base=&quot;/thredds/fileServer/&quot; /&gt;
+        &lt;service name=&quot;wcs&quot; serviceType=&quot;WCS&quot; base=&quot;/thredds/wcs/&quot; /&gt;
+        &lt;service name=&quot;wms&quot; serviceType=&quot;WMS&quot; base=&quot;/thredds/wms/&quot; /&gt;
+        &lt;service name=&quot;ncml&quot; serviceType=&quot;NCML&quot; base=&quot;/thredds/ncml/&quot;/&gt;
+        &lt;service name=&quot;uddc&quot; serviceType=&quot;UDDC&quot; base=&quot;/thredds/uddc/&quot;/&gt;
+        &lt;service name=&quot;iso&quot; serviceType=&quot;ISO&quot; base=&quot;/thredds/iso/&quot;/&gt;
+&lt;/service&gt;
+</pre></div>
+</div>
+<p>así podremos indicar a los datasets que utilicen este servicio compuesto:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;dataset ID=&quot;sample&quot; name=&quot;Sample Data&quot; urlPath=&quot;sample.nc&quot;&gt;
+&lt;serviceName&gt;all&lt;/serviceName&gt;
+&lt;/dataset&gt;
+</pre></div>
+</div>
+<p>A través del <tt class="docutils literal"><span class="pre">servicename</span></tt> es como enlazaremos el servicio con los datasets. Podemos reinicializar nuestros catálogos accediendo a través de la aplicación TDS Remote Management.</p>
+<p><strong>Referencias</strong></p>
+<ul class="simple">
+<li>TDS Configuration Catalogs <a class="footnote-reference" href="#id16" id="id7">[7]</a></li>
+<li>Dataset Inventory Catalog Specification, Version 1.0.2 <a class="footnote-reference" href="#id17" id="id8">[8]</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="gn">
+<h2><em>GeoNetwork</em><a class="headerlink" href="#gn" title="Permalink to this headline">¶</a></h2>
+<p>Para el <em>Data Portal</em> será necesario utilizar una versión de <em>GeoNetwork</em> 2.7 o superior, debido a los procesos que son necesarios para realizar el harvesting. Una vez descargada la versión de <em>GeoNetwork</em> indicada, se desplegará en nuestra instancia de <em>Tomcat</em> bien desde el manager o bien moviendo el archivo .war descargado a la carpeta webapps de servidor.
+Será necesario modificar los permisos de la carpeta <tt class="docutils literal"><span class="pre">/var/lib/tomcat6</span></tt> para que el usuario tomcat6 que ejecuta el despliegue tenga permisos a la hora de desplegar <em>GeoNetwork</em> y pueda crear en dicha carpeta los archivos necesarios para la instalación de <em>GeoNetwork</em>. Para ello ejecutamos:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo chown tomcat6:tomcat6 /var/lib/tomcat6
+</pre></div>
+</div>
+<p>y haremos el despliegue de <em>GeoNetwork</em>. Si tenemos monitorizada la salida del archivo de log <tt class="docutils literal"><span class="pre">catalina.out</span></tt> podremos comprobar que el despliegue se ha realizado de manera correcta si aparece un mensaje como:</p>
+<div class="highlight-python"><div class="highlight"><pre>2011-08-22 18:21:29,004 INFO  [jeeves.engine] - === System working =========================================
+</pre></div>
+</div>
+<p>Podremos acceder a nuestro <em>GeoNetwork</em> a través de:</p>
+<div class="highlight-python"><div class="highlight"><pre>http://localhost:8080/geonetwork
+</pre></div>
+</div>
+</div>
+<div class="section" id="harvesting-tds-a-gn">
+<h2>Harvesting <em>Thredds</em> a <em>GeoNetwork</em><a class="headerlink" href="#harvesting-tds-a-gn" title="Permalink to this headline">¶</a></h2>
+<p><em>GeoNetwork</em> permite, a partir de su versión 2.7, realizar procesos de harvesting a servidores <em>Thredds</em>. De esta manera es posible incorporar en nuestro servidor de catálogo la información de los metadatos de los datasets que tengamos publicados a través de nuestro servidor <em>Thredds</em>. Para configurar correctamente este proceso de Harvesting es necesario realizar dos operaciones diferentes:</p>
+<ul class="simple">
+<li>Creación y configuración del proceso de Harvesting</li>
+<li>Creación de las plantillas de extracción de la información</li>
+</ul>
+<div class="section" id="creacion-y-configuracion-del-proceso-de-harvesting">
+<h3>Creación y configuración del proceso de Harvesting<a class="headerlink" href="#creacion-y-configuracion-del-proceso-de-harvesting" title="Permalink to this headline">¶</a></h3>
+<p>Para dar de alta un proceso de harvesting debemos acceder a <em>GeoNetwork</em> como administradores y dirigirnos a la pestaña de <tt class="docutils literal"><span class="pre">Administration</span></tt>. Desde allí nos dirigiremos a <tt class="docutils literal"><span class="pre">Harvesting</span> <span class="pre">Management</span></tt>. Esto nos abrirá una nueva ventana desde donde podemos crear nuestro proceso de harvesting. Para ello pulsaremos sobre <tt class="docutils literal"><span class="pre">Add</span></tt> y elegiremos del desplegable el <tt class="docutils literal"><span class="pre">Thredds</span> <span class="pre">Catalog</span></tt> para después volver a pulsar <tt class="docutils literal"><span class="pre">Add</span></tt>. Rellenaremos los campos como se indica a continuación:</p>
+<a class="reference internal image-reference" href="_images/harvesting-management.png"><img alt="Configuración de proceso harvest" class="align-center" src="_images/harvesting-management.png" style="width: 600px;" /></a>
+<ul>
+<li><p class="first"><strong>Name</strong>; nombre que le queremos dar al proceso</p>
+</li>
+<li><p class="first"><strong>Catalog URL</strong>; URL del catalog de <em>Thredds</em>. Importante que la dirección apunte al .xml:</p>
+<div class="highlight-python"><div class="highlight"><pre>http://localhost:8080/thredds/catalog.xml
+</pre></div>
+</div>
+</li>
+<li><p class="first"><strong>Create ISO19119 metadata for all services in the catalog</strong>; crearia una plantilla ISO19119 para todos los servicios que hayamos definido en nuestro catalog.xml</p>
+</li>
+<li><dl class="first docutils">
+<dt><strong>Create metadata for Collection Datasets</strong>; si seleccionamos esta opción, el proceso de harvesting creará un registro en <em>GeoNetwork</em> también para las colecciones de datasets incluidas en el catalog.xml. Dentro de esta opción existen varias opciones:</dt>
+<dd><ul class="first last simple">
+<li><strong>Ignore harvesting attribute</strong>: Que no tiene en cuenta el valor del atributo harvest en el archivo catalog.xml. En caso de no seleccionar esta opción, solo incorporarán en el catálogo aquellas colecciones que tengan este valor igual a <tt class="docutils literal"><span class="pre">true</span></tt> en el catalog.xml.</li>
+<li><strong>Extract DIF metadata elements and create ISO metadata</strong>: Extrae metadatos DIF y crea un metadato ISO. Habrá que seleccionar el esquema en el que se desea realizar la extracción.</li>
+<li><strong>Extract Unidata dataset discovery metadata using fragments</strong>: indicaremos que el proceso extraiga el valor de los metadatos que se definen utilizando la NetCDF Attribute Convention for Dataset Discovery. Nos permite el uso de fragmentos en la extracción de la información. Nos solicita el esquema de salida de la información, la plantilla que queremos utilizar para la creación de los fragmentos y la plantilla sobre la que se van a crear dichos fragmentos. Un detalle de este proceso se explica más adelante.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first"><strong>Create metadata for Atomic Datasets</strong>; Con las opciones parecidas al caso anterior, generará un registro por cada dataset que exista en nuestro servidor <em>Thredds</em>. Cuenta con la opción <strong>Harvest new or modified datasets only</strong> que indica que cuando se repita el proceso de harvesting solo se incluyan aquellos datasets nuevos o que hayan sido modificados.</p>
+</li>
+<li><p class="first"><strong>Create thumbnails for any datasets delivered by WMS</strong>; crea iconos para los datasets que tengan activado el servicio WMS y permite elegir el icono.</p>
+</li>
+<li><p class="first"><strong>Every</strong>; indicaremos la frecuencia con que deseamos que se repita el proceso de harvest o si solo queremos que se repita una vez.</p>
+</li>
+</ul>
+<p>Una vez definidas estos parametros pulsaremos sobre <tt class="docutils literal"><span class="pre">Save</span></tt> y podremos observar como en la ventana anterior aparece nuestro proceso. Seleccionandole podremos acceder a las diferentes operaciones que se nos ofrece. Si pulsamos sobre <tt class="docutils literal"><span class="pre">Run</span></tt> ejecutaremos el harvest. Una vez finalizado, situando el puntero del ratón sobre el icono <tt class="docutils literal"><span class="pre">Status</span></tt> visualizaremos un resumen del proceso.</p>
+</div>
+<div class="section" id="creacion-de-las-plantillas-de-extraccion-de-la-informacion">
+<h3>Creación de las plantillas de extracción de la información<a class="headerlink" href="#creacion-de-las-plantillas-de-extraccion-de-la-informacion" title="Permalink to this headline">¶</a></h3>
+<p>Para generar la información que necesitamos para el <em>Data Portal</em>, debemos configurar el proceso de harvest de manera que este extraiga la información asociada a los datasets configurados en el servidor <em>Thredds</em> siguiendo la NetCDF Attribute Convention for Dataset Discovery. Para ello a partir de la versión 2.7 de <em>GeoNetwork</em> se implementa la posibilidad de utilizar fragmentos para la extracción y reutilización de esta información extraida en el proceso de harvest. Esta posibilidad solo está disponible para extracción de información de catalogos <em>Thredds</em> y operaciones getFeature del protocolo WFS. Utilizando los fragmentos podremos extraer exclusivamente la información que requiere el <em>Data Portal</em> para el proceso de busquedas implementado a través de <em>GeoNetwork</em>. Podremos definir plantillas con los fragmentos que nos interesan que serán guardados en <em>GeoNetwork</em> como <strong>subplantillas</strong> (subtemplates), a seleccionar en las opciones del proceso de harvest, y estos fragmentos que generarán estas subplantillas serán insertados en una plantilla que generará el registro (<strong>plantilla base</strong>) con el metadato en <em>GeoNetwork</em>.</p>
+<a class="reference internal image-reference" href="_images/web-harvesting-fragments.png"><img alt="utilización de fragmentos en |GN|" class="align-center" src="_images/web-harvesting-fragments.png" style="width: 400px;" /></a>
+<p>Para tener disposición de las plantillas y subplantillas hemos de crear estas en la carpeta del esquema que vayamos a utilizar. Estas carpetas se encuentran en:</p>
+<div class="highlight-python"><div class="highlight"><pre>$TOMCAT_HOME/webapps/geonetwork/xml/schemas/
+</pre></div>
+</div>
+<p>Para el caso del <em>Data Portal</em> utilizaremos el esquema ISO19139, por lo que será necesario crear la <strong>plantilla base</strong> en la carpeta <tt class="docutils literal"><span class="pre">templates</span></tt> del esquema <tt class="docutils literal"><span class="pre">iso19139</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/templates
+</pre></div>
+</div>
+<p>allí encontraremos la plantilla base que viene por defecto con la versión de <em>GeoNetwork</em> que podremos utilizar para crear la nuestra propia. Dentro de la misma carpeta del esquema, encontraremos una carpeta <tt class="docutils literal"><span class="pre">convert</span></tt> en la que aparece la carpeta <tt class="docutils literal"><span class="pre">ThreddsTofragments</span></tt>. En esta localización será donde incluiremos nuestras <strong>subplantillas</strong> que generarán los fragmentos:</p>
+<div class="highlight-python"><div class="highlight"><pre>$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/convert/ThreddsToFragments
+</pre></div>
+</div>
+<p>Una vez que hayamos incluido nuestros archivos en las carpetas indicadas, deberemos cargar las plantillas del esquema en <em>GeoNetwork</em>. Para ello, desde una sesión como administrador, nos dirigiremos a la ventana <tt class="docutils literal"><span class="pre">Administration</span></tt> y en la sección de <tt class="docutils literal"><span class="pre">Metadata</span> <span class="pre">&amp;</span> <span class="pre">Template</span></tt> seleccionaremos el esquema <tt class="docutils literal"><span class="pre">iso19139</span></tt> y le indicaremos <tt class="docutils literal"><span class="pre">Add</span> <span class="pre">templates</span></tt>. Realizado esto, podremos comprobar que en las opciones dentro de la ventana de <tt class="docutils literal"><span class="pre">Harvesting</span> <span class="pre">Management</span></tt> <tt class="docutils literal"><span class="pre">Stylesheet</span> <span class="pre">to</span> <span class="pre">create</span> <span class="pre">metadata</span> <span class="pre">fragments</span></tt> y <tt class="docutils literal"><span class="pre">Select</span> <span class="pre">template</span> <span class="pre">to</span> <span class="pre">combine</span> <span class="pre">with</span> <span class="pre">fragments</span></tt> podremos encontrar las plantillas que hemos creado. El nombre de estas plantillas serán el nombre del archivo para las <strong>subplantillas</strong> y el valor del tag que tenga asociado el id <tt class="docutils literal"><span class="pre">id=&quot;thredds.title&quot;</span></tt> dentro de la <strong>plantilla base</strong>.</p>
+<div class="section" id="creacion-de-la-plantilla-base">
+<h4>Creación de la plantilla base<a class="headerlink" href="#creacion-de-la-plantilla-base" title="Permalink to this headline">¶</a></h4>
+<p>Para la creación de la plantilla base tomaremos como plantilla de partida la que <em>GeoNetwork</em> incluye por defecto en su versión 2.7. Esta, como hemos comentado se encuentra en:</p>
+<div class="highlight-python"><div class="highlight"><pre>$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/templates/thredds-harvester-unidata-data-discovery.xml
+</pre></div>
+</div>
+<p>Esta es la plantilla base que se generará por cada registro que se incluya en <em>GeoNetwork</em>. Se trata de una plantilla tipica de la ISO19139. La diferencia fundamental, es que asociado a determinados elementos de la ISO, aparece el atributo <tt class="docutils literal"><span class="pre">id=&lt;identificador</span> <span class="pre">del</span> <span class="pre">fragmento&gt;</span></tt>. Esta es la manera en que se indica que durante el proceso de creación del metadato en <em>GeoNetwork</em>, busque el identificador en la subplantilla que hemos seleccionado al crear el proceso de harvest. Por eso para crear la plantilla base, lo único que debemos hacer es sustituir los elementos que estemos interesados en crear mediante fragmentos, por una llamada a través del <tt class="docutils literal"><span class="pre">id</span></tt> al del fragmento que estamos interesados en incluir:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;gmd:date id=&quot;thredds.resource.dates&quot;/&gt;
+&lt;gmd:abstract id=&quot;thredds.abstract&quot;/&gt;
+&lt;gmd:credit id=&quot;thredds.credit&quot;/&gt;
+&lt;gmd:descriptiveKeywords id=&quot;thredds.keywords&quot;/&gt;
+&lt;gmd:resourceConstraints id=&quot;thredds.use.constraints&quot;/&gt;
+&lt;gmd:aggregationInfo id=&quot;thredds.project&quot;/&gt;
+</pre></div>
+</div>
+<p>y en la subplantilla definiremos los fragmentos y les indicaremos el <tt class="docutils literal"><span class="pre">id</span></tt> al que la pantilla hace referencia.</p>
+</div>
+<div class="section" id="creacion-de-la-subplantilla-fragmentos">
+<h4>Creación de la subplantilla (fragmentos)<a class="headerlink" href="#creacion-de-la-subplantilla-fragmentos" title="Permalink to this headline">¶</a></h4>
+<p>La subplantilla ha de definirse en la carpeta:</p>
+<div class="highlight-python"><div class="highlight"><pre>$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/convert/ThreddsToFragments
+</pre></div>
+</div>
+<p>Una vez que hemos definido los <tt class="docutils literal"><span class="pre">id</span></tt> en la plantilla base, debemos crear estos en la subplantilla. Para ello podemos partir de alguna de los XSL que vienen suministrados en la versión de <em>GeoNetwork</em>. Estas subplantillas, a diferencia de las plantillas base, se tratan de hojas XSL que serán ejecutadas durante la creación del metadato.</p>
+<p>Si abrimos una plantilla de las suministradas, por ejemplo:</p>
+<div class="highlight-python"><div class="highlight"><pre>$TOMCAT_HOME/webapps/geonetwork/xml/schemas/iso19139/convert/ThreddsToFragments/netcdf-attributes.xsl
+</pre></div>
+</div>
+<p>comprobaremos que se trata de un ejemplo normal de plantilla xsl, con su encabezado, definición de namespaces, y como diferencia se puede observar la aparición de unos elementos:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;replacementGroup id=&quot;thredds.supplemental&quot;&gt;
+&lt;fragment uuid=&quot;{util:toString(util:randomUUID())}&quot; title=&quot;{concat($name,&#39;_contentinfo&#39;)}&quot;&gt;
+...
+&lt;/fragment&gt;
+&lt;/replacementGroup&gt;
+</pre></div>
+</div>
+<p>Esta es la manera de definir el fragmento. El atributo <tt class="docutils literal"><span class="pre">id</span></tt> que acompaña al elemento se trata del <tt class="docutils literal"><span class="pre">id</span></tt> al que se hace referencia en la plantilla base, y todos los elementos que se incluyan dentro del fragmento serán procesados en la creación del metadato e incluidos en la plantilla.</p>
+</div>
+</div>
+</div>
+<div class="section" id="pg">
+<h2><em>PostgreSQL</em><a class="headerlink" href="#pg" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="instalacion-y-configuracion-inicial">
+<h3>Instalación y configuración inicial<a class="headerlink" href="#instalacion-y-configuracion-inicial" title="Permalink to this headline">¶</a></h3>
+<p>Instalar <em>PostgreSQL</em>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo apt-get install postgresql
+</pre></div>
+</div>
+<p>Comprobar que está habilitado el servicio de conexión vía TCP/IP para localhost, y el puerto. En postgresql.conf:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">listen_addresses</span> <span class="o">=</span> <span class="s">&#39;localhost&#39;</span>
+<span class="n">port</span> <span class="o">=</span> <span class="mi">5432</span>
+</pre></div>
+</div>
+<p>Y en pg_hba.conf:</p>
+<div class="highlight-python"><div class="highlight"><pre>host    all         all         127.0.0.1/32          md5
+</pre></div>
+</div>
+<p>Si se ha modificado alguno de estos ficheros, reiniciar el servicio:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo /etc/init.d/postgresql-8.4 restart
+</pre></div>
+</div>
+</div>
+<div class="section" id="creacion-esquema-bdd-para-el-dp">
+<h3>Creación esquema BDD para el <em>Data Portal</em><a class="headerlink" href="#creacion-esquema-bdd-para-el-dp" title="Permalink to this headline">¶</a></h3>
+<p>Obtener los scripts create_db.sql y create_schema.sql. Abrir el script create_db.sql y poner un password al usuario &#8220;icos&#8221;. Luego, ejecutar el script:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo -u postgres psql &lt; create_db.sql
+</pre></div>
+</div>
+<p>A continuación creamos el esquema:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ psql -U icos -d dataportal &lt; create_schema.sql
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="dp">
+<h2><em>Data Portal</em><a class="headerlink" href="#dp" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="fichero-dataportal-properties">
+<h3>Fichero dataportal.properties<a class="headerlink" href="#fichero-dataportal-properties" title="Permalink to this headline">¶</a></h3>
+<p>Cambiar los valores para:</p>
+<ul class="simple">
+<li>URL del servicio de catálogo CSW donde realizar las búsquedas.</li>
+<li>Directorio temporal donde se almacenarán los datos descargables.</li>
+<li>Credenciales de acceso a la BDD de la aplicación.</li>
+<li>Datos sobre la cuenta de mail utilizada por el gestor de cuentas de usuario.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>Referencias<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="id10" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://www.keopx.net/blog/cambiar-las-preferencias-de-java-alternatives-en-debianubuntu">http://www.keopx.net/blog/cambiar-las-preferencias-de-java-alternatives-en-debianubuntu</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id11" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td><a class="reference external" href="http://www.guia-ubuntu.org/index.php?title=Java">http://www.guia-ubuntu.org/index.php?title=Java</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id12" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td><a class="reference external" href="http://tomcat.apache.org/tomcat-6.0-doc/ssl-howto.html">http://tomcat.apache.org/tomcat-6.0-doc/ssl-howto.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id13" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[4]</a></td><td><a class="reference external" href="http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/tutorial/AddingServices.html">http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/tutorial/AddingServices.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id14" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[5]</a></td><td><a class="reference external" href="http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/reference/ncISO.html">http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/reference/ncISO.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id15" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[6]</a></td><td><a class="reference external" href="http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.1/reference/RemoteManagement.html">http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.1/reference/RemoteManagement.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id16" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[7]</a></td><td><a class="reference external" href="http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/tutorial/ConfigCatalogs.html">http://www.unidata.ucar.edu/projects/THREDDS/tech/tds4.2/tutorial/ConfigCatalogs.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id17" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id8">[8]</a></td><td><a class="reference external" href="http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html">http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id18" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[9]</td><td><a class="reference external" href="http://geonetwork-opensource.org/manuals/trunk/users/admin/harvesting/index.html#harvesting-fragments-of-metadata-to-support-re-use">http://geonetwork-opensource.org/manuals/trunk/users/admin/harvesting/index.html#harvesting-fragments-of-metadata-to-support-re-use</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id19" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[10]</td><td><a class="reference external" href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html">http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Instalación</a><ul>
+<li><a class="reference internal" href="#tct-y-java"><em>Tomcat</em> y Java</a><ul>
+<li><a class="reference internal" href="#instalacion-de-java-de-sun">Instalación de JAVA de SUN</a><ul>
+<li><a class="reference internal" href="#utilizando-los-repositorios-de-ubuntu">Utilizando los repositorios de Ubuntu</a></li>
+<li><a class="reference internal" href="#descargando-java">Descargando Java</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#instalacion-de-tomcat">Instalación de Tomcat</a><ul>
+<li><a class="reference internal" href="#instalacion-desde-los-repositorios">Instalación desde los repositorios</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gs"><em>GeoServer</em></a><ul>
+<li><a class="reference internal" href="#publicacion-de-capas-base-para-gn-y-dp">Publicación de capas base para <em>GeoNetwork</em> y <em>Data Portal</em></a></li>
+<li><a class="reference internal" href="#configuracion-inicial">Configuración inicial</a><ul>
+<li><a class="reference internal" href="#metadatos-de-servicio">Metadatos de servicio</a></li>
+<li><a class="reference internal" href="#borrado-de-datos-de-ejemplo">Borrado de datos de ejemplo</a></li>
+<li><a class="reference internal" href="#servicios">Servicios</a></li>
+<li><a class="reference internal" href="#settings-global">Settings =&gt; Global</a></li>
+<li><a class="reference internal" href="#seguridad">Seguridad</a></li>
+<li><a class="reference internal" href="#referencias">Referencias</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tds"><em>Thredds</em></a><ul>
+<li><a class="reference internal" href="#instalacion-de-thredds-data-server">Instalación de Thredds Data Server</a></li>
+<li><a class="reference internal" href="#configuracion-de-modulos-en-tds">Configuración de módulos en <em>Thredds</em></a><ul>
+<li><a class="reference internal" href="#tds-remote-management">TDS Remote Management</a></li>
+<li><a class="reference internal" href="#configuracion-de-servicios-wms-y-wcs">Configuración de servicios WMS y WCS</a></li>
+<li><a class="reference internal" href="#configuracion-de-nciso">Configuración de ncISO</a></li>
+<li><a class="reference internal" href="#inclusion-de-servicios-ogc-iso-en-los-catalogos">Inclusión de servicios OGC/ISO en los catálogos</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gn"><em>GeoNetwork</em></a></li>
+<li><a class="reference internal" href="#harvesting-tds-a-gn">Harvesting <em>Thredds</em> a <em>GeoNetwork</em></a><ul>
+<li><a class="reference internal" href="#creacion-y-configuracion-del-proceso-de-harvesting">Creación y configuración del proceso de Harvesting</a></li>
+<li><a class="reference internal" href="#creacion-de-las-plantillas-de-extraccion-de-la-informacion">Creación de las plantillas de extracción de la información</a><ul>
+<li><a class="reference internal" href="#creacion-de-la-plantilla-base">Creación de la plantilla base</a></li>
+<li><a class="reference internal" href="#creacion-de-la-subplantilla-fragmentos">Creación de la subplantilla (fragmentos)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pg"><em>PostgreSQL</em></a><ul>
+<li><a class="reference internal" href="#instalacion-y-configuracion-inicial">Instalación y configuración inicial</a></li>
+<li><a class="reference internal" href="#creacion-esquema-bdd-para-el-dp">Creación esquema BDD para el <em>Data Portal</em></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#dp"><em>Data Portal</em></a><ul>
+<li><a class="reference internal" href="#fichero-dataportal-properties">Fichero dataportal.properties</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id9">Referencias</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="intro.html"
+                        title="previous chapter">Introducción</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="data.html"
+                        title="next chapter">Preparación de los datos netCDF</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/install.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="data.html" title="Preparación de los datos netCDF"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="Introducción"
+             >previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Oscar Fonts, Micho García.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

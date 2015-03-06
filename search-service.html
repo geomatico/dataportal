@@ -1,0 +1,342 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Servicio “search” de búsqueda de datos &mdash; ICOS Carbon Data Portal 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ICOS Carbon Data Portal 1 documentation" href="index.html" />
+    <link rel="next" title="Conversión a NetCDF" href="converter.html" />
+    <link rel="prev" title="Preparación de los datos netCDF" href="data.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="converter.html" title="Conversión a NetCDF"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="data.html" title="Preparación de los datos netCDF"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="servicio-search-de-busqueda-de-datos">
+<h1>Servicio &#8220;search&#8221; de búsqueda de datos<a class="headerlink" href="#servicio-search-de-busqueda-de-datos" title="Permalink to this headline">¶</a></h1>
+<p>Este apartado define la interfaz del servicio de búsqueda <em>search</em>, tanto desde el punto de vista de la interfaz gráfica de usuario (su aspecto exterior), como los formatos de intercambio de información entre el cliente y el servidor.</p>
+<div class="section" id="interfaz-cliente-servidor">
+<h2>Interfaz cliente-servidor<a class="headerlink" href="#interfaz-cliente-servidor" title="Permalink to this headline">¶</a></h2>
+<p>Las peticiones de búsqueda se harán mediante una peticion HTTP GET o POST a la siguiente url:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="n">url_base</span><span class="p">]</span><span class="o">/</span><span class="n">search</span>
+</pre></div>
+</div>
+<p>Donde [url_base] es la URL donde está desplegada la aplicación. Por ejemplo:</p>
+<div class="highlight-python"><div class="highlight"><pre>http://ciclope.cmima.csic.es:8080/dataportal/search
+</pre></div>
+</div>
+<p>Tanto los parámetros de la petición como las respuestas se codificarán siempre en <strong>UTF-8</strong>.</p>
+<div class="section" id="parametros-de-la-peticion">
+<h3>Parámetros de la petición<a class="headerlink" href="#parametros-de-la-peticion" title="Permalink to this headline">¶</a></h3>
+<p>Los parámetros que debe aceptar el servicio pueden dividirse en <em>parámetros de búsqueda</em>, <em>parámetros de paginación</em> y <em>parámetros de ordenación</em>.</p>
+<p>Los <em>parametros de búsqueda</em> son:</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><strong>text</strong>: Texto libre, a buscar entre cualquiera de los metadatos de tipo textual. Codificado en UTF-8.</p>
+</li>
+<li><p class="first"><strong>bboxes</strong>: Lista de bounding boxes en EPSG:4326 expresada como un array, de formato:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[[</span><span class="n">Xmin0</span><span class="p">,</span><span class="n">Ymin0</span><span class="p">,</span><span class="n">Xmax0</span><span class="p">,</span><span class="n">Ymax0</span><span class="p">],[</span><span class="n">Xmin1</span><span class="p">,</span><span class="n">Ymin1</span><span class="p">,</span><span class="n">Xmax1</span><span class="p">,</span><span class="n">Ymax1</span><span class="p">],</span><span class="o">...</span><span class="p">,[</span><span class="n">XminN</span><span class="p">,</span><span class="n">YminN</span><span class="p">,</span><span class="n">XmaxN</span><span class="p">,</span><span class="n">YmaxN</span><span class="p">]]</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><strong>start_date</strong>: Formato &#8220;YYYY-MM-DD&#8221; (formato de fecha de calendario <a class="reference external" href="http://es.wikipedia.org/wiki/ISO_8601">ISO8601</a>).</p>
+</li>
+<li><p class="first"><strong>end_date</strong>: Formato &#8220;YYYY-MM-DD&#8221; (formato de fecha de calendario <a class="reference external" href="http://es.wikipedia.org/wiki/ISO_8601">ISO8601</a>).</p>
+</li>
+<li><p class="first"><strong>variables</strong>: Lista de variables separada por comas, de entre una lista controlada de valores. Los posibles valores son los distintos &lt;nc_term&gt; en <a class="reference external" href="http://ciclope.cmima.csic.es:8080/dataportal/xml/vocabulario.xml">vocabulario.xml</a>. Ejemplo:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="s">&quot;sea_water_salinity,sea_water_temperature,sea_water_electrical_conductivity&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><strong>response_format</strong>: Formato MIME en que se solicita la respuesta. De momento sólo está definido el formato <em>text/xml</em>.</p>
+</li>
+</ul>
+</div></blockquote>
+<p><em>Parámetros de paginación</em>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>start</strong>: Primer registro solicitado (offset, comenzando a contar por cero).</li>
+<li><strong>limit</strong>: Número máximo de resultados por página.</li>
+</ul>
+</div></blockquote>
+<p>Por ejemplo, para solicitar la 3ª página a 20 resultados por página, los parámetros serían: <em>start=40</em> y <em>limit=20</em>.</p>
+<p><em>Parámetros de ordenación</em>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>sort</strong>: nombre del campo por el que se ordenan los elementos de la respuesta. Los posibles valores son:
+- &#8220;id&#8221;,
+- &#8220;title&#8221;,
+- &#8220;start_time&#8221;, y
+- &#8220;end_time&#8221;.</li>
+<li><strong>dir</strong>: &#8220;ASC&#8221; (orden ascendente) o &#8220;DESC&#8221; (orden descendente).</li>
+</ul>
+</div></blockquote>
+<p>Por ejemplo, para obtener los registros más recientes primero, los parámetros serían: <em>sort=start_time</em> &amp; <em>dir=DESC</em>.</p>
+</div>
+<div class="section" id="elementos-de-la-respuesta">
+<h3>Elementos de la respuesta<a class="headerlink" href="#elementos-de-la-respuesta" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>Flag <strong>success</strong>. Será <em>true</em> si todo ha ido bien, o <em>false</em> si ha habido algún error realizando la petición.</li>
+<li>Atributo global <strong>totalcount</strong>. Se refiere al número total de resultados que cumplen los criterios de búsqueda, no contenidos en una respuesta específica. Por ejemplo, en una respuesta paginada donde se devuelvan 20 resultados por página, <strong>totalcount</strong> puede ser 1200 (así, toda la respuesta ocuparía 60 páginas de resultados).</li>
+<li>Lista de resultados. Cada uno de ellos tendrá los siguientes elementos:<ul>
+<li><strong>id</strong>: Identificador.</li>
+<li><strong>title</strong>: Título.</li>
+<li><strong>summary</strong>: Resumen.</li>
+<li><strong>geo_extent</strong>: Ámbito geográfico, expresado en <a class="reference external" href="http://en.wikipedia.org/wiki/Well-known_text">WKT</a>. Se considerarán sólamente las primitivas geométricas 2D &#8220;POINT&#8221;, &#8220;LINESTRING&#8221;, &#8220;POLYGON&#8221; y &#8220;MULTIPOLYGON&#8221;, expresadas en coordenadas geográficas WGS84 (EPSG:4326). Generalmente se tratará de un &#8220;POLYGON&#8221; de 4 vértices describiendo un BBOX.</li>
+<li><strong>start_time</strong> y <strong>end_time</strong>, en formato <a class="reference external" href="http://es.wikipedia.org/wiki/ISO_8601">ISO8601</a>. Fracción horaria expresada en <a class="reference external" href="http://en.wikipedia.org/wiki/Coordinated_Universal_Time">UTC</a> (aka &#8220;Z&#8221;).</li>
+<li><strong>variables</strong>: Lista de variables contenida en el dataset, separada por comas. Se espera que corresponda a una lista controlada de valores. Los posibles valores son los distintos &lt;nc_term&gt; de <a class="reference external" href="http://ciclope.cmima.csic.es:8080/dataportal/xml/vocabulario.xml">vocabulario.xml</a>.</li>
+<li><strong>data_link</strong>: Enlace a los datos.</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+<p>En caso de error, el flag <strong>success</strong> será <em>false</em>, y la respuesta contendrá un error con los siguientes elementos:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>code</strong>: Código del error. A criterio del desarrollador, debería servir para determinar la causa.</li>
+<li><strong>message</strong>: Mensaje amable para mostrar al usuario frustrado.</li>
+</ul>
+</div></blockquote>
+<div class="section" id="respuesta-codificada-en-text-xml">
+<h4>Respuesta codificada en &#8220;text/xml&#8221;<a class="headerlink" href="#respuesta-codificada-en-text-xml" title="Permalink to this headline">¶</a></h4>
+<p>Ejemplo de respuesta XML válida:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;response success=&quot;true&quot; totalcount=&quot;330&quot;&gt;
+    &lt;item&gt;
+        &lt;id&gt;5df54bf0-3a7d-44bf-9abf-84d772da8df1&lt;/id&gt;
+        &lt;title&gt;Global Wind-Wave Forecast Model and Ocean Wave model&lt;/title&gt;
+        &lt;summary&gt;This is a sample global ocean file that comes with default Thredds installation. Its global attributes have been modified to conform with Dataset Discovery convention&lt;/summary&gt;
+        &lt;geo_extent&gt;POLYGON ((-10 50, 10 50, 10 40, -10 40, -10 50))&lt;/geo_extent&gt;
+        &lt;start_time&gt;2011-07-10T12:00:00Z&lt;/start_time&gt;
+        &lt;end_time&gt;2011-07-15T12:00:00Z&lt;/end_time&gt;
+        &lt;variables&gt;sea_water_salinity,sea_water_temperature,sea_water_electrical_conductivity&lt;/variables&gt;
+        &lt;data_link&gt;http://ciclope.cmima.csic.es:8080/thredds/fileServer/cmimaTest/ocean-metadata-sample.nc&lt;/data_link&gt;
+    &lt;/item&gt;
+    &lt;item&gt;
+        &lt;id&gt;5df54bf0-3a7d-44bf-9abf-84d772da8df1&lt;/id&gt;
+        &lt;title&gt;Global Wind-Wave Forecast Model and Ocean Wave model&lt;/title&gt;
+        &lt;summary&gt;This is a sample global ocean file that comes with default Thredds installation. Its global attributes have been modified to conform with Dataset Discovery convention&lt;/summary&gt;
+        &lt;geo_extent&gt;POLYGON ((-10 50, 10 50, 10 40, -10 40, -10 50))&lt;/geo_extent&gt;
+        &lt;start_time&gt;2011-07-10T12:00:00Z&lt;/start_time&gt;
+        &lt;end_time&gt;2011-07-15T12:00:00Z&lt;/end_time&gt;
+        &lt;variables&gt;sea_water_salinity,sea_water_temperature,sea_water_electrical_conductivity&lt;/variables&gt;
+        &lt;data_link&gt;http://ciclope.cmima.csic.es:8080/thredds/fileServer/cmimaTest/ocean-metadata-sample.nc&lt;/data_link&gt;
+    &lt;/item&gt;
+&lt;/response&gt;
+</pre></div>
+</div>
+<p>Respuesta XML en caso de error:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;response success=&quot;false&quot;&gt;
+    &lt;error&gt;
+        &lt;code&gt;java.lang.NullPointerException&lt;/code&gt;
+        &lt;message&gt;Ooops, something went wrong here and there. Please do, or don&#39;t.&lt;/message&gt;
+    &lt;/error&gt;
+&lt;/response&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="configuracion-de-gn-para-busqueda-por-variables">
+<h3>Configuración de <em>GeoNetwork</em> para búsqueda por variables<a class="headerlink" href="#configuracion-de-gn-para-busqueda-por-variables" title="Permalink to this headline">¶</a></h3>
+<p><em>GeoNetwork</em> incluye el motor de búsqueda Apache Lucene para realizar búsquedas dentro del catálogo. Lucene está configurado para que estas búsquedas puedan ser realizadas por unos determinados campos. Para conseguir realizar búsquedas por un tipo de campos no incluidos, habrá que modificar <em>GeoNetwork</em>. Los siguientes pasos indican como se ha de realizar esta modificación.</p>
+<div class="section" id="indexacion-del-campo-en-lucene">
+<h4>Indexación del campo en Lucene<a class="headerlink" href="#indexacion-del-campo-en-lucene" title="Permalink to this headline">¶</a></h4>
+<p>En primer lugar indicaremos que nuevos campos han de ser indexados. Para ello en cada carpeta de esquema existe un archivo <tt class="docutils literal"><span class="pre">index-fields.xsl</span></tt> en el que se indica que campos han de ser indexados. La ruta para el esquema ISO19139 con el que estamos trabajando en el <em>Data Portal</em> será:</p>
+<div class="highlight-python"><div class="highlight"><pre>/var/lib/tomcat6/webapps/geonetwork/xml/schemas/iso19139/index-fields.xsl
+</pre></div>
+</div>
+<p>Este archivo se trata de una plantilla XSLT que se encarga de extraer datos de nuestros metadatos en incluirlos en el índice de Lucene. Para realizar esta acción, debemos indicar que valores queremos que se incluyan en el índice, el nombre del campo en los que se incluirá y una serie de parametros que indican como han de incluirse estos:</p>
+<ul>
+<li><p class="first"><strong>store</strong>: guarda el valor del campo en el índice</p>
+</li>
+<li><p class="first"><strong>index</strong>: indexa el campo, casi siempre será <tt class="docutils literal"><span class="pre">true</span></tt></p>
+</li>
+<li><p class="first"><strong>token</strong>: extrae el valor del campo en pequeños trozos (tokens):</p>
+<div class="highlight-python"><div class="highlight"><pre>P.ej.: &#39;es un valor de campo&#39; --&gt; &#39;es&#39;,&#39;un&#39;,&#39;valor&#39;,&#39;de&#39;,&#39;campo&#39;
+</pre></div>
+</div>
+</li>
+</ul>
+<p>El fragmento de plantilla que debe quedar trás la ejecución de la plantilla será:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;Field name=&quot;&lt;nombre del campo&gt;&quot; string=&quot;{&lt;valor del campo&gt;}&quot;
+store=&quot;true&quot; index=&quot;true&quot;
+token=&quot;true&quot;/&gt;
+</pre></div>
+</div>
+<p>Así estamos indicando que cree un campo <tt class="docutils literal"><span class="pre">&lt;nombre</span> <span class="pre">del</span> <span class="pre">campo&gt;</span></tt> en el índice y que incluya el valor <tt class="docutils literal"><span class="pre">&lt;valor</span> <span class="pre">del</span> <span class="pre">campo&gt;</span></tt> en el mismo. Esta última será una expresión XPATH que recoja del metadato en el esquema que estamos trabajando, la información que nos interesa. En el caso del <em>Data Portal</em> quedaría de la siguiente manera:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;xsl:for-each select=&quot;//gmd:contentInfo/gmi:MI_CoverageDescription/gmd:dimension&quot;&gt;
+&lt;Field name=&quot;variable&quot; token=&quot;false&quot; store=&quot;true&quot; index=&quot;true&quot; string=&quot;{string(gmd:MD_Band/gmd:sequenceIdentifier/gco:MemberName/gco:aName/gco:CharacterString)}&quot; /&gt;
+&lt;/xsl:for-each&gt;
+</pre></div>
+</div>
+<p>Así estamos indicando que para cada valor que aparezca de <tt class="docutils literal"><span class="pre">gmd:Dimension</span></tt> incluya este en un campo denominado <tt class="docutils literal"><span class="pre">variable</span></tt> en el índice.
+Una vez que hemos modificado el archivo <tt class="docutils literal"><span class="pre">index-fields.xsl</span></tt> debemos re-indexar todos los metadatos con la nueva disposición. Para ello iremos a la sección <strong>Index settings</strong> de la ventana de administración y en <tt class="docutils literal"><span class="pre">Rebuild</span> <span class="pre">Lucene</span> <span class="pre">index</span></tt> indicaremos <tt class="docutils literal"><span class="pre">Rebuild</span></tt>. Esta operación tardará en función del número de metadatos que tengamos en el servidor.</p>
+<p>Una vez que esta operación ha finalizado, debemos comprobar si las nuevas variables han sido indexadas. Para ello desargaremos la herramienta <a class="reference external" href="http://code.google.com/p/luke/downloads/list">Luke</a> - Lucene Index Toolbox, que nos permitirá explorar el indice y comprobar los cambios que hemos realizado. Una vez descargada, navegaremos hasta el directorio, modificaremos los permisos dandole de ejecución y ejecutaremos:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ java -jar lukeall-3.3.0.jar
+</pre></div>
+</div>
+<p>Lo primero que nos indicará la aplicación es que seleccionemos la ruta donde se encuentra el índice, que en nuestro caso será:</p>
+<div class="highlight-python"><div class="highlight"><pre>$TOMCAT_HOME/webapps/geonetwork/WEB-INF/lucene/nonspatial
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/luke-lucene.png"><img alt="Cáptura inicio Luke" class="align-center" src="_images/luke-lucene.png" style="width: 500px;" /></a>
+<p>Una vez abierto el índice, en la pestaña <tt class="docutils literal"><span class="pre">overview</span></tt>, podremos comprobar que el campo se encuentra indexado, y visualizar los términos que ha guardado. También podremos ir a la pestaña <tt class="docutils literal"><span class="pre">search</span></tt> y realizar unas pruebas de búsqueda para el campo que acabamos de incluir.</p>
+</div>
+<div class="section" id="inclusion-del-campo-en-servicio-csw">
+<h4>Inclusión del campo en servicio CSW<a class="headerlink" href="#inclusion-del-campo-en-servicio-csw" title="Permalink to this headline">¶</a></h4>
+<p>Una vez que hemos indexado el campo de búsqueda, debemos incluir este como campo soportado en las búsquedas a través del servicio CSW. Para ello modificaremos el archivo config-csw.xml que se encuentra en:</p>
+<div class="highlight-python"><div class="highlight"><pre>$TOMCAT_HOME/webapps/geonetwork/WEB-INF/config-csw.xml
+</pre></div>
+</div>
+<p>Debemos añadir dentro de los campos     <tt class="docutils literal"><span class="pre">Additional</span> <span class="pre">queryable</span> <span class="pre">properties</span></tt> la linea que incluya nuestro campo como consultable. Para ello añadiremos en esa sección:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;parameter name=&quot;&lt;Nombre del campo dentro del esquema&gt;&quot; field=&quot;&lt;nombre del campo incluido en el índice&gt;&quot; type=&quot;SupportedISOQueryables&quot; /&gt;
+</pre></div>
+</div>
+<p>Que para el caso del <em>Data Portal</em> quedaría:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;parameter name=&quot;ContentInfo&quot; field=&quot;variable&quot; type=&quot;SupportedISOQueryables&quot; /&gt;
+</pre></div>
+</div>
+<p>De esta manera, si consultamos del GetCapabilities del servidor observaremos si el campo ha sido incluido:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;ows:Constraint name=&quot;SupportedISOQueryables&quot;&gt;
+...
+&lt;ows:Value&gt;ContentInfo&lt;/ows:Value&gt;
+...
+</pre></div>
+</div>
+<p>Ya tendremos preparado nuestro servidor para realizar consultas por <tt class="docutils literal"><span class="pre">ContenInfo</span></tt>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="interfaz-grafica-de-usuario">
+<h2>Interfaz gráfica de usuario<a class="headerlink" href="#interfaz-grafica-de-usuario" title="Permalink to this headline">¶</a></h2>
+<p>TODO tras tarea 3.3.</p>
+<div class="section" id="formulario-de-busqueda">
+<h3>Formulario de búsqueda<a class="headerlink" href="#formulario-de-busqueda" title="Permalink to this headline">¶</a></h3>
+<p>TODO tras tarea 3.3.</p>
+</div>
+<div class="section" id="tabla-de-resultados">
+<h3>Tabla de resultados<a class="headerlink" href="#tabla-de-resultados" title="Permalink to this headline">¶</a></h3>
+<p>TODO tras tarea 3.3.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Servicio &#8220;search&#8221; de búsqueda de datos</a><ul>
+<li><a class="reference internal" href="#interfaz-cliente-servidor">Interfaz cliente-servidor</a><ul>
+<li><a class="reference internal" href="#parametros-de-la-peticion">Parámetros de la petición</a></li>
+<li><a class="reference internal" href="#elementos-de-la-respuesta">Elementos de la respuesta</a><ul>
+<li><a class="reference internal" href="#respuesta-codificada-en-text-xml">Respuesta codificada en &#8220;text/xml&#8221;</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#configuracion-de-gn-para-busqueda-por-variables">Configuración de <em>GeoNetwork</em> para búsqueda por variables</a><ul>
+<li><a class="reference internal" href="#indexacion-del-campo-en-lucene">Indexación del campo en Lucene</a></li>
+<li><a class="reference internal" href="#inclusion-del-campo-en-servicio-csw">Inclusión del campo en servicio CSW</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#interfaz-grafica-de-usuario">Interfaz gráfica de usuario</a><ul>
+<li><a class="reference internal" href="#formulario-de-busqueda">Formulario de búsqueda</a></li>
+<li><a class="reference internal" href="#tabla-de-resultados">Tabla de resultados</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="data.html"
+                        title="previous chapter">Preparación de los datos netCDF</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="converter.html"
+                        title="next chapter">Conversión a NetCDF</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/search-service.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="converter.html" title="Conversión a NetCDF"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="data.html" title="Preparación de los datos netCDF"
+             >previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Oscar Fonts, Micho García.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

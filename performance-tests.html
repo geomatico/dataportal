@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Performance tests &mdash; ICOS Carbon Data Portal 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ICOS Carbon Data Portal 1 documentation" href="index.html" />
+    <link rel="next" title="Rendimiento servicios" href="service-performance.html" />
+    <link rel="prev" title="Conversión a NetCDF" href="converter.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="service-performance.html" title="Rendimiento servicios"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="converter.html" title="Conversión a NetCDF"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="performance-tests">
+<h1>Performance tests<a class="headerlink" href="#performance-tests" title="Permalink to this headline">¶</a></h1>
+<p>JMeter <a class="footnote-reference" href="#id3" id="id1">[1]</a> can be used to test how the developed web services perform in different scenarios.</p>
+<p>Before going on with this document, it is recommended to follow the web test plan
+tutorial <a class="footnote-reference" href="#id4" id="id2">[2]</a>, which is very short and easy to read.</p>
+<p>JMeter test plans are stored in .jmx files and there are several plans prepared to test the
+dataportal services. At the moment of writing, they were on <em>/dataportal/query-core/jmeter</em>
+on the code base.</p>
+<p>In order to launch a specific test, it is necessary to:</p>
+<ul class="simple">
+<li>Load it into jmeter.</li>
+<li>Set the number of users and the ramp-up period in the &#8220;Thread group&#8221; element.</li>
+<li>Possibly change the query parameters in the HTTP Request element to adapt to the desired test case.</li>
+<li>Execute Run &gt; Start.</li>
+</ul>
+<p>Note that at any moment it is possible to right click an element in the test plan tree (at left)
+and select the <em>Help</em> context menu to see a good explanation of the selected element.</p>
+<p>Also be careful with the &#8220;Save responses to a file&#8221; element since it has a linux absolute path. In case a
+non-unix system is used it should be changed to specify the folder and prefix of the files containing
+the different query responses. Relative paths are relative to the jmeter working directory.</p>
+<div class="section" id="referencias">
+<h2>Referencias<a class="headerlink" href="#referencias" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://jmeter.apache.org/">http://jmeter.apache.org/</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td><a class="reference external" href="http://jmeter.apache.org/usermanual/build-web-test-plan.html">http://jmeter.apache.org/usermanual/build-web-test-plan.html</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Performance tests</a><ul>
+<li><a class="reference internal" href="#referencias">Referencias</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="converter.html"
+                        title="previous chapter">Conversión a NetCDF</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="service-performance.html"
+                        title="next chapter">Rendimiento servicios</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/performance-tests.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="service-performance.html" title="Rendimiento servicios"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="converter.html" title="Conversión a NetCDF"
+             >previous</a> |</li>
+        <li><a href="index.html">ICOS Carbon Data Portal 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Oscar Fonts, Micho García.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
